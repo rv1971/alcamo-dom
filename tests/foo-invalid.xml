@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<?xml-stylesheet href="foo.xsl" type="text/xsl"?>
+
+<foo
+    xmlns="http://foo.example.org"
+    xmlns:dc="http://purl.org/dc/terms/"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://foo.example.org foo.xsd http://www.w3.org/2000/01/rdf-schema# ../xsd/rdfs.xsd"
+    xml:lang="oc"
+    qux="quux">
+</foo>

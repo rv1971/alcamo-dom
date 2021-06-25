@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xsd:schema
+    xmlns="http://foo2.example.org"
+    xmlns:dc="http://purl.org/dc/terms/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    targetNamespace="http://foo2.example.org"
+    elementFormDefault="qualified">
+
+  <xsd:include schemaLocation="foo2a.xsd"/>
+
+  <xsd:import
+      namespace="http://www.w3.org/XML/1998/namespace"
+      schemaLocation="../xsd/xml.xsd"/>
+
+  <xsd:import
+      namespace="http://www.w3.org/2001/XMLSchema"
+      schemaLocation="../xsd/XMLSchema.xsd"/>
+
+  <xsd:simpleType name="ListOfNamedItemType" xml:id="ListOfNamedItemType">
+    <xsd:list itemType="xsd:integer"/>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="ListOfAnonymousItemType">
+    <xsd:list>
+      <xsd:simpleType>
+        <xsd:restriction base="xsd:string">
+          <xsd:minLength value="42"/>
+        </xsd:restriction>
+      </xsd:simpleType>
+    </xsd:list>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="DerivedFromList">
+    <xsd:restriction base="ListOfNamedItemType"/>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="EnumUnion" xml:id="FooBarType">
+    <xsd:union memberTypes="xsd:formChoice xsd:derivationControl">
+      <xsd:simpleType>
+        <xsd:restriction base="xsd:string">
+          <xsd:enumeration value="foo"/>
+          <xsd:enumeration value="bar"/>
+        </xsd:restriction>
+      </xsd:simpleType>
+
+      <xsd:simpleType>
+        <xsd:restriction base="xsd:string">
+          <xsd:enumeration value="baz"/>
+          <xsd:enumeration value="qux"/>
+          <xsd:enumeration value="quux"/>
+        </xsd:restriction>
+      </xsd:simpleType>
+    </xsd:union>
+  </xsd:simpleType>
+
+  <xsd:attributeGroup name="NestedAttrGroup">
+    <xsd:attributeGroup ref="xsd:occurs"/>
+    <xsd:attribute ref="xml:id"/>
+    <xsd:attribute name="foo"/>
+  </xsd:attributeGroup>
+</xsd:schema>

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?xml-stylesheet href="xsl/xsd.xsl" type="text/xsl"?>
+
+<xsd:schema
+    xmlns="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:dc="http://purl.org/dc/terms/"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://www.w3.org/2000/01/rdf-schema#"
+    dc:title="Selected RDFS types, attributes and elements"
+    dc:creator="RV1971 &lt;rv1971@web.de&gt;"
+    dc:created="2017-01-01"
+    dc:modified="2020-02-17"
+    xml:lang="en">
+  <xsd:annotation>
+    <xsd:documentation xmlns="http://www.w3.org/1999/xhtml">
+      <p>This schema document describes selected <a
+      href="https://www.w3.org/TR/rdf-schema/">RDF Schema</a> related
+      types, attributes and elements. Its main purpose is to re-use the
+      semantics defined there, so the definitions are copied
+      almost verbatim.</p>
+    </xsd:documentation>
+  </xsd:annotation>
+
+  <xsd:import
+      namespace="http://www.w3.org/XML/1998/namespace"
+      schemaLocation="xml.xsd"/>
+
+  <!-- attributes -->
+
+  <xsd:attribute name="comment" type="Literal" rdfs:label="Comment">
+    <xsd:annotation>
+      <xsd:documentation xmlns="http://www.w3.org/1999/xhtml">
+        <p>May be used to provide a human-readable description of a
+        resource.</p>
+      </xsd:documentation>
+    </xsd:annotation>
+  </xsd:attribute>
+
+  <xsd:attribute name="isDefinedBy" type="xsd:anyURI" rdfs:label="Defined by">
+    <xsd:annotation>
+      <xsd:documentation xmlns="http://www.w3.org/1999/xhtml">
+        <p>Used to indicate a resource defining the subject
+        resource. This property may be used to indicate an RDF
+        vocabulary in which a resource is described.</p>
+      </xsd:documentation>
+    </xsd:annotation>
+  </xsd:attribute>
+
+  <xsd:attribute name="label" type="Literal" rdfs:label="Label">
+    <xsd:annotation>
+      <xsd:documentation xmlns="http://www.w3.org/1999/xhtml">
+        <p>May be used to provide a human-readable version of a
+        resource's name.</p>
+      </xsd:documentation>
+    </xsd:annotation>
+  </xsd:attribute>
+
+  <!-- elements -->
+
+  <xsd:element name="comment" rdfs:label="Comment">
+    <xsd:annotation>
+      <xsd:documentation xmlns="http://www.w3.org/1999/xhtml">
+        <p>May be used to provide a human-readable description of a
+        resource.</p>
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:simpleContent>
+        <xsd:extension base="Literal">
+          <xsd:attribute ref="xml:lang"/>
+        </xsd:extension>
+      </xsd:simpleContent>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="label" rdfs:label="Label">
+    <xsd:annotation>
+      <xsd:documentation xmlns="http://www.w3.org/1999/xhtml">
+        <p>May be used to provide a human-readable version of a
+        resource's name.</p>
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType>
+      <xsd:simpleContent>
+        <xsd:extension base="Literal">
+          <xsd:attribute ref="xml:lang"/>
+        </xsd:extension>
+      </xsd:simpleContent>
+    </xsd:complexType>
+  </xsd:element>
+
+  <!-- types -->
+
+  <xsd:simpleType name="Literal">
+    <xsd:annotation>
+      <xsd:documentation xmlns="http://www.w3.org/1999/xhtml">
+        <p>Literal values such as strings and integers.</p>
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:restriction base="xsd:string"/>
+  </xsd:simpleType>
+</xsd:schema>

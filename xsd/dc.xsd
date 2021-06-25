@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?xml-stylesheet href="xsl/xsd.xsl" type="text/xsl"?>
+
+<xsd:schema
+    xmlns="http://purl.org/dc/terms/"
+    xmlns:dc="http://purl.org/dc/terms/"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://purl.org/dc/terms/"
+    dc:title="Selected Dublin Core types and attributes"
+    dc:creator="RV1971 &lt;rv1971@web.de&gt;"
+    dc:created="2017-01-01"
+    dc:modified="2021-02-02"
+    xml:lang="en">
+  <xsd:annotation>
+    <xsd:documentation xmlns="http://www.w3.org/1999/xhtml">
+      <p>This schema document describes selected <a
+      href="http://purl.org/dc/terms/">Dublin Core</a> related types
+      and attributes. Its main purpose is to re-use the semantics
+      defined there, so the definitions are copied almost
+      verbatim.</p>
+    </xsd:documentation>
+  </xsd:annotation>
+
+  <xsd:import namespace="http://www.w3.org/2000/01/rdf-schema#"
+              schemaLocation="rdfs.xsd"/>
+
+  <!-- types -->
+
+  <xsd:simpleType name="Agent">
+    <xsd:annotation xmlns="http://www.w3.org/1999/xhtml">
+      <xsd:documentation>
+        <p>A resource that acts or has the power to act.</p>
+
+        <p>Examples of Agent include person, organization, and
+        software agent.</p>
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:restriction base="xsd:string"/>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="AgentClass">
+    <xsd:annotation xmlns="http://www.w3.org/1999/xhtml">
+      <xsd:documentation>
+        <p>A group of agents.</p>
+
+        <p>Examples of Agent Class include groups seen as classes,
+        such as students, women, charities, lecturers.</p>
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:restriction base="xsd:string"/>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="Audience">
+    <xsd:annotation xmlns="http://www.w3.org/1999/xhtml">
+      <xsd:documentation>
+        <p>This type does not impose further restrictions onto
+        <code>AgentClass</code>. It is provided to allow further
+        restriction via <code>&lt;xsd:redefine></code> and to support
+        code which make use of XSD type information.</p>
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:restriction base="AgentClass"/>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="W3cdtf">
+    <xsd:annotation xmlns="http://www.w3.org/1999/xhtml">
+      <xsd:documentation>
+        <p><a href="https://www.w3.org/TR/NOTE-datetime">W3C Date and
+        Time Formats.</a></p>
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:union memberTypes="xsd:date xsd:dateTime"/>
+  </xsd:simpleType>
+
+  <!-- attributes -->
+
+  <xsd:attribute name="audience" type="Audience" rdfs:label="Audience">
+    <xsd:annotation xmlns="http://www.w3.org/1999/xhtml">
+      <xsd:documentation>
+        <p>A class of entity for whom the resource is intended or
+        useful.</p>
+      </xsd:documentation>
+    </xsd:annotation>
+  </xsd:attribute>
+
+  <xsd:attribute name="created" type="W3cdtf" rdfs:label="Date created">
+    <xsd:annotation xmlns="http://www.w3.org/1999/xhtml">
+      <xsd:documentation>
+        <p>Date of creation of the resource.</p>
+      </xsd:documentation>
+    </xsd:annotation>
+  </xsd:attribute>
+
+  <xsd:attribute name="creator" type="Agent" rdfs:label="Creator">
+    <xsd:annotation xmlns="http://www.w3.org/1999/xhtml">
+      <xsd:documentation>
+        <p>An entity primarily responsible for making the
+        resource.</p>
+
+        <p>Examples of a Creator include a person, an organization, or
+        a service.</p>
+      </xsd:documentation>
+    </xsd:annotation>
+  </xsd:attribute>
+
+  <xsd:attribute name="dateAccepted" type="W3cdtf" rdfs:label="Date accepted">
+    <xsd:annotation xmlns="http://www.w3.org/1999/xhtml">
+      <xsd:documentation>
+        <p>Date of acceptance of the resource.</p>
+      </xsd:documentation>
+    </xsd:annotation>
+  </xsd:attribute>
+
+  <xsd:attribute name="identifier" type="rdfs:Literal" rdfs:label="Identifier">
+    <xsd:annotation xmlns="http://www.w3.org/1999/xhtml">
+      <xsd:documentation>
+        <p>An unambiguous reference to the resource within a given context.</p>
+      </xsd:documentation>
+    </xsd:annotation>
+  </xsd:attribute>
+
+  <xsd:attribute name="modified" type="W3cdtf" rdfs:label="Date modified">
+    <xsd:annotation xmlns="http://www.w3.org/1999/xhtml">
+      <xsd:documentation>
+        <p>Date on which the resource was changed.</p>
+      </xsd:documentation>
+    </xsd:annotation>
+  </xsd:attribute>
+
+  <xsd:attribute name="publisher" type="Agent" rdfs:label="Publisher">
+    <xsd:annotation xmlns="http://www.w3.org/1999/xhtml">
+      <xsd:documentation>
+        <p>An entity responsible for making the resource
+        available.</p>
+
+        <p>Examples of a Publisher include a person, an organization,
+        or a service.</p>
+      </xsd:documentation>
+    </xsd:annotation>
+  </xsd:attribute>
+
+  <xsd:attribute name="rightsHolder" type="Agent" rdfs:label="Rights Holder">
+    <xsd:annotation xmlns="http://www.w3.org/1999/xhtml">
+      <xsd:documentation>
+        <p>A person or organization owning or managing rights over the
+        resource.</p>
+      </xsd:documentation>
+    </xsd:annotation>
+  </xsd:attribute>
+
+  <xsd:attribute name="title" type="rdfs:Literal" rdfs:label="Title">
+    <xsd:annotation xmlns="http://www.w3.org/1999/xhtml">
+      <xsd:documentation>
+        <p>A name given to the resource.</p>
+      </xsd:documentation>
+    </xsd:annotation>
+  </xsd:attribute>
+
+  <xsd:attribute name="source" type="xsd:anyURI" rdfs:label="Source">
+    <xsd:annotation xmlns="http://www.w3.org/1999/xhtml">
+      <xsd:documentation>
+        <p>A related resource from which the described resource is derived.</p>
+      </xsd:documentation>
+    </xsd:annotation>
+  </xsd:attribute>
+
+    <xsd:element name="alternative" type="rdfs:Literal" rdfs:label="Alternative Title">
+    <xsd:annotation xmlns="http://www.w3.org/1999/xhtml">
+      <xsd:documentation>
+        <p>An alternative name for the resource.</p>
+      </xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+</xsd:schema>

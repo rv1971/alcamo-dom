@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xsd:schema
+    xmlns="http://foo.example.org"
+    xmlns:dc="http://purl.org/dc/terms/"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:xh11d="http://www.w3.org/1999/xhtml/datatypes/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:foo2="http://foo2.example.org"
+    targetNamespace="http://foo.example.org"
+    elementFormDefault="qualified">
+
+  <xsd:import
+      namespace="http://www.w3.org/2000/01/rdf-schema#"
+      schemaLocation="../xsd/rdfs.xsd"/>
+
+  <xsd:import
+      namespace="http://purl.org/dc/terms/"
+      schemaLocation="../xsd/dc.xsd"/>
+
+  <xsd:import
+      namespace="http://www.w3.org/XML/1998/namespace"
+      schemaLocation="../xsd/xml.xsd"/>
+
+  <xsd:import
+      namespace="http://www.w3.org/1999/xhtml/datatypes/"
+      schemaLocation="../xsd/xhtml-datatypes-1.xsd"/>
+
+  <xsd:import
+      xmlns="http://foo2.example.org"
+      schemaLocation="foo2.xsd"/>
+
+  <xsd:attribute name="quux" type="xsd:short"/>
+
+  <xsd:element name="foo">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="rdfs:comment"/>
+
+        <xsd:element name="bar" type="AbstractBar"/>
+
+        <xsd:element name="corge">
+          <xsd:complexType>
+            <xsd:attribute ref="xml:id"/>
+            <xsd:attribute name="datetime" type="xsd:date"/>
+            <xsd:attribute name="safecurie" type="xh11d:SafeCURIE"/>
+
+            <xsd:attribute name="list">
+              <xsd:simpleType>
+                <xsd:list itemType="xsd:string"/>
+              </xsd:simpleType>
+            </xsd:attribute>
+
+            <xsd:attribute name="shorts">
+              <xsd:simpleType>
+                <xsd:list itemType="xsd:short"/>
+              </xsd:simpleType>
+            </xsd:attribute>
+
+            <xsd:attribute name="enums">
+              <xsd:simpleType>
+                <xsd:list itemType="xsd:typeDerivationControl"/>
+              </xsd:simpleType>
+            </xsd:attribute>
+          </xsd:complexType>
+        </xsd:element>
+
+        <xsd:element ref="xsd:annotation"/>
+      </xsd:sequence>
+
+      <xsd:attribute ref="xml:lang"/>
+      <xsd:attribute ref="dc:source"/>
+      <xsd:attribute ref="quux"/>
+      <xsd:attribute name="qux"/>
+      <xsd:attribute name="bar" type="xsd:boolean"/>
+      <xsd:attribute name="baz" type="xsd:boolean"/>
+      <xsd:attribute name="foobar"/>
+      <xsd:attribute name="barbaz" type="xsd:long"/>
+      <xsd:attribute name="bazbaz"/>
+
+      <xsd:attribute name="foofoofoo">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string"/>
+        </xsd:simpleType>
+      </xsd:attribute>
+
+      <xsd:attribute name="barbarbar">
+        <xsd:simpleType>
+          <xsd:list itemType="xsd:token"/>
+        </xsd:simpleType>
+      </xsd:attribute>
+
+      <xsd:attribute name="bazbazbaz">
+        <xsd:simpleType>
+          <xsd:restriction base="foo2:DerivedFromList"/>
+        </xsd:simpleType>
+      </xsd:attribute>
+
+      <xsd:anyAttribute namespace="##any" processContents="lax"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="quux" type="xsd:duration"/>
+
+  <xsd:complexType name="QuuxContainer">
+    <xsd:sequence>
+      <xsd:element ref="quux"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:element name="anyQuux"/>
+
+  <xsd:element name="corge1">
+    <xsd:simpleType>
+      <xsd:restriction base="xsd:language"/>
+    </xsd:simpleType>
+  </xsd:element>
+
+  <xsd:element name="corge2">
+    <xsd:simpleType>
+      <xsd:restriction base="xsd:NMTOKENS"/>
+    </xsd:simpleType>
+  </xsd:element>
+
+  <xsd:complexType name="AbstractBar" abstract="true"/>
+
+  <xsd:complexType name="Bar">
+    <xsd:complexContent>
+      <xsd:extension base="AbstractBar">
+        <xsd:sequence>
+          <xsd:element name="baz" maxOccurs="unbounded">
+            <xsd:complexType>
+              <xsd:simpleContent>
+                <xsd:extension base="xsd:string">
+                  <xsd:attribute ref="xml:id"/>
+                  <xsd:attribute name="content"/>
+                </xsd:extension>
+              </xsd:simpleContent>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:sequence>
+
+        <xsd:attribute ref="xml:id"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="Baz">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+        <xsd:attribute ref="xml:lang"/>
+        <xsd:attribute name="baz"/>
+        <xsd:attributeGroup ref="xsd:occurs"/>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="Qux">
+    <xsd:simpleContent>
+      <xsd:restriction base="Baz">
+        <xsd:attribute ref="xml:lang"/>
+        <xsd:attribute name="baz"/>
+        <xsd:attributeGroup ref="xsd:occurs"/>
+      </xsd:restriction>
+    </xsd:simpleContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="fooComplexType">
+    <xsd:complexContent>
+      <xsd:restriction base="xsd:localComplexType"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:element name="qux" type="xsd:short"/>
+</xsd:schema>

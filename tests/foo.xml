@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<?xml-stylesheet href="foo.xsl" type="text/xsl"?>
+
+<!-- comment -->
+
+<foo
+    xmlns="http://foo.example.org"
+    xmlns:dc="http://purl.org/dc/terms/"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:qux="http://qux.example.org"
+    xsi:schemaLocation="http://foo.example.org foo.xsd http://www.w3.org/2000/01/rdf-schema# ../xsd/rdfs.xsd"
+    xml:lang="oc"
+    dc:source="http://www.example.org/foo"
+    qux="42-43"
+    bar="true"
+    baz="false"
+    foobar="foo   bar	baz"
+    barbaz="42"
+    bazbaz="dc:title"
+    closing-bracket="&lt;baz>"
+    qux:qux="123">
+  <rdfs:comment>Lorem ipsum</rdfs:comment>
+  <bar xsi:type="Bar" xml:id="x">
+    <baz xml:id="a">At eos</baz>
+    <baz xml:id="b">vero</baz>
+    <baz xml:id="c"/>
+    <baz xml:id="d"/>
+    <baz xml:id="datetime" content="2021-02-16T18:04:03.123+00:00"/>
+    <baz xml:id="duration" content="PT5M"/>
+    <baz xml:id="float" content="3.141"/>
+    <baz xml:id="lang" content="yo-NG"/>
+    <baz xml:id="media-type" content="application/json"/>
+    <baz xml:id="longint" content="123456789012345678901234567890"/>
+    <baz xml:id="bool-1" content="yes"/>
+    <baz xml:id="bool-0" content="no"/>
+    <baz xml:id="base64" content="Zm9vCg=="/>
+    <baz xml:id="hex" content="1234abcdef"/>
+    <baz xml:id="pairsToMap" content="foo bar baz-qux 42"/>
+    <baz xml:id="curie" content="dc:source"/>
+    <baz xml:id="safecurie" content="[qux:#1234]"/>
+    <baz xml:id="uriorsafecurie1" content="http://www.example.biz/foo"/>
+    <baz xml:id="uriorsafecurie2" content="[xsd:#token]"/>
+    <baz xml:id="document" content="foo.xml"/>
+    <baz xml:id="xpointer1" content="foo.xml#b"/>
+    <baz
+        xml:id="xpointer2"
+        content="#xpointer(//@xml:id[starts-with^(., 'd'^)])"/>
+  </bar>
+
+  <corge
+      xml:id="corge"
+      datetime="2021-02-17"
+      safecurie="[/bar?baz=qux]"
+      list="foo foo foo bar"
+      shorts="1 2 3 -4"
+      enums="list list union"/>
+
+  <xsd:annotation>
+    <xsd:appinfo>
+      <qux:qux xml:id="qux" qux="foo"><qux>42</qux> sed diam nonumy
+      eirmod <qux:quux xml:id="quux">tempor</qux:quux>
+      invidunt</qux:qux>
+    </xsd:appinfo>
+  </xsd:annotation>
+</foo>
