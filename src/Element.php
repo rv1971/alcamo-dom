@@ -11,10 +11,12 @@ use alcamo\xml\HasXNameInterface;
  */
 class Element extends \DOMElement implements
     \IteratorAggregate,
-    HasXNameInterface
+    HasXNameInterface,
+    BaseUriInterface
 {
     use HasXNameTrait;
     use Rfc5147Trait;
+    use BaseUriTrait;
 
     /// Return [textContent](https://www.php.net/manual/en/class.domnode#domnode.props.textcontent)
     public function __toString()

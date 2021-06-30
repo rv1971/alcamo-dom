@@ -11,7 +11,6 @@ use alcamo\time\Duration;
 use alcamo\xml\XName;
 use alcamo\xpointer\Pointer;
 use Ds\Set;
-use GuzzleHttp\Psr7\UriResolver;
 
 class ConverterPool
 {
@@ -144,10 +143,7 @@ class ConverterPool
      */
     public static function toDocument($value, $context): Document
     {
-        $url = UriResolver::resolve(
-            new Uri($context->baseURI),
-            new Uri($value)
-        );
+        $url = $context->resolve($value);
 
         return
             $context->ownerDocument->getDocumentFactory()->createFromUrl($url);

@@ -2,7 +2,6 @@
 
 namespace alcamo\dom;
 
-use GuzzleHttp\Psr7\{Uri, UriResolver};
 use alcamo\collection\PreventWriteArrayAccessTrait;
 use alcamo\exception\{
     AbsoluteUriNeeded,
@@ -21,41 +20,24 @@ use alcamo\ietf\UriNormalizer;
  */
 class Document extends \DOMDocument implements
     \ArrayAccess,
+    BaseUriInterface,
     HasDocumentFactoryInterface
 {
     use PreventWriteArrayAccessTrait;
+    use BaseUriTrait;
 
-    /// Namespaces to register for each document instance
+    /// Namespace mappings that will be registered for each document instance
     public const NSS = [
-        /// Dublin Core namespace
-        'dc' => 'http://purl.org/dc/terms/',
-
-        /// OWL namespace
-        'owl' => 'http://www.w3.org/2002/07/owl#',
-
-        /// RDF namespace
-        'rdf' => 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-
-        /// RDFS namespace
-        'rdfs' => 'http://www.w3.org/2000/01/rdf-schema#',
-
-        /// Namespace for this package
-        'self' => 'https://github.com/rv1971/alcamo-dom/',
-
-        /// XHTML namespace
-        'xh' => 'http://www.w3.org/1999/xhtml',
-
-        /// XHTML datatypes namespace
+        'dc'    => 'http://purl.org/dc/terms/',
+        'owl'   => 'http://www.w3.org/2002/07/owl#',
+        'rdf'   => 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+        'rdfs'  => 'http://www.w3.org/2000/01/rdf-schema#',
+        'self'  => 'https://github.com/rv1971/alcamo-dom/',
+        'xh'    => 'http://www.w3.org/1999/xhtml',
         'xh11d' => 'http://www.w3.org/1999/xhtml/datatypes/',
-
-        /// XML Namespace
-        'xml' => 'http://www.w3.org/XML/1998/namespace',
-
-        /// XSD Namespace
-        'xsd' => 'http://www.w3.org/2001/XMLSchema',
-
-        /// XSI Namespace
-        'xsi' => 'http://www.w3.org/2001/XMLSchema-instance',
+        'xml'   => 'http://www.w3.org/XML/1998/namespace',
+        'xsd'   => 'http://www.w3.org/2001/XMLSchema',
+        'xsi'   => 'http://www.w3.org/2001/XMLSchema-instance',
     ];
 
     /// Dublin core namespace
@@ -70,7 +52,7 @@ class Document extends \DOMDocument implements
     /// XML Schema instance namespace
     public const XSI_NS = self::NSS['xsi'];
 
-    /// Node classes to register
+    /// Node classes that will be registered for each document instance
     public const NODE_CLASSES = [
         'DOMAttr'    => Attr::class,
         'DOMElement' => Element::class,
@@ -81,6 +63,14 @@ class Document extends \DOMDocument implements
     public const LIBXML_OPTIONS =
         LIBXML_COMPACT | LIBXML_NOBLANKS | LIBXML_NSCLEAN | LIBXML_PEDANTIC;
 
+    /**
+     * @brief Create a document from a URL
+     *
+     * @param $url URL to get the data from.
+     *
+     * @param $libXmlOptions See $options in
+     * [DOMDocument::load()](https://www.php.net/manual/en/domdocument.load)
+     */
     public static function newFromUrl(
         string $url,
         ?int $libXmlOptions = null
@@ -89,7 +79,8 @@ class Document extends \DOMDocument implements
 
         $doc->loadUrl($url, $libXmlOptions);
 
-        // ensure the file:// protocol is preserved in the document URI
+        /** Ensure that the file:// protocol is preserved in the
+         *  `documentURI` property. */
         if (substr($url, 0, 5) == 'file:' && $doc->documentURI[0] == '/') {
             $doc->documentURI = "file://$doc->documentURI";
         }
@@ -97,6 +88,14 @@ class Document extends \DOMDocument implements
         return $doc;
     }
 
+    /**
+     * @brief Create a document from XML text
+     *
+     * @param $xml XML text
+     *
+     * @param $libXmlOptions See $options in
+     * [DOMDocument::load()](https://www.php.net/manual/en/domdocument.load)
+     */
     public static function newFromXmlText(
         string $xml,
         ?int $libXmlOptions = null
@@ -110,33 +109,49 @@ class Document extends \DOMDocument implements
 
     private static $docRegistry_ = []; ///< Used for conserve()
 
-    private $xPath_;          ///< XPath object.
-    private $xsltProcessor_;  ///< XSLTProcessor object or FALSE.
-    private $schemaLocations_; ///< Array of schema locations or FALSE.
+    private $xPath_;                 ///< XPath
+    private $xsltProcessor_ = false; ///< XSLTProcessor or `null`
+    private $schemaLocations_;       ///< Array of schema locations
 
+    /// @sa See [DOMDocument::__construct()](https://www.php.net/manual/en/domdocument.construct)
     public function __construct($version = null, $encoding = null)
     {
         parent::__construct($version, $encoding);
 
+        /** Register @ref NODE_CLASSES. */
         foreach (static::NODE_CLASSES as $baseClass => $extendedClass) {
             $this->registerNodeClass($baseClass, $extendedClass);
         }
     }
 
+    /// Return a new instance of DocumentFactory()
     public function getDocumentFactory(): DocumentFactoryInterface
     {
         return new DocumentFactory();
     }
 
+    /**
+     * @brief Load a URL into a document
+     *
+     * @param $url URL to get the data from.
+     *
+     * @param $libXmlOptions See $options in
+     * [DOMDocument::load()](https://www.php.net/manual/en/domdocument.load)
+     */
     public function loadUrl(string $url, ?int $libXmlOptions = null)
     {
         $handler = new ErrorHandler();
 
         try {
             if (!$this->load($url, $libXmlOptions ?? static::LIBXML_OPTIONS)) {
+                /** @throw alcamo::exception::FileLoadFailed if
+                 *  [DOMDocument::load()](https://www.php.net/manual/en/domdocument.load)
+                 *  fails. */
                 throw new FileLoadFailed($url);
             }
         } catch (\ErrorException $e) {
+            /** @throw alcamo::exception::FileLoadFailed if any libxml warning
+             *  or error occurs. */
             throw new FileLoadFailed(
                 $url,
                 "; {$e->getMessage()}",
@@ -145,9 +160,18 @@ class Document extends \DOMDocument implements
             );
         }
 
+        /** After loading, run the afterLoad() hook and return its result. */
         return $this->afterLoad();
     }
 
+    /**
+     * @brief Load XML text into a document
+     *
+     * @param $xml XML text
+     *
+     * @param $libXmlOptions See $options in
+     * [DOMDocument::load()](https://www.php.net/manual/en/domdocument.load)
+     */
     public function loadXmlText(string $xml, ?int $libXmlOptions = null)
     {
         $handler = new ErrorHandler();
@@ -156,9 +180,14 @@ class Document extends \DOMDocument implements
             if (
                 !$this->loadXML($xml, $libXmlOptions ?? static::LIBXML_OPTIONS)
             ) {
+                /** @throw alcamo::exception::SyntaxError if
+                 *  [DOMDocument::loadXML()](https://www.php.net/manual/en/domdocument.loadxml)
+                 *  fails. */
                 throw new SyntaxError($xml);
             }
         } catch (\ErrorException $e) {
+            /** @throw alcamo::exception::SyntaxError if any libxml warning or
+             *  error occurs. */
             throw new SyntaxError(
                 $xml,
                 null,
@@ -168,43 +197,55 @@ class Document extends \DOMDocument implements
             );
         }
 
+        /** After loading, run the afterLoad() hook and return its result. */
         return $this->afterLoad();
     }
 
-    /** Ensure there is always a reference to the complete object so that it
-     *  remains available through the `$ownerDocument` property of its
-     *  nodes. */
+    /**
+     * @brief Ensure there is always a reference to the complete object
+     *
+     * Thus, it remains available through the `$ownerDocument` property of its
+     * nodes. Without this, when no PHP variable references the document
+     * object, the `$ownerDocument` property returns the bare DOMDocument
+     * object, forgetting any properties added in derived classes.
+     */
     public function conserve(): self
     {
         return (self::$docRegistry_[spl_object_hash($this)] = $this);
     }
 
-    /** Allow the object to be destroyed. */
+    /// Undo the effect of conserve(), allowing the object to be destroyed
     public function unconserve()
     {
         unset(self::$docRegistry_[spl_object_hash($this)]);
     }
 
+    /// Readonly ArrayAccess access to elements by ID
     public function offsetExists($id)
     {
         return $this->getElementById($id) !== null;
     }
 
+    /// Readonly ArrayAccess access to elements by ID
     public function offsetGet($id)
     {
         return $this->getElementById($id);
     }
 
+    /// Get an XPath object cached in this document
     public function getXPath(): XPath
     {
         if (!isset($this->xPath_)) {
             if (!$this->documentElement) {
-                /** @throw Uninitialized if called on an empty document. */
+                /** @throw alcamo::exception::Uninitialized if called on an
+                 *  empty document. */
                 throw new Uninitialized($this);
             }
 
             $this->xPath_ = new XPath($this);
 
+            /** All namespaces in @ref NSS are registered in the XPath
+             *  object. */
             foreach (static::NSS as $prefix => $uri) {
                 $this->xPath_->registerNamespace($prefix, $uri);
             }
@@ -213,13 +254,13 @@ class Document extends \DOMDocument implements
         return $this->xPath_;
     }
 
-    /// Run XPath query relative to root node.
+    /// Run DOMXPath::query() relative to root node
     public function query(string $expr)
     {
         return $this->getXPath()->query($expr);
     }
 
-    /// Run and evaluate XPath query relative to root node.
+    /// Run DOMXPath::evaluate() relative to root node
     public function evaluate(string $expr)
     {
         return $this->getXPath()->evaluate($expr);
@@ -229,44 +270,47 @@ class Document extends \DOMDocument implements
      * @brief XSLT processor based on the first xml-stylesheet processing
      * instruction, if any
      */
-    public function getXsltProcessor()
+    public function getXsltProcessor(): ?\XSLTProcessor
     {
-        if (!isset($this->xsltProcessor_)) {
+        if ($this->xsltProcessor_ === false) {
             if (!$this->documentElement) {
-                /** @throw Uninitialized if called on an empty document. */
+                /** @throw alcamo::exception::Uninitialized if called on an
+                 *  empty document. */
                 throw new Uninitialized($this);
             }
 
             $pi = $this->query('/processing-instruction("xml-stylesheet")')[0];
 
             if (!isset($pi)) {
-                return ($this->xsltProcessor_ = false);
+                $this->xsltProcessor_ = null;
+                return null;
             }
 
             $pseudoAttrs = simplexml_load_string("<x {$pi->nodeValue}/>");
 
             if ($pseudoAttrs['type'] != 'text/xsl') {
-                return ($this->xsltProcessor_ = false);
+                $this->xsltProcessor_ = null;
+                return null;
             }
 
             $this->xsltProcessor_ = new \XSLTProcessor();
 
-            $xslUrl = UriResolver::resolve(
-                new Uri($this->documentURI),
-                new Uri($pseudoAttrs['href'])
-            );
+            $xslUrl = $this->resolve($pseudoAttrs['href']);
 
             if (
                 !$this->xsltProcessor_->importStylesheet(
                     self::newFromUrl($xslUrl)
                 )
             ) {
+                /** @throw alcamo::exception::FileLoadFailed if a stylesheet
+                 *  is specified but cannot be loaded. */
                 throw new FileLoadFailed($xslUrl);
             }
         }
 
         return $this->xsltProcessor_;
     }
+
     /**
      * @return Array of absolute Uri objects indexed by namespace. Empty if
      * there is no `schemaLocation` attribute.
@@ -274,8 +318,6 @@ class Document extends \DOMDocument implements
     public function getSchemaLocations(): array
     {
         if (!isset($this->schemaLocations_)) {
-            $baseUri = new Uri($this->documentURI);
-
             if (
                 $this->documentElement->hasAttributeNS(
                     self::XSI_NS,
@@ -293,10 +335,8 @@ class Document extends \DOMDocument implements
                 $this->schemaLocations_ = [];
 
                 for ($i = 0; isset($items[$i]); $i += 2) {
-                    $this->schemaLocations_[$items[$i]] = UriResolver::resolve(
-                        $baseUri,
-                        new Uri($items[$i + 1])
-                    );
+                    $this->schemaLocations_[$items[$i]] =
+                        $this->resolve($items[$i + 1]);
                 }
             } else {
                 $this->schemaLocations_ = [];
@@ -380,20 +420,15 @@ class Document extends \DOMDocument implements
      */
     public function validate(?int $libXmlOptions = null): self
     {
-        $baseUri = new Uri($this->documentURI);
-
         if (
             $this->documentElement
                 ->hasAttributeNS(self::XSI_NS, 'noNamespaceSchemaLocation')
         ) {
             return $this->validateWithSchema(
-                UriResolver::resolve(
-                    $baseUri,
-                    new Uri(
-                        $this->documentElement->getAttributeNS(
-                            self::XSI_NS,
-                            'noNamespaceSchemaLocation'
-                        )
+                $this->resolve(
+                    $this->documentElement->getAttributeNS(
+                        self::XSI_NS,
+                        'noNamespaceSchemaLocation'
                     )
                 ),
                 $libXmlOptions
@@ -422,8 +457,13 @@ class Document extends \DOMDocument implements
         return $this->validateWithSchemaSource($schemaSource, $libXmlOptions);
     }
 
-    // Any initialization to be done after document loading
+    /// Perform any initialization to be done after document loading
     protected function afterLoad()
     {
+        /** Unset any properties that might refer to a preceding document
+         * content. */
+        $this->xPath_ = null;
+        $this->xsltProcessor_ = false;
+        $this->schemaLocations_ = null;
     }
 }

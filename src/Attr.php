@@ -9,10 +9,11 @@ use alcamo\xml\HasXNameInterface;
  *
  * @date Last reviewed 2021-06-30
  */
-class Attr extends \DOMAttr implements HasXNameInterface
+class Attr extends \DOMAttr implements HasXNameInterface, BaseUriInterface
 {
     use HasXNameTrait;
     use Rfc5147Trait;
+    use BaseUriTrait;
 
     /// Return attribute value
     public function __toString()

@@ -359,10 +359,7 @@ class Schema
                         continue;
                     }
 
-                    $url = UriResolver::resolve(
-                        new Uri($import->baseURI),
-                        $import->schemaLocation
-                    );
+                    $url = $import->resolve($import->schemaLocation);
 
                     if (!isset($this->xsds_[(string)$url])) {
                         $xsds[] = $this->createXsd($url);
