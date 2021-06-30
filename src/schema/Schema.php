@@ -30,9 +30,6 @@ use alcamo\xml\XName;
  */
 class Schema
 {
-    public const XSD_NS = Xsd::NS['xsd'];
-    public const XSI_NS = Xsd::NS['xsi'];
-
     private static $schemaCache_ = [];
 
     /** This works even if a document has no `xsi:schemaLocation` attribute,
@@ -49,7 +46,7 @@ class Schema
         }
 
         $schemaLocation = $doc->documentElement
-            ->getAttributeNodeNS(self::XSI_NS, 'schemaLocation');
+            ->getAttributeNodeNS(Document::XSI_NS, 'schemaLocation');
 
         if ($schemaLocation) {
             foreach (
@@ -288,10 +285,10 @@ class Schema
     public function lookupElementType(ExtElement $element): ?AbstractType
     {
         // look up global type if explicitely given in `xsi:type`
-        if ($element->hasAttributeNS(self::XSI_NS, 'type')) {
+        if ($element->hasAttributeNS(Document::XSI_NS, 'type')) {
             return $this->getGlobalType(
                 ConverterPool::toXName(
-                    $element->getAttributeNS(self::XSI_NS, 'type'),
+                    $element->getAttributeNS(Document::XSI_NS, 'type'),
                     $element
                 )
             );
@@ -402,10 +399,10 @@ class Schema
         }
 
         $this->anyType_ =
-            $this->getGlobalType(new XName(self::XSD_NS, 'anyType'));
+            $this->getGlobalType(new XName(Document::XSD_NS, 'anyType'));
 
         // Add `anySimpleType`.
-        $anySimpleTypeXName = new XName(self::XSD_NS, 'anySimpleType');
+        $anySimpleTypeXName = new XName(Document::XSD_NS, 'anySimpleType');
 
         $this->anySimpleType_ = new PredefinedSimpleType(
             $this,
@@ -417,14 +414,14 @@ class Schema
             $this->anySimpleType_;
 
         // Add `xsi:type` to be `xsd:QName` if undefined.
-        $xsiTypeXName = new XName(self::XSI_NS, 'type');
+        $xsiTypeXName = new XName(Document::XSI_NS, 'type');
 
         if (!isset($this->globalAttrs_[(string)$xsiTypeXName])) {
             $this->globalAttrs_[(string)$xsiTypeXName] =
                 new PredefinedAttr(
                     $this,
                     $xsiTypeXName,
-                    $this->getGlobalType(new XName(self::XSD_NS, 'QName'))
+                    $this->getGlobalType(new XName(Document::XSD_NS, 'QName'))
                 );
         }
     }

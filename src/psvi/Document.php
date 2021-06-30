@@ -13,31 +13,31 @@ class Document extends BaseDocument
     use ValidationTrait;
 
     public const ATTR_TYPE_MAP = [
-        self::NS['xh11d'] . ' CURIE'          => CP::class . '::curieToUri',
-        self::NS['xh11d'] . ' SafeCURIE'      => CP::class . '::safeCurieToUri',
-        self::NS['xh11d'] . ' URIorSafeCURIE' => CP::class . '::uriOrSafeCurieToUri',
+        self::NSS['xh11d'] . ' CURIE'          => CP::class . '::curieToUri',
+        self::NSS['xh11d'] . ' SafeCURIE'      => CP::class . '::safeCurieToUri',
+        self::NSS['xh11d'] . ' URIorSafeCURIE' => CP::class . '::uriOrSafeCurieToUri',
 
-        self::NS['xsd'] . ' anyURI'       => CP::class . '::toUri',
-        self::NS['xsd'] . ' base64Binary' => CP::class . '::base64ToBinary',
-        self::NS['xsd'] . ' boolean'      => CP::class . '::toBool',
-        self::NS['xsd'] . ' date'         => CP::class . '::toDateTime',
-        self::NS['xsd'] . ' dateTime'     => CP::class . '::toDateTime',
-        self::NS['xsd'] . ' decimal'      => CP::class . '::toFloat',
-        self::NS['xsd'] . ' double'       => CP::class . '::toFloat',
-        self::NS['xsd'] . ' duration'     => CP::class . '::toDuration',
-        self::NS['xsd'] . ' float'        => CP::class . '::toFloat',
-        self::NS['xsd'] . ' hexBinary'    => CP::class . '::hexToBinary',
-        self::NS['xsd'] . ' integer'      => CP::class . '::toInt',
-        self::NS['xsd'] . ' language'     => CP::class . '::toLang',
-        self::NS['xsd'] . ' QName'        => CP::class . '::toXName'
+        self::XSD_NS . ' anyURI'       => CP::class . '::toUri',
+        self::XSD_NS . ' base64Binary' => CP::class . '::base64ToBinary',
+        self::XSD_NS . ' boolean'      => CP::class . '::toBool',
+        self::XSD_NS . ' date'         => CP::class . '::toDateTime',
+        self::XSD_NS . ' dateTime'     => CP::class . '::toDateTime',
+        self::XSD_NS . ' decimal'      => CP::class . '::toFloat',
+        self::XSD_NS . ' double'       => CP::class . '::toFloat',
+        self::XSD_NS . ' duration'     => CP::class . '::toDuration',
+        self::XSD_NS . ' float'        => CP::class . '::toFloat',
+        self::XSD_NS . ' hexBinary'    => CP::class . '::hexToBinary',
+        self::XSD_NS . ' integer'      => CP::class . '::toInt',
+        self::XSD_NS . ' language'     => CP::class . '::toLang',
+        self::XSD_NS . ' QName'        => CP::class . '::toXName'
     ];
 
-    public const NODE_CLASS =
+    public const NODE_CLASSES =
         [
             'DOMAttr'    => Attr::class,
             'DOMElement' => Element::class
         ]
-        + parent::NODE_CLASS;
+        + parent::NODE_CLASSES;
 
     private $schema_;         ///< Schema object.
     private $attrConverters_; ///< TypeMap
@@ -70,8 +70,8 @@ class Document extends BaseDocument
 
     public function validateIdrefs()
     {
-        static $idrefName  = self::NS['xsd'] . ' IDREF';
-        static $idrefsName = self::NS['xsd'] . ' IDREFS';
+        static $idrefName  = self::XSD_NS . ' IDREF';
+        static $idrefsName = self::XSD_NS . ' IDREFS';
 
         foreach ($this->query('//@*') as $attr) {
             switch ((string)$attr->getType()->getXName()) {

@@ -76,27 +76,27 @@ class AttrTest extends TestCase
             'base' => [
                 $doc->query('//*[@base = "xs:anyType"]')[0],
                 'base',
-                new Xname(Document::NS['xsd'], 'anyType')
+                new Xname(Document::XSD_NS, 'anyType')
             ],
             'itemType' => [
                 $doc->query('//*[@itemType = "xs:reducedDerivationControl"]')[0],
                 'itemType',
-                new Xname(Document::NS['xsd'], 'reducedDerivationControl')
+                new Xname(Document::XSD_NS, 'reducedDerivationControl')
             ],
             'ref' => [
                 $doc->query('//*[@ref = "xs:annotation"]')[0],
                 'ref',
-                new Xname(Document::NS['xsd'], 'annotation')
+                new Xname(Document::XSD_NS, 'annotation')
             ],
             'type' => [
                 $doc->query('//*[@type = "xs:ID"]')[0],
                 'type',
-                new Xname(Document::NS['xsd'], 'ID')
+                new Xname(Document::XSD_NS, 'ID')
             ],
             'memberTypes' => [
                 $doc->query('//*[@memberTypes="xs:nonNegativeInteger"]')[0],
                 'memberTypes',
-                [ new Xname(Document::NS['xsd'], 'nonNegativeInteger') ]
+                [ new Xname(Document::XSD_NS, 'nonNegativeInteger') ]
             ],
         ];
     }
@@ -110,10 +110,10 @@ class AttrTest extends TestCase
         $this->assertEquals('oc', (string)$doc->documentElement->getLang());
 
         $doc->documentElement
-            ->setAttributeNS(Document::NS['xml'], 'xml:lang', 'cu');
+            ->setAttributeNS(Document::XML_NS, 'xml:lang', 'cu');
 
         $this->assertEquals('cu', $doc->documentElement
-            ->getAttributeNS(Document::NS['xml'], 'lang'));
+            ->getAttributeNS(Document::XML_NS, 'lang'));
 
         // language is cached and therefore does not see the change
         $this->assertEquals('oc', (string)$doc->documentElement->getLang());
@@ -146,7 +146,7 @@ class AttrTest extends TestCase
                 $doc->documentElement, 'xml:lang', true, 'oc'
             ],
             'xname' => [
-                $doc->documentElement, Document::NS['xml'] . ' lang', true, 'oc'
+                $doc->documentElement, Document::XML_NS . ' lang', true, 'oc'
             ],
             'unset-without-namespace' => [
                 $doc->documentElement, 'barbarbar', false, null
@@ -156,7 +156,7 @@ class AttrTest extends TestCase
             ],
             'unset-xname' => [
                 $doc->documentElement,
-                Document::NS['rdfs'] . ' comment',
+                Document::NSS['rdfs'] . ' comment',
                 false,
                 null
             ]

@@ -6,8 +6,6 @@ use alcamo\dom\Document;
 
 abstract class AbstractSimpleTypeValidator
 {
-    public const XSD_NS = Document::NS['xsd'];
-
     private const XSD_TEXT_1 = '<?xml version="1.0" encoding="UTF-8"?>'
         . '<schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">';
 
@@ -26,7 +24,7 @@ abstract class AbstractSimpleTypeValidator
     private $nsMap_ = []; ///< Map of namespace names to prefixes
 
     /// String of namespace declarations
-    private $nsDeclText_ = 'xmlns:xsi="' . Document::NS['xsi'] . '"';
+    private $nsDeclText_ = 'xmlns:xsi="' . Document::XSI_NS . '"';
 
     /**
      * @param $nsName2schemaLocation iterable Map of NS names schema locations

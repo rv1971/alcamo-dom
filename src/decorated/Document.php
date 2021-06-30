@@ -8,11 +8,11 @@ use alcamo\dom\schema\TypeMap;
 
 class Document extends BaseDocument
 {
-    public const NODE_CLASS =
+    public const NODE_CLASSES =
         [
             'DOMElement' => Element::class
         ]
-        + parent::NODE_CLASS;
+        + parent::NODE_CLASSES;
 
     public const ELEMENT_DECORATOR_MAP = [];
 

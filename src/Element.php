@@ -4,7 +4,11 @@ namespace alcamo\dom;
 
 use alcamo\xml\HasXNameInterface;
 
-/// Element class for use in DOMDocument::registerNodeClass().
+/**
+ * @brief Element class for use in DOMDocument::registerNodeClass()
+ *
+ * @date Last reviewed 2021-06-30
+ */
 class Element extends \DOMElement implements
     \IteratorAggregate,
     HasXNameInterface
@@ -12,23 +16,25 @@ class Element extends \DOMElement implements
     use HasXNameTrait;
     use Rfc5147Trait;
 
+    /// Return [textContent](https://www.php.net/manual/en/class.domnode#domnode.props.textcontent)
     public function __toString()
     {
         return $this->textContent;
     }
 
+    /// Return a ChildElementsIterator on this element
     public function getIterator()
     {
         return new ChildElementsIterator($this);
     }
 
-    /// Run XPath query with this node as context node.
+    /// Run XPath query with this node as the context node
     public function query(string $expr)
     {
         return $this->ownerDocument->getXPath()->query($expr, $this);
     }
 
-    /// Run and evaluate XPath query with this node as context node.
+    /// Run and evaluate XPath query with this node as the context node
     public function evaluate(string $expr)
     {
         return $this->ownerDocument->getXPath()->evaluate($expr, $this);

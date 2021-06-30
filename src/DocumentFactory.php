@@ -10,7 +10,7 @@ use GuzzleHttp\Psr7\{UriNormalizer, UriResolver};
 class DocumentFactory implements DocumentFactoryInterface
 {
     public const NS_NAME_TO_CLASS = [
-        Document::NS['xsd'] => Xsd::class
+        Document::NSS['xsd'] => Xsd::class
     ];
 
     public const DEFAULT_CLASS = Document::class;

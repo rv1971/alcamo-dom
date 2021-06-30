@@ -193,14 +193,14 @@ class ConverterPoolTest extends TestCase
             ],
             'uri' => [
                 $doc->documentElement
-                    ->getAttributeNodeNS(Document::NS['dc'], 'source'),
+                    ->getAttributeNodeNS(Document::DC_NS, 'source'),
                 'toUri',
                 new Uri('http://www.example.org/foo')
             ],
             'XName' => [
                 $doc->documentElement->getAttributeNode('bazbaz'),
                 'toXName',
-                new XName(Document::NS['dc'], 'title')
+                new XName(Document::DC_NS, 'title')
             ],
             'xpointer1' => [
                 $doc['xpointer1']->getAttributeNode('content'),

@@ -2,15 +2,14 @@
 
 namespace alcamo\dom\schema\component;
 
+use alcamo\dom\Document;
 use alcamo\dom\extended\Element as ExtElement;
 use alcamo\dom\schema\Schema;
 use alcamo\xml\Xname;
 
 class ComplexType extends AbstractType
 {
-    public const XSD_NS = Schema::XSD_NS;
-    public const XSI_NS = Schema::XSI_NS;
-    public const XSI_TYPE_NAME = self::XSI_NS . ' type';
+    public const XSI_TYPE_NAME = Document::XSI_NS . ' type';
 
     private $attrs_; ///< Map of XName string to SimpleType or PredefinedType
     private $elements_; ///< Array of Element
@@ -28,7 +27,7 @@ class ComplexType extends AbstractType
                 $this->attrs_ = [
                     self::XSI_TYPE_NAME
                     => $this->schema_
-                        ->getGlobalAttr(new XName(self::XSI_NS, 'type'))
+                        ->getGlobalAttr(new XName(Document::XSI_NS, 'type'))
                 ];
             }
 
@@ -84,7 +83,7 @@ class ComplexType extends AbstractType
 
             while ($stack) {
                 foreach (array_pop($stack) as $child) {
-                    if ($child->namespaceURI == self::XSD_NS) {
+                    if ($child->namespaceURI == Document::XSD_NS) {
                         switch ($child->localName) {
                             case 'element':
                                 $element = new Element($this->schema_, $child);

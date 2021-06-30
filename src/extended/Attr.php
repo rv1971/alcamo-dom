@@ -8,8 +8,6 @@ class Attr extends BaseAttr
 {
     use RegisteredNodeTrait;
 
-    public const XSI_NS = Document::NS['xsi'];
-
     public const XSI_CONVERTERS = [
         'nil'                       => ConverterPool::class . '::toBool',
         'noNamespaceSchemaLocation' => ConverterPool::class . '::toUri',
@@ -32,7 +30,7 @@ class Attr extends BaseAttr
     /// To be redefined in child classes with something more sophisticated
     protected function createValue()
     {
-        if ($this->namespaceURI == self::XSI_NS) {
+        if ($this->namespaceURI == Document::XSI_NS) {
             $converter = static::XSI_CONVERTERS[$this->localName] ?? null;
 
             if (isset($converter)) {

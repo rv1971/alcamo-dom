@@ -113,9 +113,9 @@ class DocumentTest extends TestCase
         );
 
         $this->assertSame(
-            Document::NS['xml'] . ' lang',
+            Document::XML_NS . ' lang',
             (string)$foo
-                ->getAttributeNodeNS(Document::NS['xml'], 'lang')
+                ->getAttributeNodeNS(Document::XML_NS, 'lang')
                 ->getXName()
         );
     }

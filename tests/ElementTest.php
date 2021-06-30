@@ -38,7 +38,7 @@ class ElementTest extends TestCase
         foreach ($bar as $baz) {
             $this->assertSame(
                 $expectedIds[$i++],
-                (string)$baz->getAttributeNodeNS(Document::NS['xml'], 'id')
+                (string)$baz->getAttributeNodeNS(Document::XML_NS, 'id')
             );
         }
     }

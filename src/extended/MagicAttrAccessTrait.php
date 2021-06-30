@@ -38,7 +38,7 @@ trait MagicAttrAccessTrait
                 $a = explode(':', $attrName, 2);
 
                 return $this->hasAttributeNS(
-                    $this->ownerDocument::NS[$a[0]],
+                    $this->ownerDocument::NSS[$a[0]],
                     $a[1]
                 );
             }
@@ -63,7 +63,7 @@ trait MagicAttrAccessTrait
                 $a = explode(':', $attrName, 2);
 
                 $attrNode = $this->getAttributeNodeNS(
-                    $this->ownerDocument::NS[$a[0]],
+                    $this->ownerDocument::NSS[$a[0]],
                     $a[1]
                 );
             }

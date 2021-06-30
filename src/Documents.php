@@ -19,10 +19,8 @@ class Documents extends ReadonlyCollection
         foreach (glob($pattern, GLOB_NOSORT | GLOB_BRACE) as $path) {
             $doc = self::createDocumentFromUrl($path, $libXmlOptions);
 
-            $key = $doc->documentElement->getAttributeNS(
-                Document::NS['dc'],
-                'identifier'
-            );
+            $key = $doc->documentElement
+                ->getAttributeNS(Document::DC_NS, 'identifier');
 
             if ($key === '') {
                 $key = pathinfo($path, PATHINFO_FILENAME);
@@ -56,10 +54,8 @@ class Documents extends ReadonlyCollection
 
             $doc = self::createDocumentFromUrl($url, $libXmlOptions);
 
-            $key = $doc->documentElement->getAttributeNS(
-                Document::NS['dc'],
-                'identifier'
-            );
+            $key = $doc->documentElement
+                ->getAttributeNS(Document::DC_NS, 'identifier');
 
             if ($key === '') {
                 $key = pathinfo($url->getPath(), PATHINFO_FILENAME);
@@ -93,7 +89,7 @@ class Documents extends ReadonlyCollection
             $key = is_string($key)
                 ? $key
                 : $doc->documentElement->getAttributeNS(
-                    Document::NS['dc'],
+                    Document::DC_NS,
                     'identifier'
                 );
 

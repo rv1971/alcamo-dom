@@ -8,12 +8,12 @@ class Document extends BaseDocument
 {
     use NodeRegistryTrait;
 
-    public const NODE_CLASS =
+    public const NODE_CLASSES =
         [
             'DOMAttr'    => Attr::class,
             'DOMElement' => Element::class
         ]
-        + parent::NODE_CLASS;
+        + parent::NODE_CLASSES;
 
     public function getDocumentFactory(): DocumentFactoryInterface
     {

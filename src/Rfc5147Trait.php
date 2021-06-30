@@ -3,6 +3,8 @@
 namespace alcamo\dom;
 
 /**
+ * @brief Provide RFC 5147 data
+ *
  * RFC 5147 defines fragment identifiers for text/plain. Even though XML is
  * not text/plain, the line fragment identifier defined there can usefully be
  * applied to XML documents if the document is split into lines. A line in an
@@ -13,6 +15,8 @@ namespace alcamo\dom;
  * the XML text is formatted.
  *
  * @sa [RFC 5147](https://datatracker.ietf.org/doc/html/rfc5147)
+ *
+ * @date Last reviewed 2021-06-30
  */
 trait Rfc5147Trait
 {

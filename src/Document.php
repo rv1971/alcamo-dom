@@ -15,7 +15,7 @@ use alcamo\exception\{
 use alcamo\ietf\UriNormalizer;
 
 /**
- * @brief DOM Document class having factory methods with validation.
+ * @brief DOM Document class having factory methods with validation
  *
  * The ArrayAccess interface provides read access to elements by ID.
  */
@@ -25,7 +25,8 @@ class Document extends \DOMDocument implements
 {
     use PreventWriteArrayAccessTrait;
 
-    public const NS = [
+    /// Namespaces to register for each document instance
+    public const NSS = [
         /// Dublin Core namespace
         'dc' => 'http://purl.org/dc/terms/',
 
@@ -57,12 +58,26 @@ class Document extends \DOMDocument implements
         'xsi' => 'http://www.w3.org/2001/XMLSchema-instance',
     ];
 
-    public const NODE_CLASS = [
+    /// Dublin core namespace
+    public const DC_NS = self::NSS['dc'];
+
+    /// XML namespace
+    public const XML_NS = self::NSS['xml'];
+
+    /// XML Schema namespace
+    public const XSD_NS = self::NSS['xsd'];
+
+    /// XML Schema instance namespace
+    public const XSI_NS = self::NSS['xsi'];
+
+    /// Node classes to register
+    public const NODE_CLASSES = [
         'DOMAttr'    => Attr::class,
         'DOMElement' => Element::class,
         'DOMText'    => Text::class
     ];
 
+    /// Default libxml options when loading a document
     public const LIBXML_OPTIONS =
         LIBXML_COMPACT | LIBXML_NOBLANKS | LIBXML_NSCLEAN | LIBXML_PEDANTIC;
 
@@ -103,7 +118,7 @@ class Document extends \DOMDocument implements
     {
         parent::__construct($version, $encoding);
 
-        foreach (static::NODE_CLASS as $baseClass => $extendedClass) {
+        foreach (static::NODE_CLASSES as $baseClass => $extendedClass) {
             $this->registerNodeClass($baseClass, $extendedClass);
         }
     }
@@ -190,7 +205,7 @@ class Document extends \DOMDocument implements
 
             $this->xPath_ = new XPath($this);
 
-            foreach (static::NS as $prefix => $uri) {
+            foreach (static::NSS as $prefix => $uri) {
                 $this->xPath_->registerNamespace($prefix, $uri);
             }
         }
@@ -263,14 +278,14 @@ class Document extends \DOMDocument implements
 
             if (
                 $this->documentElement->hasAttributeNS(
-                    self::NS['xsi'],
+                    self::XSI_NS,
                     'schemaLocation'
                 )
             ) {
                 $items = preg_split(
                     '/\s+/',
                     $this->documentElement->getAttributeNS(
-                        self::NS['xsi'],
+                        self::XSI_NS,
                         'schemaLocation'
                     )
                 );
@@ -368,17 +383,15 @@ class Document extends \DOMDocument implements
         $baseUri = new Uri($this->documentURI);
 
         if (
-            $this->documentElement->hasAttributeNS(
-                self::NS['xsi'],
-                'noNamespaceSchemaLocation'
-            )
+            $this->documentElement
+                ->hasAttributeNS(self::XSI_NS, 'noNamespaceSchemaLocation')
         ) {
             return $this->validateWithSchema(
                 UriResolver::resolve(
                     $baseUri,
                     new Uri(
                         $this->documentElement->getAttributeNS(
-                            self::NS['xsi'],
+                            self::XSI_NS,
                             'noNamespaceSchemaLocation'
                         )
                     )
@@ -388,10 +401,8 @@ class Document extends \DOMDocument implements
         }
 
         if (
-            !$this->documentElement->hasAttributeNS(
-                self::NS['xsi'],
-                'schemaLocation'
-            )
+            !$this->documentElement
+                ->hasAttributeNS(self::XSI_NS, 'schemaLocation')
         ) {
             return $this;
         }
@@ -399,7 +410,7 @@ class Document extends \DOMDocument implements
         $schemaSource =
             '<?xml version="1.0" encoding="UTF-8"?>'
             . '<schema xmlns="http://www.w3.org/2001/XMLSchema" '
-            . 'targetNamespace="' . self::NS['self'] . 'validate">';
+            . 'targetNamespace="' . self::NSS['self'] . 'validate">';
 
         foreach ($this->getSchemaLocations() as $ns => $schemaUrl) {
             $schemaSource .=

@@ -25,7 +25,7 @@ class ElementTest extends TestCase
         return [
             'type' => [
                 $doc->query('//*[@name = "openAttrs"]')[0],
-                new XName(Document::NS['xsd'], 'openAttrs')
+                new XName(Document::XSD_NS, 'openAttrs')
             ],
             'annotation' => [
                 $doc->query('//*[@name = "openAttrs"]/*')[0],

@@ -7,8 +7,6 @@ use alcamo\dom\xsd\{Document as Xsd, Element as XsdElement};
 
 class Group extends AbstractXsdComponent
 {
-    public const XSD_NS = Xsd::NS['xsd'];
-
     private $elements_; ///< Array of Element
 
     /**
@@ -27,7 +25,7 @@ class Group extends AbstractXsdComponent
 
             while ($stack) {
                 foreach (array_pop($stack) as $child) {
-                    if ($child->namespaceURI == self::XSD_NS) {
+                    if ($child->namespaceURI == Xsd::XSD_NS) {
                         switch ($child->localName) {
                             case 'element':
                                 $element = new Element($this->schema_, $child);

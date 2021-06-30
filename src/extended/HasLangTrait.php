@@ -20,9 +20,9 @@ trait HasLangTrait
             /* For efficiency, first check if the element itself has an
              * xml:lang attribute since this is a frequent case in
              * practice. */
-            if ($this->hasAttributeNS(Document::NS['xml'], 'lang')) {
+            if ($this->hasAttributeNS(Document::XML_NS, 'lang')) {
                 $this->lang_ = Lang::newFromString(
-                    $this->getAttributeNS(Document::NS['xml'], 'lang')
+                    $this->getAttributeNS(Document::XML_NS, 'lang')
                 );
             } else {
                 $langAttr = $this->query('ancestor::*[@xml:lang]/@xml:lang')[0];

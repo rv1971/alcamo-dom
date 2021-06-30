@@ -7,7 +7,7 @@ use alcamo\dom\extended\Attr as BaseAttr;
 
 class Attr extends BaseAttr
 {
-    public const XSL_NS = Document::NS['xsl'];
+    public const XSL_NS = Document::NSS['xsl'];
 
     public const XSL_CONVERTERS = [
         'disable-output-escaping'    => ConverterPool::class . '::yesNoToBool',

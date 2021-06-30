@@ -50,10 +50,10 @@ class ElementTest extends TestCase
         $this->assertEquals('oc', (string)$doc->documentElement->getLang());
 
         $doc->documentElement
-            ->setAttributeNS(Document::NS['xml'], 'xml:lang', 'cu');
+            ->setAttributeNS(Document::XML_NS, 'xml:lang', 'cu');
 
         $this->assertEquals('cu', $doc->documentElement
-            ->getAttributeNS(Document::NS['xml'], 'lang'));
+            ->getAttributeNS(Document::XML_NS, 'lang'));
 
         // language is cached and therefore does not see the change
         $this->assertEquals('oc', (string)$doc->documentElement->getLang());
@@ -86,7 +86,7 @@ class ElementTest extends TestCase
                 $doc->documentElement, 'xml:lang', true, 'oc'
             ],
             'xname' => [
-                $doc->documentElement, Document::NS['xml'] . ' lang', true, 'oc'
+                $doc->documentElement, Document::XML_NS . ' lang', true, 'oc'
             ],
             'unset-without-namespace' => [
                 $doc->documentElement, 'barbarbar', false, null
@@ -96,7 +96,7 @@ class ElementTest extends TestCase
             ],
             'unset-xname' => [
                 $doc->documentElement,
-                Document::NS['rdfs'] . ' comment',
+                Document::NSS['rdfs'] . ' comment',
                 false,
                 null
             ]

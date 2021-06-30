@@ -6,8 +6,6 @@ use alcamo\dom\extended\Attr as BaseAttr;
 
 class Attr extends BaseAttr
 {
-    public const XSD_NS = Document::NS['xsd'];
-
     /*
      * `namespace` and `targetNamespace` are *not* modeled as URIs since this
      * would remove, for instance, the trailing `#` in
@@ -39,7 +37,7 @@ class Attr extends BaseAttr
     protected function createValue()
     {
         if (
-            $this->parentNode->namespaceURI == self::XSD_NS
+            $this->parentNode->namespaceURI == Document::XSD_NS
             && !isset($this->namespaceURI)
         ) {
             $converter = static::XSD_CONVERTERS[$this->localName] ?? null;
