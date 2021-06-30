@@ -6,17 +6,15 @@
     "repositories": [
         {
             "type": "vcs",
-            "url": "https://github.com/rv1971/alcamo-core"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/rv1971/alcamo-xpointer"
+            "url": "https://github.com/rv1971/alcamo-stage"
         }
     ],
     "require": {
         "php": "7.3 - 7.4",
-        "alcamo/core": "dev-master",
-        "alcamo/xpointer": "dev-master"
+        "alcamo/binary-data": "^0.1",
+        "alcamo/core": "^0.1",
+        "alcamo/stage": "dev-master",
+        "alcamo/xpointer": "^0.1"
     },
     "autoload": {
 	"psr-4": {
