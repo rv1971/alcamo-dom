@@ -5,33 +5,36 @@ namespace alcamo\dom;
 use alcamo\exception\SyntaxError;
 
 /**
- * @brief DOM Document consisting in the document element without content
+ * @brief DOM Document consisting in the document element without any content
  *
  * This is useful to inspect a document without parsing it completeley. For
- * instance, the name of the document element tag can be used to choose an
- * appropriate document class.
+ * instance, the tag name or some attribute of the document element can be
+ * used to choose an appropriate document class.
+ *
+ * @date Last reviewed 2021-07-01
  */
 class ShallowDocument extends Document
 {
-    /** Never use the cache for shallow documents. */
-    public static function newFromUrl(
-        string $url,
-        ?int $libXmlOptions = null
-    ): Document {
-        return parent::newFromUrl($url, $libXmlOptions);
-    }
+    /// Maximum number of bytes to read from the document
+    public const MAX_LENGH = 4096;
 
-    /** @warning The first tag must end within the first 4kiB of the data. */
+    /**
+     * @copydoc Document::loadUrl()
+     *
+     * @warning The first tag must end within the first @ref MAX_LENGH of the
+     * data.
+     */
     public function loadUrl(string $url, ?int $libXmlOptions = null)
     {
         return $this->loadXmlText(
-            file_get_contents($url, false, null, 0, 4096)
+            file_get_contents($url, false, null, 0, static::MAX_LENGH)
         );
     }
 
+    /// @copydoc Document::loadXmlText()
     public function loadXmlText(string $xml, ?int $libXmlOptions = null)
     {
-        /** This uses a regular expression to find the first string in angular
+        /** Use a regular expression to find the first string in angular
          *  brackets which is neither an xml declaration or processing
          *  instruction nor a comment, and which contains quotes only in
          *  pairs.
@@ -46,7 +49,10 @@ class ShallowDocument extends Document
                 PREG_OFFSET_CAPTURE
             )
         ) {
-            throw new SyntaxError($xml, null, '; no end of tag found');
+            /** @throw alcamo::exception::SyntaxError if no complete opening
+             *  tag is found. */
+            throw new
+                SyntaxError($xml, null, '; no complete opening tag found');
         }
 
         $bracketPos = $matches[0][1] + strlen($matches[0][0]) - 1;

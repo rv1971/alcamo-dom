@@ -4,21 +4,55 @@ namespace alcamo\dom;
 
 use alcamo\collection\ReadonlyCollection;
 use GuzzleHttp\Psr7\{Uri, UriResolver};
+use Psr\Http\Message\UriInterface;
 
-/// Array of DOM documents indexed by dc:identifier.
+/**
+ * @brief Array of DOM documents indexed by their dc:identifier
+ *
+ * Features caching as well as automatic determination of the document class.
+ *
+ * @date Last reviewed 2021-07-01
+ */
 class Documents extends ReadonlyCollection
 {
+    /// PHP factory class used to create documents
     public const FACTORY_CLASS = DocumentFactory::class;
 
+    /**
+     * @brief Create documents from a glob() pattern
+     *
+     * @param $pattern Pattern for [glob()](https://www.php.net/manual/en/function.glob)
+     *
+     * @param $globFlags Flags for glob(). Defaults to `GLOB_NOSORT |
+     * GLOB_BRACE`.
+     *
+     * @param $libXmlOptions See $options in
+     * [DOMDocument::load()](https://www.php.net/manual/en/domdocument.load)
+     */
     public static function newFromGlob(
         string $pattern,
+        ?int $globFlags = null,
         ?int $libXmlOptions = null
     ): self {
+        /** Use the createFromUrl() method of an instance of @ref
+         *  FACTORY_CLASS to create the documents. */
+        $factoryClass = static::FACTORY_CLASS;
+
+        $factory = new $factoryClass();
+
         $docs = [];
 
-        foreach (glob($pattern, GLOB_NOSORT | GLOB_BRACE) as $path) {
-            $doc = self::createDocumentFromUrl($path, $libXmlOptions);
+        foreach (
+            glob($pattern, $globFlags ?? GLOB_NOSORT | GLOB_BRACE) as $path
+        ) {
+            $doc = $factory->createFromUrl(
+                'file://' . str_replace(DIRECTORY_SEPARATOR, '/', $path),
+                null,
+                $libXmlOptions
+            );
 
+            /** If the document element has a `dc:identifier` attribute, use
+             *  it for the array key. Otherwise use the file name. */
             $key = $doc->documentElement
                 ->getAttributeNS(Document::DC_NS, 'identifier');
 
@@ -32,19 +66,35 @@ class Documents extends ReadonlyCollection
         return new self($docs);
     }
 
+    /**
+     * @brief Create documents from a collection of URLs
+     *
+     * @param $urls Collection of URLs.
+     *
+     * @param $baseUrl string|UriInterface Base URL to locate documents
+     *
+     * @param $libXmlOptions See $options in
+     * [DOMDocument::load()](https://www.php.net/manual/en/domdocument.load)
+     */
     public static function newFromUrls(
         iterable $urls,
         $baseUrl = null,
         ?int $libXmlOptions = null
     ): self {
+        /** Use the createFromUrl() method of an instance of @ref
+         *  FACTORY_CLASS to create the documents. */
+        $factoryClass = static::FACTORY_CLASS;
+
+        $factory = new $factoryClass();
+
         $docs = [];
 
-        if (isset($baseUrl) && !($baseUrl instanceof Uri)) {
+        if (isset($baseUrl) && !($baseUrl instanceof UriInterface)) {
             $baseUrl = new Uri((string)$baseUrl);
         }
 
         foreach ($urls as $url) {
-            if (!($url instanceof Uri)) {
+            if (!($url instanceof UriInterface)) {
                 $url = new Uri((string)$url);
             }
 
@@ -52,8 +102,10 @@ class Documents extends ReadonlyCollection
                 $url = UriResolver::resolve($baseUrl, $url);
             }
 
-            $doc = self::createDocumentFromUrl($url, $libXmlOptions);
+            $doc = $factory->createFromUrl($url, null, $libXmlOptions);
 
+            /** If the document element has a `dc:identifier` attribute, use
+             *  it for the array key. Otherwise use the file name. */
             $key = $doc->documentElement
                 ->getAttributeNS(Document::DC_NS, 'identifier');
 
@@ -67,17 +119,10 @@ class Documents extends ReadonlyCollection
         return new self($docs);
     }
 
-    public static function createDocumentFromUrl(
-        string $url,
-        ?int $libXmlOptions = null
-    ): Document {
-        $class = static::FACTORY_CLASS;
-
-        return (new $class())->createFromUrl($url, null, $libXmlOptions);
-    }
-
     /**
-     * If a key in $docs is a string, use it as key int he result
+     * @brief Construct from a collection of documents
+     *
+     * If a key in $docs is a string, use it as key in the result
      * collection. Otherwise, use the `dc:identifier` attribute in the
      * document element.
      */

@@ -14,7 +14,7 @@ trait BaseUriTrait
     }
 
     /// @copybrief BaseUriInterface::resolve()
-    public function resolve($uri): ?UriInterface
+    public function resolveUri($uri): ?UriInterface
     {
         if (!($uri instanceof UriInterface)) {
             $uri = new Uri($uri);

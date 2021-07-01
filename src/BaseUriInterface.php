@@ -10,5 +10,5 @@ interface BaseUriInterface
     public function getBaseUri(): ?UriInterface;
 
     /// Resolve $uri relative to base URI, if possible
-    public function resolve($uri): ?UriInterface;
+    public function resolveUri($uri): ?UriInterface;
 }

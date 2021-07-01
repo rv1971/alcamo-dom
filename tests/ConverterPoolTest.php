@@ -4,8 +4,9 @@ namespace alcamo\dom;
 
 use PHPUnit\Framework\TestCase;
 use alcamo\collection\ReadonlyPrefixSet;
+use alcamo\exception\OutOfRange;
 use alcamo\iana\MediaType;
-use alcamo\integer\NonNegativeRange;
+use alcamo\range\NonNegativeRange;
 use alcamo\ietf\{Lang, Uri};
 use alcamo\time\Duration;
 use alcamo\xml\XName;
@@ -131,11 +132,6 @@ class ConverterPoolTest extends TestCase
                 'toSet',
                 new Set(['foo', 'bar', 'baz'])
             ],
-            'longint' => [
-                $doc['longint']->getAttributeNode('content'),
-                'toInt',
-                '123456789012345678901234567890'
-            ],
             'bool-1' => [
                 $doc['bool-1']->getAttributeNode('content'),
                 'yesNoToBool',
@@ -246,5 +242,12 @@ class ConverterPoolTest extends TestCase
         $this->assertInstanceof(Document::class, $doc2);
 
         $this->assertSame($doc, $doc2);
+    }
+
+    public function testToIntException()
+    {
+        $this->expectException(OutOfRange::class);
+
+        ConverterPool::toInt(PHP_INT_MAX . '0');
     }
 }

@@ -192,7 +192,7 @@ class DocumentTest extends TestCase
 
         $this->expectException(DataValidationFailed::class);
 
-        $bar->validateWithSchema(__DIR__ . DIRECTORY_SEPARATOR . 'baz.xsd');
+        $bar->validateAgainstXsd(__DIR__ . DIRECTORY_SEPARATOR . 'baz.xsd');
     }
 
     public function testValidate()
