@@ -16,7 +16,7 @@ use alcamo\dom\{Document as BaseDocument, DocumentFactoryInterface};
 
 /**
  * @brief DOM Document class having elements and attributes with extended
- * features.
+ * features
  *
  * @date Last reviewed 2021-07-01
  */

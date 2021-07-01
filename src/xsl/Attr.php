@@ -5,10 +5,17 @@ namespace alcamo\dom\xsl;
 use alcamo\dom\ConverterPool;
 use alcamo\dom\extended\Attr as BaseAttr;
 
+/**
+ * @brief Attribute class for use in DOMDocument::registerNodeClass()
+ *
+ * @date Last reviewed 2021-07-01
+ */
 class Attr extends BaseAttr
 {
+    /// XSL namespace
     public const XSL_NS = Document::NSS['xsl'];
 
+    /// Converters for attributes in the @ref XSL_NS namespace
     public const XSL_CONVERTERS = [
         'disable-output-escaping'    => ConverterPool::class . '::yesNoToBool',
         'elements'                   => ConverterPool::class . '::toArray',
@@ -24,8 +31,11 @@ class Attr extends BaseAttr
         'use-attribute-sets'         => ConverterPool::class . '::toArray'
     ];
 
+    /// @copybrief alcamo::dom::Attr::createValue()
     protected function createValue()
     {
+        /** Convert values of attributes in the @ref XSL_NS namespace
+         *  using @ref XSL_CONVERTERS. */
         if (
             $this->parentNode->namespaceURI == self::XSL_NS
             && !isset($this->namespaceURI)
