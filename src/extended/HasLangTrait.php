@@ -4,13 +4,23 @@ namespace alcamo\dom\extended;
 
 use alcamo\ietf\Lang;
 
+/**
+ * @brief Provides language of a node
+ *
+ * When calling getLang() a second time, the result is taken from the cache.
+ *
+ * @warning The cached result is never updated, not even when the language of
+ * the node or one of its ancestors is changed.
+ *
+ * @date Last reviewed 2021-07-01
+ */
 trait HasLangTrait
 {
     use RegisteredNodeTrait;
 
     private $lang_ = false; ///< ?Lang
 
-    /// Return xml:lang of element or closest ancestor, or false.
+    /// Return xml:lang of element or closest ancestor
     public function getLang(): ?Lang
     {
         if ($this->lang_ === false) {

@@ -12,6 +12,16 @@ use alcamo\exception\{
 };
 
 /**
+ * @namespace alcamo::dom
+ *
+ * @brief Convenience features for DOM nodes
+ *
+ * The derived classes for attribute and element nodes defined in
+ * this namespace do not add properties, only methods, hence no special
+ * measures are necessary to conserve nodes.
+ */
+
+/**
  * @brief DOM Document class having factory methods with validation
  *
  * The ArrayAccess interface provides read access to elements by ID.

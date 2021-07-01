@@ -21,7 +21,12 @@ class Attr extends \DOMAttr implements HasXNameInterface, BaseUriInterface
         return $this->value;
     }
 
-    /// Return attribute value; meant to be overridden in derived classes
+    /**
+     * @brief Return the attribute value appropriately converted
+     *
+     * This implementation simply returns the string content. It is meant to
+     * be overriden by more sophisticated methods in derived classes.
+     */
     public function getValue()
     {
         return $this->value;

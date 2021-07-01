@@ -5,27 +5,34 @@ namespace alcamo\dom\extended;
 use alcamo\xml\XName;
 
 /**
- * @brief Access to attributes as if they were object properties
+ * @brief Provide access to attributes as if they were object properties
  *
- * There are three ways to specify an attribute:
+ * There are three ways to specify an attribute as a property:
  * - Attribute name without namespace prefix.
- * - Qualified name with a prefix registered in the NS constant of the
+ * - Qualified name with a prefix registered in the NSS constant of the
  *    document class.
  * - Serialization of an XName object.
  * Hence there may be more than one way to specify the same attribute. All
  * ways to specify an attribute are equally stored in the cache.
+ *
+ * @warning The cached attributes is never updated, not even when an attribute
+ * is changed.
+ *
+ * @date Last reviewed 2021-07-01
  */
 trait MagicAttrAccessTrait
 {
-    private $attrCache_ = []; ///< Map of attributes to values.
+    private $attrCache_ = []; ///< Map of attributes to values
 
     public function __isset($attrName)
     {
-        /* At first look in the cache. `array_key_exists()` must be used
-         * instead of `isset()` because an attribute might evaluate to `null`
-         * even though it is present, in which case `offsetExists()` must
-         * return true. */
-        if (array_key_exists($attrName, $this->attrCache_)) {
+        /* At first look in the cache. isset() is fast and works for all cases
+         * where the attribute value is not `null`. To cover the latter as
+         * well, the slower array_key_exists() is used. */
+        if (
+            isset($this->attrCache_[$attrName])
+            || array_key_exists($attrName, $this->attrCache_)
+        ) {
             return true;
         }
 
@@ -47,15 +54,23 @@ trait MagicAttrAccessTrait
         }
     }
 
+    /**
+     * @brief Returns the result of Attr::getValue()
+     *
+     * When a second time, the result is taken from a cache.
+     */
     public function __get($attrName)
     {
-        /* At first look in the cache. `array_key_exists()` must be used
-         * instead of `isset()` because an attribute might evaluate to
-         * `null`. */
-        if (array_key_exists($attrName, $this->attrCache_)) {
+        /* At first look in the cache just as in __isset(). */
+        if (
+            isset($this->attrCache_[$attrName])
+            || array_key_exists($attrName, $this->attrCache_)
+        ) {
             return $this->attrCache_[$attrName];
         }
 
+        /* If not found in the cache, check which kind of attribute name is
+         * given, and get the attribute node, if any. */
         if (strpos($attrName, ' ') === false) {
             if (strpos($attrName, ':') === false) {
                 $attrNode = $this->getAttributeNode($attrName);
@@ -71,6 +86,7 @@ trait MagicAttrAccessTrait
             $attrNode = $this->getAttributeNodeNS(...explode(' ', $attrName));
         }
 
+        /* Return null if there is no such node. */
         if (!$attrNode) {
             return null;
         }
