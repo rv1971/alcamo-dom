@@ -3,14 +3,19 @@
 namespace alcamo\dom\schema\component;
 
 use alcamo\dom\schema\Schema;
-use alcamo\dom\xsd\Element;
+use alcamo\dom\xsd\Element as XsdElement;
 
+/**
+ * @brief Attribute declaration in an XSD
+ *
+ * @date Last reviewed 2021-07-09
+ */
 class Attr extends AbstractXsdComponent
 {
     private $refAttr_; ///< ?Attr
-    private $type_;    ///< SimpleType
+    private $type_;    ///< SimpleTypeInterface
 
-    public function __construct(Schema $schema, Element $xsdElement)
+    public function __construct(Schema $schema, XsdElement $xsdElement)
     {
         parent::__construct($schema, $xsdElement);
 
@@ -20,6 +25,7 @@ class Attr extends AbstractXsdComponent
         }
     }
 
+    /// Attr indicated by the `ref` attribute, if any
     public function getRefAttr(): ?self
     {
         return $this->refAttr_;

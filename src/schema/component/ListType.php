@@ -3,16 +3,20 @@
 namespace alcamo\dom\schema\component;
 
 use alcamo\dom\schema\Schema;
-use alcamo\dom\xsd\Element;
+use alcamo\dom\xsd\Element as XsdElement;
 
-/// Defintion of an XSD list simple type.
+/**
+ * @brief List type definition
+ *
+ * @date Last reviewed 2021-07-09
+ */
 class ListType extends AbstractSimpleType
 {
     protected $itemType_; ///< SimpleTypeInterface
 
     public function __construct(
         Schema $schema,
-        Element $xsdElement,
+        XsdElement $xsdElement,
         ?SimpleTypeInterface $baseType,
         SimpleTypeInterface $itemType
     ) {

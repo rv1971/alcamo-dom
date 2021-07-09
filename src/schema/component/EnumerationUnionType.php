@@ -4,12 +4,22 @@ namespace alcamo\dom\schema\component;
 
 use alcamo\dom\xsd\Enumerator;
 
-/// Defintion of an XSD simple type that is a union of enumerations.
+/**
+ * @brief Definition of a simple type that is a union of enumerations
+ *
+ * @date Last reviewed 2021-07-09
+ */
 class EnumerationUnionType extends UnionType implements
     EnumerationTypeInterface
 {
-    private $enumerators_; ///< Map of enumerator strings to Enumerator objects.
+    private $enumerators_; ///< Map of enumerator strings to Enumerator objects
 
+    /**
+     * @copybrief EnumerationTypeInterface::getEnumerators()
+     *
+     * When calling this method a second time, the result is taken from the
+     * cache.
+     */
     public function getEnumerators(): array
     {
         if (!isset($this->enumerators_)) {

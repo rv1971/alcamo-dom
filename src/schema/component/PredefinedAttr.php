@@ -5,9 +5,14 @@ namespace alcamo\dom\schema\component;
 use alcamo\dom\schema\Schema;
 use alcamo\xml\XName;
 
+/**
+ * @brief Attribute declaration predefined in the XML Schema specification
+ *
+ * @date Last reviewed 2021-07-09
+ */
 class PredefinedAttr extends AbstractPredefinedComponent
 {
-    private $type_; ///< SimpleType
+    private $type_; ///< AbstractSimpleType
 
     public function __construct(
         Schema $schema,

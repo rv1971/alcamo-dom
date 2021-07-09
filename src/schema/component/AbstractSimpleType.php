@@ -3,13 +3,16 @@
 namespace alcamo\dom\schema\component;
 
 use alcamo\dom\schema\Schema;
-use alcamo\dom\xsd\Element;
+use alcamo\dom\xsd\Element as XsdElement;
 
-abstract class AbstractSimpleType extends AbstractType implements SimpleTypeInterface
+abstract class AbstractSimpleType extends AbstractXsdComponent implements
+    SimpleTypeInterface
 {
+    private $baseType_; ///< ?AbstractType
+
     public static function newFromSchemaAndXsdElement(
         Schema $schema,
-        Element $xsdElement
+        XsdElement $xsdElement
     ): self {
         $restrictionElement = $xsdElement->query('xsd:restriction')[0];
 
@@ -91,14 +94,18 @@ abstract class AbstractSimpleType extends AbstractType implements SimpleTypeInte
         return new AtomicType($schema, $xsdElement, null);
     }
 
-    /** Unlike AbstractType::__construct(), the third parameter must be
-     *  provided, and AbstractSimpleType objects can only be created via
-     *  newFromSchemaAndXsdElement() or from derived classes. */
     protected function __construct(
         Schema $schema,
-        Element $xsdElement,
+        XsdElement $xsdElement,
         ?TypeInterface $baseType
     ) {
-        parent::__construct($schema, $xsdElement, $baseType);
+        parent::__construct($schema, $xsdElement);
+
+        $this->baseType_ = $baseType;
+    }
+
+    public function getBaseType(): ?TypeInterface
+    {
+        return $this->baseType_;
     }
 }

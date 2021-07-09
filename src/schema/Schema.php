@@ -8,7 +8,6 @@ use alcamo\dom\extended\{Document, DocumentFactory, Element as ExtElement};
 use alcamo\dom\schema\component\{
     AbstractComponent,
     AbstractSimpleType,
-    AbstractType,
     Attr,
     AttrGroup,
     ComplexType,
@@ -131,7 +130,7 @@ class Schema
     private $globalGroups_     = []; ///< Map of XName string to Group
     private $globalNotations_  = []; ///< Map of XName string to Notation
 
-    ///< Map of XName string to AbstractType
+    ///< Map of XName string to TypeInterface
     private $globalTypes_ = [];
 
     private $getGlobalTypesAlreadyCalled_ = false;
@@ -282,7 +281,7 @@ class Schema
         return $this->anySimpleType_;
     }
 
-    public function lookupElementType(ExtElement $element): ?AbstractType
+    public function lookupElementType(ExtElement $element): ?TypeInterface
     {
         // look up global type if explicitely given in `xsi:type`
         if ($element->hasAttributeNS(Document::XSI_NS, 'type')) {

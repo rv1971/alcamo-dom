@@ -8,7 +8,7 @@ use alcamo\dom\xsd\Element as XsdElement;
 class Element extends AbstractXsdComponent
 {
     private $refElement_; ///< ?Element
-    private $type_;       ///< AbstractType
+    private $type_;       ///< TypeInterface
 
     public function __construct(Schema $schema, XsdElement $xsdElement)
     {
@@ -25,7 +25,7 @@ class Element extends AbstractXsdComponent
         return $this->refElement_;
     }
 
-    public function getType(): AbstractType
+    public function getType(): TypeInterface
     {
         if (!isset($this->type_)) {
             switch (true) {

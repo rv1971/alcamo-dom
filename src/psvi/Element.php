@@ -3,13 +3,13 @@
 namespace alcamo\dom\psvi;
 
 use alcamo\dom\extended\Element as BaseElement;
-use alcamo\dom\schema\component\AbstractType;
+use alcamo\dom\schema\component\TypeInterface;
 
 class Element extends BaseElement
 {
-    private $type_ = false;  ///< AbstractType
+    private $type_ = false;  ///< TypeInterface
 
-    public function getType(): AbstractType
+    public function getType(): TypeInterface
     {
         if ($this->type_ === false) {
             $schema = $this->ownerDocument->getSchema();

@@ -5,17 +5,43 @@ namespace alcamo\dom\schema\component;
 use alcamo\dom\Document;
 use alcamo\dom\extended\Element as ExtElement;
 use alcamo\dom\schema\Schema;
+use alcamo\dom\xsd\Element as XsdElement;
 use alcamo\xml\Xname;
 
-class ComplexType extends AbstractType
+class ComplexType extends AbstractXsdComponent implements TypeInterface
 {
     public const XSI_TYPE_NAME = Document::XSI_NS . ' type';
 
+    private $baseType_; ///< ?AbstractType
     private $attrs_; ///< Map of XName string to SimpleType or PredefinedType
     private $elements_; ///< Array of Element
 
     /// Map of element XName string to AbstractType
     private $elementName2Type_;
+
+    public function __construct(
+        Schema $schema,
+        XsdElement $xsdElement,
+        $baseType = false
+    ) {
+        parent::__construct($schema, $xsdElement);
+
+        $this->baseType_ = $baseType;
+    }
+
+    public function getBaseType(): ?TypeInterface
+    {
+        if ($this->baseType_ === false) {
+            $baseXNameElement =
+                $this->xsdElement_->query('xsd:*/xsd:*[@base]')[0];
+
+            $this->baseType_ = isset($baseXNameElement)
+                ? $this->schema_->getGlobalType($baseXNameElement->base)
+                : null;
+        }
+
+        return $this->baseType_;
+    }
 
     public function getAttrs(): array
     {
