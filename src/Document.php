@@ -134,7 +134,7 @@ class Document extends \DOMDocument implements
         }
     }
 
-    /// Return a new instance of DocumentFactory()
+    /// Return a new instance of DocumentFactory
     public function getDocumentFactory(): DocumentFactoryInterface
     {
         return new DocumentFactory();

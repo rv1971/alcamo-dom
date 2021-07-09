@@ -4,9 +4,19 @@ namespace alcamo\dom\xsd;
 
 use alcamo\dom\extended\Attr as BaseAttr;
 
+/**
+ * @brief Attribute class for use in DOMDocument::registerNodeClass()
+ *
+ * @date Last reviewed 2021-07-09
+ */
 class Attr extends BaseAttr
 {
+    /// XSD namespace
+    public const XSD_NS = Document::NSS['xsd'];
+
     /*
+     * @brief Converters for attributes in the @ref XSL_NS namespace
+     *
      * `namespace` and `targetNamespace` are *not* modeled as URIs since this
      * would remove, for instance, the trailing `#` in
      * http://www.w3.org/2000/01/rdf-schema#.
@@ -34,10 +44,13 @@ class Attr extends BaseAttr
         'memberTypes'       => ConverterPool::class . '::toXNames'
     ];
 
+    /// @copybrief alcamo::dom::Attr::createValue()
     protected function createValue()
     {
+        /** Convert values of attributes in the @ref XSD_NS namespace
+         *  using @ref XSD_CONVERTERS. */
         if (
-            $this->parentNode->namespaceURI == Document::XSD_NS
+            $this->parentNode->namespaceURI == self::XSD_NS
             && !isset($this->namespaceURI)
         ) {
             $converter = static::XSD_CONVERTERS[$this->localName] ?? null;
