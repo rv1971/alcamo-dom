@@ -6,7 +6,7 @@ use alcamo\dom\schema\Schema;
 use alcamo\xml\XName;
 
 /**
- * @brief XML Schema component predefined in the XML Schema specification
+ * @brief XML %Schema component predefined in the XML %Schema specification
  *
  * @date Last reviewed 2021-07-09
  */

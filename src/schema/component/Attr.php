@@ -6,7 +6,7 @@ use alcamo\dom\schema\Schema;
 use alcamo\dom\xsd\Element as XsdElement;
 
 /**
- * @brief Attribute declaration in an XSD
+ * @brief Attribute declaration
  *
  * @date Last reviewed 2021-07-09
  */
@@ -25,12 +25,16 @@ class Attr extends AbstractXsdComponent
         }
     }
 
-    /// Attr indicated by the `ref` attribute, if any
+    /// Attribute indicated by the `ref` attribute, if any
     public function getRefAttr(): ?self
     {
         return $this->refAttr_;
     }
 
+    /**
+     * When calling this method a second time, the result is taken from the
+     * cache.
+     */
     public function getType(): SimpleTypeInterface
     {
         if (!isset($this->type_)) {

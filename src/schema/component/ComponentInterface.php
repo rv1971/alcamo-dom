@@ -8,11 +8,11 @@ use alcamo\xml\XName;
 /**
  * @namespace alcamo::dom::schema::component
  *
- * @brief Classes modelling XML Schema components
+ * @brief Classes modelling XML %Schema components
  */
 
 /**
- * @brief XML Schema component
+ * @brief XML %Schema component
  *
  * @date Last reviewed 2021-07-09
  */

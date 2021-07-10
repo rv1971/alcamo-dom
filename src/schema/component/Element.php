@@ -5,6 +5,11 @@ namespace alcamo\dom\schema\component;
 use alcamo\dom\schema\Schema;
 use alcamo\dom\xsd\Element as XsdElement;
 
+/**
+ * @brief Element declaration
+ *
+ * @date Last reviewed 2021-07-10
+ */
 class Element extends AbstractXsdComponent
 {
     private $refElement_; ///< ?Element
@@ -20,11 +25,16 @@ class Element extends AbstractXsdComponent
         }
     }
 
+    /// Element indicated by the `ref` attribute, if any
     public function getRefElement(): ?self
     {
         return $this->refElement_;
     }
 
+    /**
+     * When calling this method a second time, the result is taken from the
+     * cache.
+     */
     public function getType(): TypeInterface
     {
         if (!isset($this->type_)) {

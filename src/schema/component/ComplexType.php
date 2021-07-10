@@ -3,20 +3,24 @@
 namespace alcamo\dom\schema\component;
 
 use alcamo\dom\Document;
-use alcamo\dom\extended\Element as ExtElement;
 use alcamo\dom\schema\Schema;
 use alcamo\dom\xsd\Element as XsdElement;
 use alcamo\xml\Xname;
 
+/**
+ * @brief Complex type definition
+ *
+ * @date Last reviewed 2021-07-10
+ */
 class ComplexType extends AbstractXsdComponent implements TypeInterface
 {
     public const XSI_TYPE_NAME = Document::XSI_NS . ' type';
 
     private $baseType_; ///< ?AbstractType
-    private $attrs_; ///< Map of XName string to SimpleType or PredefinedType
-    private $elements_; ///< Array of Element
+    private $attrs_;    ///< Map of XName string to SimpleTypeInterface
+    private $elements_; ///< Map of element XName string to Element
 
-    /// Map of element XName string to AbstractType
+    /// Map of element XName string to TypeInterface
     private $elementName2Type_;
 
     public function __construct(
@@ -43,33 +47,39 @@ class ComplexType extends AbstractXsdComponent implements TypeInterface
         return $this->baseType_;
     }
 
+    /**
+     * @brief Map of XName string to SimpleTypeInterface
+     *
+     * When calling this method a second time, the result is taken from the
+     * cache.
+     */
     public function getAttrs(): array
     {
         if (!isset($this->attrs_)) {
             if ($this->getBaseType() instanceof self) {
                 $this->attrs_ = $this->getBaseType()->getAttrs();
+
+                $attrParent =
+                    $this->xsdElement_->query(
+                        'xsd:complexContent/xsd:restriction'
+                        . '|xsd:complexContent/xsd:extension'
+                        . '|xsd:simpleContent/xsd:restriction'
+                        . '|xsd:simpleContent/xsd:extension'
+                    )[0];
             } else {
                 // predefine xsi:type if not inheriting it from base type
                 $this->attrs_ = [
                     self::XSI_TYPE_NAME
-                    => $this->schema_
-                        ->getGlobalAttr(new XName(Document::XSI_NS, 'type'))
+                    => $this->schema_->getGlobalAttr(self::XSI_TYPE_NAME)
                 ];
+
+                $attrParent = $this->xsdElement_;
             }
-
-            $extensionOrRestriction =
-                $this->xsdElement_->query(
-                    'xsd:complexContent/xsd:restriction'
-                    . '|xsd:complexContent/xsd:extension'
-                    . '|xsd:simpleContent/xsd:restriction'
-                    . '|xsd:simpleContent/xsd:extension'
-                )[0];
-
-            $attrParent = $extensionOrRestriction ?? $this->xsdElement_;
 
             foreach ($attrParent as $element) {
                 switch ($element->localName) {
                     case 'attribute':
+                        // remove prohibited attributes
                         if ($element->use == 'prohibited') {
                             unset($this->attrs_[
                                 (string)$element->getComponentXName()
@@ -94,11 +104,14 @@ class ComplexType extends AbstractXsdComponent implements TypeInterface
     }
 
     /**
-     * @return array mapping element expanded name string to Element objects
-     * for all elements in the content model
+     * Map of element XName string to Element for all elements in the content
+     * model
      *
      * @warning Content models containing two elements with the same expanded
      * name but different types are not supported.
+     *
+     * When calling this method a second time, the result is taken from the
+     * cache.
      */
     public function getElements(): array
     {

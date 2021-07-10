@@ -2,10 +2,21 @@
 
 namespace alcamo\dom\schema\component;
 
+/**
+ * @brief Attribute group definition
+ *
+ * @date Last reviewed 2021-07-10
+ */
 class AttrGroup extends AbstractXsdComponent
 {
-    private $attrs_; ///< Map of XName string to SimpleType or PredefinedType
+    private $attrs_; ///< Map of XName string to SimpleTypeInterface
 
+    /**
+     * @brief Map of XName string to SimpleTypeInterface
+     *
+     * When calling this method a second time, the result is taken from the
+     * cache.
+     */
     public function getAttrs(): array
     {
         if (!isset($this->attrs_)) {

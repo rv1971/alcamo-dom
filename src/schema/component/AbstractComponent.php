@@ -5,7 +5,7 @@ namespace alcamo\dom\schema\component;
 use alcamo\dom\schema\Schema;
 
 /**
- * @brief XML Schema component
+ * @brief XML %Schema component
  *
  * @date Last reviewed 2021-07-09
  */

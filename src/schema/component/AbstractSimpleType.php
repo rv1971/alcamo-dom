@@ -5,23 +5,31 @@ namespace alcamo\dom\schema\component;
 use alcamo\dom\schema\Schema;
 use alcamo\dom\xsd\Element as XsdElement;
 
+/**
+ * @brief Simple type definition
+ *
+ * @date Last reviewed 2021-07-10
+ */
 abstract class AbstractSimpleType extends AbstractXsdComponent implements
     SimpleTypeInterface
 {
     private $baseType_; ///< ?AbstractType
 
+    /// Factory method creating the most specific type that it can recognize
     public static function newFromSchemaAndXsdElement(
         Schema $schema,
         XsdElement $xsdElement
     ): self {
-        $restrictionElement = $xsdElement->query('xsd:restriction')[0];
+        $xPath = $xsdElement->ownerDocument->getXPath();
+
+        $restrictionElement = $xPath->query('xsd:restriction', $xsdElement)[0];
 
         if (isset($restrictionElement)) {
             $baseType = isset($restrictionElement->base)
                 ? $schema->getGlobalType($restrictionElement->base)
                 : self::newFromSchemaAndXsdElement(
                     $schema,
-                    $restrictionElement->query('xsd:simpleType')[0]
+                    $xPath->query('xsd:simpleType', $restrictionElement)[0]
                 );
 
             if ($baseType instanceof ListType) {
@@ -33,14 +41,14 @@ abstract class AbstractSimpleType extends AbstractXsdComponent implements
                 );
             }
 
-            if ($restrictionElement->query('xsd:enumeration')[0]) {
+            if ($xPath->query('xsd:enumeration', $restrictionElement)[0]) {
                 return new EnumerationType($schema, $xsdElement, $baseType);
             }
 
             return new AtomicType($schema, $xsdElement, $baseType);
         }
 
-        $listElement = $xsdElement->query('xsd:list')[0];
+        $listElement = $xPath->query('xsd:list', $xsdElement)[0];
 
         if (isset($listElement)) {
             if (isset($listElement->itemType)) {
@@ -49,14 +57,14 @@ abstract class AbstractSimpleType extends AbstractXsdComponent implements
             } else {
                 $itemType = self::newFromSchemaAndXsdElement(
                     $schema,
-                    $listElement->query('xsd:simpleType')[0]
+                    $xPath->query('xsd:simpleType', $listElement)[0]
                 );
             }
 
             return new ListType($schema, $xsdElement, null, $itemType);
         }
 
-        $unionElement = $xsdElement->query('xsd:union')[0];
+        $unionElement = $xPath->query('xsd:union', $xsdElement)[0];
 
         if (isset($unionElement)) {
             $memberTypes = [];
@@ -69,7 +77,10 @@ abstract class AbstractSimpleType extends AbstractXsdComponent implements
             }
 
             foreach (
-                $unionElement->query('xsd:simpleType') as $memberTypeElement
+                $xPath->query(
+                    'xsd:simpleType',
+                    $unionElement
+                ) as $memberTypeElement
             ) {
                 $memberTypes[] = self::newFromSchemaAndXsdElement(
                     $schema,

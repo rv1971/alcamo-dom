@@ -7,7 +7,7 @@ use alcamo\dom\xsd\Element as XsdElement;
 use alcamo\xml\XName;
 
 /**
- * @brief XML Schema component defined in an XSD
+ * @brief XML %Schema component defined in an XSD
  *
  * @date Last reviewed 2021-07-09
  */

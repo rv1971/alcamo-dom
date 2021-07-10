@@ -2,19 +2,26 @@
 
 namespace alcamo\dom\schema\component;
 
-use alcamo\dom\extended\Element as ExtElement;
-use alcamo\dom\xsd\{Document as Xsd, Element as XsdElement};
+use alcamo\dom\xsd\Document as Xsd;
 
+/**
+ * @brief Model group definition
+ *
+ * @date Last reviewed 2021-07-10
+ */
 class Group extends AbstractXsdComponent
 {
     private $elements_; ///< Array of Element
 
     /**
-     * @return Array mapping element expanded name string to Element objects
-     * for all elements in the content model.
-
+     * @brief Map of element XName string to Element for all elements in the
+     * content model
+     *
      * @warning Content models containing two elements with the same expanded
      * name but different types are not supported.
+     *
+     * When calling this method a second time, the result is taken from the
+     * cache.
      */
     public function getElements(): array
     {
