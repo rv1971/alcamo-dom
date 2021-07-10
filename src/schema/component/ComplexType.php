@@ -20,9 +20,6 @@ class ComplexType extends AbstractXsdComponent implements TypeInterface
     private $attrs_;    ///< Map of XName string to SimpleTypeInterface
     private $elements_; ///< Map of element XName string to Element
 
-    /// Map of element XName string to TypeInterface
-    private $elementName2Type_;
-
     public function __construct(
         Schema $schema,
         XsdElement $xsdElement,

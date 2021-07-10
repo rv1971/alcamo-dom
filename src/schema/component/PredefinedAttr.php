@@ -10,7 +10,8 @@ use alcamo\xml\XName;
  *
  * @date Last reviewed 2021-07-09
  */
-class PredefinedAttr extends AbstractPredefinedComponent
+class PredefinedAttr extends AbstractPredefinedComponent implements
+    AttrInterface
 {
     private $type_; ///< AbstractSimpleType
 
@@ -24,7 +25,7 @@ class PredefinedAttr extends AbstractPredefinedComponent
         $this->type_ = $type;
     }
 
-    public function getType(): AbstractSimpleType
+    public function getType(): SimpleTypeInterface
     {
         return $this->type_;
     }

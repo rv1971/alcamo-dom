@@ -10,7 +10,7 @@ use alcamo\dom\xsd\Element as XsdElement;
  *
  * @date Last reviewed 2021-07-09
  */
-class Attr extends AbstractXsdComponent
+class Attr extends AbstractXsdComponent implements AttrInterface
 {
     private $refAttr_; ///< ?Attr
     private $type_;    ///< SimpleTypeInterface

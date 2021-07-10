@@ -6,20 +6,22 @@ use alcamo\dom\schema\component\TypeInterface;
 use alcamo\exception\Locked;
 
 /**
- * @brief Map whose keys are type hashes.
+ * @brief Map whose keys are type hashes
  *
- * The lookup() searches for base types if the type itself has no mapping. The
- * result of the lookup is cached in the map to speed up further lookups of
- * the same type.
+ * The lookup() method searches for base types if the type itself has no
+ * mapping. The result of the lookup is cached in the map to speed up further
+ * lookups of the same type.
+ *
+ * @date Last reviewed 2021-07-10
  */
 class TypeMap
 {
-    private $map_;          ///< Array whose keys are type hashes.
-    private $defaultValue_; ///< Default value if no element is found.
-    private $isLocked_;     ///< Whether entries have been added to $map_.
+    private $map_;          ///< Array whose keys are type hashes
+    private $defaultValue_; ///< Default value if no element is found
+    private $isLocked_;     ///< Whether entries have been added to $map_
 
     /**
-     * @param $map iterable Iterable whose keys are XName strings
+     * @param $map Map whose keys are XName strings
      */
     public static function createHashMapFromSchemaAndXNameMap(
         Schema $schema,
@@ -28,8 +30,8 @@ class TypeMap
         $hashMap = [];
 
         foreach ($map as $xNameString => $value) {
-            /** Unknown XNames are silently ignored, so that fixed map can be
-             *  used for a number of schemas which might not have all
+            /** @note Unknown XNames are silently ignored, so that a fixed map
+             *  can be used for a number of schemas which might not have all
              *  types. */
             $type = $schema->getGlobalType($xNameString);
 
@@ -42,7 +44,7 @@ class TypeMap
     }
 
     /**
-     * @param $map iterable Iterable whose keys are XName strings
+     * @param $map Map whose keys are XName strings
      */
     public static function newFromSchemaAndXNameMap(
         Schema $schema,
@@ -61,6 +63,7 @@ class TypeMap
         $this->defaultValue_ = $defaultValue;
     }
 
+    /// Array whose keys are type hashes
     public function getMap(): array
     {
         return $this->map_;
@@ -71,24 +74,24 @@ class TypeMap
         return $this->defaultValue_;
     }
 
-    /// Add elements, not replacing existing ones.
+    /// Add map items, not replacing existing ones
     public function addItems(array $map)
     {
         if ($this->isLocked_) {
             /** @throw alcamo::exception::Locked when attempting to modify a
-             *  map where entries have already been added. */
+             *  map to which entries have already been added. */
             throw new Locked($this);
         }
 
         $this->map_ = $this->map_ + $map;
     }
 
-    /// Add elements, replacing existing ones.
+    /// Add map items, replacing existing ones
     public function replaceItems(array $map)
     {
         if ($this->isLocked_) {
             /** @throw alcamo::exception::Locked when attempting to modify a
-             *  map where entries have already been added. */
+             *  map to which entries have already been added. */
             throw new Locked($this);
         }
 
@@ -124,9 +127,9 @@ class TypeMap
         /** Cache any new result in the map. */
         $this->map_[$hash] = $result;
 
-        /** Once any new result has been added, the map must not be
-         * modified any more because a change could invalidate the entry that
-         * has been added. */
+        /** Once any new result has been added, the map must not be modified
+         * any more because the entry that has been added might become
+         * incorrect. */
         $this->isLocked_ = true;
 
         return $result;
