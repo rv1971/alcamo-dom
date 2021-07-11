@@ -8,6 +8,14 @@ use alcamo\exception\Unsupported;
 use alcamo\ietf\Uri;
 use GuzzleHttp\Psr7\UriResolver;
 
+/**
+ * @brief Class that validates data of some XSD simple type given by a URI
+ *
+ * Supported are URIs that follow the id solution in [XML Schema Datatypes in
+ * RDF and OWL](https://www.w3.org/TR/swbp-xsch-datatypes)
+ *
+ * @date Last reviewed 2021-07-11
+ */
 class TypeUriBasedSimpleTypeValidator extends AbstractSimpleTypeValidator
 {
     private $baseUrl_; ///< Uri
@@ -27,8 +35,8 @@ class TypeUriBasedSimpleTypeValidator extends AbstractSimpleTypeValidator
     }
 
     /*
-     * @param $valueTypeUriPairs iterable Pairs consisting of a value and the
-     * URI of a type.
+     * @param $valueTypeUriPairs Pairs consisting of a value and the URI of a
+     * type.
      */
     public function validate($valueTypeUriPairs): array
     {
@@ -36,13 +44,13 @@ class TypeUriBasedSimpleTypeValidator extends AbstractSimpleTypeValidator
 
         $valueTypeXNamePairs = [];
 
-        foreach ($valueTypeUriPairs as $valueTypeUriPair) {
-            [ $value, $typeUri ] = $valueTypeUriPair;
+        foreach ($valueTypeUriPairs as $pair) {
+            [ $value, $typeUri ] = $pair;
             [ $schemaLocation, $typeId ] = explode('#', $typeUri, 2);
 
             if (strpos($typeId, '(') !== false) {
-                /** @throw Unsupported when attempting to use a pointer that
-                 *  is not an id. */
+                /** @throw alcamo::exception::Unsupported when attempting to
+                 *  use a pointer that is not an id. */
                 throw new Unsupported('Non-id pointers to XSD types');
             }
 

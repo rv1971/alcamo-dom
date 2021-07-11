@@ -3,8 +3,8 @@
 namespace alcamo\dom\schema;
 
 /**
- * @brief Class that validates data of some some XSD simple type against a
- * fixed schema.
+ * @brief Class that validates data of some XSD simple type against a fixed
+ * schema.
  *
  * @date Last reviewed 2021-07-11
  */
