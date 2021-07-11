@@ -10,6 +10,15 @@ use alcamo\dom\schema\component\{
     SimpleTypeInterface
 };
 
+/**
+ * @brief Attribute class for use in DOMDocument::registerNodeClass()
+ *
+ * Provides getType() to retrieve the XSD type of this attribute and uses this
+ * in create Value(), so that alcamo::dom::extended::Attr::getValue() returns
+ * an appropriately converted value.
+ *
+ * @date Last reviewed 2021-07-11
+ */
 class Attr extends BaseAttr
 {
     private $type_;  ///< SimpleTypeInterface
@@ -21,6 +30,8 @@ class Attr extends BaseAttr
                 $elementType = $this->parentNode->getType();
 
                 if (!($elementType instanceof ComplexType)) {
+                    $this->type_ =
+                        $this->ownerDocument->getSchema()->getAnySimpleType();
                     break;
                 }
 
@@ -28,21 +39,19 @@ class Attr extends BaseAttr
                     ?? null;
 
                 if (!isset($attr)) {
+                    $this->type_ =
+                        $this->ownerDocument->getSchema()->getAnySimpleType();
                     break;
                 }
 
                 $this->type_ = $attr->getType();
             } while (false);
-
-            if (!isset($this->type_)) {
-                $this->type_ =
-                    $this->ownerDocument->getSchema()->getAnySimpleType();
-            }
         }
 
         return $this->type_;
     }
 
+    /// @copybrief alcamo::dom::extended::Attr::createValue()
     protected function createValue()
     {
         try {
@@ -52,28 +61,24 @@ class Attr extends BaseAttr
 
             $converter = $converters->lookup($attrType);
 
-            /* If there is a specific converter, use it. */
+            /** - If there is a specific converter for the attribute type or
+             *  one of its base types, use it. */
             if (isset($converter)) {
                 return $converter($this->value, $this);
             }
 
-            /* Otherwise, if the type is a list type, convert the value to a
-             * numerically-indexed array. */
+            /** - Otherwise, if the type is a list type, convert the value to
+             * a numerically-indexed array by splitting at whitespace. */
             if ($attrType instanceof ListType) {
                 $value = preg_split('/\s+/', $this->value);
 
                 $itemType = $attrType->getItemType();
                 $converter = $converters->lookup($itemType);
 
-                /* In particular, if the type is a list type and there is a
+                /** - However, if the type is a list type and there is a
                  * converter for the item type, replace the value by an
                  * associative array, mapping each item literal to its
                  * conversion result.
-                 *
-                 * @warning This implies that repeated items will silently be
-                 * dropped in this case. To model lists of items having a
-                 * converter with possible repetition, an explicit converter
-                 * for the list type is necessary.
                  */
                 if (isset($converter)) {
                     $convertedValue = [];
@@ -85,20 +90,22 @@ class Attr extends BaseAttr
                     return $convertedValue;
                 }
 
-                /* Otherwise, if the type is a list type and the items are
+                /** - Otherwise, if the type is a list type and the items are
                  * enumerators, replace the value by an associative array,
                  * mapping each item literal to its enumerator object.
                  *
-                 * @warning This implies that repeated enumerators will
-                 * silently be dropped. To model lists of enumerators with
+                 * @warning This implies that repeated items will silently be
+                 * dropped int he last two cases. To model such cases with
                  * possible repetition, an explicit converter for the list
                  * type is necessary.
-             */
+                 */
                 if ($itemType instanceof EnumerationTypeInterface) {
                     $convertedValue = [];
 
+                    $enumerators = $itemType->getEnumerators();
+
                     foreach ($value as $item) {
-                        $convertedValue[$item] = $itemType->getEnumerators()[$item];
+                        $convertedValue[$item] = $enumerators[$item];
                     }
 
                     return $convertedValue;
@@ -107,6 +114,8 @@ class Attr extends BaseAttr
                 return $value;
             }
 
+            /** If none of the above applies, fall back to
+             *  alcamo::dom::extended::Attr::createValue(). */
             return parent::createValue();
         } catch (\Throwable $e) {
             $e->name = $this->name;

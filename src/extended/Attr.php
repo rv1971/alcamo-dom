@@ -36,7 +36,7 @@ class Attr extends BaseAttr
         return $this->value_;
     }
 
-    /// @copybrief alcamo::dom::Attr::createValue()
+    /// Create a value for use in getValue()
     protected function createValue()
     {
         /** Convert values of attributes in the @ref

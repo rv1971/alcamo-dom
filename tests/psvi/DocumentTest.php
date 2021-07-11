@@ -94,7 +94,7 @@ class DocumentTest extends TestCase
         $this->expectExceptionMessage(
             "Failed to validate \"<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
             . "<...\" at " . $doc->documentURI
-            . ", line 9; no ID found for IDREF \"zz\""
+            . ", line 9; no ID found for IDREFS item \"zz\""
         );
 
         $doc->validateIdrefs();

@@ -45,7 +45,7 @@ class ComplexType extends AbstractXsdComponent implements TypeInterface
     }
 
     /**
-     * @brief Map of XName string to SimpleTypeInterface
+     * @brief Map of XName string to Attr
      *
      * When calling this method a second time, the result is taken from the
      * cache.

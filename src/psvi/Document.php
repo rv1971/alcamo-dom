@@ -5,13 +5,25 @@ namespace alcamo\dom\psvi;
 use alcamo\dom\{ConverterPool as CP, DocumentFactoryInterface, ValidationTrait};
 use alcamo\dom\extended\Document as BaseDocument;
 use alcamo\dom\schema\{Schema, TypeMap};
-use alcamo\dom\schema\component\SimpleTypeInterface;
 use alcamo\exception\DataValidationFailed;
 
+/**
+ * @namespace alcamo::dom::psvi
+ *
+ * @brief DOM classes that make the Post-Schema-Validation Infoset available
+ */
+
+/**
+ * @brief DOM class for %Documents that make the Post-Schema-Validation
+ * Infoset available
+ *
+ * @date Last reviewed 2021-07-11
+ */
 class Document extends BaseDocument
 {
     use ValidationTrait;
 
+    /// Map of XSD type XNames to conversion functions for attribute values
     public const ATTR_TYPE_MAP = [
         self::NSS['xh11d'] . ' CURIE'          => CP::class . '::curieToUri',
         self::NSS['xh11d'] . ' SafeCURIE'      => CP::class . '::safeCurieToUri',
@@ -32,6 +44,7 @@ class Document extends BaseDocument
         self::XSD_NS . ' QName'        => CP::class . '::toXName'
     ];
 
+    /// @copybrief alcamo::dom::Document::NODE_CLASSES
     public const NODE_CLASSES =
         [
             'DOMAttr'    => Attr::class,
@@ -39,14 +52,19 @@ class Document extends BaseDocument
         ]
         + parent::NODE_CLASSES;
 
-    private $schema_;         ///< Schema object.
+    public const IDREF_XNAME  = self::XSD_NS . ' IDREF';
+    public const IDREFS_XNAME = self::XSD_NS . ' IDREFS';
+
+    private $schema_;         ///< Schema
     private $attrConverters_; ///< TypeMap
 
+    /// @copybrief alcamo::dom::Document::getDocumentFactory()
     public function getDocumentFactory(): DocumentFactoryInterface
     {
         return new DocumentFactory();
     }
 
+    /// Schema obtained from `xsi:schemaLocation`
     public function getSchema(): Schema
     {
         if (!isset($this->schema_)) {
@@ -56,6 +74,7 @@ class Document extends BaseDocument
         return $this->schema_;
     }
 
+    /// Type map used to convert attribute values
     public function getAttrConverters(): TypeMap
     {
         if (!isset($this->attrConverters_)) {
@@ -68,35 +87,43 @@ class Document extends BaseDocument
         return $this->attrConverters_;
     }
 
+    /// Validate that IDREF[S] refer to existing IDs
     public function validateIdrefs()
     {
-        static $idrefName  = self::XSD_NS . ' IDREF';
-        static $idrefsName = self::XSD_NS . ' IDREFS';
-
+        /**
+         * @note This method may be expensive because it iterates over *all*
+         * attributes in the document.
+         */
         foreach ($this->query('//@*') as $attr) {
             switch ((string)$attr->getType()->getXName()) {
-                case $idrefsName:
-                    foreach ($attr->getValue() as $idref) {
-                        if (!isset($this[$idref])) {
-                            throw new DataValidationFailed(
-                                $this->saveXML(),
-                                $this->documentURI,
-                                $attr->getLineNo(),
-                                "; no ID found for IDREF \"$idref\""
-                            );
-                        }
-                    }
-
-                    break;
-
-                case $idrefName:
-                    if (!isset($this[(string)$attr])) {
+                case self::IDREF_XNAME:
+                    if (!isset($this[$attr->value])) {
+                        /** @throw alcamo::exception::DataValidationFailed
+                         *  when encountering an IDREF the refers to a
+                         *  non-existing ID. */
                         throw new DataValidationFailed(
                             $this->saveXML(),
                             $this->documentURI,
                             $attr->getLineNo(),
                             "; no ID found for IDREF \"$attr\""
                         );
+                    }
+
+                    break;
+
+                case self::IDREFS_XNAME:
+                    foreach ($attr->getValue() as $idref) {
+                        if (!isset($this[$idref])) {
+                            /** @throw alcamo::exception::DataValidationFailed
+                             *  when encountering an IDREFS the refers to a
+                             *  non-existing ID. */
+                            throw new DataValidationFailed(
+                                $this->saveXML(),
+                                $this->documentURI,
+                                $attr->getLineNo(),
+                                "; no ID found for IDREFS item \"$idref\""
+                            );
+                        }
                     }
 
                     break;

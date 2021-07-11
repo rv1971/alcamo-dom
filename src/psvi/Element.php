@@ -5,6 +5,13 @@ namespace alcamo\dom\psvi;
 use alcamo\dom\extended\Element as BaseElement;
 use alcamo\dom\schema\component\TypeInterface;
 
+/**
+ * @brief %Element class for use in DOMDocument::registerNodeClass()
+ *
+ * Provides getType() to retrieve the XSD type of this element.
+ *
+ * @date Last reviewed 2021-07-11
+ */
 class Element extends BaseElement
 {
     private $type_ = false;  ///< TypeInterface
@@ -12,13 +19,8 @@ class Element extends BaseElement
     public function getType(): TypeInterface
     {
         if ($this->type_ === false) {
-            $schema = $this->ownerDocument->getSchema();
-
-            $this->type_ = $schema->lookupElementType($this);
-
-            if (!isset($this->type_)) {
-                $this->type_ = $schema->getAnyType();
-            }
+            $this->type_ = $this->ownerDocument->getSchema()
+                ->lookupElementType($this);
         }
 
         return $this->type_;
