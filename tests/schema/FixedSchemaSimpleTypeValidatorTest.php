@@ -6,16 +6,16 @@ use PHPUnit\Framework\TestCase;
 use alcamo\ietf\Uri;
 use alcamo\xml\XName;
 
-class FixedXsdSimpleTypeValidatorTest extends TestCase
+class FixedSchemaSimpleTypeValidatorTest extends TestCase
 {
     public const XSD_NS = 'http://www.w3.org/2001/XMLSchema';
 
     public function testGetXsdText()
     {
-        $validator = new FixedXsdSimpleTypeValidator(
+        $validator = new FixedSchemaSimpleTypeValidator(
             [
-                'http://foo.example.org' => 'foo.xsd',
-                'http://bar.example.org' => 'bar.xsd'
+                [ 'http://foo.example.org', 'foo.xsd' ],
+                [ 'http://bar.example.org', 'bar.xsd' ]
             ]
         );
 
@@ -58,7 +58,7 @@ class FixedXsdSimpleTypeValidatorTest extends TestCase
 
     public function validateProvider()
     {
-        $validator = FixedXsdSimpleTypeValidator::newFromSchema(
+        $validator = FixedSchemaSimpleTypeValidator::newFromSchema(
             Schema::newFromUrls(
                 [
                     Uri::newFromFilesystemPath(

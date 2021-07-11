@@ -32,7 +32,7 @@ class TypeUriBasedSimpleTypeValidator extends AbstractSimpleTypeValidator
      */
     public function validate($valueTypeUriPairs): array
     {
-        $nsName2schemaLocation = [];
+        $nsNameSchemaLocationPairs = [];
 
         $valueTypeXNamePairs = [];
 
@@ -57,7 +57,7 @@ class TypeUriBasedSimpleTypeValidator extends AbstractSimpleTypeValidator
 
             $nsName = $xsd->documentElement->targetNamespace;
 
-            $nsName2schemaLocation[$nsName] = $url;
+            $nsNameSchemaLocationPairs[] = [ $nsName, $url ];
 
             $valueTypeXNamePairs[] =
                 [ $value, $xsd[$typeId]->getComponentXName() ];
@@ -65,7 +65,7 @@ class TypeUriBasedSimpleTypeValidator extends AbstractSimpleTypeValidator
 
         return self::validateAux(
             $valueTypeXNamePairs,
-            self::createXsdText($nsName2schemaLocation)
+            self::createXsdText($nsNameSchemaLocationPairs)
         );
     }
 }

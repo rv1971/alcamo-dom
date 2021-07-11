@@ -4,6 +4,12 @@ namespace alcamo\dom\schema;
 
 use alcamo\dom\Document;
 
+/**
+ * @brief Base for classes that validate data of some some XSD simple type
+ * against a schema.
+ *
+ * @date Last reviewed 2021-07-11
+ */
 abstract class AbstractSimpleTypeValidator
 {
     private const XSD_TEXT_1 = '<?xml version="1.0" encoding="UTF-8"?>'
@@ -27,22 +33,28 @@ abstract class AbstractSimpleTypeValidator
     private $nsDeclText_ = 'xmlns:xsi="' . Document::XSI_NS . '"';
 
     /**
-     * @param $nsName2schemaLocation iterable Map of NS names schema locations
+     * @brief Create XSD text suitable to validate a sequence of simple data
+     * items
+     *
+     * @param $nsNameSchemaLocationPairs Pairs of NS name and schema location
      */
-    public function createXsdText(iterable $nsName2schemaLocation)
+    public function createXsdText(iterable $nsNameSchemaLocationPairs): string
     {
         $xsdText = self::XSD_TEXT_1;
 
-        foreach ($nsName2schemaLocation as $nsName => $schemaLocation) {
+        foreach ($nsNameSchemaLocationPairs as $pair) {
             $xsdText .=
-                "<import namespace='$nsName' schemaLocation='$schemaLocation'/>";
+                "<import namespace='{$pair[0]}' schemaLocation='{$pair[1]}'/>";
         }
 
         return $xsdText .= self::XSD_TEXT_2;
     }
 
     /**
-     * @param $valueTypeXNamePairs iterable Nonempty list of pairs consisting
+     * @brief Create an instance document suitable for validation against the
+     * XSD created by createXsdText()
+     *
+     * @param $valueTypeXNamePairs Nonempty list of pairs consisting
      * of a value and the XName of a type.
      */
     public function createInstanceDoc(iterable $valueTypeXNamePairs): Document
@@ -76,6 +88,12 @@ abstract class AbstractSimpleTypeValidator
     }
 
     /**
+     * @brief Validate data against a schema
+     *
+     * @param $valueTypeXNamePairs Pairs of value and type XName
+     *
+     * @param $xsdText XSD document text to use for validation
+     *
      * @return Array mapping indexes of items in $valueTypeXNamePairs to
      * (potentially multi-line) error messages. Empty array if no errors
      * occurred.
