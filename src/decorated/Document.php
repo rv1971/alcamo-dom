@@ -7,7 +7,7 @@ use alcamo\dom\psvi\Document as BaseDocument;
 use alcamo\dom\schema\TypeMap;
 
 /**
- * @namespace alcamo::dom::decorator
+ * @namespace alcamo::dom::decorated
  *
  * @brief DOM classes providing element-type-specific element decorator
  * objects

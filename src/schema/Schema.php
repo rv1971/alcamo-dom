@@ -25,6 +25,12 @@ use alcamo\ietf\{Uri, UriNormalizer};
 use alcamo\xml\XName;
 
 /**
+ * @namespace alcamo::dom::schema
+ *
+ * @brief Classes to model an XML %Schema
+ */
+
+/**
  * @brief Complete XML Schema
  *
  * @warning `\<redefine>` is not supported.

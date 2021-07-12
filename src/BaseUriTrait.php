@@ -13,7 +13,7 @@ trait BaseUriTrait
         return isset($this->baseURI) ? new Uri($this->baseURI) : null;
     }
 
-    /// @copybrief BaseUriInterface::resolve()
+    /// @copybrief BaseUriInterface::resolveUri()
     public function resolveUri($uri): ?UriInterface
     {
         if (!($uri instanceof UriInterface)) {
