@@ -313,6 +313,17 @@ class Schema
     /**
      * @brief Return the type of a given element, if possible
      *
+     * @warning If no information was found, the return value is identical to
+     * that of getAnyType(), even when a type is explicitely given in
+     * `xsi:type`. Hence an `xsi:type` referring to an unknown type is not
+     * detected here. This is not an error because the only source of
+     * information evaluated by this class are XSDs typically given with
+     * `xsi:schemaLocation`, but [XML Schema Part 1: Structures Second
+     * Edition](https://www.w3.org/TR/2004/REC-xmlschema-1-20041028/structures.html#schema-loc)
+     * states that schema information may be obtained from sources other than
+     * that. So a document may be valid but the schema details may not be
+     * available for this class.
+     *
      * This method is the primary reason why the entire class was implemented.
      */
     public function lookupElementType(ExtElement $element): TypeInterface
@@ -324,7 +335,7 @@ class Schema
                     $element->getAttributeNS(Xsd::XSI_NS, 'type'),
                     $element
                 )
-            );
+            ) ?? $this->anyType_;
         }
 
         // look up global element, if there is one

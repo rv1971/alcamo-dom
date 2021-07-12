@@ -1034,6 +1034,12 @@ class SchemaTest extends TestCase
 
         $schema = Schema::newFromDocument($foo);
 
+        $corge = Document::newFromUrl(
+            'file://' . dirname(__DIR__) . '/corge.xml'
+        )->conserve();
+
+        $corgeSchema = Schema::newFromDocument($corge);
+
         return [
             'explicit' => [
                 $schema,
@@ -1064,6 +1070,12 @@ class SchemaTest extends TestCase
             'element-unknown' => [
                 $schema,
                 $foo['qux'],
+                'XMLSchema.xsd',
+                '/xs:schema/xs:complexType[29]'
+            ],
+            'explicit-type-no-schema' => [
+                $corgeSchema,
+                $corge->documentElement,
                 'XMLSchema.xsd',
                 '/xs:schema/xs:complexType[29]'
             ]
