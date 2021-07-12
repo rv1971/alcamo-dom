@@ -28,6 +28,8 @@ use alcamo\xml\XName;
  * @brief Complete XML Schema
  *
  * @warning `\<redefine>` is not supported.
+ *
+ * @date Last reviewed 2021-07-10
  */
 class Schema
 {

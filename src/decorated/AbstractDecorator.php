@@ -4,6 +4,11 @@ namespace alcamo\dom\decorated;
 
 use alcamo\decorator\DecoratorTrait;
 
+/**
+ * @brief Decorator for Element objects
+ *
+ * @date Last reviewed 2021-07-12
+ */
 abstract class AbstractDecorator implements
     \Countable,
     \IteratorAggregate,
