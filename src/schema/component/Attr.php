@@ -45,7 +45,8 @@ class Attr extends AbstractXsdComponent implements AttrInterface
 
                 case isset($this->xsdElement_->type):
                     $this->type_ = $this->schema_
-                        ->getGlobalType($this->xsdElement_->type);
+                        ->getGlobalType($this->xsdElement_->type)
+                        ?? $this->schema_->getAnySimpleType();
                     break;
 
                 case ($simpleTypeElement =
