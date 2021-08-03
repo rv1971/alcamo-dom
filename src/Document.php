@@ -396,8 +396,13 @@ class Document extends \DOMDocument implements
         libxml_use_internal_errors(true);
         libxml_clear_errors();
 
-        if (!$this->schemaValidateSource($xsdText, $libXmlOptions)) {
-            $this->processLibxmlErrors();
+        try {
+            if (!$this->schemaValidateSource($xsdText, $libXmlOptions)) {
+                $this->processLibxmlErrors();
+            }
+        } catch (\Throwable $e) {
+            $e->xsdText = $xsdText;
+            throw $e;
         }
 
         return $this;
