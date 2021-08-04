@@ -63,7 +63,7 @@ class Documents extends ReadonlyCollection
             $docs[$key] = $doc;
         }
 
-        return new self($docs);
+        return new static($docs);
     }
 
     /**
@@ -116,7 +116,7 @@ class Documents extends ReadonlyCollection
             $docs[$key] = $doc;
         }
 
-        return new self($docs);
+        return new static($docs);
     }
 
     /**
