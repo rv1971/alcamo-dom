@@ -19,7 +19,7 @@ class Element extends \DOMElement implements
     use BaseUriTrait;
 
     /// Return [textContent](https://www.php.net/manual/en/class.domnode#domnode.props.textcontent)
-    public function __toString()
+    public function __toString(): string
     {
         return $this->textContent;
     }

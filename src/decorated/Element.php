@@ -34,7 +34,7 @@ class Element extends BaseElement
     }
 
     /// Delegate method calls to the decorator object, if any
-    public function __call($name, $params)
+    public function __call(string $name, array $params)
     {
         /* Call a method in the decorator only if it exists. Otherwise the
          * decorator would look for it in the Element class, leading to an

@@ -16,7 +16,7 @@ class Attr extends \DOMAttr implements HasXNameInterface, BaseUriInterface
     use BaseUriTrait;
 
     /// Return attribute value
-    public function __toString()
+    public function __toString(): string
     {
         return $this->value;
     }

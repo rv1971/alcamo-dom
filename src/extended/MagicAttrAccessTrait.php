@@ -24,7 +24,7 @@ trait MagicAttrAccessTrait
 {
     private $attrCache_ = []; ///< Map of attributes to values
 
-    public function __isset($attrName)
+    public function __isset(string $attrName)
     {
         /* At first look in the cache. isset() is fast and works for all cases
          * where the attribute value is not `null`. To cover the latter as
@@ -59,7 +59,7 @@ trait MagicAttrAccessTrait
      *
      * When a second time, the result is taken from a cache.
      */
-    public function __get($attrName)
+    public function __get(string $attrName)
     {
         /* At first look in the cache just as in __isset(). */
         if (
