@@ -3,7 +3,7 @@
 namespace alcamo\dom\schema;
 
 use PHPUnit\Framework\TestCase;
-use alcamo\ietf\Uri;
+use alcamo\ietf\UriFactory;
 use alcamo\xml\XName;
 
 class FixedSchemaSimpleTypeValidatorTest extends TestCase
@@ -61,7 +61,7 @@ class FixedSchemaSimpleTypeValidatorTest extends TestCase
         $validator = FixedSchemaSimpleTypeValidator::newFromSchema(
             Schema::newFromUrls(
                 [
-                    Uri::newFromFilesystemPath(
+                    (new UriFactory())->createFromFilesystemPath(
                         dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR
                         . 'xsd' . DIRECTORY_SEPARATOR . 'XMLSchema.xsd'
                     )
