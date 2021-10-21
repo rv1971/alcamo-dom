@@ -101,11 +101,13 @@ class Document extends BaseDocument
                         /** @throw alcamo::exception::DataValidationFailed
                          *  when encountering an IDREF the refers to a
                          *  non-existing ID. */
-                        throw new DataValidationFailed(
-                            $this->saveXML(),
-                            $this->documentURI,
-                            $attr->getLineNo(),
-                            "; no ID found for IDREF \"$attr\""
+                        throw (new DataValidationFailed())->setMessageContext(
+                            [
+                                'inData' => $this->saveXML(),
+                                'atUri' => $this->documentURI,
+                                'atLine' => $attr->getLineNo(),
+                                'extraMessage' => "no ID found for IDREF \"$attr\""
+                            ]
                         );
                     }
 
@@ -117,12 +119,15 @@ class Document extends BaseDocument
                             /** @throw alcamo::exception::DataValidationFailed
                              *  when encountering an IDREFS the refers to a
                              *  non-existing ID. */
-                            throw new DataValidationFailed(
-                                $this->saveXML(),
-                                $this->documentURI,
-                                $attr->getLineNo(),
-                                "; no ID found for IDREFS item \"$idref\""
-                            );
+                            throw (new DataValidationFailed())
+                                ->setMessageContext(
+                                    [
+                                        'inData' => $this->saveXML(),
+                                        'atUri' => $this->documentURI,
+                                        'atLine' => $attr->getLineNo(),
+                                        'extraMessage' => "no ID found for IDREFS item \"$idref\""
+                                    ]
+                                );
                         }
                     }
 

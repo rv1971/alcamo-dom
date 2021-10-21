@@ -206,7 +206,7 @@ class TypeMapTest extends TestCase
 
         $this->expectException(Locked::class);
         $this->expectExceptionMessage(
-            'Attempt to modify locked ' . TypeMap::class
+            'Attempt to modify locked object <' . TypeMap::class . '>'
         );
 
         $map->addItems([]);
@@ -296,7 +296,7 @@ class TypeMapTest extends TestCase
 
         $this->expectException(Locked::class);
         $this->expectExceptionMessage(
-            'Attempt to modify locked ' . TypeMap::class
+            'Attempt to modify locked object <' . TypeMap::class . '>'
         );
 
         $map->replaceItems([]);

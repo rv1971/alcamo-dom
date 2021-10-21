@@ -6,7 +6,7 @@ use GuzzleHttp\Psr7\UriResolver;
 use PHPUnit\Framework\TestCase;
 use alcamo\dom\xsd\Document as Xsd;
 use alcamo\dom\psvi\Document as PsviDocument;
-use alcamo\exception\{AbsoluteUriNeeded, Locked};
+use alcamo\exception\{AbsoluteUriNeeded, ReadonlyViolation};
 use alcamo\ietf\Uri;
 
 class DocumentFactoryTest extends TestCase
@@ -138,7 +138,7 @@ class DocumentFactoryTest extends TestCase
 
         $this->expectException(AbsoluteUriNeeded::class);
         $this->expectExceptionMessage(
-            'Relative URI "'
+            'Relative URI <alcamo\ietf\Uri>"'
             . __DIR__ . DIRECTORY_SEPARATOR
             . 'bar.xml" given where absolute URI is needed'
         );
@@ -164,9 +164,11 @@ class DocumentFactoryTest extends TestCase
 
         DocumentFactory::addToCache($bar1);
 
-        $this->expectException(Locked::class);
+        $this->expectException(ReadonlyViolation::class);
         $this->expectExceptionMessage(
-            "Attempt to replace cache entry \"$barUrl\" with a different document"
+            'Attempt to modify readonly object '
+            . '"alcamo\dom\DocumentFactory cache"; '
+            . 'attempt to replace cache entry "file:...'
         );
 
         DocumentFactory::addToCache($bar2);

@@ -126,7 +126,7 @@ class DocumentTest extends TestCase
 
         $this->expectException(Uninitialized::class);
         $this->expectExceptionMessage(
-            'Attempt to access uninitialized ' . Document::class
+            'Attempt to access uninitialized object <' . Document::class . '>'
         );
 
         $doc->getXPath();
@@ -138,7 +138,7 @@ class DocumentTest extends TestCase
 
         $this->expectException(Uninitialized::class);
         $this->expectExceptionMessage(
-            'Attempt to access uninitialized ' . Document::class
+            'Attempt to access uninitialized object <' . Document::class . '>'
         );
 
         $doc->getXsltProcessor();

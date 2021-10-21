@@ -4,7 +4,7 @@ namespace alcamo\dom;
 
 use alcamo\ietf\Uri;
 use alcamo\dom\xsd\Document as Xsd;
-use alcamo\exception\{AbsoluteUriNeeded, Locked};
+use alcamo\exception\{AbsoluteUriNeeded, InvalidType, ReadonlyViolation};
 use GuzzleHttp\Psr7\{UriNormalizer, UriResolver};
 use Psr\Http\Message\UriInterface;
 
@@ -36,7 +36,8 @@ class DocumentFactory implements DocumentFactoryInterface
         if (!Uri::isAbsolute($url)) {
             /** @throw alcamo::exception::AbsoluteUriNeeded when attempting to
              * cache a document with a non-absolute URL. */
-            throw new AbsoluteUriNeeded($doc->documentURI);
+            throw (new AbsoluteUriNeeded())
+                ->setMessageContext([ 'uri' => $doc->documentURI ]);
         }
 
         // normalize URL for use in caching
@@ -46,10 +47,13 @@ class DocumentFactory implements DocumentFactoryInterface
             if (self::$cache_[$doc->documentURI] !== $doc) {
                 /** @throw alcamo::exception::Locked when attempting to
                  * replace a cache entry with a different document. */
-                throw new Locked(
-                    $doc,
-                    "Attempt to replace cache entry \"{$doc->documentURI}\" "
-                    . "with a different document"
+                throw (new ReadonlyViolation())->setMessageContext(
+                    [
+                        'object' => self::class . ' cache',
+                        'extraMessage' => 'attempt to replace cache entry '
+                        . "\"{$doc->documentURI}\" "
+                        . 'by a different document'
+                    ]
                 );
             }
         } else {
@@ -110,7 +114,8 @@ class DocumentFactory implements DocumentFactoryInterface
                     /** @throw alcamo::exception::AbsoluteUriNeeded when
                      * attempting to cache a document with a non-absolute
                      * URL. */
-                    throw new AbsoluteUriNeeded($url);
+                    throw (new AbsoluteUriNeeded())
+                        ->setMessageContext([ 'uri' => $url ]);
                 }
             } else {
                 $useCache = Uri::isAbsolute($url);
@@ -124,18 +129,17 @@ class DocumentFactory implements DocumentFactoryInterface
                     $doc = self::$cache_[$url];
 
                     if (isset($class) && !($doc instanceof $class)) {
-                        /** @throw alcamo::exception::TypeError when cached
+                        /** @throw alcamo::exception::InvalidType when cached
                          *  document is not an instance of the
                          *  requested class. */
 
-                        $exception = new \TypeError(
-                            "cached document for $url is " . get_class($doc)
-                            . " while requesting $class"
+                        throw (new InvalidType())->setMessageContext(
+                            [
+                                'value' => $doc,
+                                'expectedOneOf' => [ $class ],
+                                'atUri' => $url
+                            ]
                         );
-
-                        $exception->object = $doc;
-
-                        throw $exception;
                     }
 
                     return $doc;

@@ -5,9 +5,10 @@
     "license": "Apache-2.0",
     "require": {
         "php": "7.3 - 8.0",
-        "alcamo/binary-data": "^0.3",
-        "alcamo/core": "^0.3",
-        "alcamo/xpointer": "^0.3"
+        "alcamo/binary-data": "^0.4",
+        "alcamo/core": "^0.4",
+        "alcamo/exception": "^0.1",
+        "alcamo/xpointer": "^0.4"
     },
     "autoload": {
 	"psr-4": {

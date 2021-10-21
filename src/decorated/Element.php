@@ -47,7 +47,12 @@ class Element extends BaseElement
         } else {
             /** @throw alcamo::exception::MethodNotFound if the method does
              *  not exist in the decorator object. */
-            throw new MethodNotFound($this->getDecorator(), $name);
+            throw (new MethodNotFound())->setMessageContext(
+                [
+                    'object' => $this->getDecorator(),
+                    'method' => $name
+                ]
+            );
         }
     }
 }

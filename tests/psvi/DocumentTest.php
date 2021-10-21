@@ -75,11 +75,7 @@ class DocumentTest extends TestCase
         );
 
         $this->expectException(DataValidationFailed::class);
-        $this->expectExceptionMessage(
-            "Failed to validate \"<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
-            . "<...\" at " . $doc->documentURI
-            . ", line 8; no ID found for IDREF \"z\""
-        );
+        $this->expectExceptionMessage('; no ID found for IDREF "z"');
 
         $doc->validateIdrefs();
     }
@@ -91,11 +87,7 @@ class DocumentTest extends TestCase
         );
 
         $this->expectException(DataValidationFailed::class);
-        $this->expectExceptionMessage(
-            "Failed to validate \"<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
-            . "<...\" at " . $doc->documentURI
-            . ", line 9; no ID found for IDREFS item \"zz\""
-        );
+        $this->expectExceptionMessage('; no ID found for IDREFS item "zz"');
 
         $doc->validateIdrefs();
     }

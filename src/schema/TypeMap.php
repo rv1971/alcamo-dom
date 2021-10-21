@@ -80,7 +80,7 @@ class TypeMap
         if ($this->isLocked_) {
             /** @throw alcamo::exception::Locked when attempting to modify a
              *  map to which entries have already been added. */
-            throw new Locked($this);
+            throw new Locked();
         }
 
         $this->map_ = $this->map_ + $map;
@@ -92,7 +92,7 @@ class TypeMap
         if ($this->isLocked_) {
             /** @throw alcamo::exception::Locked when attempting to modify a
              *  map to which entries have already been added. */
-            throw new Locked($this);
+            throw new Locked();
         }
 
         $this->map_ = $map + $this->map_;

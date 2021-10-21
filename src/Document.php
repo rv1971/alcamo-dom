@@ -157,17 +157,13 @@ class Document extends \DOMDocument implements
                 /** @throw alcamo::exception::FileLoadFailed if
                  *  [DOMDocument::load()](https://www.php.net/manual/en/domdocument.load)
                  *  fails. */
-                throw new FileLoadFailed($url);
+                throw (new FileLoadFailed())
+                    ->setMessageContext([ 'filename' => $url ]);
             }
         } catch (\ErrorException $e) {
             /** @throw alcamo::exception::FileLoadFailed if any libxml warning
              *  or error occurs. */
-            throw new FileLoadFailed(
-                $url,
-                "; {$e->getMessage()}",
-                $e->getCode(),
-                $e
-            );
+            throw FileLoadFailed::newFromPrevious($e, [ 'filename' => $url ]);
         }
 
         /** After loading, run the afterLoad() hook. */
@@ -193,18 +189,13 @@ class Document extends \DOMDocument implements
                 /** @throw alcamo::exception::SyntaxError if
                  *  [DOMDocument::loadXML()](https://www.php.net/manual/en/domdocument.loadxml)
                  *  fails. */
-                throw new SyntaxError($xml);
+                throw (new SyntaxError())
+                    ->setMessageContext([ 'inData' => $xml ]);
             }
         } catch (\ErrorException $e) {
             /** @throw alcamo::exception::SyntaxError if any libxml warning or
              *  error occurs. */
-            throw new SyntaxError(
-                $xml,
-                null,
-                "; {$e->getMessage()}",
-                $e->getCode(),
-                $e
-            );
+            throw SyntaxError::newFromPrevious($e, [ 'inData' => $xml ]);
         }
 
         /** After loading, run the afterLoad() hook. */
@@ -249,7 +240,7 @@ class Document extends \DOMDocument implements
             if (!$this->documentElement) {
                 /** @throw alcamo::exception::Uninitialized if called on an
                  *  empty document. */
-                throw new Uninitialized($this);
+                throw new Uninitialized();
             }
 
             $this->xPath_ = new XPath($this);
@@ -286,7 +277,7 @@ class Document extends \DOMDocument implements
             if (!$this->documentElement) {
                 /** @throw alcamo::exception::Uninitialized if called on an
                  *  empty document. */
-                throw new Uninitialized($this);
+                throw new Uninitialized();
             }
 
             $pi = $this->query('/processing-instruction("xml-stylesheet")')[0];
@@ -489,10 +480,12 @@ class Document extends \DOMDocument implements
 
         /** @throw alcamo::exception::DataValidationFailed when
          *  encountering validation errors. */
-        throw new DataValidationFailed(
-            $this->saveXML(),
-            $this->documentURI,
-            '; ' . implode('', $messages)
+        throw (new DataValidationFailed())->setMessageContext(
+            [
+                'inData' => $this->saveXML(),
+                'atUri' => $this->documentURI,
+                'extraMessage' => implode('', $messages)
+            ]
         );
     }
 }

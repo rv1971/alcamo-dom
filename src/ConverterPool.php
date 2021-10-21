@@ -73,11 +73,13 @@ class ConverterPool
         } else {
             /** @throw alcamo::exception::OutOfRange if $value is too large to
              *  be represented as an integer. */
-            throw new OutOfRange(
-                $value,
-                0,
-                PHP_INT_MAX,
-                '; unable to convert to integer'
+            throw (new OutOfRange())->setMessageContext(
+                [
+                    'value' => $value,
+                    'lowerBound' => PHP_INT_MIN,
+                    'upperBound' => PHP_INT_MAX,
+                    'extraMessage' => 'unable to convert to integer'
+                ]
             );
         }
     }

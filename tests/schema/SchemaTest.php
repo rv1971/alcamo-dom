@@ -175,9 +175,6 @@ class SchemaTest extends TestCase
             . 'xsd' . DIRECTORY_SEPARATOR . 'XMLSchema.xsd';
 
         $this->expectException(AbsoluteUriNeeded::class);
-        $this->expectExceptionMessage(
-            "Relative URI \"$path\" given where absolute URI is needed"
-        );
 
         Schema::newFromXsds([ Xsd::newFromUrl($path) ]);
     }

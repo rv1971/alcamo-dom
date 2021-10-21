@@ -51,8 +51,12 @@ class ShallowDocument extends Document
         ) {
             /** @throw alcamo::exception::SyntaxError if no complete opening
              *  tag is found. */
-            throw new
-                SyntaxError($xml, null, '; no complete opening tag found');
+            throw (new SyntaxError())->setMessageContext(
+                [
+                    'inData' => $xml,
+                    'extraMessage' => 'no complete opening tag found'
+                ]
+            );
         }
 
         $bracketPos = $matches[0][1] + strlen($matches[0][0]) - 1;

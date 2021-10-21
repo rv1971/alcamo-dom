@@ -51,7 +51,9 @@ class TypeUriBasedSimpleTypeValidator extends AbstractSimpleTypeValidator
             if (strpos($typeId, '(') !== false) {
                 /** @throw alcamo::exception::Unsupported when attempting to
                  *  use a pointer that is not an id. */
-                throw new Unsupported('Non-id pointers to XSD types');
+                throw (new Unsupported())->setMessageContext(
+                    [ 'feature' => 'Non-id pointers to XSD types' ]
+                );
             }
 
             $url = new Uri($schemaLocation);

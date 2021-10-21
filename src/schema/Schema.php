@@ -117,7 +117,8 @@ class Schema
             if (!Uri::isAbsolute($url)) {
                 /** @throw AbsoluteUriNeeded when attempting to use a
                  * non-absolute URL as a cache key. */
-                throw new AbsoluteUriNeeded($xsd->documentURI);
+                throw (new AbsoluteUriNeeded())
+                    ->setMessageContext(['uri' => $xsd->documentURI ]);
             }
 
             // normalize URL for use by caching
