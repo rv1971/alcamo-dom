@@ -48,12 +48,12 @@ class ElementTest extends TestCase
         $doc = Document::newFromUrl(__DIR__ . DIRECTORY_SEPARATOR . 'foo.xml');
 
         $this->assertSame(
-            $doc->documentURI . '#line=27',
+            $doc->documentURI . '#line=26,27',
             $doc['a']->getRfc5147Uri()
         );
 
         $this->assertSame(
-            $doc->documentURI . '#line=50',
+            $doc->documentURI . '#line=49,50',
             $doc['xpointer2']->getAttributeNode('content')->getRfc5147Uri()
         );
     }

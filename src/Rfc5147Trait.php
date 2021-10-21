@@ -23,7 +23,8 @@ trait Rfc5147Trait
     /// Return RFC 5147 `line=` fragment identifier
     public function getRfc5147Fragment(): string
     {
-        return "line={$this->getLineNo()}";
+        $lineNo = $this->getLineNo();
+        return 'line=' . ($lineNo - 1) . ',' . $lineNo;
     }
 
     /// Return URI with RFC 5147 `line=` fragment identifier
