@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?xml-stylesheet href="xsl/xsd.xsl" type="text/xsl"?>
-
 <xsd:schema
     xmlns="http://www.w3.org/2000/01/rdf-schema#"
     xmlns:dc="http://purl.org/dc/terms/"
@@ -11,7 +9,7 @@
     dc:title="Selected RDFS types, attributes and elements"
     dc:creator="RV1971 &lt;rv1971@web.de&gt;"
     dc:created="2017-01-01"
-    dc:modified="2020-02-17"
+    dc:modified="2021-11-19"
     xml:lang="en">
   <xsd:annotation>
     <xsd:documentation xmlns="http://www.w3.org/1999/xhtml">

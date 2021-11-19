@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xsd:schema
+    xmlns="http://www.w3.org/2002/07/owl#"
+    xmlns:dc="http://purl.org/dc/terms/"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://www.w3.org/2002/07/owl#"
+    dc:title="Selected OWL types and attributes"
+    dc:creator="RV1971 &lt;rv1971@web.de&gt;"
+    dc:created="2016-10-19"
+    dc:modified="2021-11-19"
+    xml:lang="en">
+  <xsd:annotation>
+    <xsd:documentation>
+      <p>Declarations of selected <a
+      href="http://www.w3.org/2002/07/owl#">OWL Web Ontology
+      Language</a> related attributes and types.</p>
+    </xsd:documentation>
+  </xsd:annotation>
+
+  <xsd:import
+      namespace="http://www.w3.org/2000/01/rdf-schema#"
+      schemaLocation="rdfs.xsd"/>
+
+  <xsd:import
+      namespace="http://www.w3.org/2001/XMLSchema"
+      schemaLocation="XMLSchema.xsd"/>
+
+  <xsd:attribute name="sameAs" type="xsd:anyURI"/>
+
+  <xsd:attribute name="versionInfo" type="xsd:string" rdfs:label="Version"/>
+</xsd:schema>

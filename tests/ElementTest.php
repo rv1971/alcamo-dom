@@ -48,13 +48,25 @@ class ElementTest extends TestCase
         $doc = Document::newFromUrl(__DIR__ . DIRECTORY_SEPARATOR . 'foo.xml');
 
         $this->assertSame(
-            $doc->documentURI . '#line=26,27',
+            $doc->documentURI . '#line=27,28',
             $doc['a']->getRfc5147Uri()
         );
 
         $this->assertSame(
-            $doc->documentURI . '#line=49,50',
+            $doc->documentURI . '#line=50,51',
             $doc['xpointer2']->getAttributeNode('content')->getRfc5147Uri()
+        );
+    }
+
+    public function testGetSameAs()
+    {
+        $doc = Document::newFromUrl(__DIR__ . DIRECTORY_SEPARATOR . 'foo.xml');
+
+        $this->assertSame(
+            'c',
+            $doc->documentElement
+                ->getSameAs("http://foo.example.org/'bar'/#c")[0]
+                ->getAttribute('xml:id')
         );
     }
 }

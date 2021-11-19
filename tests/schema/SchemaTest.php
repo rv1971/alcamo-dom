@@ -106,6 +106,7 @@ class SchemaTest extends TestCase
             'foo2.xsd',
             'foo2a.xsd',
             'xhtml-datatypes-1.xsd',
+            'owl.xsd',
             'dc.xsd'
         ];
 
@@ -158,6 +159,7 @@ class SchemaTest extends TestCase
             'foo2a.xsd',
             'rdfs.xsd',
             'xhtml-datatypes-1.xsd',
+            'owl.xsd',
             'dc.xsd'
         ];
 

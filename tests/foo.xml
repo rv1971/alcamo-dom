@@ -7,6 +7,7 @@
 <foo
     xmlns="http://foo.example.org"
     xmlns:dc="http://purl.org/dc/terms/"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -26,7 +27,7 @@
   <bar xsi:type="Bar" xml:id="x">
     <baz xml:id="a">At eos</baz>
     <baz xml:id="b">vero</baz>
-    <baz xml:id="c"/>
+    <baz xml:id="c" owl:sameAs="http://foo.example.org/'bar'/#c"/>
     <baz xml:id="d"/>
     <baz xml:id="datetime" content="2021-02-16T18:04:03.123+00:00"/>
     <baz xml:id="duration" content="PT5M"/>

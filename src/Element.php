@@ -41,4 +41,19 @@ class Element extends \DOMElement implements
     {
         return $this->ownerDocument->getXPath()->evaluate($expr, $this);
     }
+
+    /**
+     * @brief Return all subnodes having an `owl:sameAs` attribute with value
+     * $uri
+     *
+     * This may include the context node itself.
+     */
+    public function getSameAs(string $uri): \DOMNodeList
+    {
+        return $this->query(
+            "descendant-or-self::*[@owl:sameAs = \""
+            . htmlspecialchars($uri, ENT_XML1)
+            . "\"]"
+        );
+    }
 }
