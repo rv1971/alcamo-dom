@@ -68,5 +68,12 @@ class ElementTest extends TestCase
                 ->getSameAs("http://foo.example.org/'bar'/#c")[0]
                 ->getAttribute('xml:id')
         );
+
+        $this->assertSame(
+            'c',
+            $doc->getElementById('c')
+                ->getSameAs("http://foo.example.org/'bar'/#c")[0]
+                ->getAttribute('xml:id')
+        );
     }
 }
