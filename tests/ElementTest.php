@@ -4,6 +4,8 @@ namespace alcamo\dom;
 
 use PHPUnit\Framework\TestCase;
 
+use alcamo\exception\AbsoluteUriNeeded;
+
 class ElementTest extends TestCase
 {
     public function testIteration()
@@ -53,7 +55,7 @@ class ElementTest extends TestCase
         );
 
         $this->assertSame(
-            $doc->documentURI . '#line=50,51',
+            $doc->documentURI . '#line=52,53',
             $doc['xpointer2']->getAttributeNode('content')->getRfc5147Uri()
         );
     }
@@ -65,15 +67,30 @@ class ElementTest extends TestCase
         $this->assertSame(
             'c',
             $doc->documentElement
-                ->getSameAs("http://foo.example.org/'bar'/#c")[0]
+                ->getFirstSameAs("http://baz.example.org/'bar'/#c")
                 ->getAttribute('xml:id')
         );
 
         $this->assertSame(
             'c',
             $doc->getElementById('c')
-                ->getSameAs("http://foo.example.org/'bar'/#c")[0]
+                ->getFirstSameAs("http://baz.example.org/'bar'/#c")
                 ->getAttribute('xml:id')
         );
+
+        $this->assertNull(
+            $doc->documentElement
+                ->getFirstSameAs("http://foo.example.org/'bar'/#c")
+        );
+
+        $relUri = "baz.xml#c";
+
+        $this->expectException(AbsoluteUriNeeded::class);
+        $this->expectExceptionMessage(
+            "Relative URI <GuzzleHttp\Psr7\Uri>\"$relUri\" "
+            . "given where absolute URI is needed"
+        );
+
+        $doc->documentElement->getFirstSameAs($relUri);
     }
 }

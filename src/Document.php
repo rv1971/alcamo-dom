@@ -53,6 +53,9 @@ class Document extends \DOMDocument implements
     /// Dublin core namespace
     public const DC_NS = self::NSS['dc'];
 
+    /// OWL Web Ontology Language namespace
+    public const OWL_NS = self::NSS['owl'];
+
     /// XML namespace
     public const XML_NS = self::NSS['xml'];
 

@@ -27,7 +27,9 @@
   <bar xsi:type="Bar" xml:id="x">
     <baz xml:id="a">At eos</baz>
     <baz xml:id="b">vero</baz>
-    <baz xml:id="c" owl:sameAs="http://foo.example.org/'bar'/#c"/>
+    <baz xml:id="c"
+         xml:base="http://baz.example.org"
+         owl:sameAs="'bar'/#c"/>
     <baz xml:id="d"/>
     <baz xml:id="datetime" content="2021-02-16T18:04:03.123+00:00"/>
     <baz xml:id="duration" content="PT5M"/>

@@ -2,7 +2,10 @@
 
 namespace alcamo\dom;
 
+use alcamo\exception\AbsoluteUriNeeded;
 use alcamo\xml\HasXNameInterface;
+use GuzzleHttp\Psr7\{Uri, UriNormalizer};
+use Psr\Http\Message\UriInterface;
 
 /**
  * @brief Element class for use in DOMDocument::registerNodeClass()
@@ -43,17 +46,46 @@ class Element extends \DOMElement implements
     }
 
     /**
-     * @brief Return all subnodes having an `owl:sameAs` attribute with value
-     * $uri
+     * @brief Return the first node having an equivalent `owl:sameAs`
+     * attribute
      *
-     * This may include the context node itself.
+     * This may be the context node itself. Return `null` if no such node is
+     * found.
+     *
+     * For comparison, the values of `owl:sameAs` attributes are resolved to
+     * absolute URIs and compared literally.
      */
-    public function getSameAs(string $uri): \DOMNodeList
-    {
-        return $this->query(
-            "descendant-or-self::*[@owl:sameAs = \""
-            . htmlspecialchars($uri, ENT_XML1)
-            . "\"]"
-        );
+    public function getFirstSameAs(
+        $uri,
+        $normalizations = UriNormalizer::PRESERVING_NORMALIZATIONS
+    ): ?self {
+        if (!($uri instanceof UriInterface)) {
+            $uri = new Uri($uri);
+        }
+
+        if (!Uri::isAbsolute($uri)) {
+            /** @throw alcamo::exception::AbsoluteUriNeeded if $uri does not
+             *  represent an absolut URI. */
+            throw (new AbsoluteUriNeeded())
+                ->setMessageContext([ 'uri' => $uri ]);
+        }
+
+        $uri = (string)UriNormalizer::normalize($uri, $normalizations);
+
+        foreach ($this->query('descendant-or-self::*[@owl:sameAs]') as $node) {
+            if (
+                UriNormalizer::normalize(
+                    $node->resolveUri(
+                        $node->getAttributeNS(Document::OWL_NS, 'sameAs')
+                    ),
+                    $normalizations
+                )
+                == $uri
+            ) {
+                return $node;
+            }
+        }
+
+        return null;
     }
 }
