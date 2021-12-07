@@ -168,7 +168,7 @@ class DocumentFactoryTest extends TestCase
         $this->expectExceptionMessage(
             'Attempt to modify readonly object '
             . '"alcamo\dom\DocumentFactory cache"; '
-            . 'attempt to replace cache entry "file:...'
+            . 'attempt to replace cache entry "file:///'
         );
 
         DocumentFactory::addToCache($bar2);

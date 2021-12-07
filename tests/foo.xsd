@@ -138,6 +138,7 @@
             <xsd:complexType>
               <xsd:simpleContent>
                 <xsd:extension base="xsd:string">
+                  <xsd:attribute ref="xml:base"/>
                   <xsd:attribute ref="xml:id"/>
                   <xsd:attribute ref="owl:sameAs"/>
                   <xsd:attribute name="content"/>

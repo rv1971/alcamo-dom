@@ -25,7 +25,11 @@
     qux:qux="123">
   <rdfs:comment>Lorem ipsum</rdfs:comment>
   <bar xsi:type="Bar" xml:id="x">
+    <!-- comment for test of GetPositionTrait -->
+    <!-- comment for test of GetPositionTrait -->
+    <!-- comment for test of GetPositionTrait -->
     <baz xml:id="a">At eos</baz>
+    <!-- comment for test of GetPositionTrait -->
     <baz xml:id="b">vero</baz>
     <baz xml:id="c"
          xml:base="http://baz.example.org"

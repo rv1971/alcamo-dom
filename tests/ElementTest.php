@@ -2,9 +2,8 @@
 
 namespace alcamo\dom;
 
-use PHPUnit\Framework\TestCase;
-
 use alcamo\exception\AbsoluteUriNeeded;
+use PHPUnit\Framework\TestCase;
 
 class ElementTest extends TestCase
 {
@@ -50,12 +49,12 @@ class ElementTest extends TestCase
         $doc = Document::newFromUrl(__DIR__ . DIRECTORY_SEPARATOR . 'foo.xml');
 
         $this->assertSame(
-            $doc->documentURI . '#line=27,28',
+            $doc->documentURI . '#line=30,31',
             $doc['a']->getRfc5147Uri()
         );
 
         $this->assertSame(
-            $doc->documentURI . '#line=52,53',
+            $doc->documentURI . '#line=56,57',
             $doc['xpointer2']->getAttributeNode('content')->getRfc5147Uri()
         );
     }
