@@ -84,6 +84,18 @@ class ConverterPool
         }
     }
 
+    /// Split at whitespace, return set of integers
+    public static function toIntSet($value): Set
+    {
+        $result = new Set();
+
+        foreach (preg_split('/\s+/', $value) as $item) {
+            $result->add((int)$item);
+        }
+
+        return $result;
+    }
+
     /// Call alcamo::ietf::Lang::newFromString()
     public static function toLang($value): Lang
     {

@@ -24,6 +24,7 @@ class ConverterPoolTest extends TestCase
         switch ($converter) {
             case 'toDateTime':
             case 'toDuration':
+            case 'toIntSet':
             case 'toLang':
             case 'toMediaType':
             case 'toNonNegativeRange':
@@ -106,6 +107,11 @@ class ConverterPoolTest extends TestCase
                 $doc->documentElement->getAttributeNode('barbaz'),
                 'toInt',
                 42
+            ],
+            'intset' => [
+                $doc['intset']->getAttributeNode('content'),
+                'toIntSet',
+                new Set([ 42, -42, 0, 7, 5 ])
             ],
             'lang' => [
                 $doc['lang']->getAttributeNode('content'),

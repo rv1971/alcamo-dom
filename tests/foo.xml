@@ -38,6 +38,7 @@
     <baz xml:id="datetime" content="2021-02-16T18:04:03.123+00:00"/>
     <baz xml:id="duration" content="PT5M"/>
     <baz xml:id="float" content="3.141"/>
+    <baz xml:id="intset" content="42 -42 0 7 5"/>
     <baz xml:id="lang" content="yo-NG"/>
     <baz xml:id="media-type" content="application/json"/>
     <baz xml:id="longint" content="123456789012345678901234567890"/>
