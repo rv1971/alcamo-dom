@@ -16,6 +16,27 @@ class ComplexTypeTest extends TestCase
     public const FOO_NS = 'http://foo.example.org';
     public const FOO2_NS = 'http://foo2.example.org';
 
+    public function testGetUri()
+    {
+        $fooSchema = Schema::newFromDocument(
+            Document::newFromUrl(
+                'file://' . dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR
+                . 'foo.xml'
+            )
+        );
+
+        $this->assertSame(
+            'file://' . dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR
+            . 'foo.xsd#Bar',
+            (string)$fooSchema->getGlobalType(self::FOO_NS . ' Bar')->getUri()
+        );
+
+        // no id attribute in XSD
+        $this->assertNull(
+            $fooSchema->getGlobalType(self::FOO_NS . ' AbstractBar')->getUri()
+        );
+    }
+
     /**
      * @dataProvider getAttrsProvider
      */
@@ -35,7 +56,7 @@ class ComplexTypeTest extends TestCase
     {
         $fooSchema = Schema::newFromDocument(
             Document::newFromUrl(
-                'file:///' . dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR
+                'file://' . dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR
                 . 'foo.xml'
             )
         );
@@ -224,7 +245,7 @@ class ComplexTypeTest extends TestCase
     {
         $fooSchema = Schema::newFromDocument(
             Document::newFromUrl(
-                'file:///' . dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR
+                'file://' . dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR
                 . 'foo.xml'
             )
         );

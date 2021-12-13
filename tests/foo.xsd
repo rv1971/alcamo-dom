@@ -130,7 +130,7 @@
 
   <xsd:complexType name="AbstractBar" abstract="true"/>
 
-  <xsd:complexType name="Bar">
+  <xsd:complexType name="Bar" id="Bar">
     <xsd:complexContent>
       <xsd:extension base="AbstractBar">
         <xsd:sequence>

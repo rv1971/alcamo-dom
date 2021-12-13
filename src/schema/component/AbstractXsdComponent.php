@@ -4,6 +4,7 @@ namespace alcamo\dom\schema\component;
 
 use alcamo\dom\schema\Schema;
 use alcamo\dom\xsd\Element as XsdElement;
+use Psr\Http\Message\UriInterface;
 use alcamo\xml\XName;
 
 /**
@@ -32,5 +33,21 @@ abstract class AbstractXsdComponent extends AbstractComponent
     public function getXName(): ?XName
     {
         return $this->xsdElement_->getComponentXName();
+    }
+
+    /**
+     * @brief URL that allows to access to definition
+     *
+     * Can be used to refer to an XSD type as explaind in [Using the id
+     * Attribute](https://www.w3.org/TR/swbp-xsch-datatypes/#sec-id-attr).
+     */
+    public function getUri(): ?UriInterface
+    {
+        if (isset($this->xsdElement_->id)) {
+            return $this->xsdElement_->ownerDocument->getBaseUri()
+                ->withFragment($this->xsdElement_->id);
+        } else {
+            return null;
+        }
     }
 }
