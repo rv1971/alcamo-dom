@@ -114,10 +114,18 @@ class ConverterPool
         return NonNegativeRange::newFromString($value);
     }
 
-    //// Call alcamo::collection::ReadonlyPrefixSet::newFromString()
+    /// Call alcamo::collection::ReadonlyPrefixSet::newFromString()
     public static function toPrefixSet($value): ReadonlyPrefixSet
     {
         return ReadonlyPrefixSet::newFromString($value);
+    }
+
+    /// Call alcamo::collection::ReadonlyPrefixBlackWhiteList::newFromStringWithOperator()
+    public static function toPrefixBlackWhiteList(
+        $value
+    ): ReadonlyPrefixBlackWhiteList {
+        return
+            ReadonlyPrefixBlackWhiteList::newFromStringWithOperator($value);
     }
 
     /// Split at whitespace

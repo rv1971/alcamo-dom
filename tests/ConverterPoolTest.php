@@ -3,7 +3,7 @@
 namespace alcamo\dom;
 
 use PHPUnit\Framework\TestCase;
-use alcamo\collection\ReadonlyPrefixSet;
+use alcamo\collection\{ReadonlyPrefixBlackWhiteList, ReadonlyPrefixSet};
 use alcamo\exception\OutOfRange;
 use alcamo\iana\MediaType;
 use alcamo\range\NonNegativeRange;
@@ -132,6 +132,11 @@ class ConverterPoolTest extends TestCase
                 $doc->documentElement->getAttributeNode('foobar'),
                 'toPrefixSet',
                 ReadonlyPrefixSet::newFromString('foo bar baz')
+            ],
+            'prefix-black-white-list' => [
+                $doc->documentElement->getAttributeNode('foobar'),
+                'toPrefixSet',
+                ReadonlyPrefixBlackWhiteList::newFromString('foo bar baz')
             ],
             'set' => [
                 $doc->documentElement->getAttributeNode('foobar'),
