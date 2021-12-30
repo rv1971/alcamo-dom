@@ -143,6 +143,11 @@ class ConverterPoolTest extends TestCase
                 'toSet',
                 new Set(['foo', 'bar', 'baz'])
             ],
+            'ref' => [
+                $doc['ref']->getAttributeNode('content'),
+                'resolveIdRef',
+                $doc['lang']
+            ],
             'bool-1' => [
                 $doc['bool-1']->getAttributeNode('content'),
                 'yesNoToBool',

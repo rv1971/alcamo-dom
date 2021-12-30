@@ -42,6 +42,7 @@
     <baz xml:id="lang" content="yo-NG"/>
     <baz xml:id="media-type" content="application/json"/>
     <baz xml:id="longint" content="123456789012345678901234567890"/>
+    <baz xml:id="ref" content="lang"/>
     <baz xml:id="bool-1" content="yes"/>
     <baz xml:id="bool-0" content="no"/>
     <baz xml:id="base64" content="Zm9vCg=="/>

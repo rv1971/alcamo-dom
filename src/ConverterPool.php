@@ -158,6 +158,12 @@ class ConverterPool
         return $xNames;
     }
 
+    /// Resolve ID to DOM element it references
+    public static function resolveIdRef($value, \DOMNode $context): \DOMElement
+    {
+        return $context->ownerDocument[$value];
+    }
+
     /// Convert "yes" to `true`, anything else to `false`
     public static function yesNoToBool($value): bool
     {

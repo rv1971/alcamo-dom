@@ -22,6 +22,7 @@ class ElementTest extends TestCase
             'lang',
             'media-type',
             'longint',
+            'ref',
             'bool-1',
             'bool-0',
             'base64',
@@ -55,7 +56,7 @@ class ElementTest extends TestCase
         );
 
         $this->assertSame(
-            $doc->documentURI . '#line=57,58',
+            $doc->documentURI . '#line=58,59',
             $doc['xpointer2']->getAttributeNode('content')->getRfc5147Uri()
         );
     }
