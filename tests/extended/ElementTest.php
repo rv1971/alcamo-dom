@@ -69,7 +69,17 @@ class ElementTest extends TestCase
         $expectedValue
     ) {
         $this->assertSame($expectedIsSet, isset($elem->$attrName));
-        $this->assertSame($expectedValue, $elem->$attrName);
+
+        if (is_object($expectedValue)) {
+            $this->assertInstanceOf(
+                get_class($expectedValue),
+                $elem->$attrName
+            );
+
+            $this->assertEquals($expectedValue, $elem->$attrName);
+        } else {
+            $this->assertSame($expectedValue, $elem->$attrName);
+        }
     }
 
     public function magicAttrAccessProvider()
@@ -83,10 +93,13 @@ class ElementTest extends TestCase
                 $doc->documentElement, 'qux', true, '42-43'
             ],
             'namespace-prefix' => [
-                $doc->documentElement, 'xml:lang', true, 'oc'
+                $doc->documentElement, 'xml:lang', true, new Lang('oc')
             ],
             'xname' => [
-                $doc->documentElement, Document::XML_NS . ' lang', true, 'oc'
+                $doc->documentElement,
+                Document::XML_NS . ' lang',
+                true,
+                new Lang('oc')
             ],
             'unset-without-namespace' => [
                 $doc->documentElement, 'barbarbar', false, null

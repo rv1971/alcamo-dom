@@ -3,6 +3,7 @@
 namespace alcamo\dom\extended;
 
 use PHPUnit\Framework\TestCase;
+use alcamo\ietf\Lang;
 use alcamo\xml\XName;
 
 class AttrTest extends TestCase
@@ -12,6 +13,13 @@ class AttrTest extends TestCase
      */
     public function testgetValue($attr, $attrName, $expectedResult)
     {
+        if (is_object($expectedResult)) {
+            $this->assertInstanceOf(
+                get_class($expectedResult),
+                $attr->$attrName
+            );
+        }
+
         $this->assertEquals($expectedResult, $attr->$attrName);
     }
 
@@ -22,6 +30,11 @@ class AttrTest extends TestCase
         )->conserve();
 
         return [
+            'lang' => [
+                $doc->documentElement,
+                'xml:lang',
+                new Lang('oc')
+            ],
             'schemaLocation' => [
                 $doc->documentElement,
                 'xsi:schemaLocation',
