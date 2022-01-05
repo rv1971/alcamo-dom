@@ -65,6 +65,7 @@
       safecurie="[/bar?baz=qux]"
       list="foo foo foo bar"
       shorts="1 2 3 -4"
+      enum="list"
       enums="list list union"/>
 
   <xsd:annotation>

@@ -67,6 +67,12 @@ class Attr extends BaseAttr
                 return $converter($this->value, $this);
             }
 
+            /**- Otherwise, if the type is an enumeration, convert to the
+             * enumerator object. */
+            if ($attrType instanceof EnumerationTypeInterface) {
+                return $attrType->getEnumerators()[$this->value];
+            }
+
             /** - Otherwise, if the type is a list type, convert the value to
              * a numerically-indexed array by splitting at whitespace. */
             if ($attrType instanceof ListType) {

@@ -106,6 +106,10 @@ class AttrTest extends TestCase
     {
         switch (true) {
             case is_object($expectedValue):
+                $this->assertInstanceOf(get_class($expectedValue), $value);
+                $this->assertEquals($expectedValue, $value);
+                break;
+
             case is_array($expectedValue):
                 $this->assertEquals($expectedValue, $value);
                 break;
@@ -165,6 +169,10 @@ class AttrTest extends TestCase
             'shorts' => [
                 $doc['corge']->shorts,
                 [ 1 => 1, 2 => 2, 3 => 3, -4 => -4 ]
+            ],
+            'enum' => [
+                $doc['corge']->enum,
+                $enums['list']
             ],
             'enums' => [
                 $doc['corge']->enums,
