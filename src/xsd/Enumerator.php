@@ -13,6 +13,12 @@ class Enumerator implements \IteratorAggregate
 {
     use DecoratorTrait;
 
+    /// Return underlying \<xsd:enumerator> element
+    public function getDomNode(): Element
+    {
+        return $this->handler_;
+    }
+
     /// Return the content of the `value` attribute
     public function __toString(): string
     {

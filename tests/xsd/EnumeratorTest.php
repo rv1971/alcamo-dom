@@ -9,8 +9,9 @@ class EnumeratorTest extends TestCase
     /**
      * @dataProvider toStringProvider
      */
-    public function testToString($enum, $expectedString)
+    public function testToString($enum, $domNode, $expectedString)
     {
+        $this->assertEquals($domNode, $enum->getDomNode());
         $this->assertEquals($expectedString, (string)$enum);
     }
 
@@ -21,13 +22,18 @@ class EnumeratorTest extends TestCase
             . 'xsd' . DIRECTORY_SEPARATOR . 'XMLSchema.xsd'
         )->conserve();
 
+        $qualified = $doc->query('//*[@value = "qualified"]')[0];
+        $unqualified = $doc->query('//*[@value = "unqualified"]')[0];
+
         return [
             [
-                new Enumerator($doc->query('//*[@value = "qualified"]')[0]),
+                new Enumerator($qualified),
+                $qualified,
                 'qualified'
             ],
             [
-                new Enumerator($doc->query('//*[@value = "unqualified"]')[0]),
+                new Enumerator($unqualified),
+                $unqualified,
                 'unqualified'
             ]
         ];
