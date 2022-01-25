@@ -9,4 +9,6 @@ namespace alcamo\dom\schema\component;
  */
 interface SimpleTypeInterface extends TypeInterface
 {
+    /// Value of first facet in closest ancestor, if any
+    public function getFacetValue(string $facetName);
 }

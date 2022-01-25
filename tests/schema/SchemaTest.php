@@ -1080,4 +1080,36 @@ class SchemaTest extends TestCase
             ]
         ];
     }
+
+    /**
+     * @dataProvider getFacetValueProvider
+     */
+    public function testGetFacetValue($schema, $type, $facet, $expectedValue)
+    {
+        $this->assertSame(
+            $expectedValue,
+            $schema->getGlobalType($type)->getFacetValue($facet)
+        );
+    }
+
+    public function getFacetValueProvider()
+    {
+        $foo = Document::newFromUrl(
+            'file://' . dirname(__DIR__) . '/foo.xml'
+        )->conserve();
+
+        $schema = Schema::newFromDocument($foo);
+
+        return [
+            [ $schema, Xsd::XSD_NS . ' anySimpleType', 'minLength', null ],
+            [ $schema, Xsd::XSD_NS . ' anySimpleType', 'pattern', null ],
+            [ $schema, Xsd::XSD_NS . ' IDREFS', 'minLength', '1' ],
+            [ $schema, Xsd::XSD_NS . ' short', 'minInclusive', '-32768' ],
+            [ $schema, Xsd::XSD_NS . ' NMTOKEN', 'pattern', '\c+' ],
+            [ $schema, Xsd::XSD_NS . ' formChoice', 'pattern', '\c+' ],
+            [ $schema, Xsd::XSD_NS . ' reducedDerivationControl', 'pattern', '\c+' ],
+            [ $schema, Xsd::XSD_NS . ' token', 'whiteSpace', 'collapse' ],
+            [ $schema, Xsd::XSD_NS . ' public', 'whiteSpace', 'collapse' ]
+        ];
+    }
 }

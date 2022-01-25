@@ -119,4 +119,24 @@ abstract class AbstractSimpleType extends AbstractXsdComponent implements
     {
         return $this->baseType_;
     }
+
+    /**
+     * @warning Only finds facets within the top-level `xsd:restriction´
+     * element. A facet within
+     * `xsd:restriction/xsd:simpleType/xsd:restriction´ is not found; such
+     * constructs are valid (up to any level of depth), but rarely needed.
+     */
+    public function getFacetValue(string $facetName)
+    {
+        for ($type = $this; isset($type); $type = $type->getBaseType()) {
+            $facetValue = $type->getXsdElement()
+                ->query("xsd:restriction/xsd:$facetName/@value")[0];
+
+            if (isset($facetValue)) {
+                return (string)$facetValue;
+            }
+        }
+
+        return null;
+    }
 }

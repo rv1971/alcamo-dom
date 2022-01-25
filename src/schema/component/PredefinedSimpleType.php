@@ -10,4 +10,8 @@ namespace alcamo\dom\schema\component;
 class PredefinedSimpleType extends PredefinedType implements
     SimpleTypeInterface
 {
+    public function getFacetValue(string $facetName)
+    {
+        return null;
+    }
 }

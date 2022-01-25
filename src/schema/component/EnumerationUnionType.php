@@ -14,6 +14,11 @@ class EnumerationUnionType extends UnionType implements
 {
     private $enumerators_; ///< Map of enumerator strings to Enumerator objects
 
+    public function getFacetValue(string $facetName)
+    {
+        return null;
+    }
+
     /**
      * @copybrief EnumerationTypeInterface::getEnumerators()
      *
