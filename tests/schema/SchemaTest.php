@@ -1103,6 +1103,7 @@ class SchemaTest extends TestCase
         return [
             [ $schema, Xsd::XSD_NS . ' anySimpleType', 'minLength', null ],
             [ $schema, Xsd::XSD_NS . ' anySimpleType', 'pattern', null ],
+            [ $schema, Xsd::XSD_NS . ' string', 'minLength', null ],
             [ $schema, Xsd::XSD_NS . ' IDREFS', 'minLength', '1' ],
             [ $schema, Xsd::XSD_NS . ' short', 'minInclusive', '-32768' ],
             [ $schema, Xsd::XSD_NS . ' NMTOKEN', 'pattern', '\c+' ],
