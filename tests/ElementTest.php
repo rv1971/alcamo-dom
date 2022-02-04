@@ -34,7 +34,8 @@ class ElementTest extends TestCase
             'uriorsafecurie2',
             'document',
             'xpointer1',
-            'xpointer2'
+            'xpointer2',
+            ''
         ];
         $i = 0;
 

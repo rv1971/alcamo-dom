@@ -28,7 +28,7 @@
     <!-- comment for test of GetPositionTrait -->
     <!-- comment for test of GetPositionTrait -->
     <!-- comment for test of GetPositionTrait -->
-    <baz xml:id="a">At eos</baz>
+    <baz xml:id="a" rdfs:label="baz-a">At eos</baz>
     <!-- comment for test of GetPositionTrait -->
     <baz xml:id="b">vero</baz>
     <baz xml:id="c"
@@ -57,6 +57,8 @@
     <baz
         xml:id="xpointer2"
         content="#xpointer(//@xml:id[starts-with^(., 'd'^)])"/>
+
+    <rdfs:label xml:lang="sl">C sl</rdfs:label>
   </bar>
 
   <corge
@@ -66,7 +68,10 @@
       list="foo foo foo bar"
       shorts="1 2 3 -4"
       enum="list"
-      enums="list list union"/>
+      enums="list list union"
+      rdfs:label="CORGE">
+      <rdfs:label xml:lang="pl">CORGE-pl</rdfs:label>
+  </corge>
 
   <xsd:annotation>
     <xsd:appinfo>
@@ -75,4 +80,6 @@
       invidunt</qux:qux>
     </xsd:appinfo>
   </xsd:annotation>
+
+  <qux>42</qux>
 </foo>

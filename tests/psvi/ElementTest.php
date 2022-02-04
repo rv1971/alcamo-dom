@@ -90,7 +90,7 @@ class ElementTest extends TestCase
                 'foo.xsd',
                 '/xsd:schema/xsd:complexType[3]'
                 . '/xsd:complexContent/xsd:extension/xsd:sequence/'
-                . 'xsd:element/xsd:complexType'
+                . 'xsd:element[1]/xsd:complexType'
             ],
             [
                 $doc["qux"],

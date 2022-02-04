@@ -2,6 +2,7 @@
 
 namespace alcamo\dom\xsd;
 
+use alcamo\dom\GetLabelInterface;
 use alcamo\dom\extended\Element as BaseElement;
 use alcamo\xml\XName;
 
@@ -10,7 +11,7 @@ use alcamo\xml\XName;
  *
  * @date Last reviewed 2021-07-09
  */
-class Element extends BaseElement
+class Element extends BaseElement implements GetLabelInterface
 {
     private $xComponentName_ = false; ///< ?XName
 
@@ -62,5 +63,70 @@ class Element extends BaseElement
         }
 
         return $this->xComponentName_;
+    }
+
+    public function getLabel(
+        ?string $lang = null,
+        ?int $fallbackFlags = null
+    ): ?string {
+        /**
+         * - If a specific language is requested and there is an
+         * `\<rdfs:label>` element for that language in some `\<xsd:appinfo>`
+         * element, return its value.
+         */
+        if (isset($lang)) {
+            $labelElement = $this->query(
+                "xsd:annotation/xsd:appinfo/rdfs:label[@xml:lang = '$lang']"
+            )[0];
+
+            if (isset($labelElement)) {
+                return $labelElement->nodeValue;
+            }
+        }
+
+        /**
+         * - Otherwise (i.e. if no specific language is requested or the
+         * requested language has not been found), if the present element (not
+         * a descendent of it) has an `rdfs:label` attribute, return its
+         * content. This way, the attribute, if present, acts as a
+         * language-agnostic default label.
+         */
+        $labelAttr = $this->{'rdfs:label'};
+
+        if (isset($labelAttr)) {
+            return $labelAttr;
+        }
+
+        /*
+         * - Otherwise, if no specific language is requested or $fallbackFlags
+         * contains GetLabelInterface::FALLBACK_TO_OTHER_LANG, return the
+         * first `\<rdfs:label>` found in an `\<xsd:appinfo>` element,
+         * regardless of its language. Thus, the schema author decides about
+         * the default fallback language by putting the corresponding label in
+         * the first place.
+         */
+        if (!isset($lang) || $fallbackFlags & self::FALLBACK_TO_OTHER_LANG) {
+            $labelElement = $this->query(
+                "xsd:annotation/xsd:appinfo/rdfs:label"
+            )[0];
+
+            if (isset($labelElement)) {
+                return $labelElement->nodeValue;
+            }
+        }
+
+        /**
+         * - Otherwise, if the present element has an extended name and
+         * $fallbackFlags contains GetLabelInterface::FALLBACK_TO_NAME, use
+         * its local part as a fallback.
+         */
+        if ($fallbackFlags & self::FALLBACK_TO_NAME) {
+            $xName = $this->getComponentXName();
+
+            return isset($xName) ? $xName->getLocalName() : null;
+        }
+
+        /** - Otherwise return `null`. */
+        return null;
     }
 }

@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<!DOCTYPE xsd:schema [
+<!ATTLIST xsd:element id ID #IMPLIED>
+]>
+
 <xsd:schema
     xmlns="http://foo.example.org"
     xmlns:dc="http://purl.org/dc/terms/"
@@ -38,16 +42,36 @@
 
   <xsd:attribute name="quux" type="xsd:short"/>
 
-  <xsd:element name="foo">
+  <xsd:element name="foo" id="foo" rdfs:label="language-agnostic foo">
+    <xsd:annotation>
+      <xsd:appinfo>
+        <rdfs:label xml:lang="en">English foo</rdfs:label>
+        <rdfs:label xml:lang="de">deutsches foo</rdfs:label>
+        <rdfs:label xml:lang="fr">foo français</rdfs:label>
+      </xsd:appinfo>
+    </xsd:annotation>
+
     <xsd:complexType>
       <xsd:sequence>
         <xsd:element ref="rdfs:comment"/>
 
-        <xsd:element name="bar" type="AbstractBar"/>
+        <xsd:element name="bar" id="bar" type="AbstractBar">
+          <xsd:annotation>
+            <xsd:appinfo>
+              <rdfs:label xml:lang="it">bar italiano</rdfs:label>
+              <rdfs:label xml:lang="en">English bar</rdfs:label>
+            </xsd:appinfo>
+          </xsd:annotation>
+        </xsd:element>
 
         <xsd:element name="corge">
           <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element ref="rdfs:label"/>
+            </xsd:sequence>
+
             <xsd:attribute ref="xml:id"/>
+            <xsd:attribute ref="rdfs:label"/>
             <xsd:attribute name="datetime" type="xsd:date"/>
             <xsd:attribute name="safecurie" type="xh11d:SafeCURIE"/>
 
@@ -74,6 +98,8 @@
         </xsd:element>
 
         <xsd:element ref="xsd:annotation"/>
+
+        <xsd:element ref="qux"/>
       </xsd:sequence>
 
       <xsd:attribute ref="xml:lang"/>
@@ -142,12 +168,15 @@
                 <xsd:extension base="xsd:string">
                   <xsd:attribute ref="xml:base"/>
                   <xsd:attribute ref="xml:id"/>
+                  <xsd:attribute ref="rdfs:label"/>
                   <xsd:attribute ref="owl:sameAs"/>
                   <xsd:attribute name="content"/>
                 </xsd:extension>
               </xsd:simpleContent>
             </xsd:complexType>
           </xsd:element>
+
+          <xsd:element ref="rdfs:label" maxOccurs="unbounded"/>
         </xsd:sequence>
 
         <xsd:attribute ref="xml:id"/>

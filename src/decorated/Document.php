@@ -43,7 +43,7 @@ class Document extends BaseDocument
      * @brief Default decorator class to use if no entry is found in @ref
      * ELEMENT_DECORATOR_MAP
      */
-    public const DEFAULT_DECORATOR_CLASS = null;
+    public const DEFAULT_DECORATOR_CLASS = GetLabelDecorator::class;
 
     private $elementDecoratorMap_; /// TypeMap
 

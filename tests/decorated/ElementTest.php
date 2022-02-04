@@ -39,7 +39,7 @@ class ElementTest extends TestCase
         $this->expectException(MethodNotFound::class);
         $this->expectExceptionMessage(
             'Method "bar" not found in object '
-            . '<alcamo\dom\decorated\FooBar>"At eosvero"'
+            . '<alcamo\dom\decorated\FooBar>"At eosveroC sl"'
         );
 
         $doc['x']->bar();

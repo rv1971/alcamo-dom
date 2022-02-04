@@ -1057,8 +1057,8 @@ class SchemaTest extends TestCase
                 $foo['a'],
                 'foo.xsd',
                 '/xsd:schema/xsd:complexType[3]'
-                . '/xsd:complexContent/xsd:extension/xsd:sequence/xsd:element'
-                . '/xsd:complexType'
+                . '/xsd:complexContent/xsd:extension/xsd:sequence'
+                . '/xsd:element[1]/xsd:complexType'
             ],
             'parent-unknown' => [
                 $schema,
