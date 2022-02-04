@@ -9,6 +9,13 @@ use alcamo\dom\psvi\Document as PsviDocument;
 use alcamo\exception\{AbsoluteUriNeeded, ReadonlyViolation};
 use alcamo\ietf\Uri;
 
+class MyDocumentFactory extends DocumentFactory
+{
+    public const X_NAME_TO_CLASS = [
+        'https://corge.example.info corge' => __CLASS__
+    ];
+}
+
 class DocumentFactoryTest extends TestCase
 {
     /**
@@ -16,7 +23,7 @@ class DocumentFactoryTest extends TestCase
      */
     public function testUrlToClass($url, $expectedClass)
     {
-        $documentFactory = new DocumentFactory();
+        $documentFactory = new MyDocumentFactory();
 
         $this->assertSame($expectedClass, $documentFactory->urlToClass($url));
 
@@ -36,6 +43,10 @@ class DocumentFactoryTest extends TestCase
             'xsd' => [
                 __DIR__ . DIRECTORY_SEPARATOR . 'foo.xsd',
                 Xsd::class
+            ],
+            'corge' => [
+                __DIR__ . DIRECTORY_SEPARATOR . 'corge.xml',
+                MyDocumentFactory::class
             ]
         ];
     }
@@ -45,7 +56,7 @@ class DocumentFactoryTest extends TestCase
      */
     public function testCreateClass($url, $class, $expectedClass)
     {
-        $documentFactory = new DocumentFactory();
+        $documentFactory = new MyDocumentFactory();
 
         $doc = $documentFactory->createFromUrl($url, $class);
 
@@ -87,7 +98,7 @@ class DocumentFactoryTest extends TestCase
         $baseUrl =
             'file://' . str_replace(DIRECTORY_SEPARATOR, '/', __DIR__) . '/';
 
-        $documentFactory = new DocumentFactory($baseUrl);
+        $documentFactory = new MyDocumentFactory($baseUrl);
 
         $this->assertEquals($baseUrl, $documentFactory->getBaseUrl());
 
@@ -123,7 +134,7 @@ class DocumentFactoryTest extends TestCase
 
         $this->assertSame('BAZ', $baz->documentElement->getAttribute('baz'));
 
-        DocumentFactory::addToCache($baz);
+        MyDocumentFactory::addToCache($baz);
 
         // $baz2 sees the change in the cached document
         $baz2 = $documentFactory->createFromUrl('baz.xml');
@@ -134,7 +145,7 @@ class DocumentFactoryTest extends TestCase
 
     public function testCacheException()
     {
-        $documentFactory = new DocumentFactory();
+        $documentFactory = new MyDocumentFactory();
 
         $this->expectException(AbsoluteUriNeeded::class);
         $this->expectExceptionMessage(
@@ -153,7 +164,7 @@ class DocumentFactoryTest extends TestCase
 
     public function testAddToCacheException()
     {
-        $documentFactory = new DocumentFactory();
+        $documentFactory = new MyDocumentFactory();
 
         $barUrl = 'file://' . str_replace(DIRECTORY_SEPARATOR, '/', __DIR__)
             . DIRECTORY_SEPARATOR . 'bar.xml';
@@ -162,7 +173,7 @@ class DocumentFactoryTest extends TestCase
 
         $bar2 = $documentFactory->createFromUrl($barUrl, null, null, false);
 
-        DocumentFactory::addToCache($bar1);
+        MyDocumentFactory::addToCache($bar1);
 
         $this->expectException(ReadonlyViolation::class);
         $this->expectExceptionMessage(
@@ -171,6 +182,6 @@ class DocumentFactoryTest extends TestCase
             . 'attempt to replace cache entry "file:///'
         );
 
-        DocumentFactory::addToCache($bar2);
+        MyDocumentFactory::addToCache($bar2);
     }
 }

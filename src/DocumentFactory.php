@@ -17,7 +17,11 @@ use Psr\Http\Message\UriInterface;
  */
 class DocumentFactory implements DocumentFactoryInterface
 {
-    /// Map of namespaces to PHP classes for DOM documents
+    /// Map of document element extended names to PHP classes for DOM documents
+    public const X_NAME_TO_CLASS = [
+    ];
+
+    /// Map of document element namespaces to PHP classes for DOM documents
     public const NS_NAME_TO_CLASS = [
         Document::NSS['xsd'] => Xsd::class
     ];
@@ -190,22 +194,41 @@ class DocumentFactory implements DocumentFactoryInterface
     /// Determine a document class to use from a document URL
     public function urlToClass(string $url): string
     {
-        $nsName = ShallowDocument::newFromUrl($url)
-            ->documentElement->namespaceURI;
+        $documentElement = ShallowDocument::newFromUrl($url)->documentElement;
 
-        /** Look up the namespace of the document element in @ref
-         *  NS_NAME_TO_CLASS; if not found, use @ref DEFAULT_CLASS. */
-        return static::NS_NAME_TO_CLASS[$nsName] ?? static::DEFAULT_CLASS;
+        /**
+         * - If @ref X_NAME_TO_CLASS contains an item for the extended name of
+         *  the document element, return its value.
+         * - Otherwise, if @ref NS_NAME_TO_CLASS contains an item for the
+         *  namespace name of the document element, return its value.
+         * - Otherwise, return @ref DEFAULT_CLASS.
+         */
+        return
+            static::X_NAME_TO_CLASS[
+                "$documentElement->namespaceURI $documentElement->localName"
+            ]
+            ?? static::NS_NAME_TO_CLASS[$documentElement->namespaceURI]
+            ?? static::DEFAULT_CLASS;
     }
 
     /// Determine a document class to use from XML text
     public function xmlTextToClass(string $xml): string
     {
-        $nsName = ShallowDocument::newFromXmlText($xml)
-            ->documentElement->namespaceURI;
+        $documentElement =
+            ShallowDocument::newFromXmlText($xml)->documentElement;
 
-        /** Look up the namespace of the document element in @ref
-         *  NS_NAME_TO_CLASS; if not found, use @ref DEFAULT_CLASS. */
-        return static::NS_NAME_TO_CLASS[$nsName] ?? static::DEFAULT_CLASS;
+        /**
+         * - If @ref X_NAME_TO_CLASS contains an item for the extended name of
+         *  the document element, return its value.
+         * - Otherwise, if @ref NS_NAME_TO_CLASS contains an item for the
+         *  namespace name of the document element, return its value.
+         * - Otherwise, return @ref DEFAULT_CLASS.
+         */
+        return
+            static::X_NAME_TO_CLASS[
+                "$documentElement->namespaceURI $documentElement->localName"
+            ]
+            ?? static::NS_NAME_TO_CLASS[$documentElement->namespaceURI]
+            ?? static::DEFAULT_CLASS;
     }
 }
