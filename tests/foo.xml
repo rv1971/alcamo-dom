@@ -74,7 +74,7 @@
   </corge>
 
   <xsd:annotation>
-    <xsd:appinfo>
+    <xsd:appinfo xml:lang="fi">
       <qux:qux xml:id="qux" qux="foo"><qux>42</qux> sed diam nonumy
       eirmod <qux:quux xml:id="quux">tempor</qux:quux>
       invidunt</qux:qux>

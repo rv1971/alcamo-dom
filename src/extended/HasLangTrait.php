@@ -35,7 +35,10 @@ trait HasLangTrait
                     $this->getAttributeNS(Document::XML_NS, 'lang')
                 );
             } else {
-                $langAttr = $this->query('ancestor::*[@xml:lang]/@xml:lang')[0];
+                /* Then look for the first ancestor having such an
+                 * attribute. */
+                $langAttr =
+                    $this->query('ancestor::*[@xml:lang][1]/@xml:lang')[0];
 
                 if (isset($langAttr)) {
                     $this->lang_ = Lang::newFromString($langAttr->value);

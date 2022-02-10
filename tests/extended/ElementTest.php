@@ -34,6 +34,10 @@ class ElementTest extends TestCase
                 $fooDoc->documentElement->firstChild->nextSibling,
                 new Lang('oc')
             ],
+            'closest-parent-lang' => [
+                $fooDoc['qux'],
+                new Lang('fi')
+            ],
             'no-lang' => [
                 $barDoc->documentElement,
                 null
