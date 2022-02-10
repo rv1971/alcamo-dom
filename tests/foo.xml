@@ -58,7 +58,7 @@
         xml:id="xpointer2"
         content="#xpointer(//@xml:id[starts-with^(., 'd'^)])"/>
 
-    <rdfs:label xml:lang="sl">C sl</rdfs:label>
+    <rdfs:label>C oc</rdfs:label>
   </bar>
 
   <corge

@@ -27,6 +27,14 @@ trait GetLabelTrait
             if (isset($labelElement)) {
                 return $labelElement->nodeValue;
             }
+
+            /* If there is no element with an explicit corresponding language,
+             * look for one that inherits the language. */
+            $labelElement = $this->query("rdfs:label[not(@xml:lang)]")[0];
+
+            if (isset($labelElement) && $labelElement->getLang() == $lang) {
+                return $labelElement->nodeValue;
+            }
         }
 
         /**

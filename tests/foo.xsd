@@ -44,10 +44,10 @@
 
   <xsd:element name="foo" id="foo" rdfs:label="language-agnostic foo">
     <xsd:annotation>
-      <xsd:appinfo>
+      <xsd:appinfo xml:lang="fr">
         <rdfs:label xml:lang="en">English foo</rdfs:label>
         <rdfs:label xml:lang="de">deutsches foo</rdfs:label>
-        <rdfs:label xml:lang="fr">foo français</rdfs:label>
+        <rdfs:label>foo français</rdfs:label>
       </xsd:appinfo>
     </xsd:annotation>
 

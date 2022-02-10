@@ -3,7 +3,7 @@
 namespace alcamo\dom\xsd;
 
 use alcamo\dom\GetLabelInterface;
-use alcamo\dom\extended\Element as BaseElement;
+use alcamo\dom\extended\{Element as BaseElement, HasLangTrait};
 use alcamo\xml\XName;
 
 /**
@@ -13,6 +13,8 @@ use alcamo\xml\XName;
  */
 class Element extends BaseElement implements GetLabelInterface
 {
+    use HasLangTrait;
+
     private $xComponentName_ = false; ///< ?XName
 
     /**
@@ -80,6 +82,16 @@ class Element extends BaseElement implements GetLabelInterface
             )[0];
 
             if (isset($labelElement)) {
+                return $labelElement->nodeValue;
+            }
+
+            /* If there is no element with an explicit corresponding language,
+             * look for one that inherits the language. */
+            $labelElement = $this->query(
+                "xsd:annotation/xsd:appinfo/rdfs:label[not(@xml:lang)]"
+            )[0];
+
+            if (isset($labelElement) && $labelElement->getLang() == $lang) {
                 return $labelElement->nodeValue;
             }
         }
