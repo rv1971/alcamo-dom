@@ -2,9 +2,9 @@
 
 namespace alcamo\dom;
 
-use alcamo\ietf\Uri;
 use alcamo\dom\xsd\Document as Xsd;
 use alcamo\exception\{AbsoluteUriNeeded, InvalidType, ReadonlyViolation};
+use alcamo\uri\Uri;
 use GuzzleHttp\Psr7\{UriNormalizer, UriResolver};
 use Psr\Http\Message\UriInterface;
 

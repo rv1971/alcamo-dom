@@ -3,7 +3,8 @@
 namespace alcamo\dom\xsd;
 
 use PHPUnit\Framework\TestCase;
-use alcamo\ietf\{Lang, Uri};
+use alcamo\ietf\Lang;
+use alcamo\uri\Uri;
 use alcamo\xml\XName;
 
 class AttrTest extends TestCase

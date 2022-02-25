@@ -4,7 +4,7 @@ namespace alcamo\dom;
 
 use PHPUnit\Framework\TestCase;
 use alcamo\exception\Uninitialized;
-use alcamo\ietf\Uri;
+use alcamo\uri\Uri;
 
 class DocumentsTest extends TestCase
 {

@@ -10,7 +10,7 @@ use alcamo\exception\{
     FileLoadFailed,
     Uninitialized
 };
-use alcamo\ietf\UriFactory;
+use alcamo\uri\FileUriFactory;
 
 class DocumentTest extends TestCase
 {
@@ -79,16 +79,14 @@ class DocumentTest extends TestCase
         return [
             'from-url' => [
                 $doc1,
-                (string)(new UriFactory())->createFromFilesystemPath(
-                    __DIR__ . DIRECTORY_SEPARATOR . 'foo.xml',
-                    true
+                (new FileUriFactory())->fsPath2FileUrlPath(
+                    __DIR__ . DIRECTORY_SEPARATOR . 'foo.xml'
                 )
             ],
             'from-xml' => [
                 $doc2,
-                (string)(new UriFactory())->createFromFilesystemPath(
-                    __DIR__ . DIRECTORY_SEPARATOR,
-                    true
+                (new FileUriFactory())->fsPath2FileUrlPath(
+                    __DIR__ . DIRECTORY_SEPARATOR
                 )
             ]
         ];

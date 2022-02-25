@@ -6,9 +6,10 @@ use alcamo\binary_data\BinaryString;
 use alcamo\collection\ReadonlyPrefixSet;
 use alcamo\exception\OutOfRange;
 use alcamo\iana\MediaType;
-use alcamo\ietf\{Lang, Uri, UriFactory};
+use alcamo\ietf\Lang;
 use alcamo\range\NonNegativeRange;
 use alcamo\time\Duration;
+use alcamo\uri\{Uri, UriFromCurieFactory};
 use alcamo\xml\XName;
 use alcamo\xpointer\Pointer;
 use Ds\Set;
@@ -194,24 +195,24 @@ class ConverterPool
         return $map;
     }
 
-    /// Call alcamo::ietf::UriFactory::createFromCurieAndContext()
+    /// Call alcamo::ietf::UriFromCurieFactory::createFromCurieAndContext()
     public static function curieToUri($value, \DOMNode $context): Uri
     {
-        return (new UriFactory())
+        return (new UriFromCurieFactory())
             ->createFromCurieAndContext($value, $context);
     }
 
-    /// Call alcamo::ietf::UriFactory::createFromSafeCurieAndContext()
+    /// Call alcamo::ietf::UriFromCurieFactory::createFromSafeCurieAndContext()
     public static function safeCurieToUri($value, \DOMNode $context): Uri
     {
-        return (new UriFactory())
+        return (new UriFromCurieFactory())
             ->createFromSafeCurieAndContext($value, $context);
     }
 
-    /// Call alcamo::ietf::UriFactory::createFromUriOrSafeCurieAndContext()
+    /// Call alcamo::ietf::UriFromCurieFactory::createFromUriOrSafeCurieAndContext()
     public static function uriOrSafeCurieToUri($value, \DOMNode $context): Uri
     {
-        return (new UriFactory())
+        return (new UriFromCurieFactory())
             ->createFromUriOrSafeCurieAndContext($value, $context);
     }
 

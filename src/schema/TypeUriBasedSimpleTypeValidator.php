@@ -5,7 +5,7 @@ namespace alcamo\dom\schema;
 use alcamo\dom\extended\DocumentFactory;
 use alcamo\dom\xsd\Document;
 use alcamo\exception\Unsupported;
-use alcamo\ietf\Uri;
+use alcamo\uri\Uri;
 use GuzzleHttp\Psr7\UriResolver;
 
 /**

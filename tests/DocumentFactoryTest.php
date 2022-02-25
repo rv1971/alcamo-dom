@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 use alcamo\dom\xsd\Document as Xsd;
 use alcamo\dom\psvi\Document as PsviDocument;
 use alcamo\exception\{AbsoluteUriNeeded, ReadonlyViolation};
-use alcamo\ietf\Uri;
+use alcamo\uri\Uri;
 
 class MyDocumentFactory extends DocumentFactory
 {
@@ -149,7 +149,7 @@ class DocumentFactoryTest extends TestCase
 
         $this->expectException(AbsoluteUriNeeded::class);
         $this->expectExceptionMessage(
-            'Relative URI <alcamo\ietf\Uri>"'
+            'Relative URI <alcamo\uri\Uri>"'
             . __DIR__ . DIRECTORY_SEPARATOR
             . 'bar.xml" given where absolute URI is needed'
         );

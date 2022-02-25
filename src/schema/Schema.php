@@ -21,7 +21,7 @@ use alcamo\dom\schema\component\{
 };
 use alcamo\dom\xsd\{Document as Xsd, Element as XsdElement};
 use alcamo\exception\AbsoluteUriNeeded;
-use alcamo\ietf\{Uri, UriNormalizer};
+use alcamo\uri\{Uri, UriNormalizer};
 use alcamo\xml\XName;
 
 /**

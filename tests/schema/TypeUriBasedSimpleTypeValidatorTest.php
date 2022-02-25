@@ -3,7 +3,7 @@
 namespace alcamo\dom\schema;
 
 use PHPUnit\Framework\TestCase;
-use alcamo\ietf\{Uri, UriFactory};
+use alcamo\uri\{Uri, FileUriFactory};
 use alcamo\xml\XName;
 
 class TypeUriBasedSimpleTypeValidatorTest extends TestCase
@@ -40,8 +40,8 @@ class TypeUriBasedSimpleTypeValidatorTest extends TestCase
     public function validateProvider()
     {
         $validator = new TypeUriBasedSimpleTypeValidator(
-            (new UriFactory())->createFromFilesystemPath(
-                dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR
+            (new FileUriFactory())->create(
+                dirname(__DIR__) . DIRECTORY_SEPARATOR
             )
         );
 

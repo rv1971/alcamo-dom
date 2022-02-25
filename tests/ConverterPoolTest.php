@@ -7,8 +7,9 @@ use alcamo\collection\{ReadonlyPrefixBlackWhiteList, ReadonlyPrefixSet};
 use alcamo\exception\OutOfRange;
 use alcamo\iana\MediaType;
 use alcamo\range\NonNegativeRange;
-use alcamo\ietf\{Lang, Uri};
+use alcamo\ietf\Lang;
 use alcamo\time\Duration;
+use alcamo\uri\Uri;
 use alcamo\xml\XName;
 use Ds\Set;
 
