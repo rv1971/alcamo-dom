@@ -2,7 +2,7 @@
 
 namespace alcamo\dom;
 
-use alcamo\exception\SyntaxError;
+use alcamo\exception\{FileLoadFailed, SyntaxError};
 
 /**
  * @brief DOM Document consisting in the document element without any content
@@ -26,9 +26,20 @@ class ShallowDocument extends Document
      */
     public function loadUrl(string $url, ?int $libXmlOptions = null)
     {
-        return $this->loadXmlText(
-            file_get_contents($url, false, null, 0, static::MAX_LENGH)
-        );
+        $errorLevel = error_reporting(E_ERROR);
+
+        $xmlText = file_get_contents($url, false, null, 0, static::MAX_LENGH);
+
+        error_reporting($errorLevel);
+
+        if ($xmlText === false) {
+            /** @throw alcamo::exception::FileLoadFailed if
+             *  file_get_contents() fails. */
+            throw (new FileLoadFailed())
+                ->setMessageContext([ 'filename' => $url ]);
+        }
+
+        return $this->loadXmlText($xmlText);
     }
 
     /// @copydoc Document::loadXmlText()

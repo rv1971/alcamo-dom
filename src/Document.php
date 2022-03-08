@@ -395,8 +395,13 @@ class Document extends \DOMDocument implements
                 $this->processLibxmlErrors();
             }
         } catch (\Throwable $e) {
-            $e->xsdText = $xsdText;
-            throw $e;
+            throw DataValidationFailed::newFromPrevious(
+                $e,
+                [
+                    'inData' => $this->saveXML(),
+                    'atUri' => $this->documentURI
+                ]
+            );
         }
 
         return $this;
