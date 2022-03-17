@@ -3,7 +3,7 @@
 namespace alcamo\dom\xsd;
 
 use alcamo\dom\GetLabelInterface;
-use alcamo\dom\extended\{Element as BaseElement, HasLangTrait};
+use alcamo\dom\extended\{Element as BaseElement, GetLangTrait};
 use alcamo\xml\XName;
 
 /**
@@ -13,7 +13,7 @@ use alcamo\xml\XName;
  */
 class Element extends BaseElement implements GetLabelInterface
 {
-    use HasLangTrait;
+    use GetLangTrait;
 
     private $xComponentName_ = false; ///< ?XName
 
