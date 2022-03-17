@@ -2,7 +2,6 @@
 
 namespace alcamo\dom\schema;
 
-use GuzzleHttp\Psr7\UriResolver;
 use alcamo\dom\ConverterPool;
 use alcamo\dom\extended\{DocumentFactory, Element as ExtElement};
 use alcamo\dom\schema\component\{
@@ -23,6 +22,8 @@ use alcamo\dom\xsd\{Document as Xsd, Element as XsdElement};
 use alcamo\exception\AbsoluteUriNeeded;
 use alcamo\uri\{Uri, UriNormalizer};
 use alcamo\xml\XName;
+use GuzzleHttp\Psr7\UriResolver;
+use Psr\Http\Message\UriInterface;
 
 /**
  * @namespace alcamo::dom::schema
@@ -84,7 +85,7 @@ class Schema
         foreach ($urls as $url) {
             $normalizedUrls[] =
                 (string)UriNormalizer::normalize(
-                    $url instanceof Uri ? $url : new Uri($url)
+                    $url instanceof UriInterface ? $url : new Uri($url)
                 );
         }
 
@@ -137,6 +138,27 @@ class Schema
         }
 
         return self::$schemaCache_[$cacheKey];
+    }
+
+    // Create type from a schema consisting of the element's owner document
+    public static function createTypeFromXsdElement(
+        XsdElement $xsdElement
+    ): TypeInterface {
+        return self::newFromXsds([ $xsdElement->ownerDocument ])->getGlobalType(
+            $xsdElement->getComponentXName()
+        );
+    }
+
+    // Create type from an URL reference indicating an XSD element by ID
+    public static function createTypeFromUrl($url): TypeInterface
+    {
+        $url = UriNormalizer::normalize(
+            $url instanceof UriInterface ? $url : new Uri($url)
+        );
+
+        return static::createTypeFromXsdElement(
+            static::createXsd($url->withFragment(''))[$url->getFragment()]
+        );
     }
 
     private $xsds_ = [];             ///< Map of URI string to Xsd

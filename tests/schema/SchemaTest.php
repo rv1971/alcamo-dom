@@ -181,6 +181,22 @@ class SchemaTest extends TestCase
         Schema::newFromXsds([ Xsd::newFromUrl($path) ]);
     }
 
+    public function testCreateTypeFromUrl()
+    {
+        $type = Schema::createTypeFromUrl(
+            'file://' . dirname(__DIR__) . '/foo.xsd#Bar'
+        );
+
+        $this->assertInstanceOf(ComplexType::class, $type);
+        $this->assertSame('Bar', $type->getXsdElement()->name);
+
+        $type2 = Schema::createTypeFromUrl(
+            'file://' . dirname(__DIR__) . '/foo.xsd#Bar'
+        );
+
+        $this->assertSame($type, $type2);
+    }
+
     public function testNegativeGetGlobal()
     {
         $schema = Schema::newFromDocument(
