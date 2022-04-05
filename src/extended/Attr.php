@@ -87,10 +87,11 @@ class Attr extends BaseAttr
             }
         }
 
-        /** - Otherwise, use the converter in ELEMENT_ATTR_CONVERTERS, if
-         * present. */
+        /** - Otherwise, for attributes without namespace, use the converter
+         * in ELEMENT_ATTR_CONVERTERS, if present. */
         if (
-            isset(static::ELEMENT_ATTR_CONVERTERS[$this->parentNode->namespaceURI])
+            !isset($this->namespaceURI)
+            && isset(static::ELEMENT_ATTR_CONVERTERS[$this->parentNode->namespaceURI])
         ) {
             $converterMap =
                 static::ELEMENT_ATTR_CONVERTERS[$this->parentNode->namespaceURI][$this->parentNode->localName]
