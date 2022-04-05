@@ -85,6 +85,12 @@ class ConverterPool
         }
     }
 
+    /// To integer, return -1 for `unbounded`
+    public static function toAllNNI($value): int
+    {
+        return $value == 'unbounded' ? -1 : (int)$value;
+    }
+
     /// Split at whitespace, return set of integers
     public static function toIntSet($value): Set
     {

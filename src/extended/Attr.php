@@ -27,6 +27,37 @@ class Attr extends BaseAttr
         ]
     ];
 
+    /**
+     * @brief Map of element NSs to maps of element local names to maps of
+     * attr local names to converters
+     */
+    public const ELEMENT_ATTR_CONVERTERS = [
+        Document::XSD_NS => [
+            '*' => [
+                'maxOccurs'         => CP::class . '::toAllNNI',
+
+                'abstract'          => CP::class . '::toBool',
+                'mixed'             => CP::class . '::toBool',
+                'nillable'          => CP::class . '::toBool',
+
+                'minOccurs'         => CP::class . '::toInt',
+
+                'schemaLocation'    => CP::class . '::toUri',
+                'source'            => CP::class . '::toUri',
+                'system'            => CP::class . '::toUri',
+
+                'base'              => CP::class . '::toXName',
+                'itemType'          => CP::class . '::toXName',
+                'ref'               => CP::class . '::toXName',
+                'refer'             => CP::class . '::toXName',
+                'substitutionGroup' => CP::class . '::toXName',
+                'type'              => CP::class . '::toXName',
+
+                'memberTypes'       => CP::class . '::toXNames'
+            ]
+        ]
+    ];
+
     private $value_;
 
     /// Call createValue() and cache the result
@@ -45,6 +76,7 @@ class Attr extends BaseAttr
     /// Create a value for use in getValue()
     protected function createValue()
     {
+        /** - Use the converter in ATTR_CONVERTERS, if present. */
         if (isset(static::ATTR_CONVERTERS[$this->namespaceURI])) {
             $converter =
                 static::ATTR_CONVERTERS[$this->namespaceURI][$this->localName]
@@ -55,7 +87,26 @@ class Attr extends BaseAttr
             }
         }
 
-        /** Return values of any other attribute unchanged. */
+        /** - Otherwise, use the converter in ELEMENT_ATTR_CONVERTERS, if
+         * present. */
+        if (
+            isset(static::ELEMENT_ATTR_CONVERTERS[$this->parentNode->namespaceURI])
+        ) {
+            $converterMap =
+                static::ELEMENT_ATTR_CONVERTERS[$this->parentNode->namespaceURI][$this->parentNode->localName]
+                ?? static::ELEMENT_ATTR_CONVERTERS[$this->parentNode->namespaceURI]['*']
+                ?? null;
+
+            if (isset($converterMap)) {
+                $converter = $converterMap[$this->localName] ?? null;
+
+                if (isset($converter)) {
+                    return $converter($this->value, $this);
+                }
+            }
+        }
+
+        /** - Otherwise, return value unchanged. */
         return $this->value;
     }
 }
