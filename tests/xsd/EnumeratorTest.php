@@ -2,6 +2,7 @@
 
 namespace alcamo\dom\xsd;
 
+use alcamo\dom\decorated\Document;
 use PHPUnit\Framework\TestCase;
 
 class EnumeratorTest extends TestCase

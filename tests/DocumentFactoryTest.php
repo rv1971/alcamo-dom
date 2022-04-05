@@ -4,7 +4,7 @@ namespace alcamo\dom;
 
 use GuzzleHttp\Psr7\UriResolver;
 use PHPUnit\Framework\TestCase;
-use alcamo\dom\xsd\Document as Xsd;
+use alcamo\dom\decorated\Document as Xsd;
 use alcamo\dom\psvi\Document as PsviDocument;
 use alcamo\exception\{AbsoluteUriNeeded, ReadonlyViolation};
 use alcamo\uri\Uri;

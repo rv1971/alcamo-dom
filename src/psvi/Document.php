@@ -3,7 +3,7 @@
 namespace alcamo\dom\psvi;
 
 use alcamo\dom\{ConverterPool as CP, DocumentFactoryInterface, ValidationTrait};
-use alcamo\dom\extended\Document as BaseDocument;
+use alcamo\dom\decorated\Document as BaseDocument;
 use alcamo\dom\schema\{Schema, TypeMap};
 use alcamo\exception\DataValidationFailed;
 
@@ -22,6 +22,14 @@ use alcamo\exception\DataValidationFailed;
 class Document extends BaseDocument
 {
     use ValidationTrait;
+
+    /// @copybrief alcamo::dom::Document::NODE_CLASSES
+    public const NODE_CLASSES =
+        [
+            'DOMAttr'    => Attr::class,
+            'DOMElement' => Element::class
+        ]
+        + parent::NODE_CLASSES;
 
     /// Map of XSD type XNames to conversion functions for attribute values
     public const ATTR_TYPE_MAP = [
@@ -44,19 +52,19 @@ class Document extends BaseDocument
         self::XSD_NS . ' QName'        => CP::class . '::toXName'
     ];
 
-    /// @copybrief alcamo::dom::Document::NODE_CLASSES
-    public const NODE_CLASSES =
-        [
-            'DOMAttr'    => Attr::class,
-            'DOMElement' => Element::class
-        ]
-        + parent::NODE_CLASSES;
+    /**
+     * @brief Map of XSD type XNames to decorator classes for elements
+     *
+     * To be overridden in derived classes.
+     */
+    public const ELEMENT_DECORATOR_MAP = [];
 
     public const IDREF_XNAME  = self::XSD_NS . ' IDREF';
     public const IDREFS_XNAME = self::XSD_NS . ' IDREFS';
 
-    private $schema_;         ///< Schema
-    private $attrConverters_; ///< TypeMap
+    private $schema_;              ///< Schema
+    private $attrConverters_;      ///< TypeMap
+    private $elementDecoratorMap_; ///< TypeMap
 
     /// @copybrief alcamo::dom::Document::getDocumentFactory()
     public function getDocumentFactory(): DocumentFactoryInterface
@@ -85,6 +93,19 @@ class Document extends BaseDocument
         }
 
         return $this->attrConverters_;
+    }
+
+    /// Map of XSD element types to decorator classes
+    public function getElementDecoratorMap(): TypeMap
+    {
+        if (!isset($this->elementDecoratorMap_)) {
+            $this->elementDecoratorMap_ = TypeMap::newFromSchemaAndXNameMap(
+                $this->getSchema(),
+                static::ELEMENT_DECORATOR_MAP
+            );
+        }
+
+        return $this->elementDecoratorMap_;
     }
 
     /// Validate that IDREF[S] refer to existing IDs

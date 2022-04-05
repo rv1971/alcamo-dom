@@ -3,9 +3,11 @@
 namespace alcamo\dom\psvi;
 
 use PHPUnit\Framework\TestCase;
-use alcamo\dom\schema\Schema;
+use alcamo\dom\schema\{Schema, TypeMap};
 use alcamo\exception\DataValidationFailed;
 use alcamo\xml\XName;
+
+require_once 'FooDocument.php';
 
 class DocumentTest extends TestCase
 {
@@ -15,7 +17,7 @@ class DocumentTest extends TestCase
 
     public static function setUpBeforeClass(): void
     {
-        self::$doc = Document::newFromUrl(
+        self::$doc = FooDocument::newFromUrl(
             'file://' . dirname(__DIR__) . '/baz.xml'
         );
     }
@@ -66,6 +68,23 @@ class DocumentTest extends TestCase
             [ self::XSD_NS, 'duration', 'toDuration' ],
             [ self::XSD_NS, 'unsignedByte', 'toInt' ]
         ];
+    }
+
+    public function testGetElementDecoratorMap()
+    {
+        $doc = FooDocument::newFromUrl(
+            'file://' . dirname(__DIR__) . '/foo.xml'
+        );
+
+        $this->assertInstanceOf(
+            TypeMap::class,
+            $doc->getElementDecoratorMap()
+        );
+
+        $this->assertSame(
+            [ FooBar::class, FooLiteral::class ],
+            array_values($doc->getElementDecoratorMap()->getMap())
+        );
     }
 
     public function testValidateIdrefsIdref()

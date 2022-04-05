@@ -2,7 +2,7 @@
 
 namespace alcamo\dom\schema\component;
 
-use alcamo\dom\xsd\Document as Xsd;
+use alcamo\dom\decorated\Document as Xsd;
 
 /**
  * @brief Model group definition

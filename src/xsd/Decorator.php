@@ -3,18 +3,12 @@
 namespace alcamo\dom\xsd;
 
 use alcamo\dom\GetLabelInterface;
-use alcamo\dom\extended\{Element as BaseElement, GetLangTrait};
+use alcamo\dom\decorated\AbstractDecorator;
 use alcamo\xml\XName;
 
-/**
- * @brief Element class for use in DOMDocument::registerNodeClass()
- *
- * @date Last reviewed 2021-07-09
- */
-class Element extends BaseElement implements GetLabelInterface
+/// Decorator providing getLabel()
+class Decorator extends AbstractDecorator implements GetLabelInterface
 {
-    use GetLangTrait;
-
     private $xComponentName_ = false; ///< ?XName
 
     /**

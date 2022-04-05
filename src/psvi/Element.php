@@ -2,19 +2,19 @@
 
 namespace alcamo\dom\psvi;
 
-use alcamo\dom\extended\Element as BaseElement;
+use alcamo\dom\decorated\{AbstractDecorator, Element as BaseElement};
 use alcamo\dom\schema\component\TypeInterface;
 
 /**
  * @brief %Element class for use in DOMDocument::registerNodeClass()
  *
  * Provides getType() to retrieve the XSD type of this element.
- *
- * @date Last reviewed 2021-07-11
  */
 class Element extends BaseElement
 {
     private $type_ = false;  ///< TypeInterface
+
+    public const DEFAULT_DECORATOR_CLASS = GetLabelDecorator::class;
 
     public function getType(): TypeInterface
     {
@@ -24,5 +24,20 @@ class Element extends BaseElement
         }
 
         return $this->type_;
+    }
+
+    /** The default implementation calls the constructor of a class looked up
+     *  in Document::getElementDecoratorMap(). Derived classes may implement
+     *  other mechanisms. */
+    protected function createDecorator(): ?AbstractDecorator
+    {
+        $className = $this->ownerDocument->getElementDecoratorMap()
+            ->lookup($this->getType());
+
+        if (isset($className)) {
+            return new $className($this);
+        }
+
+        return parent::createDecorator();
     }
 }

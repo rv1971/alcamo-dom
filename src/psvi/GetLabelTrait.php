@@ -1,8 +1,9 @@
 <?php
 
-namespace alcamo\dom\decorated;
+namespace alcamo\dom\psvi;
 
 use alcamo\dom\GetLabelInterface;
+use alcamo\dom\schema\component\AbstractXsdComponent;
 
 /**
  * @brief Implementation of getLabel()
@@ -63,6 +64,22 @@ trait GetLabelTrait
             if (isset($labelElement)) {
                 return $labelElement->nodeValue;
             }
+        }
+
+        /**
+         * - Otherwise, if the present element has a type declared in an XSD
+         * document and $fallbackFlags contains
+         * GetLabelInterface::FALLBACK_TO_TYPE_NAME, call getLabel() on the
+         * type declaration element.
+         */
+        $type = $this->getType();
+
+        if (
+            $type instanceof AbstractXsdComponent
+            && $fallbackFlags & self::FALLBACK_TO_TYPE_NAME
+        ) {
+            return $type->getXsdElement()
+                ->getLabel($lang, $fallbackFlags | self::FALLBACK_TO_NAME);
         }
 
         /**

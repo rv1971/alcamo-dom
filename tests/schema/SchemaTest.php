@@ -22,7 +22,7 @@ use alcamo\dom\schema\component\{
     TypeInterface,
     UnionType
 };
-use alcamo\dom\xsd\Document as Xsd;
+use alcamo\dom\decorated\Document as Xsd;
 use alcamo\exception\AbsoluteUriNeeded;
 use alcamo\xml\XName;
 

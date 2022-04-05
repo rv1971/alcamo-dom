@@ -1,6 +1,6 @@
 <?php
 
-namespace alcamo\dom\decorated;
+namespace alcamo\dom\psvi;
 
 use alcamo\dom\GetLabelInterface;
 use PHPUnit\Framework\TestCase;
@@ -28,8 +28,24 @@ class GetLabelDecoratorTest extends TestCase
 
         return [
             [ $qux, null, null, null ],
+            [ $qux, null, GetLabelInterface::FALLBACK_TO_TYPE_NAME, 'short' ],
+            [
+                $qux,
+                null,
+                GetLabelInterface::FALLBACK_TO_TYPE_NAME
+                | GetLabelInterface::FALLBACK_TO_NAME,
+                'short'
+            ],
             [ $qux, null, GetLabelInterface::FALLBACK_TO_NAME, 'qux' ],
             [ $qux, 'de', null, null ],
+            [ $qux, 'fr', GetLabelInterface::FALLBACK_TO_TYPE_NAME, 'short' ],
+            [
+                $qux,
+                'en',
+                GetLabelInterface::FALLBACK_TO_TYPE_NAME
+                | GetLabelInterface::FALLBACK_TO_NAME,
+                'short'
+            ],
             [ $qux, 'it', GetLabelInterface::FALLBACK_TO_NAME, 'qux' ],
             [ $doc['a'], null, null, 'baz-a' ],
             [ $doc['a'], 'no', null, 'baz-a' ],
@@ -37,6 +53,7 @@ class GetLabelDecoratorTest extends TestCase
             [ $doc['x'], 'oc', null, 'C oc' ],
             [ $doc['x'], 'sk', null, null ],
             [ $doc['x'], 'sk', GetLabelInterface::FALLBACK_TO_OTHER_LANG, 'C oc' ],
+            [ $doc['x'], 'sk', GetLabelInterface::FALLBACK_TO_TYPE_NAME, 'Bar' ],
             [ $doc['x'], 'sk', GetLabelInterface::FALLBACK_TO_NAME, 'bar' ],
             [ $doc['corge'], null, null, 'CORGE' ],
             [ $doc['corge'], 'pl', null, 'CORGE-pl' ],

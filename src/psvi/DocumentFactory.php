@@ -2,7 +2,7 @@
 
 namespace alcamo\dom\psvi;
 
-use alcamo\dom\extended\DocumentFactory as DocumentFactoryBase;
+use alcamo\dom\decorated\DocumentFactory as DocumentFactoryBase;
 
 /**
  * @brief Factory for DOM documents

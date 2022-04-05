@@ -3,6 +3,7 @@
 namespace alcamo\dom\xsd;
 
 use alcamo\decorator\DecoratorTrait;
+use alcamo\dom\decorated\Element;
 
 /**
  * @brief Decorator for an `xsd:enumeration` element

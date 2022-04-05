@@ -4,7 +4,7 @@ namespace alcamo\dom\schema\component;
 
 use alcamo\dom\Document;
 use alcamo\dom\schema\Schema;
-use alcamo\dom\xsd\Element as XsdElement;
+use alcamo\dom\decorated\Element as XsdElement;
 use alcamo\xml\Xname;
 
 /**

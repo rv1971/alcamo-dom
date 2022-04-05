@@ -2,13 +2,13 @@
 
 namespace alcamo\dom\decorated;
 
-use alcamo\dom\psvi\DocumentFactory as DocumentFactoryBase;
+use alcamo\dom\extended\DocumentFactory as DocumentFactoryBase;
 
 /**
  * @brief Factory for DOM documents
  *
  * Unlike its parent, by default this creates Document objects rather than
- * alcamo::dom::psvi::Document objects.
+ * alcamo::dom::extended::Document objects.
  *
  * @date Last reviewed 2021-07-11
  */

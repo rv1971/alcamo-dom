@@ -4,6 +4,7 @@ namespace alcamo\dom\xsd;
 
 use PHPUnit\Framework\TestCase;
 use alcamo\dom\GetLabelInterface;
+use alcamo\dom\decorated\Document;
 use alcamo\xml\XName;
 
 class ElementTest extends TestCase

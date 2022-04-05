@@ -3,7 +3,12 @@
 namespace alcamo\dom\schema;
 
 use alcamo\dom\ConverterPool;
-use alcamo\dom\extended\{DocumentFactory, Element as ExtElement};
+use alcamo\dom\decorated\{
+    Document as Xsd,
+    DocumentFactory as XsdFactory,
+    Element as XsdElement
+};
+use alcamo\dom\extended\{Element as ExtElement};
 use alcamo\dom\schema\component\{
     AbstractComponent,
     AbstractSimpleType,
@@ -18,7 +23,6 @@ use alcamo\dom\schema\component\{
     PredefinedSimpleType,
     TypeInterface
 };
-use alcamo\dom\xsd\{Document as Xsd, Element as XsdElement};
 use alcamo\exception\AbsoluteUriNeeded;
 use alcamo\uri\{Uri, UriNormalizer};
 use alcamo\xml\XName;
@@ -397,7 +401,7 @@ class Schema
 
     protected static function createXsd(string $url): Xsd
     {
-        return (new DocumentFactory())
+        return (new XsdFactory())
             ->createFromUrl($url, Xsd::class, null, true);
     }
 
@@ -426,7 +430,7 @@ class Schema
 
                 /* Cache all XSDs. addToCache() will throw if documentURI is
                  * not absolute. */
-                DocumentFactory::addToCache($xsd);
+                XsdFactory::addToCache($xsd);
 
                 // Also load imported XSDs.
                 foreach ($xsd->query('xsd:import|xsd:include') as $import) {

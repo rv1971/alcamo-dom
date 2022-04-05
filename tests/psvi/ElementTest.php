@@ -7,6 +7,8 @@ use alcamo\dom\schema\Schema;
 use alcamo\dom\schema\component\{AtomicType, ComplexType};
 use alcamo\xml\XName;
 
+require_once 'FooDocument.php';
+
 class ElementTest extends TestCase
 {
     public const XSD_NS = 'http://www.w3.org/2001/XMLSchema';
@@ -114,5 +116,21 @@ class ElementTest extends TestCase
                 '/xs:schema/xs:complexType[29]'
             ]
         ];
+    }
+
+    public function testDecoration()
+    {
+        $doc = FooDocument::newFromUrl(
+            'file://' . dirname(__DIR__) . '/foo.xml'
+        );
+
+        $this->assertSame("Hello, I'm x!", $doc['x']->hello());
+
+        $this->assertSame($doc['x'], $doc['x']->getElement());
+
+        $this->assertSame(
+            'Hello! Lorem ipsum',
+            $doc->documentElement->firstChild->hello()
+        );
     }
 }
