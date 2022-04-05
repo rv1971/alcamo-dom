@@ -2,7 +2,7 @@
 
 namespace alcamo\dom\extended;
 
-use alcamo\dom\{Attr as BaseAttr, ConverterPool};
+use alcamo\dom\{Attr as BaseAttr, ConverterPool as CP};
 use alcamo\ietf\Lang;
 
 /**
@@ -14,12 +14,17 @@ class Attr extends BaseAttr
 {
     use RegisteredNodeTrait;
 
-    /// Converters for attributes in the @ref alcamo::dom::Document::XSI_NS namespace
-    public const XSI_CONVERTERS = [
-        'nil'                       => ConverterPool::class . '::toBool',
-        'noNamespaceSchemaLocation' => ConverterPool::class . '::toUri',
-        'schemaLocation'            => ConverterPool::class . '::pairsToMap',
-        'type'                      => ConverterPool::class . '::toXName'
+    /// Map of attr NSs to maps of attr local names to converters
+    public const ATTR_CONVERTERS = [
+        Document::XML_NS => [
+            'lang'                      => CP::class . '::toLang'
+        ],
+        Document::XSI_NS => [
+            'nil'                       => CP::class . '::toBool',
+            'noNamespaceSchemaLocation' => CP::class . '::toUri',
+            'schemaLocation'            => CP::class . '::pairsToMap',
+            'type'                      => CP::class . '::toXName'
+        ]
     ];
 
     private $value_;
@@ -40,17 +45,10 @@ class Attr extends BaseAttr
     /// Create a value for use in getValue()
     protected function createValue()
     {
-        /** Convert xml:lang to Lang object. */
-        if (
-            $this->namespaceURI == Document::XML_NS
-            && $this->localName == 'lang'
-        ) {
-            return ConverterPool::toLang($this->value);
-        } elseif ($this->namespaceURI == Document::XSI_NS) {
-            /** Convert values of attributes in the @ref
-             *  alcamo::dom::Document::XSI_NS namespace using @ref
-             *  XSI_CONVERTERS. */
-            $converter = static::XSI_CONVERTERS[$this->localName] ?? null;
+        if (isset(static::ATTR_CONVERTERS[$this->namespaceURI])) {
+            $converter =
+                static::ATTR_CONVERTERS[$this->namespaceURI][$this->localName]
+                ?? null;
 
             if (isset($converter)) {
                 return $converter($this->value, $this);
