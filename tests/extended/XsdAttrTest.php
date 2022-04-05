@@ -1,13 +1,13 @@
 <?php
 
-namespace alcamo\dom\xsd;
+namespace alcamo\dom\extended;
 
 use PHPUnit\Framework\TestCase;
 use alcamo\ietf\Lang;
 use alcamo\uri\Uri;
 use alcamo\xml\XName;
 
-class AttrTest extends TestCase
+class XsdAttrTest extends TestCase
 {
     /**
      * @dataProvider getValueProvider

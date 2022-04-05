@@ -23,7 +23,6 @@ class Document extends BaseDocument
     /// @copybrief alcamo::dom::Document::NODE_CLASSES
     public const NODE_CLASSES =
         [
-            'DOMAttr'    => Attr::class,
             'DOMElement' => Element::class
         ]
         + parent::NODE_CLASSES;
