@@ -54,15 +54,15 @@ class Attr extends BaseAttr
     /// @copybrief alcamo::dom::extended::Attr::createValue()
     protected function createValue()
     {
-        /** For attributes without namespace on XSD elements, fall back to
-         *  alcamo::dom::extended::Attr::createValue() immediately. */
-        if (
-            !isset($this->namespaceURI)
-            && $this->parentNode->namespaceURI == Document::XSD_NS
-        ) {
-            return parent::createValue();
+        /** If alcamo::dom::extended::Attr::createValue() converts the value,
+         *  return its result. */
+        $value = parent::createValue();
+
+        if ($value !== $this->value) {
+            return $value;
         }
 
+        /** Otherwise convert based on the XML Schema type. */
         try {
             $attrType = $this->getType();
 
@@ -129,9 +129,8 @@ class Attr extends BaseAttr
                 return $value;
             }
 
-            /** If none of the above applies, fall back to
-             *  alcamo::dom::extended::Attr::createValue(). */
-            return parent::createValue();
+            /** If none of the above applies, return the literal value. */
+            return $this->value;
         } catch (\Throwable $e) {
             $e->name = $this->name;
             $e->documentURI = $this->ownerDocument->documentURI;
