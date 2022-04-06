@@ -464,7 +464,7 @@ class Schema
         ];
 
         foreach ($this->xsds_ as $xsd) {
-            $targetNs = $xsd->documentElement->targetNamespace;
+            $targetNs = $xsd->documentElement->targetNamespace ?? null;
 
             // loop top-level XSD elements having name attributes
             foreach ($xsd->documentElement as $elem) {

@@ -14,6 +14,10 @@ class MyDocumentFactory extends DocumentFactory
     public const X_NAME_TO_CLASS = [
         'https://corge.example.info corge' => __CLASS__
     ];
+
+    public const NS_NAME_TO_CLASS = [
+        Document::NSS['xsd'] => Xsd::class
+    ];
 }
 
 class DocumentFactoryTest extends TestCase
