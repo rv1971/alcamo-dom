@@ -54,6 +54,15 @@ class Attr extends BaseAttr
     /// @copybrief alcamo::dom::extended::Attr::createValue()
     protected function createValue()
     {
+        /** For attributes without namespace on XSD elements, fall back to
+         *  alcamo::dom::extended::Attr::createValue() immediately. */
+        if (
+            !isset($this->namespaceURI)
+            && $this->parentNode->namespaceURI == Document::XSD_NS
+        ) {
+            return parent::createValue();
+        }
+
         try {
             $attrType = $this->getType();
 
