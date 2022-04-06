@@ -135,6 +135,13 @@ class AttrTest extends TestCase
                 $doc->documentElement->{'xml:lang'},
                 new Lang('oc')
             ],
+            'xsi:schemaLocation' => [
+                $doc->documentElement->{'xsi:schemaLocation'},
+                [
+                    'http://foo.example.org' => 'foo.xsd',
+                    'http://www.w3.org/2000/01/rdf-schema#' => '../xsd/rdfs.xsd'
+                ]
+            ],
             'dc:source' => [
                 $doc->documentElement->{'dc:source'},
                 new Uri('http://www.example.org/foo')
