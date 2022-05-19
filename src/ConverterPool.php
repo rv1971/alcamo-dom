@@ -4,7 +4,7 @@ namespace alcamo\dom;
 
 use alcamo\binary_data\BinaryString;
 use alcamo\collection\ReadonlyPrefixSet;
-use alcamo\exception\OutOfRange;
+use alcamo\exception\{OutOfRange, SyntaxError};
 use alcamo\iana\MediaType;
 use alcamo\ietf\Lang;
 use alcamo\range\NonNegativeRange;
@@ -225,7 +225,19 @@ class ConverterPool
     /// Process an XPointer URL
     public static function xPointerUrlToSubset($value, \DOMNode $context)
     {
-        [ $url, $fragment ] = explode('#', $value, 2);
+        $a = explode('#', $value, 2);
+
+        if (!isset($a[1])) {
+            throw (new SyntaxError())->setMessageContext(
+                [
+                    'inData' => $value,
+                    'atUri' => $context->ownerDocument->documentURI,
+                    'atLine' => $context->getLineNo()
+                ]
+            );
+        }
+
+        [ $url, $fragment ] = $a;
 
         $doc = $url
             ? static::toDocument($url, $context)

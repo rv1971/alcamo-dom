@@ -4,7 +4,7 @@ namespace alcamo\dom;
 
 use PHPUnit\Framework\TestCase;
 use alcamo\collection\{ReadonlyPrefixBlackWhiteList, ReadonlyPrefixSet};
-use alcamo\exception\OutOfRange;
+use alcamo\exception\{OutOfRange, SyntaxError};
 use alcamo\iana\MediaType;
 use alcamo\range\NonNegativeRange;
 use alcamo\ietf\Lang;
@@ -266,5 +266,16 @@ class ConverterPoolTest extends TestCase
         $this->expectException(OutOfRange::class);
 
         ConverterPool::toInt(PHP_INT_MAX . '0');
+    }
+
+    public function testXPointerUrlToSubsetException()
+    {
+        $doc = Document::newFromUrl(
+            __DIR__ . DIRECTORY_SEPARATOR . 'foo.xml'
+        );
+
+        $this->expectException(SyntaxError::class);
+
+        ConverterPool::xPointerUrlToSubset('bar.xml', $doc->documentElement);
     }
 }
