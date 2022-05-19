@@ -303,7 +303,7 @@ class Document extends \DOMDocument implements
 
             if (
                 !$this->xsltProcessor_->importStylesheet(
-                    self::newFromUrl($xslUrl)
+                    Document::newFromUrl($xslUrl)
                 )
             ) {
                 /** @throw alcamo::exception::FileLoadFailed if a stylesheet
