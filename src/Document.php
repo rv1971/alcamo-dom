@@ -99,7 +99,7 @@ class Document extends \DOMDocument implements
     public static function newFromUrl(
         string $url,
         ?int $libXmlOptions = null,
-        int $loadFlags = null
+        ?int $loadFlags = null
     ): self {
         $doc = new static();
 
@@ -125,7 +125,7 @@ class Document extends \DOMDocument implements
     public static function newFromXmlText(
         string $xml,
         ?int $libXmlOptions = null,
-        int $loadFlags = null
+        ?int $loadFlags = null
     ) {
         $doc = new static();
 
@@ -168,7 +168,7 @@ class Document extends \DOMDocument implements
     public function loadUrl(
         string $url,
         ?int $libXmlOptions = null,
-        int $loadFlags = null
+        ?int $loadFlags = null
     ): void {
         $handler = new ErrorHandler();
 
@@ -201,7 +201,7 @@ class Document extends \DOMDocument implements
     public function loadXmlText(
         string $xml,
         ?int $libXmlOptions = null,
-        int $loadFlags = null
+        ?int $loadFlags = null
     ): void {
         $handler = new ErrorHandler();
 
@@ -481,7 +481,7 @@ class Document extends \DOMDocument implements
     }
 
     /// Perform any initialization to be done after document loading
-    protected function afterLoad(int $loadFlags = null): void
+    protected function afterLoad(?int $loadFlags = null): void
     {
         /** Unset any properties that might refer to a preceding document
          * content. */

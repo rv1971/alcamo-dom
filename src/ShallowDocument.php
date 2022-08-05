@@ -27,7 +27,7 @@ class ShallowDocument extends Document
     public function loadUrl(
         string $url,
         ?int $libXmlOptions = null,
-        int $loadFlags = null
+        ?int $loadFlags = null
     ): void {
         $errorLevel = error_reporting(E_ERROR);
 
@@ -49,7 +49,7 @@ class ShallowDocument extends Document
     public function loadXmlText(
         string $xml,
         ?int $libXmlOptions = null,
-        int $loadFlags = null
+        ?int $loadFlags = null
     ): void {
         /** Use a regular expression to find the first string in angular
          *  brackets which is neither an xml declaration or processing
