@@ -12,6 +12,11 @@ use alcamo\exception\{
 };
 use alcamo\uri\FileUriFactory;
 
+class ValidatedDocument extends Document
+{
+    public const LOAD_FLAGS = self::VALIDATE_AFTER_LOAD;
+}
+
 class DocumentTest extends TestCase
 {
     /**
@@ -231,6 +236,20 @@ class DocumentTest extends TestCase
 
         ValidatedDocument::newFromUrl(
             __DIR__ . DIRECTORY_SEPARATOR . 'foo-invalid.xml'
+        );
+    }
+
+    public function testXinclude()
+    {
+        $quux = Document::newFromUrl(
+            __DIR__ . DIRECTORY_SEPARATOR . 'quux.xml',
+            0,
+            Document::XINCLUDE_AFTER_LOAD | Document::VALIDATE_AFTER_XINCLUDE
+        );
+
+        $this->assertEquals(
+            'corge',
+            $quux->documentElement->firstChild->nextSibling->tagName
         );
     }
 }

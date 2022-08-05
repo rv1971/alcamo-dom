@@ -24,8 +24,11 @@ class ShallowDocument extends Document
      * @warning The first tag must end within the first @ref MAX_LENGH of the
      * data.
      */
-    public function loadUrl(string $url, ?int $libXmlOptions = null)
-    {
+    public function loadUrl(
+        string $url,
+        ?int $libXmlOptions = null,
+        int $loadFlags = null
+    ): void {
         $errorLevel = error_reporting(E_ERROR);
 
         $xmlText = file_get_contents($url, false, null, 0, static::MAX_LENGH);
@@ -39,12 +42,15 @@ class ShallowDocument extends Document
                 ->setMessageContext([ 'filename' => $url ]);
         }
 
-        return $this->loadXmlText($xmlText);
+        $this->loadXmlText($xmlText, $loadFlags);
     }
 
     /// @copydoc Document::loadXmlText()
-    public function loadXmlText(string $xml, ?int $libXmlOptions = null)
-    {
+    public function loadXmlText(
+        string $xml,
+        ?int $libXmlOptions = null,
+        int $loadFlags = null
+    ): void {
         /** Use a regular expression to find the first string in angular
          *  brackets which is neither an xml declaration or processing
          *  instruction nor a comment, and which contains quotes only in
@@ -75,6 +81,6 @@ class ShallowDocument extends Document
         $firstTagText = substr($xml, 0, $bracketPos)
             . (($xml[$bracketPos - 1] == '/') ? '>' : '/>');
 
-        return parent::loadXmlText($firstTagText, $libXmlOptions);
+        parent::loadXmlText($firstTagText, $libXmlOptions);
     }
 }

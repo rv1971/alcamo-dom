@@ -76,6 +76,18 @@ class Document extends \DOMDocument implements
     public const LIBXML_OPTIONS =
         LIBXML_COMPACT | LIBXML_NOBLANKS | LIBXML_NSCLEAN | LIBXML_PEDANTIC;
 
+    /// Validate document just after load (before xinclude(), if requested)
+    public const VALIDATE_AFTER_LOAD = 1;
+
+    /// Call xinclude() after load (and after validation, if requested)
+    public const XINCLUDE_AFTER_LOAD = 2;
+
+    /// Validate document after xinclude()
+    public const VALIDATE_AFTER_XINCLUDE = 4;
+
+    /// OR-Combination of the above constants
+    public const LOAD_FLAGS = 0;
+
     /**
      * @brief Create a document from a URL
      *
@@ -86,11 +98,12 @@ class Document extends \DOMDocument implements
      */
     public static function newFromUrl(
         string $url,
-        ?int $libXmlOptions = null
+        ?int $libXmlOptions = null,
+        int $loadFlags = null
     ): self {
         $doc = new static();
 
-        $doc->loadUrl($url, $libXmlOptions);
+        $doc->loadUrl($url, $libXmlOptions, $loadFlags);
 
         /** Ensure that the file:// protocol is preserved in the
          *  `documentURI` property. */
@@ -111,11 +124,12 @@ class Document extends \DOMDocument implements
      */
     public static function newFromXmlText(
         string $xml,
-        ?int $libXmlOptions = null
+        ?int $libXmlOptions = null,
+        int $loadFlags = null
     ) {
         $doc = new static();
 
-        $doc->loadXmlText($xml, $libXmlOptions);
+        $doc->loadXmlText($xml, $libXmlOptions, $loadFlags);
 
         return $doc;
     }
@@ -151,8 +165,11 @@ class Document extends \DOMDocument implements
      * @param $libXmlOptions See $options in
      * [DOMDocument::load()](https://www.php.net/manual/en/domdocument.load)
      */
-    public function loadUrl(string $url, ?int $libXmlOptions = null)
-    {
+    public function loadUrl(
+        string $url,
+        ?int $libXmlOptions = null,
+        int $loadFlags = null
+    ): void {
         $handler = new ErrorHandler();
 
         try {
@@ -170,7 +187,7 @@ class Document extends \DOMDocument implements
         }
 
         /** After loading, run the afterLoad() hook. */
-        $this->afterLoad();
+        $this->afterLoad($loadFlags);
     }
 
     /**
@@ -181,8 +198,11 @@ class Document extends \DOMDocument implements
      * @param $libXmlOptions See $options in
      * [DOMDocument::load()](https://www.php.net/manual/en/domdocument.load)
      */
-    public function loadXmlText(string $xml, ?int $libXmlOptions = null)
-    {
+    public function loadXmlText(
+        string $xml,
+        ?int $libXmlOptions = null,
+        int $loadFlags = null
+    ): void {
         $handler = new ErrorHandler();
 
         try {
@@ -202,7 +222,7 @@ class Document extends \DOMDocument implements
         }
 
         /** After loading, run the afterLoad() hook. */
-        return $this->afterLoad();
+        $this->afterLoad($loadFlags);
     }
 
     /**
@@ -461,13 +481,29 @@ class Document extends \DOMDocument implements
     }
 
     /// Perform any initialization to be done after document loading
-    protected function afterLoad(): void
+    protected function afterLoad(int $loadFlags = null): void
     {
         /** Unset any properties that might refer to a preceding document
          * content. */
         $this->xPath_ = null;
         $this->xsltProcessor_ = false;
         $this->schemaLocations_ = null;
+
+        if (!isset($loadFlags)) {
+            $loadFlags = static::LOAD_FLAGS;
+        }
+
+        if ($loadFlags & self::VALIDATE_AFTER_LOAD) {
+            $this->validate();
+        }
+
+        if ($loadFlags & self::XINCLUDE_AFTER_LOAD) {
+            $this->xinclude();
+
+            if ($loadFlags & self::VALIDATE_AFTER_XINCLUDE) {
+                $this->validate();
+            }
+        }
     }
 
     private function processLibxmlErrors(): void

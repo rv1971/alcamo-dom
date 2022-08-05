@@ -21,7 +21,7 @@ use alcamo\exception\DataValidationFailed;
  */
 class Document extends BaseDocument
 {
-    use ValidationTrait;
+    public const LOAD_FLAGS = self::VALIDATE_AFTER_LOAD;
 
     /// @copybrief alcamo::dom::Document::NODE_CLASSES
     public const NODE_CLASSES =
