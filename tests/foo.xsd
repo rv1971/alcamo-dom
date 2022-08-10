@@ -43,8 +43,17 @@
 
   <xsd:attribute name="quux" type="xsd:short"/>
 
-  <xsd:element name="foo" id="foo" rdfs:label="language-agnostic foo">
+  <xsd:element
+      name="foo"
+      id="foo"
+      rdfs:label="language-agnostic foo"
+      rdfs:comment="language-agnostic description">
     <xsd:annotation>
+      <xsd:appinfo xml:lang="es">
+        <rdfs:comment xml:lang="en">Description</rdfs:comment>
+        <rdfs:comment>Descripción</rdfs:comment>
+      </xsd:appinfo>
+
       <xsd:appinfo xml:lang="fr">
         <rdfs:label xml:lang="en">English foo</rdfs:label>
         <rdfs:label xml:lang="de">deutsches foo</rdfs:label>
@@ -61,6 +70,11 @@
             <xsd:appinfo>
               <rdfs:label xml:lang="it">bar italiano</rdfs:label>
               <rdfs:label xml:lang="en">English bar</rdfs:label>
+            </xsd:appinfo>
+
+            <xsd:appinfo xml:lang="it">
+              <rdfs:comment>Descrizione</rdfs:comment>
+              <rdfs:comment xml:lang="de">Beschreibung</rdfs:comment>
             </xsd:appinfo>
           </xsd:annotation>
         </xsd:element>

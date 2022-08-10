@@ -14,7 +14,7 @@ class Element extends BaseElement
 {
     private $type_ = false;  ///< TypeInterface
 
-    public const DEFAULT_DECORATOR_CLASS = GetLabelDecorator::class;
+    public const DEFAULT_DECORATOR_CLASS = GetLabelAndCommentDecorator::class;
 
     public function getType(): TypeInterface
     {
