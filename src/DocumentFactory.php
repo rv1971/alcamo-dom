@@ -100,7 +100,8 @@ class DocumentFactory implements DocumentFactoryInterface
         $url,
         ?string $class = null,
         ?int $libXmlOptions = null,
-        ?bool $useCache = null
+        ?bool $useCache = null,
+        ?int $loadFlags = null
     ): Document {
         if (!($url instanceof UriInterface)) {
             $url = new Uri($url);
@@ -155,7 +156,7 @@ class DocumentFactory implements DocumentFactoryInterface
 
         /** If the document is not taken from the cache, call the newFromUrl()
          *  method of the document class to create a new instance. */
-        $doc = $class::newFromUrl($url, $libXmlOptions);
+        $doc = $class::newFromUrl($url, $libXmlOptions, $loadFlags);
 
         if ($useCache) {
             self::$cache_[$url] = $doc;
@@ -178,13 +179,14 @@ class DocumentFactory implements DocumentFactoryInterface
     public function createFromXmlText(
         string $xml,
         ?string $class = null,
-        ?int $libXmlOptions = null
+        ?int $libXmlOptions = null,
+        ?int $loadFlags = null
     ): Document {
         if (!isset($class)) {
             $class = $this->xmlTextToClass($xml);
         }
 
-        $doc = $class::newFromXmlText($xml, $libXmlOptions);
+        $doc = $class::newFromXmlText($xml, $libXmlOptions, $loadFlags);
 
         return $doc;
     }

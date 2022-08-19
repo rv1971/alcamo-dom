@@ -22,6 +22,8 @@ interface DocumentFactoryInterface
     public function createFromUrl(
         string $url,
         ?string $class = null,
-        ?int $libXmlOptions = null
+        ?int $libXmlOptions = null,
+        ?bool $useCache = null,
+        ?int $loadFlags = null
     ): Document;
 }

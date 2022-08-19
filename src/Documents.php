@@ -32,7 +32,8 @@ class Documents extends ReadonlyCollection
     public static function newFromGlob(
         string $pattern,
         ?int $globFlags = null,
-        ?int $libXmlOptions = null
+        ?int $libXmlOptions = null,
+        ?int $loadFlags = null
     ): self {
         /** Use the createFromUrl() method of an instance of @ref
          *  FACTORY_CLASS to create the documents. */
@@ -48,7 +49,8 @@ class Documents extends ReadonlyCollection
             $doc = $factory->createFromUrl(
                 'file://' . str_replace(DIRECTORY_SEPARATOR, '/', $path),
                 null,
-                $libXmlOptions
+                $libXmlOptions,
+                $loadFlags
             );
 
             /** If the document element has a `dc:identifier` attribute, use
@@ -79,7 +81,8 @@ class Documents extends ReadonlyCollection
     public static function newFromUrls(
         iterable $urls,
         $baseUrl = null,
-        ?int $libXmlOptions = null
+        ?int $libXmlOptions = null,
+        ?int $loadFlags = null
     ): self {
         /** Use the createFromUrl() method of an instance of @ref
          *  FACTORY_CLASS to create the documents. */
@@ -102,7 +105,8 @@ class Documents extends ReadonlyCollection
                 $url = UriResolver::resolve($baseUrl, $url);
             }
 
-            $doc = $factory->createFromUrl($url, null, $libXmlOptions);
+            $doc = $factory
+                ->createFromUrl($url, null, $libXmlOptions, $loadFlags);
 
             /** If the document element has a `dc:identifier` attribute, use
              *  it for the array key. Otherwise use the file name. */
