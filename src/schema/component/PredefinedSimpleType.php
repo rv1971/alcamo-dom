@@ -2,6 +2,8 @@
 
 namespace alcamo\dom\schema\component;
 
+use alcamo\dom\Document;
+
 /**
  * @brief Type definition predefined in the XML %Schema specification
  *
@@ -13,5 +15,20 @@ class PredefinedSimpleType extends PredefinedType implements
     public function getFacetValue(string $facetName)
     {
         return null;
+    }
+
+    public function isEqualToOrDerivedFrom(string $xName): bool
+    {
+        for (
+            $currentType = $this;
+            isset($currentType);
+            $currentType = $currentType->getBaseType()
+        ) {
+            if ($currentType->getXName() == $xName) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

@@ -120,6 +120,21 @@ abstract class AbstractSimpleType extends AbstractXsdComponent implements
         return $this->baseType_;
     }
 
+    public function isEqualToOrDerivedFrom(string $xName): bool
+    {
+        for (
+            $currentType = $this;
+            isset($currentType);
+            $currentType = $currentType->getBaseType()
+        ) {
+            if ($currentType->getXName() == $xName) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     /**
      * @warning Only finds facets within the top-level `xsd:restriction´
      * element. A facet within

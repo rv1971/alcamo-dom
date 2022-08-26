@@ -20,14 +20,12 @@ class ComplexTypeTest extends TestCase
     {
         $fooSchema = Schema::newFromDocument(
             Document::newFromUrl(
-                'file://' . dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR
-                . 'foo.xml'
+                'file://' . dirname(dirname(__DIR__)) . '/foo.xml'
             )
         );
 
         $this->assertSame(
-            'file://' . dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR
-            . 'foo.xsd#Bar',
+            'file://' . dirname(dirname(__DIR__)) . '/foo.xsd#Bar',
             (string)$fooSchema->getGlobalType(self::FOO_NS . ' Bar')->getUri()
         );
 
@@ -56,8 +54,7 @@ class ComplexTypeTest extends TestCase
     {
         $fooSchema = Schema::newFromDocument(
             Document::newFromUrl(
-                'file://' . dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR
-                . 'foo.xml'
+                'file://' . dirname(dirname(__DIR__)) . '/foo.xml'
             )
         );
 
@@ -245,8 +242,7 @@ class ComplexTypeTest extends TestCase
     {
         $fooSchema = Schema::newFromDocument(
             Document::newFromUrl(
-                'file://' . dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR
-                . 'foo.xml'
+                'file://' . dirname(dirname(__DIR__)) . '/foo.xml'
             )
         );
 
