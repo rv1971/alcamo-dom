@@ -72,9 +72,17 @@ class Document extends \DOMDocument implements
         'DOMText'    => Text::class
     ];
 
-    /// Default libxml options when loading a document
+    /**
+     * @brief Default libxml options when loading a document
+     *
+     * The option `LIBXML_PEDANTIC` has been removed because it makes the
+     * parser fail when reading `xml:lang` values containing private
+     * subtags. This is a known but unresolved bug in the underlying libxml2,
+     * see [xmllint fails to validate
+     * xs:language](https://stackoverflow.com/questions/29314958/xmllint-fails-to-validate-xslanguage).
+     */
     public const LIBXML_OPTIONS =
-        LIBXML_COMPACT | LIBXML_NOBLANKS | LIBXML_NSCLEAN | LIBXML_PEDANTIC;
+        LIBXML_COMPACT | LIBXML_NOBLANKS | LIBXML_NSCLEAN;
 
     /// Validate document just after load (before xinclude(), if requested)
     public const VALIDATE_AFTER_LOAD = 1;
