@@ -106,7 +106,7 @@ class ElementTest extends TestCase
                 AtomicType::class,
                 new XName(self::XSD_NS, 'short'),
                 'XMLSchema.xsd',
-                '/xs:schema/xs:simpleType[46]'
+                '/xs:schema/xs:simpleType[47]'
             ],
             [
                 $quxDoc->documentElement,

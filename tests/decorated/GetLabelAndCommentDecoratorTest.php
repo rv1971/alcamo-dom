@@ -39,7 +39,7 @@ class GetLabelAndCommentDecoratorTest extends TestCase
             [ $doc['x'], 'sk', GetLabelInterface::FALLBACK_TO_OTHER_LANG, 'C oc' ],
             [ $doc['x'], 'sk', GetLabelInterface::FALLBACK_TO_NAME, 'bar' ],
             [ $doc['corge'], null, null, 'CORGE' ],
-            [ $doc['corge'], 'pl', null, 'CORGE-pl' ],
+            [ $doc['corge'], 'pl-x-corge', null, 'CORGE-pl' ],
             [ $doc['corge'], 'pt', null, 'CORGE' ],
         ];
     }

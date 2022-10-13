@@ -70,7 +70,7 @@
       enum="list"
       enums="list list union"
       rdfs:label="CORGE">
-      <rdfs:label xml:lang="pl">CORGE-pl</rdfs:label>
+      <rdfs:label xml:lang="pl-x-corge">CORGE-pl</rdfs:label>
   </corge>
 
   <xsd:annotation>
