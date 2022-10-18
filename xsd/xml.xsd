@@ -5,6 +5,10 @@
   xmlns   ="http://www.w3.org/1999/xhtml"
   xml:lang="en">
 
+  <xs:import
+      namespace="http://www.w3.org/2001/XMLSchema"
+      schemaLocation="XMLSchema.xsd"/>
+
  <xs:annotation>
   <xs:documentation>
    <div>
