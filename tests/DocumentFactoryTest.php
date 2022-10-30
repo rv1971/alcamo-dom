@@ -154,8 +154,6 @@ class DocumentFactoryTest extends TestCase
         $this->expectException(AbsoluteUriNeeded::class);
         $this->expectExceptionMessage(
             'Relative URI <alcamo\uri\Uri>"'
-            . __DIR__ . DIRECTORY_SEPARATOR
-            . 'bar.xml" given where absolute URI is needed'
         );
 
         $documentFactory->createFromUrl(
