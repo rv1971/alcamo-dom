@@ -37,11 +37,10 @@ class ElementTest extends TestCase
             'xpointer2',
             ''
         ];
-        $i = 0;
 
-        foreach ($bar as $baz) {
+        foreach ($bar as $pos => $baz) {
             $this->assertSame(
-                $expectedIds[$i++],
+                $expectedIds[$pos],
                 (string)$baz->getAttributeNodeNS(Document::XML_NS, 'id')
             );
         }

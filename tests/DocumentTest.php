@@ -252,4 +252,23 @@ class DocumentTest extends TestCase
             $quux->documentElement->firstChild->nextSibling->tagName
         );
     }
+
+    public function testIteration()
+    {
+        $expectedTagNames = [
+            'rdfs:comment',
+            'bar',
+            'corge',
+            'xsd:annotation',
+            'qux'
+        ];
+
+        foreach (
+            Document::newFromUrl(
+                __DIR__ . DIRECTORY_SEPARATOR . 'foo.xml'
+            ) as $pos => $element
+        ) {
+            $this->assertSame($expectedTagNames[$pos], $element->tagName);
+        }
+    }
 }

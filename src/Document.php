@@ -31,7 +31,8 @@ use alcamo\exception\{
 class Document extends \DOMDocument implements
     \ArrayAccess,
     BaseUriInterface,
-    HasDocumentFactoryInterface
+    HasDocumentFactoryInterface,
+    \IteratorAggregate
 {
     use PreventWriteArrayAccessTrait;
     use BaseUriTrait;
@@ -250,6 +251,12 @@ class Document extends \DOMDocument implements
     public function unconserve()
     {
         unset(self::$docRegistry_[spl_object_hash($this)]);
+    }
+
+    /// Call Element::getIterator() on document element
+    public function getIterator()
+    {
+        return $this->documentElement->getIterator();
     }
 
     /// Readonly ArrayAccess access to elements by ID
