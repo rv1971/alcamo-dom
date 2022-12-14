@@ -88,7 +88,7 @@ class ElementTest extends TestCase
 
         $this->expectException(AbsoluteUriNeeded::class);
         $this->expectExceptionMessage(
-            "Relative URI <GuzzleHttp\Psr7\Uri>\"$relUri\" "
+            "Relative URI <alcamo\uri\Uri>\"$relUri\" "
             . "given where absolute URI is needed"
         );
 

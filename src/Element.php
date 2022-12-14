@@ -4,7 +4,7 @@ namespace alcamo\dom;
 
 use alcamo\exception\AbsoluteUriNeeded;
 use alcamo\xml\HasXNameInterface;
-use GuzzleHttp\Psr7\{Uri, UriNormalizer};
+use alcamo\uri\{Uri, UriNormalizer};
 use Psr\Http\Message\UriInterface;
 
 /**

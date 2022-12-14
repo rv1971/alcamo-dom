@@ -3,8 +3,8 @@
 namespace alcamo\dom;
 
 use alcamo\exception\{AbsoluteUriNeeded, InvalidType, ReadonlyViolation};
-use alcamo\uri\Uri;
-use GuzzleHttp\Psr7\{UriNormalizer, UriResolver};
+use alcamo\uri\{Uri, UriNormalizer};
+use GuzzleHttp\Psr7\UriResolver;
 use Psr\Http\Message\UriInterface;
 
 /**
