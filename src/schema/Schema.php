@@ -23,7 +23,7 @@ use alcamo\dom\schema\component\{
     PredefinedSimpleType,
     TypeInterface
 };
-use alcamo\exception\AbsoluteUriNeeded;
+use alcamo\exception\{AbsoluteUriNeeded, ExceptionInterface};
 use alcamo\uri\{Uri, UriNormalizer};
 use alcamo\xml\XName;
 use GuzzleHttp\Psr7\UriResolver;
@@ -442,7 +442,18 @@ class Schema
                     $url = $import->resolveUri($import->schemaLocation);
 
                     if (!isset($this->xsds_[(string)$url])) {
-                        $xsds[] = $this->createXsd($url);
+                        try {
+                            $xsds[] = $this->createXsd($url);
+                        } catch (ExceptionInterface $e) {
+                            $e->addMessageContext(
+                                [
+                                    'atUri' => $xsd->documentURI,
+                                    'atLine' => $import->getLineNo()
+                                ]
+                            );
+
+                            throw $e;
+                        }
                     }
                 }
             }
