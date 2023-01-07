@@ -306,6 +306,22 @@ class Document extends \DOMDocument implements
     }
 
     /**
+     * @brief Get pseudo attributes of the first processing instruction for
+     * the given target
+     *
+     * @return SimpleXMLElement with the pseudo attributes as attributes, or
+     * `null` if ther is no instruction for that target.
+     */
+    public function getFirstPiPseudoAttrs(string $piTarget): ?\SimpleXMLElement
+    {
+        $firstPi = $this->query('/processing-instruction("xml-stylesheet")')[0];
+
+        return isset($firstPi)
+            ? simplexml_load_string("<x {$firstPi->nodeValue}/>")
+            : null;
+    }
+
+    /**
      * @brief XSLT processor based on the first xml-stylesheet processing
      * instruction, if any
      */
@@ -318,16 +334,9 @@ class Document extends \DOMDocument implements
                 throw new Uninitialized();
             }
 
-            $pi = $this->query('/processing-instruction("xml-stylesheet")')[0];
+            $pseudoAttrs = $this->getFirstPiPseudoAttrs('xml-stylesheet');
 
-            if (!isset($pi)) {
-                $this->xsltProcessor_ = null;
-                return null;
-            }
-
-            $pseudoAttrs = simplexml_load_string("<x {$pi->nodeValue}/>");
-
-            if ($pseudoAttrs['type'] != 'text/xsl') {
+            if (!isset($pseudoAttrs) || $pseudoAttrs['type'] != 'text/xsl') {
                 $this->xsltProcessor_ = null;
                 return null;
             }
