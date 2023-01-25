@@ -3,7 +3,7 @@
 namespace alcamo\dom\extended;
 
 use PHPUnit\Framework\TestCase;
-use alcamo\ietf\Lang;
+use alcamo\rdfa\Lang;
 
 class ElementTest extends TestCase
 {
@@ -28,15 +28,15 @@ class ElementTest extends TestCase
         return [
             'explicit-lang' => [
                 $fooDoc->documentElement,
-                new Lang('oc')
+                Lang::newFromPrimary('oc')
             ],
             'parent-lang' => [
                 $fooDoc->documentElement->firstChild->nextSibling,
-                new Lang('oc')
+                Lang::newFromPrimary('oc')
             ],
             'closest-parent-lang' => [
                 $fooDoc['qux'],
-                new Lang('fi')
+                Lang::newFromPrimary('fi')
             ],
             'no-lang' => [
                 $barDoc->documentElement,
@@ -97,13 +97,13 @@ class ElementTest extends TestCase
                 $doc->documentElement, 'qux', true, '42-43'
             ],
             'namespace-prefix' => [
-                $doc->documentElement, 'xml:lang', true, new Lang('oc')
+                $doc->documentElement, 'xml:lang', true, Lang::newFromPrimary('oc')
             ],
             'xname' => [
                 $doc->documentElement,
                 Document::XML_NS . ' lang',
                 true,
-                new Lang('oc')
+                Lang::newFromPrimary('oc')
             ],
             'unset-without-namespace' => [
                 $doc->documentElement, 'barbarbar', false, null

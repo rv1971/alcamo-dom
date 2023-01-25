@@ -3,7 +3,7 @@
 namespace alcamo\dom\extended;
 
 use alcamo\dom\{Attr as BaseAttr, ConverterPool as CP};
-use alcamo\ietf\Lang;
+use alcamo\rdfa\Lang;
 
 /**
  * @brief Attribute class for use in DOMDocument::registerNodeClass()

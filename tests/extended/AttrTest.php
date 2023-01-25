@@ -3,7 +3,7 @@
 namespace alcamo\dom\extended;
 
 use PHPUnit\Framework\TestCase;
-use alcamo\ietf\Lang;
+use alcamo\rdfa\Lang;
 use alcamo\xml\XName;
 
 class FooAttr extends Attr
@@ -66,7 +66,7 @@ class AttrTest extends TestCase
             'lang' => [
                 $doc->documentElement,
                 'xml:lang',
-                new Lang('oc')
+                Lang::newFromPrimary('oc')
             ],
             'schemaLocation' => [
                 $doc->documentElement,

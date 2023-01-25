@@ -5,9 +5,8 @@ namespace alcamo\dom;
 use alcamo\binary_data\BinaryString;
 use alcamo\collection\ReadonlyPrefixSet;
 use alcamo\exception\{OutOfRange, SyntaxError};
-use alcamo\iana\MediaType;
-use alcamo\ietf\Lang;
 use alcamo\range\NonNegativeRange;
+use alcamo\rdfa\{Lang, MediaType};
 use alcamo\time\Duration;
 use alcamo\uri\{Uri, UriFromCurieFactory};
 use alcamo\xml\XName;
@@ -103,13 +102,13 @@ class ConverterPool
         return $result;
     }
 
-    /// Call alcamo::ietf::Lang::newFromString()
+    /// Call alcamo::rdfa::Lang::newFromString()
     public static function toLang($value): Lang
     {
         return Lang::newFromString($value);
     }
 
-    /// Call alcamo::iana::MediaType::newFromString()
+    /// Call alcamo::rdfa::MediaType::newFromString()
     public static function toMediaType($value): MediaType
     {
         return MediaType::newFromString($value);
@@ -141,7 +140,7 @@ class ConverterPool
         return new Set(preg_split('/\s+/', $value));
     }
 
-    /// Call alcamo::ietf::Uri::__construct()
+    /// Call alcamo::uri::Uri::__construct()
     public static function toUri($value): Uri
     {
         return new Uri($value);
@@ -201,21 +200,21 @@ class ConverterPool
         return $map;
     }
 
-    /// Call alcamo::ietf::UriFromCurieFactory::createFromCurieAndContext()
+    /// Call alcamo::uri::UriFromCurieFactory::createFromCurieAndContext()
     public static function curieToUri($value, \DOMNode $context): Uri
     {
         return (new UriFromCurieFactory())
             ->createFromCurieAndContext($value, $context);
     }
 
-    /// Call alcamo::ietf::UriFromCurieFactory::createFromSafeCurieAndContext()
+    /// Call alcamo::uri::UriFromCurieFactory::createFromSafeCurieAndContext()
     public static function safeCurieToUri($value, \DOMNode $context): Uri
     {
         return (new UriFromCurieFactory())
             ->createFromSafeCurieAndContext($value, $context);
     }
 
-    /// Call alcamo::ietf::UriFromCurieFactory::createFromUriOrSafeCurieAndContext()
+    /// Call alcamo::uri::UriFromCurieFactory::createFromUriOrSafeCurieAndContext()
     public static function uriOrSafeCurieToUri($value, \DOMNode $context): Uri
     {
         return (new UriFromCurieFactory())

@@ -2,7 +2,7 @@
 
 namespace alcamo\dom\extended;
 
-use alcamo\ietf\Lang;
+use alcamo\rdfa\Lang;
 
 /**
  * @brief Provides language of a node

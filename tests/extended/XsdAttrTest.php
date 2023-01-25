@@ -3,7 +3,7 @@
 namespace alcamo\dom\extended;
 
 use PHPUnit\Framework\TestCase;
-use alcamo\ietf\Lang;
+use alcamo\rdfa\Lang;
 use alcamo\uri\Uri;
 use alcamo\xml\XName;
 
@@ -159,13 +159,13 @@ class XsdAttrTest extends TestCase
                 $doc->documentElement, 'qux', true, '42-43'
             ],
             'namespace-prefix' => [
-                $doc->documentElement, 'xml:lang', true, new Lang('oc')
+                $doc->documentElement, 'xml:lang', true, Lang::newFromPrimary('oc')
             ],
             'xname' => [
                 $doc->documentElement,
                 Document::XML_NS . ' lang',
                 true,
-                new Lang('oc')
+                Lang::newFromPrimary('oc')
             ],
             'unset-without-namespace' => [
                 $doc->documentElement, 'barbarbar', false, null

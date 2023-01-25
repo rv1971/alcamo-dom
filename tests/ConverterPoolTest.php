@@ -5,9 +5,8 @@ namespace alcamo\dom;
 use PHPUnit\Framework\TestCase;
 use alcamo\collection\{ReadonlyPrefixBlackWhiteList, ReadonlyPrefixSet};
 use alcamo\exception\{OutOfRange, SyntaxError};
-use alcamo\iana\MediaType;
 use alcamo\range\NonNegativeRange;
-use alcamo\ietf\Lang;
+use alcamo\rdfa\{Lang, MediaType};
 use alcamo\time\Duration;
 use alcamo\uri\Uri;
 use alcamo\xml\XName;
@@ -117,7 +116,7 @@ class ConverterPoolTest extends TestCase
             'lang' => [
                 $doc['lang']->getAttributeNode('content'),
                 'toLang',
-                new Lang('yo', 'NG')
+                Lang::newFromPrimaryAndRegion('yo', 'NG')
             ],
             'media-type' => [
                 $doc['media-type']->getAttributeNode('content'),

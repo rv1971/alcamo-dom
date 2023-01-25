@@ -4,7 +4,7 @@ namespace alcamo\dom\xsl;
 
 use PHPUnit\Framework\TestCase;
 use alcamo\dom\extended\Element;
-use alcamo\iana\MediaType;
+use alcamo\rdfa\MediaType;
 
 class AttrTest extends TestCase
 {
