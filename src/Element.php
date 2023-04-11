@@ -53,11 +53,14 @@ class Element extends \DOMElement implements
      * found.
      *
      * For comparison, the values of `owl:sameAs` attributes are resolved to
-     * absolute URIs and compared literally.
+     * absolute URIs and compared literally. The default set of normalizations
+     * applied by alcamo::uri::UriNormalizer::normalize() includes realpath(),
+     * coherently with the fact that DOMDocument::baseURI may resolve symbolic
+     * links.
      */
     public function getFirstSameAs(
         $uri,
-        $normalizations = UriNormalizer::PRESERVING_NORMALIZATIONS
+        ?int $normalizations = null
     ): ?self {
         if (!($uri instanceof UriInterface)) {
             $uri = new Uri($uri);
