@@ -314,7 +314,7 @@ class Document extends \DOMDocument implements
      */
     public function getFirstPiPseudoAttrs(string $piTarget): ?\SimpleXMLElement
     {
-        $firstPi = $this->query('/processing-instruction("xml-stylesheet")')[0];
+        $firstPi = $this->query("/processing-instruction('$piTarget')")[0];
 
         return isset($firstPi)
             ? simplexml_load_string("<x {$firstPi->nodeValue}/>")
