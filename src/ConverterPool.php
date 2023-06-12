@@ -252,12 +252,15 @@ class ConverterPool
     {
         $result = new Set();
 
-        foreach (static::xPointerUrlToSubset($value, $context) as $node) {
-            /** On Attr, call Attr::getValue() to get a value; for any other
-             *  node, take the nodeValue peroperty. */
-            $result->add(
-                $node instanceof Attr ? $node->getValue() : $node->nodeValue
-            );
+        $nodes = static::xPointerUrlToSubset($value, $context);
+        if (isset($nodes)) {
+            foreach ($nodes as $node) {
+                /** On Attr, call Attr::getValue() to get a value; for any
+                 *  other node, take the nodeValue peroperty. */
+                $result->add(
+                    $node instanceof Attr ? $node->getValue() : $node->nodeValue
+                );
+            }
         }
 
         return $result;
