@@ -63,16 +63,16 @@ class Attr extends BaseAttr
             return parent::createValue();
         }
 
-        /** Otherwise, if alcamo::dom::extended::Attr::createValue() converts
-         *  the value, return its result. */
-        $value = parent::createValue();
-
-        if ($value !== $this->value) {
-            return $value;
-        }
-
-        /** Otherwise convert based on the XML Schema type. */
         try {
+            /** Otherwise, if alcamo::dom::extended::Attr::createValue()
+             *  converts the value, return its result. */
+            $value = parent::createValue();
+
+            if ($value !== $this->value) {
+                return $value;
+            }
+
+            /** Otherwise convert based on the XML Schema type. */
             $attrType = $this->getType();
 
             $converters = $this->ownerDocument->getAttrConverters();
