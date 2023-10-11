@@ -4,6 +4,4 @@
     xmlns="http://quux.example.org"
     xmlns:xi="http://www.w3.org/2001/XInclude"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://quux.example.org quux.xsd">
-  <xi:include href="corge.xml"/>
-</quux>
+    xsi:schemaLocation="http://quux.example.org quux.xsd"><xi:include href="corge.xml"/></quux>

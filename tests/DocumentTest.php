@@ -17,6 +17,12 @@ class ValidatedDocument extends Document
     public const LOAD_FLAGS = self::VALIDATE_AFTER_LOAD;
 }
 
+class ReparsedDocument extends Document
+{
+    public const LOAD_FLAGS =
+        self::XINCLUDE_AFTER_LOAD | self::FORMAT_AND_REPARSE;
+}
+
 class DocumentTest extends TestCase
 {
     /**
@@ -269,8 +275,21 @@ class DocumentTest extends TestCase
 
         $this->assertEquals(
             'corge',
-            $quux->documentElement->firstChild->nextSibling->tagName
+            $quux->documentElement->firstChild->tagName
         );
+    }
+
+    public function testReparse()
+    {
+        $quux = ReparsedDocument::newFromUrl(
+            __DIR__ . DIRECTORY_SEPARATOR . 'quux.xml'
+        );
+
+        $corge = $quux->documentElement->firstChild;
+
+        $this->assertEquals('corge', $corge->tagName);
+
+        $this->assertEquals(3, $corge->getLineNo());
     }
 
     public function testIteration()

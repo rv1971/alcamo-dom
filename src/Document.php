@@ -94,6 +94,9 @@ class Document extends \DOMDocument implements
     /// Validate document after xinclude()
     public const VALIDATE_AFTER_XINCLUDE = 4;
 
+    /// Pretty-format and re-parse to get reasonable line numbers
+    public const FORMAT_AND_REPARSE = 8;
+
     /// OR-Combination of the above constants
     public const LOAD_FLAGS = 0;
 
@@ -533,6 +536,15 @@ class Document extends \DOMDocument implements
             if ($loadFlags & self::VALIDATE_AFTER_XINCLUDE) {
                 $this->validate();
             }
+        }
+
+        if ($loadFlags & self::FORMAT_AND_REPARSE) {
+            $this->formatOutput = true;
+
+            $this->loadXml(
+                $this->saveXML(),
+                $libXmlOptions ?? static::LIBXML_OPTIONS
+            );
         }
     }
 
