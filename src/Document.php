@@ -539,12 +539,16 @@ class Document extends \DOMDocument implements
         }
 
         if ($loadFlags & self::FORMAT_AND_REPARSE) {
+            $url = $this->documentURI;
+
             $this->formatOutput = true;
 
             $this->loadXml(
                 $this->saveXML(),
                 $libXmlOptions ?? static::LIBXML_OPTIONS
             );
+
+            $this->documentURI = $url;
         }
     }
 

@@ -281,15 +281,17 @@ class DocumentTest extends TestCase
 
     public function testReparse()
     {
-        $quux = ReparsedDocument::newFromUrl(
-            __DIR__ . DIRECTORY_SEPARATOR . 'quux.xml'
-        );
+        $url = __DIR__ . DIRECTORY_SEPARATOR . 'quux.xml';
+
+        $quux = ReparsedDocument::newFromUrl($url);
 
         $corge = $quux->documentElement->firstChild;
 
         $this->assertEquals('corge', $corge->tagName);
 
         $this->assertEquals(3, $corge->getLineNo());
+
+        $this->assertEquals($url, $quux->documentURI);
     }
 
     public function testIteration()
