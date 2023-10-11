@@ -81,6 +81,17 @@ class DocumentTest extends TestCase
 
         $doc2->getXPath()->registerNamespace('foo', 'http://foo.example.org');
 
+        $doc3Url = __DIR__ . DIRECTORY_SEPARATOR . 'bar.xml';
+
+        $doc3 = Document::newFromXmlText(
+            file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'foo.xml'),
+            null,
+            null,
+            $doc3Url
+        );
+
+        $doc3->getXPath()->registerNamespace('foo', 'http://foo.example.org');
+
         return [
             'from-url' => [
                 $doc1,
@@ -93,7 +104,8 @@ class DocumentTest extends TestCase
                 (new FileUriFactory())->fsPath2FileUrlPath(
                     __DIR__ . DIRECTORY_SEPARATOR
                 )
-            ]
+            ],
+            'from-xml-with-url' => [ $doc3, $doc3Url ]
         ];
     }
 

@@ -49,7 +49,8 @@ class ShallowDocument extends Document
     public function loadXmlText(
         string $xml,
         ?int $libXmlOptions = null,
-        ?int $loadFlags = null
+        ?int $loadFlags = null,
+        ?string $url = null
     ): void {
         /** Use a regular expression to find the first string in angular
          *  brackets which is neither an xml declaration or processing
@@ -81,6 +82,6 @@ class ShallowDocument extends Document
         $firstTagText = substr($xml, 0, $bracketPos)
             . (($xml[$bracketPos - 1] == '/') ? '>' : '/>');
 
-        parent::loadXmlText($firstTagText, $libXmlOptions);
+        parent::loadXmlText($firstTagText, $libXmlOptions, $loadFlags, $url);
     }
 }

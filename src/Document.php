@@ -134,11 +134,12 @@ class Document extends \DOMDocument implements
     public static function newFromXmlText(
         string $xml,
         ?int $libXmlOptions = null,
-        ?int $loadFlags = null
+        ?int $loadFlags = null,
+        ?string $url = null
     ) {
         $doc = new static();
 
-        $doc->loadXmlText($xml, $libXmlOptions, $loadFlags);
+        $doc->loadXmlText($xml, $libXmlOptions, $loadFlags, $url);
 
         return $doc;
     }
@@ -210,7 +211,8 @@ class Document extends \DOMDocument implements
     public function loadXmlText(
         string $xml,
         ?int $libXmlOptions = null,
-        ?int $loadFlags = null
+        ?int $loadFlags = null,
+        ?string $url = null
     ): void {
         $handler = new ErrorHandler();
 
@@ -228,6 +230,10 @@ class Document extends \DOMDocument implements
             /** @throw alcamo::exception::SyntaxError if any libxml warning or
              *  error occurs. */
             throw SyntaxError::newFromPrevious($e, [ 'inData' => $xml ]);
+        }
+
+        if (isset($url)) {
+            $this->documentURI = $url;
         }
 
         /** After loading, run the afterLoad() hook. */
