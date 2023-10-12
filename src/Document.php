@@ -531,7 +531,7 @@ class Document extends \DOMDocument implements
         }
 
         if ($loadFlags & self::XINCLUDE_AFTER_LOAD) {
-            $this->xinclude();
+            $this->xinclude($libXmlOptions ?? static::LIBXML_OPTIONS);
 
             if ($loadFlags & self::VALIDATE_AFTER_XINCLUDE) {
                 $this->validate();
