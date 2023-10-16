@@ -527,6 +527,8 @@ class Document extends \DOMDocument implements
 
         $this->documentURI = $url;
 
+        unset($this->xPath_);
+
         return $this;
     }
 
