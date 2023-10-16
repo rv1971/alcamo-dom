@@ -513,6 +513,23 @@ class Document extends \DOMDocument implements
         return $this->validateAgainstXsdText($xsdText, $libXmlOptions);
     }
 
+    /// Reparse - useful to get line numbers right after changes
+    public function reparse(?int $libXmlOptions = null): self
+    {
+        $url = $this->documentURI;
+
+        $this->formatOutput = true;
+
+        $this->loadXml(
+            $this->saveXML(),
+            $libXmlOptions ?? static::LIBXML_OPTIONS
+        );
+
+        $this->documentURI = $url;
+
+        return $this;
+    }
+
     /// Perform any initialization to be done after document loading
     protected function afterLoad(
         ?int $libXmlOptions = null,
@@ -541,16 +558,7 @@ class Document extends \DOMDocument implements
         }
 
         if ($loadFlags & self::FORMAT_AND_REPARSE) {
-            $url = $this->documentURI;
-
-            $this->formatOutput = true;
-
-            $this->loadXml(
-                $this->saveXML(),
-                $libXmlOptions ?? static::LIBXML_OPTIONS
-            );
-
-            $this->documentURI = $url;
+            $this->reparse($libXmlOptions ?? static::LIBXML_OPTIONS);
         }
     }
 
