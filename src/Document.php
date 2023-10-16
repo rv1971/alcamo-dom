@@ -200,7 +200,7 @@ class Document extends \DOMDocument implements
         }
 
         /** After loading, run the afterLoad() hook. */
-        $this->afterLoad($loadFlags);
+        $this->afterLoad($libXmlOptions, $loadFlags);
     }
 
     /**
@@ -240,7 +240,7 @@ class Document extends \DOMDocument implements
         }
 
         /** After loading, run the afterLoad() hook. */
-        $this->afterLoad($loadFlags);
+        $this->afterLoad($libXmlOptions, $loadFlags);
     }
 
     /**
@@ -514,8 +514,10 @@ class Document extends \DOMDocument implements
     }
 
     /// Perform any initialization to be done after document loading
-    protected function afterLoad(?int $loadFlags = null): void
-    {
+    protected function afterLoad(
+        ?int $libXmlOptions = null,
+        ?int $loadFlags = null
+    ): void {
         /** Unset any properties that might refer to a preceding document
          * content. */
         $this->xPath_ = null;
