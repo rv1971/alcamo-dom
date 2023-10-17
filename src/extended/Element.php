@@ -15,7 +15,19 @@ use alcamo\dom\Element as BaseElement;
  */
 class Element extends BaseElement
 {
-    use MagicAttrAccessTrait;
-    use GetLangTrait;
+    use MagicAttrAccessTrait {
+        __clone as magicAttrAccessTraitClone;
+    }
+
+    use GetLangTrait {
+        __clone as getLangTraitClone;
+    }
+
     use RegisteredNodeTrait;
+
+    public function __clone()
+    {
+        $this->magicAttrAccessTraitClone();
+        $this->getLangTraitClone();
+    }
 }

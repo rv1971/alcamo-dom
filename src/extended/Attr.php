@@ -60,6 +60,11 @@ class Attr extends BaseAttr
 
     private $value_;
 
+    public function __clone()
+    {
+        $this->value_ = null;
+    }
+
     /// Call createValue() and cache the result
     public function getValue()
     {

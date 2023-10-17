@@ -24,6 +24,11 @@ trait MagicAttrAccessTrait
 {
     private $attrCache_ = []; ///< Map of attributes to values
 
+    public function __clone()
+    {
+        $this->attrCache_ = [];
+    }
+
     public function __isset(string $attrName)
     {
         /* At first look in the cache. isset() is fast and works for all cases

@@ -9,6 +9,9 @@ use alcamo\dom\schema\component\TypeInterface;
  * @brief %Element class for use in DOMDocument::registerNodeClass()
  *
  * Provides getType() to retrieve the XSD type of this element.
+ *
+ * This class does not need a __clone() method because all of its properties
+ * can be shared among documents.
  */
 class Element extends BaseElement
 {

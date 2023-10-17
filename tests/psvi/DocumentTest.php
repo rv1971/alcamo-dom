@@ -110,4 +110,36 @@ class DocumentTest extends TestCase
 
         $doc->validateIdrefs();
     }
+
+    public function testClone()
+    {
+        $doc1 = FooDocument::newFromUrl(
+            'file://' . dirname(__DIR__) . '/foo.xml'
+        );
+
+        $doc2 = clone $doc1;
+
+        $this->assertFalse($doc1->isSameNode($doc2));
+
+        $this->assertFalse(
+            $doc1->documentElement->isSameNode($doc2->documentElement)
+        );
+
+        $this->assertFalse($doc2['a']->isSameNode($doc1['a']));
+
+        $this->assertEquals(
+            $doc1->documentElement->getLang(),
+            $doc2->documentElement->getLang()
+        );
+
+        $this->assertNotSame(
+            $doc1->documentElement->getLang(),
+            $doc2->documentElement->getLang()
+        );
+
+        $this->assertSame(
+            $doc1->getSchema(),
+            $doc2->getSchema()
+        );
+    }
 }

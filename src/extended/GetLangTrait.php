@@ -20,6 +20,11 @@ trait GetLangTrait
 
     private $lang_ = false; ///< ?Lang
 
+    public function __clone()
+    {
+        $this->lang_ = clone $this->lang_;
+    }
+
     /// Return xml:lang of element or closest ancestor
     public function getLang(): ?Lang
     {

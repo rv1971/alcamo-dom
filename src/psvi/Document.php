@@ -18,6 +18,9 @@ use alcamo\exception\DataValidationFailed;
  * Infoset available
  *
  * @date Last reviewed 2021-07-11
+ *
+ * This class does not need a __clone() method because all of its properties
+ * can be shared among documents.
  */
 class Document extends BaseDocument
 {

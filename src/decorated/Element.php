@@ -34,6 +34,11 @@ class Element extends BaseElement
 
     private $decorator_ = false; ///< ?AbstractDecorator
 
+    public function __clone()
+    {
+        $this->decorator_ = null;
+    }
+
     /// The decorator object
     public function getDecorator(): ?AbstractDecorator
     {

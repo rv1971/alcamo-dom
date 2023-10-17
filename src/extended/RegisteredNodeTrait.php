@@ -11,7 +11,7 @@ namespace alcamo\dom\extended;
  * another node), a new instance of the derived class is constructed.
  *
  * To avoid this, NodeRegistryTrait provides a node registry for use in a
- * derived document class, which si simply an array of node
+ * derived document class, which is simply an array of node
  * objects. RegisteredNodeTrait provides a register() method to add the
  * present node to that registry. Thus, any additional properties are
  * conserved.
@@ -30,7 +30,7 @@ trait RegisteredNodeTrait
     /**
      * @brief Compute a hash and call NodeRegistryTrait::register()
      *
-     * When calling this method a second time, the cached has is returned.
+     * When calling this method a second time, the cached hash is returned.
      */
     public function register(): string
     {
