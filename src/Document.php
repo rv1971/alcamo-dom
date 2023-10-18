@@ -153,6 +153,14 @@ class Document extends \DOMDocument implements
     private $xsltProcessor_ = false; ///< XSLTProcessor or `null`
     private $schemaLocations_;       ///< Array of schema locations
 
+    public function __clone()
+    {
+        $this->xPath_ = null;
+
+        /* @ref $xsltProcessor_ and $schemaLocations_ may be shared among
+         * documents. */
+    }
+
     /// @sa See [DOMDocument::__construct()](https://www.php.net/manual/en/domdocument.construct)
     public function __construct($version = null, $encoding = null)
     {

@@ -312,4 +312,19 @@ class DocumentTest extends TestCase
             $this->assertSame($expectedTagNames[$pos], $element->tagName);
         }
     }
+
+    public function testClone()
+    {
+        $doc1 = Document::newFromUrl(
+            __DIR__ . DIRECTORY_SEPARATOR . 'foo.xml'
+        );
+
+        $doc2 = clone $doc1;
+
+        $this->assertNotSame($doc1->getXPath(), $doc2->getXPath());
+
+        $this->assertSame($doc1, $doc1->getXPath()->document);
+
+        $this->assertSame($doc2, $doc2->getXPath()->document);
+    }
 }
