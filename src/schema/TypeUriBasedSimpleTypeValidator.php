@@ -6,6 +6,7 @@ use alcamo\dom\decorated\{Document, DocumentFactory};
 use alcamo\exception\Unsupported;
 use alcamo\uri\Uri;
 use GuzzleHttp\Psr7\UriResolver;
+use Psr\Http\Message\UriInterface;
 
 /**
  * @brief Class that validates data of some XSD simple type given by a URI
@@ -23,12 +24,12 @@ class TypeUriBasedSimpleTypeValidator extends AbstractSimpleTypeValidator
      * @param $baseUrl Uri Base URL to resolve the type URIs to absolute
      * ones. This allows to use the cache for XSDs.
      */
-    public function __construct(Uri $baseUrl = null)
+    public function __construct(UriInterface $baseUrl = null)
     {
         $this->baseUrl_ = $baseUrl ?? new Uri();
     }
 
-    public function getBaseUrl(): Uri
+    public function getBaseUrl(): UriInterface
     {
         return $this->baseUrl_;
     }
