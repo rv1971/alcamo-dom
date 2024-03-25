@@ -114,6 +114,10 @@ abstract class AbstractSimpleTypeValidator
         $errorMsgs = [];
 
         foreach (libxml_get_errors() as $libXmlError) {
+            if ($libXmlError->level == LIBXML_ERR_WARNING) {
+                continue;
+            }
+
             $index = $libXmlError->line - 2;
 
             $message = $libXmlError->message;
