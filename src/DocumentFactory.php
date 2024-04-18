@@ -2,6 +2,7 @@
 
 namespace alcamo\dom;
 
+use alcamo\collection\PrefixFirstMatchCollection;
 use alcamo\exception\{AbsoluteUriNeeded, InvalidType, ReadonlyViolation};
 use alcamo\uri\{Uri, UriNormalizer};
 use GuzzleHttp\Psr7\UriResolver;
@@ -16,6 +17,10 @@ use Psr\Http\Message\UriInterface;
  */
 class DocumentFactory implements DocumentFactoryInterface
 {
+    /// Map of dc:identifier prefixes to PHP classes for DOM documents
+    public const DC_IDENTIFIER_PREFIX_TO_CLASS = [
+    ];
+
     /// Map of document element extended names to PHP classes for DOM documents
     public const X_NAME_TO_CLASS = [
     ];
@@ -24,11 +29,17 @@ class DocumentFactory implements DocumentFactoryInterface
     public const NS_NAME_TO_CLASS = [
     ];
 
-    /// Default class for new DOM documents
+     /// Default class for new DOM documents
     public const DEFAULT_CLASS = Document::class;
 
     /// Array mapping absolute URLs to Document objects
     private static $cache_;
+
+    /**
+     * @brief ?PrefixFirstMatchCollection created from @ref
+     * DC_IDENTIFIER_PREFIX_TO_CLASS
+     */
+    private $dcIdentifierPrefixToClasses_;
 
     /// Add a document to the cache
     public static function addToCache(Document $doc)
@@ -73,6 +84,10 @@ class DocumentFactory implements DocumentFactoryInterface
                 ? $baseUrl
                 : new Uri($baseUrl);
         }
+
+        $this->dcIdentifierPrefixToClasses_ = new PrefixFirstMatchCollection(
+            static::DC_IDENTIFIER_PREFIX_TO_CLASS
+        );
     }
 
     public function getBaseUrl(): ?UriInterface
@@ -203,8 +218,15 @@ class DocumentFactory implements DocumentFactoryInterface
          *  namespace name of the document element, return its value.
          * - Otherwise, return @ref DEFAULT_CLASS.
          */
-        return
-            static::X_NAME_TO_CLASS[
+
+        if ($documentElement->hasAttributeNS(Document::DC_NS, 'identifier')) {
+            $class = $this->dcIdentifierPrefixToClasses_[
+                $documentElement->getAttributeNS(Document::DC_NS, 'identifier')
+            ];
+        }
+
+        return $class
+            ?? static::X_NAME_TO_CLASS[
                 "$documentElement->namespaceURI $documentElement->localName"
             ]
             ?? static::NS_NAME_TO_CLASS[$documentElement->namespaceURI]
@@ -217,6 +239,12 @@ class DocumentFactory implements DocumentFactoryInterface
         $documentElement =
             ShallowDocument::newFromXmlText($xml)->documentElement;
 
+        if ($documentElement->hasAttributeNS(Document::DC_NS, 'identifier')) {
+            $class = $this->dcIdentifierPrefixToClasses_[
+                $documentElement->getAttributeNS(Document::DC_NS, 'identifier')
+            ];
+        }
+
         /**
          * - If @ref X_NAME_TO_CLASS contains an item for the extended name of
          *  the document element, return its value.
@@ -224,8 +252,8 @@ class DocumentFactory implements DocumentFactoryInterface
          *  namespace name of the document element, return its value.
          * - Otherwise, return @ref DEFAULT_CLASS.
          */
-        return
-            static::X_NAME_TO_CLASS[
+        return $class
+            ?? static::X_NAME_TO_CLASS[
                 "$documentElement->namespaceURI $documentElement->localName"
             ]
             ?? static::NS_NAME_TO_CLASS[$documentElement->namespaceURI]

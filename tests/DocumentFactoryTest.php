@@ -9,8 +9,16 @@ use alcamo\dom\psvi\Document as PsviDocument;
 use alcamo\exception\{AbsoluteUriNeeded, ReadonlyViolation};
 use alcamo\uri\Uri;
 
+class BarXsd extends Xsd
+{
+}
+
 class MyDocumentFactory extends DocumentFactory
 {
+    public const DC_IDENTIFIER_PREFIX_TO_CLASS = [
+        'BAR' => BarXsd::class
+    ];
+
     public const X_NAME_TO_CLASS = [
         'https://corge.example.info corge' => __CLASS__
     ];
@@ -47,6 +55,10 @@ class DocumentFactoryTest extends TestCase
             'xsd' => [
                 __DIR__ . DIRECTORY_SEPARATOR . 'foo.xsd',
                 Xsd::class
+            ],
+            'bar' => [
+                __DIR__ . DIRECTORY_SEPARATOR . 'bar.xsd',
+                BarXsd::class
             ],
             'corge' => [
                 __DIR__ . DIRECTORY_SEPARATOR . 'corge.xml',

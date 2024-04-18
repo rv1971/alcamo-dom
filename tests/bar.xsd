@@ -3,6 +3,7 @@
 <schema
     xmlns="http://www.w3.org/2001/XMLSchema"
     xmlns:dc="http://purl.org/dc/terms/"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    dc:identifier="BAR.1">
   <element name="bar"/>
 </schema>
