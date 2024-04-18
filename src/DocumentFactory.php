@@ -3,6 +3,7 @@
 namespace alcamo\dom;
 
 use alcamo\collection\PrefixFirstMatchCollection;
+use alcamo\dom\decorated\Document as Xsd;
 use alcamo\exception\{AbsoluteUriNeeded, InvalidType, ReadonlyViolation};
 use alcamo\uri\{Uri, UriNormalizer};
 use GuzzleHttp\Psr7\UriResolver;
@@ -23,6 +24,7 @@ class DocumentFactory implements DocumentFactoryInterface
 
     /// Map of document element extended names to PHP classes for DOM documents
     public const X_NAME_TO_CLASS = [
+        Document::XSD_NS . ' schema' => Xsd::class
     ];
 
     /// Map of document element namespaces to PHP classes for DOM documents

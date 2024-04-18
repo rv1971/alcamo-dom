@@ -167,6 +167,7 @@ class SchemaTest extends TestCase
 
         $i = 0;
         foreach ($schema1->getXsds() as $url => $xsd) {
+            $this->assertSame(Xsd::class, get_class($xsd));
             $this->assertSame($xsds[$i++], basename($url));
         }
     }

@@ -46,6 +46,8 @@ class Schema
 {
     private static $schemaCache_ = [];
 
+    protected $documentFactory_; ///< DocumentFactoryInterface
+
     /**
      * @brief Construct new schema or get it from cache
      *
@@ -401,8 +403,7 @@ class Schema
 
     protected static function createXsd(string $url): Xsd
     {
-        return (new XsdFactory())
-            ->createFromUrl($url, Xsd::class, null, true);
+        return (new XsdFactory())->createFromUrl($url, null, null, true);
     }
 
     /// Load XSDs into @ref $xsds_
