@@ -560,7 +560,16 @@ class Document extends \DOMDocument implements
         }
 
         if ($loadFlags & self::XINCLUDE_AFTER_LOAD) {
-            $this->xinclude($libXmlOptions ?? static::LIBXML_OPTIONS);
+            try {
+                $this->xinclude($libXmlOptions ?? static::LIBXML_OPTIONS);
+            } catch (\ErrorException $e) {
+                /* xinclude() may generate a warning if the file to include is
+                 * not found, even when a fallback is defined. So this warning
+                 * should be ignored. */
+                if (strpos($e->getMessage(), 'warning') === false) {
+                    throw $e;
+                }
+            }
 
             if ($loadFlags & self::VALIDATE_AFTER_XINCLUDE) {
                 $this->validate();
