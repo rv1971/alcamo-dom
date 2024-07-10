@@ -73,6 +73,9 @@ class Document extends \DOMDocument implements
         'DOMText'    => Text::class
     ];
 
+    /// XPath to find all \<xsd:documentation> elements
+    private const ALL_DOCUMENTATION_XPATH = '//xsd:documentation';
+
     /**
      * @brief Default libxml options when loading a document
      *
@@ -538,6 +541,33 @@ class Document extends \DOMDocument implements
         unset($this->xPath_);
 
         return $this;
+    }
+
+    /**
+     * @brief Remove all \<xsd:documentation> elements
+     *
+     * @param ?bool $doReparse Whether to call reparse() afterwards
+     *
+     * Also remove any \<xsd:annotation> elements that have become empty this
+     * way.
+     */
+    public function stripXsdDocumentation(?bool $doReparse = null): self
+    {
+        foreach ($this->query(self::ALL_DOCUMENTATION_XPATH) as $xsdElement) {
+            $parent = $xsdElement->parentNode;
+
+            $parent->removeChild($xsdElement);
+
+            if (
+                !isset($parent->firstChild)
+                && $parent->namespaceURI == self::XSD_NS
+                && $parent->localName == 'annotation'
+            ) {
+                $parent->parentNode->removeChild($parent);
+            }
+        }
+
+        return $doReparse ? $this->reparse() : $this;
     }
 
     /// Perform any initialization to be done after document loading
