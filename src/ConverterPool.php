@@ -137,7 +137,7 @@ class ConverterPool
     /// Split at whitespace
     public static function toSet($value): Set
     {
-        return new Set(preg_split('/\s+/', $value));
+        return $value == '' ? new Set() : new Set(preg_split('/\s+/', $value));
     }
 
     /// Call alcamo::uri::Uri::__construct()
