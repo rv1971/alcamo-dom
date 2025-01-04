@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<foo
+    xmlns="http://foo.example.org"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:annotation>
+    <xsd:documentation xmlns="http://www.w3.org/1999/xhtml">
+      <p>Consetetur sadipscing <b>elitr.</b></p>
+    </xsd:documentation>
+
+    <xsd:appinfo>LOREM-IPSUM</xsd:appinfo>
+
+    <xsd:documentation>Lorem ipsum dolor sit amet.</xsd:documentation>
+  </xsd:annotation>
+
+  <bar>
+    <xsd:annotation>
+      <xsd:documentation>sed diam nonumy eirmod tempor
+      invidunt</xsd:documentation>
+    </xsd:annotation>
+
+    <baz>
+      <xsd:simpleType>
+        <xsd:documentation>Very simple type.</xsd:documentation>
+      </xsd:simpleType>
+    </baz>
+
+    <qux>
+      <annotation>
+        <xsd:documentation>Non-XSD annotation.</xsd:documentation>
+      </annotation>
+    </qux>
+  </bar>
+</foo>

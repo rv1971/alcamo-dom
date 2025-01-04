@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<foo xmlns="http://foo.example.org" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:annotation>
+    <xsd:appinfo>LOREM-IPSUM</xsd:appinfo>
+  </xsd:annotation>
+  <bar>
+    <baz>
+      <xsd:simpleType/>
+    </baz>
+    <qux>
+      <annotation/>
+    </qux>
+  </bar>
+</foo>
