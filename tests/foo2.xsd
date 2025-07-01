@@ -5,6 +5,7 @@
     xmlns:dc="http://purl.org/dc/terms/"
     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:f="http://foo.example.org/"
     targetNamespace="http://foo2.example.org"
     elementFormDefault="qualified">
 
@@ -19,6 +20,14 @@
       schemaLocation="../xsd/XMLSchema.xsd"/>
 
   <xsd:simpleType name="ListOfNamedItemType" xml:id="ListOfNamedItemType">
+    <xsd:annotation>
+      <xsd:appinfo xmlns="http://www.w3.org/1999/xhtml">
+        <meta property="f:bar" content="Lorem ipsum"/>
+        <link rel="f:menu" href="http://example.org/menu.html"/>
+        <link rel="next" href="http://example.org/next.html"/>
+      </xsd:appinfo>
+    </xsd:annotation>
+
     <xsd:list itemType="xsd:integer"/>
   </xsd:simpleType>
 

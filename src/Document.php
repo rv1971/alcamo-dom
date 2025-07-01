@@ -46,6 +46,7 @@ class Document extends \DOMDocument implements
         'self'  => 'https://github.com/rv1971/alcamo-dom/',
         'xh'    => 'http://www.w3.org/1999/xhtml',
         'xh11d' => 'http://www.w3.org/1999/xhtml/datatypes/',
+        'xhv'   => 'http://www.w3.org/1999/xhtml/vocab#',
         'xml'   => 'http://www.w3.org/XML/1998/namespace',
         'xsd'   => 'http://www.w3.org/2001/XMLSchema',
         'xsi'   => 'http://www.w3.org/2001/XMLSchema-instance',
@@ -56,6 +57,9 @@ class Document extends \DOMDocument implements
 
     /// OWL Web Ontology Language namespace
     public const OWL_NS = self::NSS['owl'];
+
+    /// XHTML namespace
+    public const XH_NS = self::NSS['xh'];
 
     /// XML namespace
     public const XML_NS = self::NSS['xml'];

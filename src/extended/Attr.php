@@ -14,7 +14,11 @@ class Attr extends BaseAttr
 {
     use RegisteredNodeTrait;
 
-    /// Map of attr NSs to maps of attr local names to converters
+    /**
+     * @brief Map of attr NSs to maps of attr local names to converters
+     *
+     * @sa [Use of CURIEs in Specific Attributes](https://www.w3.org/TR/rdfa-syntax/#sec_5.4.4.)
+     */
     public const ATTR_CONVERTERS = [
         Document::XML_NS => [
             'lang'                      => CP::class . '::toLang'
@@ -32,6 +36,17 @@ class Attr extends BaseAttr
      * attr local names to converters
      */
     public const ELEMENT_ATTR_CONVERTERS = [
+        Document::XH_NS => [
+            '*' => [
+                'about'             => CP::class . '::uriOrSafeCurieToUri',
+                'datatype'          => CP::class . '::curieToUri',
+                'property'          => CP::class . '::curieToUri',
+                'rel'               => CP::class . '::xhRelToUri',
+                'resource'          => CP::class . '::uriOrSafeCurieToUri',
+                'rev'               => CP::class . '::xhRelToUri',
+                'typeof'            => CP::class . '::xhRelToUri'
+            ]
+        ],
         Document::XSD_NS => [
             '*' => [
                 'maxOccurs'         => CP::class . '::toAllNNI',

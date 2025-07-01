@@ -1130,4 +1130,72 @@ class SchemaTest extends TestCase
             [ $schema, Xsd::XSD_NS . ' public', 'whiteSpace', 'collapse' ]
         ];
     }
+
+    /**
+     * @dataProvider getAppinfoMetaProvider
+     */
+    public function testGetAppinfoMeta($schema, $type, $property, $expectedContent)
+    {
+        $this->assertSame(
+            $expectedContent,
+            $schema->getGlobalType($type)->getAppinfoMeta($property)->content
+        );
+    }
+
+    public function getAppinfoMetaProvider()
+    {
+        $foo = Document::newFromUrl(
+            'file://'
+            . str_replace(DIRECTORY_SEPARATOR, '/', dirname(__DIR__))
+            . '/foo.xml'
+        );
+
+        $schema = Schema::newFromDocument($foo);
+
+        return [
+            [
+                $schema,
+                self::FOO2_NS . ' DerivedFromList',
+                'http://foo.example.org/bar',
+                'Lorem ipsum'
+            ]
+        ];
+    }
+
+    /**
+     * @dataProvider getAppinfoLinkProvider
+     */
+    public function testGetAppinfoLink($schema, $type, $rel, $expectedHref)
+    {
+        $this->assertSame(
+            $expectedHref,
+            $schema->getGlobalType($type)->getAppinfoLink($rel)->href
+        );
+    }
+
+    public function getAppinfoLinkProvider()
+    {
+        $foo = Document::newFromUrl(
+            'file://'
+            . str_replace(DIRECTORY_SEPARATOR, '/', dirname(__DIR__))
+            . '/foo.xml'
+        );
+
+        $schema = Schema::newFromDocument($foo);
+
+        return [
+            [
+                $schema,
+                self::FOO2_NS . ' DerivedFromList',
+                'http://foo.example.org/menu',
+                'http://example.org/menu.html'
+            ],
+            [
+                $schema,
+                self::FOO2_NS . ' DerivedFromList',
+                'http://www.w3.org/1999/xhtml/vocab#next',
+                'http://example.org/next.html'
+            ]
+        ];
+    }
 }

@@ -23,6 +23,8 @@ use Ds\Set;
  */
 class ConverterPool
 {
+    public const XHV_NS = Document::NSS['xhv']; ///< xhtml vocabulary
+
     /// Split at whitespace
     public static function toArray($value): array
     {
@@ -219,6 +221,13 @@ class ConverterPool
     {
         return (new UriFromCurieFactory())
             ->createFromUriOrSafeCurieAndContext($value, $context);
+    }
+
+    /// Call alcamo::uri::UriFromCurieFactory::createFromCurieAndContext()
+    public static function xhRelToUri($value, \DOMNode $context): Uri
+    {
+        return (new UriFromCurieFactory())
+            ->createFromCurieAndContext($value, $context, self::XHV_NS);
     }
 
     /// Process an XPointer URL

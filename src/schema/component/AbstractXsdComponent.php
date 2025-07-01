@@ -9,8 +9,6 @@ use alcamo\xml\XName;
 
 /**
  * @brief XML %Schema component defined in an XSD
- *
- * @date Last reviewed 2021-07-09
  */
 abstract class AbstractXsdComponent extends AbstractComponent
 {
@@ -49,5 +47,55 @@ abstract class AbstractXsdComponent extends AbstractComponent
         } else {
             return null;
         }
+    }
+
+    /**
+     * Get the first `xsd:annotation/xsd:appinfo/xh:meta` element for the
+     * given property in the closest ancestor-or-self type, if any.
+     */
+    public function getAppinfoMeta(string $property): ?XsdElement
+    {
+        for (
+            $type = $this;
+            $type instanceof AbstractXsdComponent;
+            $type = $type->getBaseType()
+        ) {
+            foreach (
+                $type->getXsdElement()->query(
+                    "xsd:annotation/xsd:appinfo/xh:meta[@property]"
+                ) as $meta
+            ) {
+                if ($meta->property == $property) {
+                    return $meta;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Get the first `xsd:annotation/xsd:appinfo/xh:link` element for the
+     * given property in the closest ancestor-or-self type, if any.
+     */
+    public function getAppinfoLink(string $rel): ?XsdElement
+    {
+        for (
+            $type = $this;
+            $type instanceof AbstractXsdComponent;
+            $type = $type->getBaseType()
+        ) {
+            foreach (
+                $type->getXsdElement()->query(
+                    "xsd:annotation/xsd:appinfo/xh:link[@rel]"
+                ) as $link
+            ) {
+                if ($link->rel == $rel) {
+                    return $link;
+                }
+            }
+        }
+
+        return null;
     }
 }
