@@ -1186,6 +1186,12 @@ class SchemaTest extends TestCase
         return [
             [
                 $schema,
+                self::FOO2_NS . ' ListOfNamedItemType',
+                'http://foo.example.org/menu',
+                'http://example.org/menu.html'
+            ],
+            [
+                $schema,
                 self::FOO2_NS . ' DerivedFromList',
                 'http://foo.example.org/menu',
                 'http://example.org/menu.html'
