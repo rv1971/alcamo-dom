@@ -14,20 +14,20 @@ class FixedSchemaSimpleTypeValidatorTest extends TestCase
     {
         $validator = new FixedSchemaSimpleTypeValidator(
             [
-                [ 'http://foo.example.org', 'foo.xsd' ],
-                [ 'http://bar.example.org', 'bar.xsd' ]
+                'http://foo.example.org' => 'foo.xsd',
+                'http://bar.example.org' => 'bar.xsd'
             ]
         );
 
         $this->assertSame(
-            '<?xml version="1.0" encoding="UTF-8"?>'
-            . '<schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">'
+            "<?xml version='1.0' encoding='UTF-8'?>"
+            . "<schema xmlns='http://www.w3.org/2001/XMLSchema' elementFormDefault='qualified'>"
             . "<import namespace='http://foo.example.org' schemaLocation='foo.xsd'/>"
             . "<import namespace='http://bar.example.org' schemaLocation='bar.xsd'/>"
-            . '<element name="x">'
+            . "<element name='x'>"
             . '<complexType>'
             . '<sequence>'
-            . '<element name="y" maxOccurs="unbounded"/>'
+            . "<element name='y' maxOccurs='unbounded'/>"
             . '</sequence>'
             . '</complexType>'
             . '</element>'

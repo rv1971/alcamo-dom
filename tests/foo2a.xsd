@@ -16,7 +16,7 @@
       namespace="http://www.w3.org/2001/XMLSchema"
       schemaLocation="../xsd/XMLSchema.xsd"/>
 
-  <xsd:simpleType name="UnionOfNamed">
+  <xsd:simpleType name="UnionOfNamed" xml:id="UnionOfNamed">
     <xsd:union memberTypes="xsd:formChoice xsd:derivationSet rdfs:Literal"/>
   </xsd:simpleType>
 </xsd:schema>

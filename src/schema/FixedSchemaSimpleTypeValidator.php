@@ -19,27 +19,28 @@ class FixedSchemaSimpleTypeValidator extends AbstractSimpleTypeValidator
 
     /**
      * @param $xsds Collection of XSDs as DOMDocument objects
+     *
+     * @warning The XSDs must have distinct target namespaces.
      */
     public static function newFromXsds(iterable $xsds): self
     {
-        $nsNameSchemaLocationPairs = [];
+        $nsNameToSchemaLocation = [];
 
         foreach ($xsds as $xsd) {
-            $nsNameSchemaLocationPairs[] = [
-                $xsd->documentElement->getAttribute('targetNamespace'),
-                $xsd->documentURI
-            ];
+            $nsNameToSchemaLocation[
+                $xsd->documentElement->getAttribute('targetNamespace')
+            ] = $xsd->documentURI;
         }
 
-        return new self($nsNameSchemaLocationPairs);
+        return new self($nsNameToSchemaLocation);
     }
 
     /**
-     * @param $nsNameSchemaLocationPairs Pairs of NS name and schema location
+     * @param $nsNameToSchemaLocation Map of namespace names to schema locations
      */
-    public function __construct(iterable $nsNameSchemaLocationPairs)
+    public function __construct(iterable $nsNameToSchemaLocation)
     {
-        $this->xsdText_ = $this->createXsdText($nsNameSchemaLocationPairs);
+        $this->xsdText_ = $this->createXsdText($nsNameToSchemaLocation);
     }
 
     public function getXsdText(): string

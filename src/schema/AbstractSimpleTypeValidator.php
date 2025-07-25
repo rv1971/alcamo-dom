@@ -3,6 +3,7 @@
 namespace alcamo\dom\schema;
 
 use alcamo\dom\Document;
+use Ds\Set;
 
 /**
  * @brief Base for classes that validate data of some some XSD simple type
@@ -12,13 +13,13 @@ use alcamo\dom\Document;
  */
 abstract class AbstractSimpleTypeValidator
 {
-    private const XSD_TEXT_1 = '<?xml version="1.0" encoding="UTF-8"?>'
-        . '<schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">';
+    private const XSD_TEXT_1 = "<?xml version='1.0' encoding='UTF-8'?>"
+        . "<schema xmlns='http://www.w3.org/2001/XMLSchema' elementFormDefault='qualified'>";
 
-    private const XSD_TEXT_2 = '<element name="x">'
+    private const XSD_TEXT_2 = "<element name='x'>"
         . '<complexType>'
         . '<sequence>'
-        . '<element name="y" maxOccurs="unbounded"/>'
+        . "<element name='y' maxOccurs='unbounded'/>"
         . '</sequence>'
         . '</complexType>'
         . '</element>'
@@ -36,15 +37,15 @@ abstract class AbstractSimpleTypeValidator
      * @brief Create XSD text suitable to validate a sequence of simple data
      * items
      *
-     * @param $nsNameSchemaLocationPairs Pairs of NS name and schema location
+     * @param $nsNameToSchemaLocation Map of namespace names to schema locations
      */
-    public function createXsdText(iterable $nsNameSchemaLocationPairs): string
+    public function createXsdText(iterable $nsNameToSchemaLocation): string
     {
         $xsdText = self::XSD_TEXT_1;
 
-        foreach ($nsNameSchemaLocationPairs as $pair) {
+        foreach ($nsNameToSchemaLocation as $nsName => $schemaLocation) {
             $xsdText .=
-                "<import namespace='{$pair[0]}' schemaLocation='{$pair[1]}'/>";
+                "<import namespace='{$nsName}' schemaLocation='{$schemaLocation}'/>";
         }
 
         return $xsdText .= self::XSD_TEXT_2;

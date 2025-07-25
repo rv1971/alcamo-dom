@@ -40,9 +40,11 @@ class TypeUriBasedSimpleTypeValidator extends AbstractSimpleTypeValidator
      */
     public function validate($valueTypeUriPairs): array
     {
-        $nsNameSchemaLocationPairs = [];
+        /* Array of maps mapping namespace names to schema locations. */
+        $nsNameToSchemaLocations = [];
 
-        $valueTypeXNamePairs = [];
+        /* Array of maps mapping values to XNames. */
+        $valueTypeXNamePairMaps = [];
 
         foreach ($valueTypeUriPairs as $pair) {
             [ $value, $typeUri ] = $pair;
@@ -67,15 +69,44 @@ class TypeUriBasedSimpleTypeValidator extends AbstractSimpleTypeValidator
 
             $nsName = $xsd->documentElement->targetNamespace;
 
-            $nsNameSchemaLocationPairs[] = [ $nsName, $url ];
+            /* Store the mapping of namespace name to schema location in a map
+             * so that it does not conflict with other schema locations for
+             * the same namespace. */
+            for ($i = 0;; $i++) {
+                if (!isset($nsNameToSchemaLocations[$i])) {
+                    $nsNameToSchemaLocations[$i] = [];
+                }
 
-            $valueTypeXNamePairs[] =
+                if (!isset($nsNameToSchemaLocations[$i][$nsName])) {
+                    $nsNameToSchemaLocations[$i][$nsName] = $url;
+                    break;
+                }
+
+                if ($nsNameToSchemaLocations[$i][$nsName] == $url) {
+                    break;
+                }
+            }
+
+            if (!isset($valueTypeXNamePairMaps[$i])) {
+                $valueTypeXNamePairMaps[$i] = [];
+            }
+
+            $valueTypeXNamePairMaps[$i][] =
                 [ $value, $xsd[$typeId]->getComponentXName() ];
         }
 
-        return self::validateAux(
-            $valueTypeXNamePairs,
-            self::createXsdText($nsNameSchemaLocationPairs)
-        );
+        $result = [];
+
+        for ($i = 0; $i < count($valueTypeXNamePairMaps); $i++) {
+            $result = array_merge(
+                $result,
+                self::validateAux(
+                    $valueTypeXNamePairMaps[$i],
+                    self::createXsdText($nsNameToSchemaLocations[$i])
+                )
+            );
+        }
+
+        return $result;
     }
 }

@@ -53,7 +53,10 @@ class TypeUriBasedSimpleTypeValidatorTest extends TestCase
                     [ 'true', 'xsd/XMLSchema.xsd#boolean' ],
                     [ '1970-01-01', 'xsd/XMLSchema.xsd#date' ],
                     [ 'ach-UG', 'xsd/XMLSchema.xsd#language' ],
+                    [ 'alice', 'tests/foo2a.xsd#UnionOfNamed' ],
                     [ '42 43 44', 'tests/foo2.xsd#ListOfNamedItemType' ],
+                    [ 'bob', 'tests/foo2a.xsd#UnionOfNamed' ],
+                    [ 'claire', 'tests/foo2a.xsd#UnionOfNamed' ],
                     [ 'quux', 'tests/foo2.xsd#FooBarType' ]
                 ],
                 []
@@ -70,12 +73,12 @@ class TypeUriBasedSimpleTypeValidatorTest extends TestCase
                     [ 'quuux', 'tests/foo2.xsd#FooBarType' ]
                 ],
                 [
-                    1 => "'truex' is not a valid value of the atomic type 'xs:boolean'.",
-                    2 => "'1970-01--01' is not a valid value of the atomic type 'xs:date'.",
-                    4 => "'x' is not a valid value of the atomic type "
+                    0 => "'truex' is not a valid value of the atomic type 'xs:boolean'.",
+                    1 => "'1970-01--01' is not a valid value of the atomic type 'xs:date'.",
+                    2 => "'x' is not a valid value of the atomic type "
                     . "'xs:integer'.\n'42 43 x 44' is not a valid value of "
                     . "the list type '{http://foo2.example.org}ListOfNamedItemType'.",
-                    6 => "'quuux' is not a valid value of the union type '{http://foo2.example.org}EnumUnion'."
+                    3 => "'quuux' is not a valid value of the union type '{http://foo2.example.org}EnumUnion'."
                 ]
             ]
         ];
