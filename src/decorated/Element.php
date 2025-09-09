@@ -4,7 +4,7 @@ namespace alcamo\dom\decorated;
 
 use alcamo\exception\MethodNotFound;
 use alcamo\dom\extended\{Element as BaseElement, GetLangTrait};
-use alcamo\dom\xsd\Decorator as XsdDecorator;
+use alcamo\dom\xsd\{Decorator as XsdDecorator, Enumerator};
 
 /**
  * @brief Element implementing the decorator pattern
@@ -20,6 +20,7 @@ class Element extends BaseElement
     /// Map of element NSs to maps of element local names to decorator classes
     public const DECORATOR_MAP = [
         Document::XSD_NS => [
+            'enumeration' => Enumerator::class,
             '*' => XsdDecorator::class
         ]
     ];
@@ -50,6 +51,12 @@ class Element extends BaseElement
         }
 
         return $this->decorator_;
+    }
+
+    /// Allow for element-specific implementations in the decorator
+    public function __toString(): string
+    {
+        return $this->getDecorator();
     }
 
     /// Delegate method calls to the decorator object, if any

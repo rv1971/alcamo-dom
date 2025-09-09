@@ -21,7 +21,7 @@ abstract class AbstractDecorator implements
 
     public function __toString(): string
     {
-        return (string)$this->handler_;
+        return $this->textContent;
     }
 
     public function getElement(): Element

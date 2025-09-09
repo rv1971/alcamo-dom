@@ -10,9 +10,8 @@ class EnumeratorTest extends TestCase
     /**
      * @dataProvider toStringProvider
      */
-    public function testToString($enum, $domNode, $expectedString)
+    public function testToString($enum, $expectedString)
     {
-        $this->assertEquals($domNode, $enum->getDomNode());
         $this->assertEquals($expectedString, (string)$enum);
     }
 
@@ -28,12 +27,10 @@ class EnumeratorTest extends TestCase
 
         return [
             [
-                new Enumerator($qualified),
                 $qualified,
                 'qualified'
             ],
             [
-                new Enumerator($unqualified),
                 $unqualified,
                 'unqualified'
             ]
