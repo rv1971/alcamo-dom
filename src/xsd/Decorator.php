@@ -15,10 +15,11 @@ class Decorator extends AbstractDecorator implements
     use GetCommentTrait;
 
     /// Relative XPath to <rdfs:label> elements
-    private const RDFS_LABEL_XPATH = 'xsd:annotation/xsd:appinfo/rdfs:label';
+    protected const RDFS_LABEL_XPATH = 'xsd:annotation/xsd:appinfo/rdfs:label';
 
     /// Relative XPath to <rdfs:comment> elements
-    private const RDFS_COMMENT_XPATH = 'xsd:annotation/xsd:appinfo/rdfs:comment';
+    protected const RDFS_COMMENT_XPATH =
+        'xsd:annotation/xsd:appinfo/rdfs:comment';
 
     private $xComponentName_ = false; ///< ?XName
 
