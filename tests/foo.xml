@@ -74,7 +74,10 @@
   </corge>
 
   <xsd:annotation>
-    <xsd:appinfo xml:lang="fi">
+    <xsd:appinfo
+        xml:id="appinfo"
+        xml:lang="fi"
+        owl:sameAs="https://www.example.org/foo#SED-DIAM">
       <qux:qux xml:id="qux" qux="foo"><qux>42</qux> sed diam nonumy
       eirmod <qux:quux xml:id="quux">tempor</qux:quux>
       invidunt</qux:qux>

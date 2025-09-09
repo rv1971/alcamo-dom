@@ -9,4 +9,7 @@ class GetLabelAndCommentDecorator extends GetLabelDecorator implements
     GetCommentInterface
 {
     use GetCommentTrait;
+
+    /// Relative XPath to <rdfs:comment> elements
+    protected const RDFS_COMMENT_XPATH = 'rdfs:comment';
 }

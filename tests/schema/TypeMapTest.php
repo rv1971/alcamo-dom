@@ -28,7 +28,7 @@ class TypeMapTest extends TestCase
     {
         $schema = Schema::newFromDocument(
             Document::newFromUrl(
-                'file:///' . dirname(__DIR__) . DIRECTORY_SEPARATOR
+                'file://' . dirname(__DIR__) . DIRECTORY_SEPARATOR
                 . 'foo.xml'
             )
         );
@@ -110,7 +110,7 @@ class TypeMapTest extends TestCase
     {
         $schema = Schema::newFromDocument(
             Document::newFromUrl(
-                'file:///' . dirname(__DIR__) . DIRECTORY_SEPARATOR
+                'file://' . dirname(__DIR__) . DIRECTORY_SEPARATOR
                 . 'foo.xml'
             )
         );
@@ -164,7 +164,7 @@ class TypeMapTest extends TestCase
     {
         $schema = Schema::newFromDocument(
             Document::newFromUrl(
-                'file:///' . dirname(__DIR__) . DIRECTORY_SEPARATOR
+                'file://' . dirname(__DIR__) . DIRECTORY_SEPARATOR
                 . 'foo.xml'
             )
         );
@@ -216,7 +216,7 @@ class TypeMapTest extends TestCase
     {
         $schema = Schema::newFromDocument(
             Document::newFromUrl(
-                'file:///' . dirname(__DIR__) . DIRECTORY_SEPARATOR
+                'file://' . dirname(__DIR__) . DIRECTORY_SEPARATOR
                 . 'foo.xml'
             )
         );
@@ -268,7 +268,7 @@ class TypeMapTest extends TestCase
     {
         $schema = Schema::newFromDocument(
             Document::newFromUrl(
-                'file:///' . dirname(__DIR__) . DIRECTORY_SEPARATOR
+                'file://' . dirname(__DIR__) . DIRECTORY_SEPARATOR
                 . 'foo.xml'
             )
         );

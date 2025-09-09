@@ -16,12 +16,22 @@ trait GetCommentTrait
         ?string $lang = null,
         ?int $fallbackFlags = null
     ): ?string {
+        return $this->getRdfsComment($lang, $fallbackFlags);
+    }
+
+    /// Get comment from <rdfs:comment> or rdfs:comment attribute, if any
+    protected function getRdfsComment(
+        ?string $lang = null,
+        ?int $fallbackFlags = null
+    ): ?string {
         /**
          * - If a specific language is requested and there is an
-         * `\<rdfs:comment>` child, return its value.
+         * `\<rdfs:comment>` child for it, return its value.
          */
         if (isset($lang)) {
-            $commentElement = $this->query("rdfs:comment[@xml:lang = '$lang']")[0];
+            $commentElement = $this->query(
+                static::RDFS_COMMENT_XPATH . "[@xml:lang = '$lang']"
+            )[0];
 
             if (isset($commentElement)) {
                 return $commentElement->nodeValue;
@@ -29,7 +39,8 @@ trait GetCommentTrait
 
             /* If there is no element with an explicit corresponding language,
              * look for one that inherits the language. */
-            $commentElement = $this->query("rdfs:comment[not(@xml:lang)]")[0];
+            $commentElement =
+                $this->query(static::RDFS_COMMENT_XPATH . "[not(@xml:lang)]")[0];
 
             if (isset($commentElement) && $commentElement->getLang() == $lang) {
                 return $commentElement->nodeValue;
@@ -58,16 +69,13 @@ trait GetCommentTrait
          * place.
          */
         if (!isset($lang) || $fallbackFlags & self::FALLBACK_TO_OTHER_LANG) {
-            $commentElement = $this->query("rdfs:comment")[0];
+            $commentElement = $this->query(static::RDFS_COMMENT_XPATH)[0];
 
             if (isset($commentElement)) {
                 return $commentElement->nodeValue;
             }
         }
 
-        /**
-         * - Otherwise return `null`.
-         */
         return null;
     }
 }

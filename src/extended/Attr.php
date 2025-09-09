@@ -20,6 +20,9 @@ class Attr extends BaseAttr
      * @sa [Use of CURIEs in Specific Attributes](https://www.w3.org/TR/rdfa-syntax/#sec_5.4.4.)
      */
     public const ATTR_CONVERTERS = [
+        Document::OWL_NS => [
+            'sameAs'                    => CP::class . '::toUri'
+        ],
         Document::XML_NS => [
             'lang'                      => CP::class . '::toLang'
         ],

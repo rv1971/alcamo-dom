@@ -16,12 +16,52 @@ trait GetLabelTrait
         ?string $lang = null,
         ?int $fallbackFlags = null
     ): ?string {
+        /** - Use <rdfs:label> or rdfs:label attribute, if applicable. */
+        $label = $this->getRdfsLabel($lang, $fallbackFlags);
+
+        if (isset($label)) {
+            return $label;
+        }
+
+        /*
+         * - Otherwise, if the present element has an owl:sameAs attribute and
+         * $fallbackFlags contains
+         * GetLabelInterface::FALLBACK_TO_SAME_AS_FRAGMENT, return the
+         * fragment part of owl:sameAs.
+         */
+
+        if ($fallbackFlags & self::FALLBACK_TO_SAME_AS_FRAGMENT) {
+            $label = $this->getSameAsFragment();
+
+            if (isset($label)) {
+                return $label;
+            }
+        }
+
+        /**
+         * - Otherwise, if $fallbackFlags contains
+         * GetLabelInterface::FALLBACK_TO_NAME, return the present element's
+         * local name.
+         * - Otherwise return `null`.
+         */
+        return $fallbackFlags & self::FALLBACK_TO_NAME
+            ? $this->localName
+            : null;
+    }
+
+    /// Get label from <rdfs:label> or rdfs:label attribute, if any
+    protected function getRdfsLabel(
+        ?string $lang = null,
+        ?int $fallbackFlags = null
+    ): ?string {
         /**
          * - If a specific language is requested and there is an
-         * `\<rdfs:label>` child, return its value.
+         * `\<rdfs:label>` child for it, return its value.
          */
         if (isset($lang)) {
-            $labelElement = $this->query("rdfs:label[@xml:lang = '$lang']")[0];
+            $labelElement = $this->query(
+                static::RDFS_LABEL_XPATH . "[@xml:lang = '$lang']"
+            )[0];
 
             if (isset($labelElement)) {
                 return $labelElement->nodeValue;
@@ -29,7 +69,8 @@ trait GetLabelTrait
 
             /* If there is no element with an explicit corresponding language,
              * look for one that inherits the language. */
-            $labelElement = $this->query("rdfs:label[not(@xml:lang)]")[0];
+            $labelElement =
+                $this->query(static::RDFS_LABEL_XPATH . "[not(@xml:lang)]")[0];
 
             if (isset($labelElement) && $labelElement->getLang() == $lang) {
                 return $labelElement->nodeValue;
@@ -58,21 +99,21 @@ trait GetLabelTrait
          * place.
          */
         if (!isset($lang) || $fallbackFlags & self::FALLBACK_TO_OTHER_LANG) {
-            $labelElement = $this->query("rdfs:label")[0];
+            $labelElement = $this->query(static::RDFS_LABEL_XPATH)[0];
 
             if (isset($labelElement)) {
                 return $labelElement->nodeValue;
             }
         }
 
-        /**
-         * - Otherwise, if $fallbackFlags contains
-         * GetLabelInterface::FALLBACK_TO_NAME, return the present element's
-         * local name.
-         * - Otherwise return `null`.
-         */
-        return $fallbackFlags & self::FALLBACK_TO_NAME
-            ? $this->localName
-            : null;
+        return null;
+    }
+
+    /// Get fragment of rdfs:label attribute, if any
+    protected function getSameAsFragment(): ?string
+    {
+        $sameAs = $this->{'owl:sameAs'};
+
+        return isset($sameAs) ? $sameAs->getFragment() : null;
     }
 }

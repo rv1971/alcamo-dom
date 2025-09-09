@@ -3,7 +3,7 @@
 namespace alcamo\dom\xsd;
 
 use alcamo\dom\{GetCommentInterface, GetLabelInterface};
-use alcamo\dom\decorated\AbstractDecorator;
+use alcamo\dom\decorated\{AbstractDecorator, GetLabelTrait, GetCommentTrait};
 use alcamo\xml\XName;
 
 /// Decorator providing getLabel()
@@ -11,6 +11,15 @@ class Decorator extends AbstractDecorator implements
     GetCommentInterface,
     GetLabelInterface
 {
+    use GetLabelTrait;
+    use GetCommentTrait;
+
+    /// Relative XPath to <rdfs:label> elements
+    private const RDFS_LABEL_XPATH = 'xsd:annotation/xsd:appinfo/rdfs:label';
+
+    /// Relative XPath to <rdfs:comment> elements
+    private const RDFS_COMMENT_XPATH = 'xsd:annotation/xsd:appinfo/rdfs:comment';
+
     private $xComponentName_ = false; ///< ?XName
 
     /**
@@ -67,59 +76,25 @@ class Decorator extends AbstractDecorator implements
         ?string $lang = null,
         ?int $fallbackFlags = null
     ): ?string {
-        /**
-         * - If a specific language is requested and there is an
-         * `\<rdfs:label>` element for that language in some `\<xsd:appinfo>`
-         * element, return its value.
-         */
-        if (isset($lang)) {
-            $labelElement = $this->query(
-                "xsd:annotation/xsd:appinfo/rdfs:label[@xml:lang = '$lang']"
-            )[0];
+        /** - Use <rdfs:label> or rdfs:label attribute, if applicable. */
+        $label = $this->getRdfsLabel($lang, $fallbackFlags);
 
-            if (isset($labelElement)) {
-                return $labelElement->nodeValue;
-            }
-
-            /* If there is no element with an explicit corresponding language,
-             * look for one that inherits the language. */
-            $labelElement = $this->query(
-                "xsd:annotation/xsd:appinfo/rdfs:label[not(@xml:lang)]"
-            )[0];
-
-            if (isset($labelElement) && $labelElement->getLang() == $lang) {
-                return $labelElement->nodeValue;
-            }
-        }
-
-        /**
-         * - Otherwise (i.e. if no specific language is requested or the
-         * requested language has not been found), if the present element (not
-         * a descendent of it) has an `rdfs:label` attribute, return its
-         * content. This way, the attribute, if present, acts as a
-         * language-agnostic default label.
-         */
-        $labelAttr = $this->{'rdfs:label'};
-
-        if (isset($labelAttr)) {
-            return $labelAttr;
+        if (isset($label)) {
+            return $label;
         }
 
         /*
-         * - Otherwise, if no specific language is requested or $fallbackFlags
-         * contains GetLabelInterface::FALLBACK_TO_OTHER_LANG, return the
-         * first `\<rdfs:label>` found in an `\<xsd:appinfo>` element,
-         * regardless of its language. Thus, the schema author decides about
-         * the default fallback language by putting the corresponding label in
-         * the first place.
+         * - Otherwise, if the present element has an owl:sameAs attribute and
+         * $fallbackFlags contains
+         * GetLabelInterface::FALLBACK_TO_SAME_AS_FRAGMENT, return the
+         * fragment part of owl:sameAs.
          */
-        if (!isset($lang) || $fallbackFlags & self::FALLBACK_TO_OTHER_LANG) {
-            $labelElement = $this->query(
-                "xsd:annotation/xsd:appinfo/rdfs:label"
-            )[0];
 
-            if (isset($labelElement)) {
-                return $labelElement->nodeValue;
+        if ($fallbackFlags & self::FALLBACK_TO_SAME_AS_FRAGMENT) {
+            $label = $this->getSameAsFragment();
+
+            if (isset($label)) {
+                return $label;
             }
         }
 
@@ -135,72 +110,6 @@ class Decorator extends AbstractDecorator implements
         }
 
         /** - Otherwise return `null`. */
-        return null;
-    }
-
-    public function getComment(
-        ?string $lang = null,
-        ?int $fallbackFlags = null
-    ): ?string {
-        /**
-         * - If a specific language is requested and there is an
-         * `\<rdfs:comment>` element for that language in some `\<xsd:appinfo>`
-         * element, return its value.
-         */
-        if (isset($lang)) {
-            $commentElement = $this->query(
-                "xsd:annotation/xsd:appinfo/rdfs:comment[@xml:lang = '$lang']"
-            )[0];
-
-            if (isset($commentElement)) {
-                return $commentElement->nodeValue;
-            }
-
-            /* If there is no element with an explicit corresponding language,
-             * look for one that inherits the language. */
-            $commentElement = $this->query(
-                "xsd:annotation/xsd:appinfo/rdfs:comment[not(@xml:lang)]"
-            )[0];
-
-            if (isset($commentElement) && $commentElement->getLang() == $lang) {
-                return $commentElement->nodeValue;
-            }
-        }
-
-        /**
-         * - Otherwise (i.e. if no specific language is requested or the
-         * requested language has not been found), if the present element (not
-         * a descendent of it) has an `rdfs:comment` attribute, return its
-         * content. This way, the attribute, if present, acts as a
-         * language-agnostic default comment.
-         */
-        $commentAttr = $this->{'rdfs:comment'};
-
-        if (isset($commentAttr)) {
-            return $commentAttr;
-        }
-
-        /*
-         * - Otherwise, if no specific language is requested or $fallbackFlags
-         * contains GetCommentInterface::FALLBACK_TO_OTHER_LANG, return the
-         * first `\<rdfs:comment>` found in an `\<xsd:appinfo>` element,
-         * regardless of its language. Thus, the schema author decides about
-         * the default fallback language by putting the corresponding comment in
-         * the first place.
-         */
-        if (!isset($lang) || $fallbackFlags & self::FALLBACK_TO_OTHER_LANG) {
-            $commentElement = $this->query(
-                "xsd:annotation/xsd:appinfo/rdfs:comment"
-            )[0];
-
-            if (isset($commentElement)) {
-                return $commentElement->nodeValue;
-            }
-        }
-
-        /**
-         * - Otherwise return `null`.
-         */
         return null;
     }
 }

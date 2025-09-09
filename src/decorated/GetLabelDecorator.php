@@ -8,4 +8,7 @@ use alcamo\dom\GetLabelInterface;
 class GetLabelDecorator extends AbstractDecorator implements GetLabelInterface
 {
     use GetLabelTrait;
+
+    /// Relative XPath to <rdfs:label> elements
+    protected const RDFS_LABEL_XPATH = 'rdfs:label';
 }

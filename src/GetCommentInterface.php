@@ -6,7 +6,7 @@ namespace alcamo\dom;
 interface GetCommentInterface extends GetMetaDataInterface
 {
     /**
-     * @brief Get an `rdfs:comment` attribute or element, if present
+     * @brief Get a human-readable comment, if present
      *
      * @param $lang Desired language.
      *

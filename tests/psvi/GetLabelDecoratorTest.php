@@ -58,6 +58,12 @@ class GetLabelDecoratorTest extends TestCase
             [ $doc['corge'], null, null, 'CORGE' ],
             [ $doc['corge'], 'pl-x-corge', null, 'CORGE-pl' ],
             [ $doc['corge'], 'pt', null, 'CORGE' ],
+            [
+                $doc['appinfo'],
+                null,
+                GetLabelInterface::FALLBACK_TO_SAME_AS_FRAGMENT,
+                'SED-DIAM'
+            ]
         ];
     }
 }

@@ -31,7 +31,7 @@ class ElementTest extends TestCase
     {
         $fooSchema = Schema::newFromDocument(
             Document::newFromUrl(
-                'file:///' . dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR
+                'file://' . dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR
                 . 'foo.xml'
             )
         );
@@ -75,7 +75,7 @@ class ElementTest extends TestCase
     {
         $fooSchema = Schema::newFromDocument(
             Document::newFromUrl(
-                'file:///' . dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR
+                'file://' . dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR
                 . 'foo.xml'
             )
         );
@@ -139,7 +139,7 @@ class ElementTest extends TestCase
     {
         $fooSchema = Schema::newFromDocument(
             Document::newFromUrl(
-                'file:///' . dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR
+                'file://' . dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR
                 . 'foo.xml'
             )
         );
