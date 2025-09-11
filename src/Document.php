@@ -125,12 +125,6 @@ class Document extends \DOMDocument implements
 
         $doc->loadUrl($url, $libXmlOptions, $loadFlags);
 
-        /** Ensure that the file:// protocol is preserved in the
-         *  `documentURI` property. */
-        if (substr($url, 0, 5) == 'file:' && $doc->documentURI[0] == '/') {
-            $doc->documentURI = "file://$doc->documentURI";
-        }
-
         return $doc;
     }
 
@@ -213,6 +207,12 @@ class Document extends \DOMDocument implements
             /** @throw alcamo::exception::FileLoadFailed if any libxml warning
              *  or error occurs. */
             throw FileLoadFailed::newFromPrevious($e, [ 'filename' => $url ]);
+        }
+
+        /** Ensure that the file:// protocol is preserved in the
+         *  `documentURI` property. */
+        if (substr($url, 0, 5) == 'file:' && $this->documentURI[0] == '/') {
+            $this->documentURI = "file://$this->documentURI";
         }
 
         /** After loading, run the afterLoad() hook. */
