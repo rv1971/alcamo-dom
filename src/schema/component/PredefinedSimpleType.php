@@ -26,7 +26,7 @@ class PredefinedSimpleType extends PredefinedType implements
 
         return false;
     }
-    public function getFacetValue(string $facetName)
+    public function getFacetValue(string $facetName): ?string
     {
         return null;
     }

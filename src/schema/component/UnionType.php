@@ -33,6 +33,27 @@ class UnionType extends AbstractSimpleType
         return $this->memberTypes_;
     }
 
+    public function getFacetValue(string $facetName): ?string
+    {
+        $uniqueValue = null;
+
+        foreach ($this->getMemberTypes() as $memberType) {
+            $value = $memberType->getFacetValue($facetName);
+
+            if (!isset($value)) {
+                return null;
+            }
+
+            if (isset($uniqueValue) && $uniqueValue != $value) {
+                return null;
+            }
+
+            $uniqueValue = $value;
+        }
+
+        return $uniqueValue;
+    }
+
     public function getHfpPropValue(string $propName): ?string
     {
         $uniqueValue = null;

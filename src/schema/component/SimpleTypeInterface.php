@@ -7,10 +7,10 @@ namespace alcamo\dom\schema\component;
  */
 interface SimpleTypeInterface extends TypeInterface
 {
-    /// Value of first facet in closest ancestor, if any
-    public function getFacetValue(string $facetName);
-
     public function isEqualToOrDerivedFrom(string $xName): bool;
+
+    /// Value of first facet in closest ancestor, if any
+    public function getFacetValue(string $facetName): ?string;
 
     public function getHfpPropValue(string $propName): ?string;
 

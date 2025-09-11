@@ -141,7 +141,7 @@ abstract class AbstractSimpleType extends AbstractXsdComponent implements
      * `xsd:restriction/xsd:simpleType/xsd:restriction´ is not found; such
      * constructs are valid (up to any level of depth), but rarely needed.
      */
-    public function getFacetValue(string $facetName)
+    public function getFacetValue(string $facetName): ?string
     {
         for (
             $type = $this;

@@ -1126,6 +1126,8 @@ class SchemaTest extends TestCase
             [ $schema, Xsd::XSD_NS . ' NMTOKEN', 'pattern', '\c+' ],
             [ $schema, Xsd::XSD_NS . ' formChoice', 'pattern', '\c+' ],
             [ $schema, Xsd::XSD_NS . ' reducedDerivationControl', 'pattern', '\c+' ],
+            [ $schema, Xsd::XSD_NS . ' reducedDerivationControl', 'whiteSpace', 'collapse' ],
+            [ $schema, Xsd::XSD_NS . ' derivationSet', 'pattern', null ],
             [ $schema, Xsd::XSD_NS . ' token', 'whiteSpace', 'collapse' ],
             [ $schema, Xsd::XSD_NS . ' public', 'whiteSpace', 'collapse' ]
         ];
