@@ -1132,6 +1132,36 @@ class SchemaTest extends TestCase
     }
 
     /**
+     * @dataProvider getIsNumericProvider
+     */
+    public function testIsNumeric($schema, $type, $expectedValue)
+    {
+        $this->assertSame(
+            $expectedValue,
+            $schema->getGlobalType($type)->isNumeric()
+        );
+    }
+
+    public function getIsNumericProvider()
+    {
+        $foo = Document::newFromUrl(
+            'file://' . dirname(__DIR__) . '/foo.xml'
+        )->conserve();
+
+        $schema = Schema::newFromDocument($foo);
+
+        return [
+            [ $schema, Xsd::XSD_NS . ' anySimpleType', false ],
+            [ $schema, Xsd::XSD_NS . ' string', false ],
+            [ $schema, Xsd::XSD_NS . ' decimal', true ],
+            [ $schema, Xsd::XSD_NS . ' short', true ],
+            [ $schema, Xsd::XSD_NS . ' formChoice', false ],
+            [ $schema, Xsd::XSD_NS . ' allNNI', false ],
+            [ $schema, self::FOO_NS . ' numericUnion', true ]
+        ];
+    }
+
+    /**
      * @dataProvider getAppinfoMetaProvider
      */
     public function testGetAppinfoMeta($schema, $type, $property, $expectedContent)

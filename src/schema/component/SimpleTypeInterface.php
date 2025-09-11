@@ -11,4 +11,8 @@ interface SimpleTypeInterface extends TypeInterface
     public function getFacetValue(string $facetName);
 
     public function isEqualToOrDerivedFrom(string $xName): bool;
+
+    public function getHfpPropValue(string $propName): ?string;
+
+    public function isNumeric(): bool;
 }

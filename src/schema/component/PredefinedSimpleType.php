@@ -12,11 +12,6 @@ use alcamo\dom\Document;
 class PredefinedSimpleType extends PredefinedType implements
     SimpleTypeInterface
 {
-    public function getFacetValue(string $facetName)
-    {
-        return null;
-    }
-
     public function isEqualToOrDerivedFrom(string $xName): bool
     {
         for (
@@ -29,6 +24,20 @@ class PredefinedSimpleType extends PredefinedType implements
             }
         }
 
+        return false;
+    }
+    public function getFacetValue(string $facetName)
+    {
+        return null;
+    }
+
+    public function getHfpPropValue(string $propName): ?string
+    {
+        return null;
+    }
+
+    public function isNumeric(): bool
+    {
         return false;
     }
 }

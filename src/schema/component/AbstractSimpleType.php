@@ -13,7 +13,7 @@ use alcamo\dom\decorated\Element as XsdElement;
 abstract class AbstractSimpleType extends AbstractXsdComponent implements
     SimpleTypeInterface
 {
-    private $baseType_; ///< ?AbstractType
+    private $baseType_;  ///< ?AbstractType
 
     /// Factory method creating the most specific type that it can recognize
     public static function newFromSchemaAndXsdElement(

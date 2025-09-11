@@ -29,4 +29,14 @@ class ListType extends AbstractSimpleType
     {
         return $this->itemType_;
     }
+
+    public function getHfpPropValue(string $propName): ?string
+    {
+        return null;
+    }
+
+    public function isNumeric(): bool
+    {
+        return false;
+    }
 }

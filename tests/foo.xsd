@@ -227,4 +227,12 @@
   </xsd:complexType>
 
   <xsd:element name="qux" type="xsd:short"/>
+
+  <xsd:simpleType name="numericUnion">
+    <xsd:union memberTypes="xsd:byte xsd:unsignedShort">
+      <xsd:simpleType>
+        <xsd:restriction base="xsd:unsignedInt"/>
+      </xsd:simpleType>
+    </xsd:union>
+  </xsd:simpleType>
 </xsd:schema>
