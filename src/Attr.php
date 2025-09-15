@@ -7,13 +7,13 @@ use alcamo\xml\HasXNameInterface;
 /**
  * @brief Attribute class for use in DOMDocument::registerNodeClass()
  *
- * @date Last reviewed 2021-06-30
+ * @date Last reviewed 2025-09-15
  */
 class Attr extends \DOMAttr implements HasXNameInterface, BaseUriInterface
 {
+    use BaseUriTrait;
     use HasXNameTrait;
     use Rfc5147Trait;
-    use BaseUriTrait;
 
     /// Return attribute value
     public function __toString(): string

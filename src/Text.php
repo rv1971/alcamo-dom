@@ -5,7 +5,7 @@ namespace alcamo\dom;
 /**
  * @brief Text class for use in DOMDocument::registerNodeClass()
  *
- * @date Last reviewed 2021-06-30
+ * @date Last reviewed 2025-09-15
  */
 class Text extends \DOMText implements BaseUriInterface
 {

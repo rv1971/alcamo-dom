@@ -16,7 +16,7 @@ namespace alcamo\dom;
  *
  * @sa [RFC 5147](https://datatracker.ietf.org/doc/html/rfc5147)
  *
- * @date Last reviewed 2021-06-30
+ * @date Last reviewed 2025-09-15
  */
 trait Rfc5147Trait
 {

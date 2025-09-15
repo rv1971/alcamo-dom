@@ -5,7 +5,7 @@ namespace alcamo\dom;
 /**
  * @brief Class able to create a document from a URL
  *
- * @date Last reviewed 2021-06-30
+ * @date Last reviewed 2025-09-15
  */
 interface DocumentFactoryInterface
 {
@@ -18,6 +18,10 @@ interface DocumentFactoryInterface
      *
      * @param $libXmlOptions See $options in
      * [DOMDocument::load()](https://www.php.net/manual/en/domdocument.load)
+     *
+     * @param $useCache Whether to use a cached document, if any
+     *
+     * @param $loadFlags Flags passed to the document's load method
      */
     public function createFromUrl(
         string $url,

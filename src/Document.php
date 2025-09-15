@@ -78,9 +78,6 @@ class Document extends \DOMDocument implements
         'DOMText'    => Text::class
     ];
 
-    /// XPath to find all \<xsd:documentation> elements
-    private const ALL_DOCUMENTATION_XPATH = '//xsd:documentation';
-
     /**
      * @brief Default libxml options when loading a document
      *
@@ -107,6 +104,9 @@ class Document extends \DOMDocument implements
 
     /// OR-Combination of the above constants
     public const LOAD_FLAGS = 0;
+
+    /// XPath to find all \<xsd:documentation> elements
+    private const ALL_DOCUMENTATION_XPATH = '//xsd:documentation';
 
     /**
      * @brief Create a document from a URL

@@ -10,16 +10,16 @@ use Psr\Http\Message\UriInterface;
 /**
  * @brief Element class for use in DOMDocument::registerNodeClass()
  *
- * @date Last reviewed 2021-06-30
+ * @date Last reviewed 2025-09-15
  */
 class Element extends \DOMElement implements
     \IteratorAggregate,
-    HasXNameInterface,
-    BaseUriInterface
+    BaseUriInterface,
+    HasXNameInterface
 {
+    use BaseUriTrait;
     use HasXNameTrait;
     use Rfc5147Trait;
-    use BaseUriTrait;
 
     /// Return [textContent](https://www.php.net/manual/en/class.domnode#domnode.props.textcontent)
     public function __toString(): string
@@ -46,17 +46,22 @@ class Element extends \DOMElement implements
     }
 
     /**
-     * @brief Return the first node having an equivalent `owl:sameAs`
-     * attribute
+     * @brief Get the first element which is semantically the same as a given
+     * URI
      *
-     * This may be the context node itself. Return `null` if no such node is
-     * found.
+     * I.e. return the first element that declares itself to be the same as
+     * $uri. The result may be the context element itself. Return `null` if no
+     * such element is found.
      *
-     * For comparison, the values of `owl:sameAs` attributes are resolved to
-     * absolute URIs and compared literally. The default set of normalizations
-     * applied by alcamo::uri::UriNormalizer::normalize() includes realpath(),
-     * coherently with the fact that DOMDocument::baseURI may resolve symbolic
-     * links.
+     * @param $uri Asbolute URI which is compared to `owl:sameAs` attributes,
+     * the latter resolved to absolute URIs.
+     *
+     * @param $normalizations For comparison, both $uri and the values of
+     * `owl:sameAs` attributes are resolved to absolute URIs and normalized
+     * according to $normalizations and then compared literally. The default
+     * set of normalizations applied by
+     * alcamo::uri::UriNormalizer::normalize() includes realpath(), coherently
+     * with the fact that DOMDocument::baseURI may resolve symbolic links.
      */
     public function getFirstSameAs(
         $uri,
@@ -75,17 +80,17 @@ class Element extends \DOMElement implements
 
         $uri = (string)UriNormalizer::normalize($uri, $normalizations);
 
-        foreach ($this->query('descendant-or-self::*[@owl:sameAs]') as $node) {
+        foreach ($this->query('descendant-or-self::*[@owl:sameAs]') as $element) {
             if (
                 UriNormalizer::normalize(
-                    $node->resolveUri(
-                        $node->getAttributeNS(Document::OWL_NS, 'sameAs')
+                    $element->resolveUri(
+                        $element->getAttributeNS(Document::OWL_NS, 'sameAs')
                     ),
                     $normalizations
                 )
                 == $uri
             ) {
-                return $node;
+                return $element;
             }
         }
 

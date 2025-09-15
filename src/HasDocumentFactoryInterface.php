@@ -5,7 +5,7 @@ namespace alcamo\dom;
 /**
  * @brief Class that provides a document factory
  *
- * @date Last reviewed 2021-06-30
+ * @date Last reviewed 2025-09-15
  */
 interface HasDocumentFactoryInterface
 {

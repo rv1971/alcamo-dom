@@ -2,7 +2,11 @@
 
 namespace alcamo\dom;
 
-/// Interface for getComment()
+/**
+ * @brief Class featuring getComment()
+ *
+ * @date Last reviewed 2025-09-15
+ */
 interface GetCommentInterface extends GetMetaDataInterface
 {
     /**
@@ -10,8 +14,9 @@ interface GetCommentInterface extends GetMetaDataInterface
      *
      * @param $lang Desired language.
      *
-     * @param $fallbackFlags OR-Combination of the above constants: which
-     * fallbacks to try if a comment in the desired language is not available.
+     * @param $fallbackFlags OR-Combination of the constants in
+     * GetMetaDataInterface: which fallbacks to try if a comment in the
+     * desired language is not available.
      */
     public function getComment(
         ?string $lang = null,

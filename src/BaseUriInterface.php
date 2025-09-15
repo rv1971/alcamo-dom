@@ -4,7 +4,11 @@ namespace alcamo\dom;
 
 use Psr\Http\Message\UriInterface;
 
-/// Object that may have a base URI
+/**
+ * @brief Class featuring base URI and resolution relative to it
+ *
+ * @date Last reviewed 2025-09-15
+ */
 interface BaseUriInterface
 {
     public function getBaseUri(): ?UriInterface;

@@ -3,9 +3,9 @@
 namespace alcamo\dom;
 
 /**
- * @brief Extension of DOMXPath whixch registers the php namespace prefix
+ * @brief Extension of DOMXPath which registers the php namespace prefix
  *
- * @date Last reviewed 2021-06-30
+ * @date Last reviewed 2025-09-15
  */
 class XPath extends \DOMXPath
 {

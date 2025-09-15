@@ -5,7 +5,11 @@ namespace alcamo\dom;
 use GuzzleHttp\Psr7\{Uri, UriResolver};
 use Psr\Http\Message\UriInterface;
 
-/// Implementation of BaseUriInterface for DOM nodes
+/**
+ * @brief Implementation of BaseUriInterface for DOM nodes
+ *
+ * @date Last reviewed 2025-09-15
+ */
 trait BaseUriTrait
 {
     public function getBaseUri(): ?UriInterface

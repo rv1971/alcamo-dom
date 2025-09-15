@@ -16,7 +16,7 @@ class ChildElementsIterator implements \Iterator
 {
     use IteratorCurrentTrait;
 
-    private $parentElement_;
+    private $parentElement_; ///< DOMElement
 
     public function __construct(\DOMElement $parentElement)
     {

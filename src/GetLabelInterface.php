@@ -2,7 +2,11 @@
 
 namespace alcamo\dom;
 
-/// Interface for getLabel()
+/**
+ * @brief Class featuring getLabel()
+ *
+ * @date Last reviewed 2025-09-15
+ */
 interface GetLabelInterface extends GetMetaDataInterface
 {
     /**

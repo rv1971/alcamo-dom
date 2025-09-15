@@ -7,7 +7,7 @@ use alcamo\xml\XName;
 /**
  * @brief Provide getXName()
  *
- * @date Last reviewed 2021-06-30
+ * @date Last reviewed 2025-09-15
  */
 trait HasXNameTrait
 {
