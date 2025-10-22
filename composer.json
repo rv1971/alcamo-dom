@@ -6,9 +6,12 @@
     "require": {
         "php": "7.3 - 8.0",
         "alcamo/binary-data": "^0.6",
-        "alcamo/rdfa": "^0.8",
-        "alcamo/uri": "^0.1",
-        "alcamo/xpointer": "^0.7"
+        "alcamo/decorator": "^0.1",
+        "alcamo/iterator": "^0.1",
+        "alcamo/range": "^0.1",
+        "alcamo/rdfa": "^0.9",
+        "alcamo/uri": "^0.2",
+        "alcamo/xpointer": "^0.8"
     },
     "autoload": {
 	"psr-4": {

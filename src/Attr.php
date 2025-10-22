@@ -2,14 +2,14 @@
 
 namespace alcamo\dom;
 
-use alcamo\xml\HasXNameInterface;
+use alcamo\xml\HavingXNameInterface;
 
 /**
  * @brief Attribute class for use in DOMDocument::registerNodeClass()
  *
  * @date Last reviewed 2025-09-15
  */
-class Attr extends \DOMAttr implements HasXNameInterface, BaseUriInterface
+class Attr extends \DOMAttr implements HavingXNameInterface, BaseUriInterface
 {
     use BaseUriTrait;
     use HasXNameTrait;

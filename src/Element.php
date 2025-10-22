@@ -3,7 +3,7 @@
 namespace alcamo\dom;
 
 use alcamo\exception\AbsoluteUriNeeded;
-use alcamo\xml\HasXNameInterface;
+use alcamo\xml\HavingXNameInterface;
 use alcamo\uri\{Uri, UriNormalizer};
 use Psr\Http\Message\UriInterface;
 
@@ -15,7 +15,7 @@ use Psr\Http\Message\UriInterface;
 class Element extends \DOMElement implements
     \IteratorAggregate,
     BaseUriInterface,
-    HasXNameInterface
+    HavingXNameInterface
 {
     use BaseUriTrait;
     use HasXNameTrait;
