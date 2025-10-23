@@ -2,10 +2,10 @@
 
 namespace alcamo\dom\psvi;
 
-use alcamo\dom\GetLabelInterface;
+use alcamo\dom\HavingDocumentationInterface;
 use PHPUnit\Framework\TestCase;
 
-class GetLabelDecoratorTest extends TestCase
+class HavingDocumentationDecoratorTest extends TestCase
 {
     /**
      * @dataProvider getLabelProvider
@@ -28,40 +28,40 @@ class GetLabelDecoratorTest extends TestCase
 
         return [
             [ $qux, null, null, null ],
-            [ $qux, null, GetLabelInterface::FALLBACK_TO_TYPE_NAME, 'short' ],
+            [ $qux, null, HavingDocumentationInterface::FALLBACK_TO_TYPE_NAME, 'short' ],
             [
                 $qux,
                 null,
-                GetLabelInterface::FALLBACK_TO_TYPE_NAME
-                | GetLabelInterface::FALLBACK_TO_NAME,
+                HavingDocumentationInterface::FALLBACK_TO_TYPE_NAME
+                | HavingDocumentationInterface::FALLBACK_TO_NAME,
                 'short'
             ],
-            [ $qux, null, GetLabelInterface::FALLBACK_TO_NAME, 'qux' ],
+            [ $qux, null, HavingDocumentationInterface::FALLBACK_TO_NAME, 'qux' ],
             [ $qux, 'de', null, null ],
-            [ $qux, 'fr', GetLabelInterface::FALLBACK_TO_TYPE_NAME, 'short' ],
+            [ $qux, 'fr', HavingDocumentationInterface::FALLBACK_TO_TYPE_NAME, 'short' ],
             [
                 $qux,
                 'en',
-                GetLabelInterface::FALLBACK_TO_TYPE_NAME
-                | GetLabelInterface::FALLBACK_TO_NAME,
+                HavingDocumentationInterface::FALLBACK_TO_TYPE_NAME
+                | HavingDocumentationInterface::FALLBACK_TO_NAME,
                 'short'
             ],
-            [ $qux, 'it', GetLabelInterface::FALLBACK_TO_NAME, 'qux' ],
+            [ $qux, 'it', HavingDocumentationInterface::FALLBACK_TO_NAME, 'qux' ],
             [ $doc['a'], null, null, 'baz-a' ],
             [ $doc['a'], 'no', null, 'baz-a' ],
             [ $doc['x'], null, null, 'C oc' ],
             [ $doc['x'], 'oc', null, 'C oc' ],
             [ $doc['x'], 'sk', null, null ],
-            [ $doc['x'], 'sk', GetLabelInterface::FALLBACK_TO_OTHER_LANG, 'C oc' ],
-            [ $doc['x'], 'sk', GetLabelInterface::FALLBACK_TO_TYPE_NAME, 'Bar' ],
-            [ $doc['x'], 'sk', GetLabelInterface::FALLBACK_TO_NAME, 'bar' ],
+            [ $doc['x'], 'sk', HavingDocumentationInterface::FALLBACK_TO_OTHER_LANG, 'C oc' ],
+            [ $doc['x'], 'sk', HavingDocumentationInterface::FALLBACK_TO_TYPE_NAME, 'Bar' ],
+            [ $doc['x'], 'sk', HavingDocumentationInterface::FALLBACK_TO_NAME, 'bar' ],
             [ $doc['corge'], null, null, 'CORGE' ],
             [ $doc['corge'], 'pl-x-corge', null, 'CORGE-pl' ],
             [ $doc['corge'], 'pt', null, 'CORGE' ],
             [
                 $doc['appinfo'],
                 null,
-                GetLabelInterface::FALLBACK_TO_SAME_AS_FRAGMENT,
+                HavingDocumentationInterface::FALLBACK_TO_SAME_AS_FRAGMENT,
                 'SED-DIAM'
             ]
         ];

@@ -11,10 +11,10 @@ use alcamo\xml\HavingXNameInterface;
  */
 class Attr extends \DOMAttr implements
     HavingXNameInterface,
-    BaseUriInterface,
+    HavingBaseUriInterface,
     Rfc5147Interface
 {
-    use BaseUriTrait;
+    use HavingBaseUriTrait;
     use HavingXNameTrait;
     use Rfc5147Trait;
 

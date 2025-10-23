@@ -2,10 +2,10 @@
 
 namespace alcamo\dom\decorated;
 
-use alcamo\dom\{GetCommentInterface, GetLabelInterface};
+use alcamo\dom\HavingDocumentationInterface;
 use PHPUnit\Framework\TestCase;
 
-class GetLabelAndCommentDecoratorTest extends TestCase
+class HavingDocumentationDecoratorTest extends TestCase
 {
     /**
      * @dataProvider getLabelProvider
@@ -28,16 +28,16 @@ class GetLabelAndCommentDecoratorTest extends TestCase
 
         return [
             [ $qux, null, null, null ],
-            [ $qux, null, GetLabelInterface::FALLBACK_TO_NAME, 'qux' ],
+            [ $qux, null, HavingDocumentationInterface::FALLBACK_TO_NAME, 'qux' ],
             [ $qux, 'de', null, null ],
-            [ $qux, 'it', GetLabelInterface::FALLBACK_TO_NAME, 'qux' ],
+            [ $qux, 'it', HavingDocumentationInterface::FALLBACK_TO_NAME, 'qux' ],
             [ $doc['a'], null, null, 'baz-a' ],
             [ $doc['a'], 'no', null, 'baz-a' ],
             [ $doc['x'], null, null, 'C oc' ],
             [ $doc['x'], 'oc', null, 'C oc' ],
             [ $doc['x'], 'sk', null, null ],
-            [ $doc['x'], 'sk', GetLabelInterface::FALLBACK_TO_OTHER_LANG, 'C oc' ],
-            [ $doc['x'], 'sk', GetLabelInterface::FALLBACK_TO_NAME, 'bar' ],
+            [ $doc['x'], 'sk', HavingDocumentationInterface::FALLBACK_TO_OTHER_LANG, 'C oc' ],
+            [ $doc['x'], 'sk', HavingDocumentationInterface::FALLBACK_TO_NAME, 'bar' ],
             [ $doc['corge'], null, null, 'CORGE' ],
             [ $doc['corge'], 'pl-x-corge', null, 'CORGE-pl' ],
             [ $doc['corge'], 'pt', null, 'CORGE' ],
@@ -72,7 +72,7 @@ class GetLabelAndCommentDecoratorTest extends TestCase
             [
                 $doc->documentElement,
                 'en',
-                GetCommentInterface::FALLBACK_TO_OTHER_LANG,
+                HavingDocumentationInterface::FALLBACK_TO_OTHER_LANG,
                 'Lorem ipsum'
             ]
         ];

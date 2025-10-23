@@ -30,12 +30,12 @@ use alcamo\exception\{
  */
 class Document extends \DOMDocument implements
     \ArrayAccess,
-    BaseUriInterface,
-    HasDocumentFactoryInterface,
+    HavingBaseUriInterface,
+    HavingDocumentFactoryInterface,
     \IteratorAggregate
 {
     use PreventWriteArrayAccessTrait;
-    use BaseUriTrait;
+    use HavingBaseUriTrait;
 
     /// Namespace mappings that will be registered for each document instance
     public const NSS = [

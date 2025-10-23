@@ -6,18 +6,17 @@ use GuzzleHttp\Psr7\{Uri, UriResolver};
 use Psr\Http\Message\UriInterface;
 
 /**
- * @brief Implementation of BaseUriInterface for DOM nodes
+ * @brief Implementation of HavingBaseUriInterface for DOM nodes
  *
- * @date Last reviewed 2025-09-15
+ * @date Last reviewed 2025-10-23
  */
-trait BaseUriTrait
+trait HavingBaseUriTrait
 {
     public function getBaseUri(): ?UriInterface
     {
         return isset($this->baseURI) ? new Uri($this->baseURI) : null;
     }
 
-    /// @copybrief BaseUriInterface::resolveUri()
     public function resolveUri($uri): ?UriInterface
     {
         if (!($uri instanceof UriInterface)) {

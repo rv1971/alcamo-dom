@@ -3,7 +3,7 @@
 namespace alcamo\dom\xsd;
 
 use PHPUnit\Framework\TestCase;
-use alcamo\dom\{GetCommentInterface, GetLabelInterface};
+use alcamo\dom\HavingDocumentationInterface;
 use alcamo\dom\decorated\Document;
 use alcamo\xml\XName;
 
@@ -69,20 +69,20 @@ class ElementTest extends TestCase
             [
                 $doc['bar'],
                 'es',
-                GetLabelInterface::FALLBACK_TO_OTHER_LANG,
+                HavingDocumentationInterface::FALLBACK_TO_OTHER_LANG,
                 'bar italiano'
             ],
             [
                 $doc['bar'],
                 'es',
-                GetLabelInterface::FALLBACK_TO_OTHER_LANG
-                | GetLabelInterface::FALLBACK_TO_NAME,
+                HavingDocumentationInterface::FALLBACK_TO_OTHER_LANG
+                | HavingDocumentationInterface::FALLBACK_TO_NAME,
                 'bar italiano'
             ],
             [
                 $doc['bar'],
                 'es',
-                GetLabelInterface::FALLBACK_TO_NAME,
+                HavingDocumentationInterface::FALLBACK_TO_NAME,
                 'bar'
             ]
         ];
@@ -120,7 +120,7 @@ class ElementTest extends TestCase
             [
                 $doc['bar'],
                 'es',
-                GetCommentInterface::FALLBACK_TO_OTHER_LANG,
+                HavingDocumentationInterface::FALLBACK_TO_OTHER_LANG,
                 'Descrizione'
             ]
         ];

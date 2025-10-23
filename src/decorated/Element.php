@@ -31,7 +31,7 @@ class Element extends BaseElement
      *
      * May also be overridden with `null` in derived classes.
      */
-    public const DEFAULT_DECORATOR_CLASS = GetLabelAndCommentDecorator::class;
+    public const DEFAULT_DECORATOR_CLASS = HavingDocumentationDecorator::class;
 
     private $decorator_ = false; ///< ?AbstractDecorator
 

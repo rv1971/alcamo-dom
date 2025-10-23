@@ -14,11 +14,11 @@ use Psr\Http\Message\UriInterface;
  */
 class Element extends \DOMElement implements
     \IteratorAggregate,
-    BaseUriInterface,
+    HavingBaseUriInterface,
     HavingXNameInterface,
     Rfc5147Interface
 {
-    use BaseUriTrait;
+    use HavingBaseUriTrait;
     use HavingXNameTrait;
     use Rfc5147Trait;
 

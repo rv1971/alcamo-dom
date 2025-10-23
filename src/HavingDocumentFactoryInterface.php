@@ -5,9 +5,9 @@ namespace alcamo\dom;
 /**
  * @brief Class that provides a document factory
  *
- * @date Last reviewed 2025-09-15
+ * @date Last reviewed 2025-10-23
  */
-interface HasDocumentFactoryInterface
+interface HavingDocumentFactoryInterface
 {
     public function getDocumentFactory(): DocumentFactoryInterface;
 }

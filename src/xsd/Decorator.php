@@ -2,18 +2,12 @@
 
 namespace alcamo\dom\xsd;
 
-use alcamo\dom\{GetCommentInterface, GetLabelInterface};
-use alcamo\dom\decorated\{AbstractDecorator, GetLabelTrait, GetCommentTrait};
+use alcamo\dom\decorated\HavingDocumentationDecorator;
 use alcamo\xml\XName;
 
 /// Decorator providing getLabel()
-class Decorator extends AbstractDecorator implements
-    GetCommentInterface,
-    GetLabelInterface
+class Decorator extends HavingDocumentationDecorator
 {
-    use GetLabelTrait;
-    use GetCommentTrait;
-
     /// Relative XPath to <rdfs:label> elements
     protected const RDFS_LABEL_XPATH = 'xsd:annotation/xsd:appinfo/rdfs:label';
 
@@ -87,8 +81,8 @@ class Decorator extends AbstractDecorator implements
         /*
          * - Otherwise, if the present element has an owl:sameAs attribute and
          * $fallbackFlags contains
-         * GetLabelInterface::FALLBACK_TO_SAME_AS_FRAGMENT, return the
-         * fragment part of owl:sameAs.
+         * HavingDocumentationInterface::FALLBACK_TO_SAME_AS_FRAGMENT, return
+         * the fragment part of owl:sameAs.
          */
 
         if ($fallbackFlags & self::FALLBACK_TO_SAME_AS_FRAGMENT) {
@@ -101,8 +95,9 @@ class Decorator extends AbstractDecorator implements
 
         /**
          * - Otherwise, if the present element has an extended name and
-         * $fallbackFlags contains GetLabelInterface::FALLBACK_TO_NAME, use
-         * its local part as a fallback.
+         * $fallbackFlags contains
+         * HavingDocumentationInterface::FALLBACK_TO_NAME, use its local part
+         * as a fallback.
          */
         if ($fallbackFlags & self::FALLBACK_TO_NAME) {
             $xName = $this->getComponentXName();
