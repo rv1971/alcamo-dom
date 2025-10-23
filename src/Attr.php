@@ -7,12 +7,15 @@ use alcamo\xml\HavingXNameInterface;
 /**
  * @brief Attribute class for use in DOMDocument::registerNodeClass()
  *
- * @date Last reviewed 2025-09-15
+ * @date Last reviewed 2025-10-23
  */
-class Attr extends \DOMAttr implements HavingXNameInterface, BaseUriInterface
+class Attr extends \DOMAttr implements
+    HavingXNameInterface,
+    BaseUriInterface,
+    Rfc5147Interface
 {
     use BaseUriTrait;
-    use HasXNameTrait;
+    use HavingXNameTrait;
     use Rfc5147Trait;
 
     /// Return attribute value

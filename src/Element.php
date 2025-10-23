@@ -10,15 +10,16 @@ use Psr\Http\Message\UriInterface;
 /**
  * @brief Element class for use in DOMDocument::registerNodeClass()
  *
- * @date Last reviewed 2025-09-15
+ * @date Last reviewed 2025-10-23
  */
 class Element extends \DOMElement implements
     \IteratorAggregate,
     BaseUriInterface,
-    HavingXNameInterface
+    HavingXNameInterface,
+    Rfc5147Interface
 {
     use BaseUriTrait;
-    use HasXNameTrait;
+    use HavingXNameTrait;
     use Rfc5147Trait;
 
     /// Return [textContent](https://www.php.net/manual/en/class.domnode#domnode.props.textcontent)

@@ -5,11 +5,11 @@ namespace alcamo\dom;
 use alcamo\xml\XName;
 
 /**
- * @brief Provide getXName()
+ * @brief Implement HavingXNameInterface
  *
- * @date Last reviewed 2025-09-15
+ * @date Last reviewed 2025-10-23
  */
-trait HasXNameTrait
+trait HavingXNameTrait
 {
     /// Return node name as expanded name made of namespaceURI and localName
     public function getXName(): XName
