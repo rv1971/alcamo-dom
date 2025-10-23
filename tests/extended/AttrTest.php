@@ -26,11 +26,11 @@ class FooAttr extends Attr
 
 class FooDocument extends Document
 {
-    public const NSS =
+    public const NS_PRFIX_TO_NS_URI =
         [
             'qux' => 'http://qux.example.org'
         ]
-        + parent::NSS;
+        + parent::NS_PRFIX_TO_NS_URI;
 
     public const NODE_CLASSES =
         [

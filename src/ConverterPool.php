@@ -21,10 +21,8 @@ use Ds\Set;
  *
  * @date Last reviewed 2021-07-01
  */
-class ConverterPool
+class ConverterPool implements NamespaceConstantsInterface
 {
-    public const XHV_NS = Document::NSS['xhv']; ///< xhtml vocabulary
-
     /// Split at whitespace
     public static function toArray($value): array
     {

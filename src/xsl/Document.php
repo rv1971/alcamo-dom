@@ -17,11 +17,6 @@ use alcamo\dom\extended\Document as BaseDocument;
  */
 class Document extends BaseDocument
 {
-    /// @copybrief alcamo::dom::Document::NSS
-    public const NSS = parent::NSS + [
-        'xsl' => 'http://www.w3.org/1999/XSL/Transform'
-    ];
-
     /// @copybrief alcamo::dom::Document::NODE_CLASSES
     public const NODE_CLASSES =
         [

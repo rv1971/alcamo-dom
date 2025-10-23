@@ -9,8 +9,8 @@ use alcamo\xml\XName;
  *
  * There are three ways to specify an attribute as a property:
  * - Attribute name without namespace prefix.
- * - Qualified name with a prefix registered in the NSS constant of the
- *    document class.
+ * - Qualified name with a prefix registered in the NS_PRFIX_TO_NS_URI
+ *   constant of the document class.
  * - Serialization of an XName object.
  * Hence there may be more than one way to specify the same attribute. All
  * ways to specify an attribute are equally stored in the cache.
@@ -50,7 +50,7 @@ trait MagicAttrAccessTrait
                 $a = explode(':', $attrName, 2);
 
                 return $this->hasAttributeNS(
-                    $this->ownerDocument::NSS[$a[0]],
+                    $this->ownerDocument::NS_PRFIX_TO_NS_URI[$a[0]],
                     $a[1]
                 );
             }
@@ -83,7 +83,7 @@ trait MagicAttrAccessTrait
                 $a = explode(':', $attrName, 2);
 
                 $attrNode = $this->getAttributeNodeNS(
-                    $this->ownerDocument::NSS[$a[0]],
+                    $this->ownerDocument::NS_PRFIX_TO_NS_URI[$a[0]],
                     $a[1]
                 );
             }

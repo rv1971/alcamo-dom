@@ -10,12 +10,16 @@ use Psr\Http\Message\UriInterface;
 /**
  * @brief Element class for use in DOMDocument::registerNodeClass()
  *
+ * The IteratorAggregate interface is served with iteration over child
+ * elements.
+ *
  * @date Last reviewed 2025-10-23
  */
 class Element extends \DOMElement implements
     \IteratorAggregate,
     HavingBaseUriInterface,
     HavingXNameInterface,
+    NamespaceConstantsInterface,
     Rfc5147Interface
 {
     use HavingBaseUriTrait;

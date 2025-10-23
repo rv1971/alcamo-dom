@@ -24,7 +24,7 @@ class MyDocumentFactory extends DocumentFactory
     ];
 
     public const NS_NAME_TO_CLASS = [
-        Document::NSS['xsd'] => Xsd::class
+        Document::XSD_NS => Xsd::class
     ];
 }
 

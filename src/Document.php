@@ -26,50 +26,20 @@ use alcamo\exception\{
  *
  * The ArrayAccess interface provides read access to elements by ID.
  *
+ * The IteratorAggregate interface is served with iteration over child
+ * elements of the document element.
+ *
  * @date Last reviewed 2021-07-01
  */
 class Document extends \DOMDocument implements
     \ArrayAccess,
     HavingBaseUriInterface,
     HavingDocumentFactoryInterface,
-    \IteratorAggregate
+    \IteratorAggregate,
+    NamespaceConstantsInterface
 {
-    use PreventWriteArrayAccessTrait;
     use HavingBaseUriTrait;
-
-    /// Namespace mappings that will be registered for each document instance
-    public const NSS = [
-        'dc'    => 'http://purl.org/dc/terms/',
-        'hfp'   => 'http://www.w3.org/2001/XMLSchema-hasFacetAndProperty',
-        'owl'   => 'http://www.w3.org/2002/07/owl#',
-        'rdf'   => 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-        'rdfs'  => 'http://www.w3.org/2000/01/rdf-schema#',
-        'self'  => 'https://github.com/rv1971/alcamo-dom/',
-        'xh'    => 'http://www.w3.org/1999/xhtml',
-        'xh11d' => 'http://www.w3.org/1999/xhtml/datatypes/',
-        'xhv'   => 'http://www.w3.org/1999/xhtml/vocab#',
-        'xml'   => 'http://www.w3.org/XML/1998/namespace',
-        'xsd'   => 'http://www.w3.org/2001/XMLSchema',
-        'xsi'   => 'http://www.w3.org/2001/XMLSchema-instance',
-    ];
-
-    /// Dublin core namespace
-    public const DC_NS = self::NSS['dc'];
-
-    /// OWL Web Ontology Language namespace
-    public const OWL_NS = self::NSS['owl'];
-
-    /// XHTML namespace
-    public const XH_NS = self::NSS['xh'];
-
-    /// XML namespace
-    public const XML_NS = self::NSS['xml'];
-
-    /// XML Schema namespace
-    public const XSD_NS = self::NSS['xsd'];
-
-    /// XML Schema instance namespace
-    public const XSI_NS = self::NSS['xsi'];
+    use PreventWriteArrayAccessTrait;
 
     /// Node classes that will be registered for each document instance
     public const NODE_CLASSES = [
@@ -307,12 +277,6 @@ class Document extends \DOMDocument implements
             }
 
             $this->xPath_ = new XPath($this);
-
-            /** All namespaces in @ref NSS are registered in the XPath
-             *  object. */
-            foreach (static::NSS as $prefix => $uri) {
-                $this->xPath_->registerNamespace($prefix, $uri);
-            }
         }
 
         return $this->xPath_;
@@ -517,7 +481,7 @@ class Document extends \DOMDocument implements
         $xsdText =
             '<?xml version="1.0" encoding="UTF-8"?>'
             . '<schema xmlns="http://www.w3.org/2001/XMLSchema" '
-            . 'targetNamespace="' . self::NSS['self'] . 'validate#">';
+            . 'targetNamespace="' . self::ALCAMO_DOM_NS . 'validate#">';
 
         foreach ($this->getSchemaLocations() as $ns => $schemaUrl) {
             $xsdText .=

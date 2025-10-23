@@ -175,7 +175,7 @@ class XsdAttrTest extends TestCase
             ],
             'unset-xname' => [
                 $doc->documentElement,
-                Document::NSS['rdfs'] . ' comment',
+                Document::RDFS_NS . ' comment',
                 false,
                 null
             ]

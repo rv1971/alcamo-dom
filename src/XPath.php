@@ -3,19 +3,19 @@
 namespace alcamo\dom;
 
 /**
- * @brief Extension of DOMXPath which registers the php namespace prefix
+ * @brief Extension of DOMXPath which registers namespace prefixes
  *
  * @date Last reviewed 2025-09-15
  */
-class XPath extends \DOMXPath
+class XPath extends \DOMXPath implements NamespaceConstantsInterface
 {
-    public const PHP_NS = 'http://php.net/xpath'; ///< PHP namespace
-
-    /// Register the prefix `php` for @ref PHP_NS
+    /// Register all namepace prefixes in NamespaceConstantsInterface
     public function __construct(\DOMDocument $doc)
     {
         parent::__construct($doc);
 
-        $this->registerNamespace('php', self::PHP_NS);
+        foreach (static::NS_PRFIX_TO_NS_URI as $prefix => $uri) {
+            $this->registerNamespace($prefix, $uri);
+        }
     }
 }

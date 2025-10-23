@@ -10,7 +10,7 @@ use alcamo\iterator\IteratorCurrentTrait;
  * Skips children which are not elements, such as text nodes and comments. The
  * iteration key is a position counter starting at 0.
  *
- * @date Last reviewed 2021-06-30
+ * @date Last reviewed 2025-09-15
  */
 class ChildElementsIterator implements \Iterator
 {

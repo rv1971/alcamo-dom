@@ -36,9 +36,9 @@ class Document extends BaseDocument
 
     /// Map of XSD type XNames to conversion functions for attribute values
     public const ATTR_TYPE_MAP = [
-        self::NSS['xh11d'] . ' CURIE'          => CP::class . '::curieToUri',
-        self::NSS['xh11d'] . ' SafeCURIE'      => CP::class . '::safeCurieToUri',
-        self::NSS['xh11d'] . ' URIorSafeCURIE' => CP::class . '::uriOrSafeCurieToUri',
+        self::XH11D_NS . ' CURIE'          => CP::class . '::curieToUri',
+        self::XH11D_NS . ' SafeCURIE'      => CP::class . '::safeCurieToUri',
+        self::XH11D_NS . ' URIorSafeCURIE' => CP::class . '::uriOrSafeCurieToUri',
 
         self::XSD_NS . ' anyURI'       => CP::class . '::toUri',
         self::XSD_NS . ' base64Binary' => CP::class . '::base64ToBinary',
