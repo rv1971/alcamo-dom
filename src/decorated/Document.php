@@ -21,9 +21,5 @@ class Document extends BaseDocument
         ]
         + parent::NODE_CLASSES;
 
-    /// @copybrief alcamo::dom::Document::getDocumentFactory()
-    public function getDocumentFactory(): DocumentFactoryInterface
-    {
-        return new DocumentFactory();
-    }
+    public const DEFAULT_DOCUMENT_FACTOTRY_CLASS = DocumentFactory::class;
 }

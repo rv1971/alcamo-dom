@@ -132,7 +132,7 @@ class DocumentFactoryTest extends TestCase
         // $bar2 does not use the cache, so it does not see the change to $bar
         $bar2Url = 'extended/../bar.xml';
 
-        $bar2 = $documentFactory->createFromUrl($bar2Url, null, null, false);
+        $bar2 = $documentFactory->createFromUrl($bar2Url, null, false);
 
         $this->assertFalse($bar2->documentElement->hasAttribute('foo'));
 
@@ -171,7 +171,6 @@ class DocumentFactoryTest extends TestCase
         $documentFactory->createFromUrl(
             __DIR__ . DIRECTORY_SEPARATOR . 'bar.xml',
             null,
-            null,
             true
         );
     }
@@ -185,7 +184,7 @@ class DocumentFactoryTest extends TestCase
 
         $bar1 = $documentFactory->createFromUrl($barUrl);
 
-        $bar2 = $documentFactory->createFromUrl($barUrl, null, null, false);
+        $bar2 = $documentFactory->createFromUrl($barUrl, null, false);
 
         MyDocumentFactory::addToCache($bar1);
 

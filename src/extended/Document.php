@@ -32,14 +32,5 @@ class Document extends BaseDocument
         ]
         + parent::NODE_CLASSES;
 
-    /**
-     * @copybrief alcamo::dom::Document::getDocumentFactory()
-     *
-     * Unlike its parent, this returns a DocumentFactory object rather than an
-     * alcamo::dom::DocumentFactory object.
-     */
-    public function getDocumentFactory(): DocumentFactoryInterface
-    {
-        return new DocumentFactory();
-    }
+    public const DEFAULT_DOCUMENT_FACTOTRY_CLASS = DocumentFactory::class;
 }

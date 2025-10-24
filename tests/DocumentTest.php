@@ -93,6 +93,7 @@ class DocumentTest extends TestCase
             file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'foo.xml'),
             null,
             null,
+            null,
             $doc3Url
         );
 
@@ -158,7 +159,7 @@ class DocumentTest extends TestCase
         $doc =
             Document::newFromUrl(__DIR__ . DIRECTORY_SEPARATOR . 'bar.xml');
 
-        $this->assertNull($doc->getFirstPiPseudoAttrs('xml-stylesheet'));
+        $this->assertNull($doc->getFirstPiPseudoElement('xml-stylesheet'));
     }
 
     public function testXsltProcessorException()
@@ -269,7 +270,7 @@ class DocumentTest extends TestCase
     {
         $quux = Document::newFromUrl(
             __DIR__ . DIRECTORY_SEPARATOR . 'quux.xml',
-            0,
+            null,
             Document::XINCLUDE_AFTER_LOAD | Document::VALIDATE_AFTER_XINCLUDE
         );
 

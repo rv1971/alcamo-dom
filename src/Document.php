@@ -10,6 +10,7 @@ use alcamo\exception\{
     SyntaxError,
     Uninitialized
 };
+use alcamo\dom\xsl\Document as Stylesheet;
 
 /**
  * @namespace alcamo::dom
@@ -69,11 +70,19 @@ class Document extends \DOMDocument implements
     /// Validate document after xinclude()
     public const VALIDATE_AFTER_XINCLUDE = 4;
 
-    /// Pretty-format and re-parse to get reasonable line numbers
+    /**
+     * @brief Pretty-format and re-parse the document
+     *
+     * This is useful to get reasonable line numbers after xinclude() because
+     * otherwise the included nodes keep their line numbers.
+     */
     public const FORMAT_AND_REPARSE = 8;
 
     /// OR-Combination of the above constants
     public const LOAD_FLAGS = 0;
+
+     /// Default class for a new document factory
+    public const DEFAULT_DOCUMENT_FACTOTRY_CLASS = DocumentFactory::class;
 
     /// XPath to find all \<xsd:documentation> elements
     private const ALL_DOCUMENTATION_XPATH = '//xsd:documentation';
@@ -83,17 +92,24 @@ class Document extends \DOMDocument implements
      *
      * @param $url URL to get the data from.
      *
-     * @param $libXmlOptions See $options in
+     * @param $documentFactory Document factory to use to create dependent
+     * documents, e.g. from links. If not specified, the Document factory will
+     * be created by createDocumentFactory() when needed.
+     *
+     * @param $loadFlags OR-Combination of the above load constants
+     *
+     * @param $libxmlOptions See $options in
      * [DOMDocument::load()](https://www.php.net/manual/en/domdocument.load)
      */
     public static function newFromUrl(
         string $url,
-        ?int $libXmlOptions = null,
-        ?int $loadFlags = null
+        ?DocumentFactoryInterface $documentFactory = null,
+        ?int $loadFlags = null,
+        ?int $libxmlOptions = null
     ): self {
-        $doc = new static();
+        $doc = new static($documentFactory, $loadFlags, $libxmlOptions);
 
-        $doc->loadUrl($url, $libXmlOptions, $loadFlags);
+        $doc->loadUrl($url);
 
         return $doc;
     }
@@ -101,42 +117,97 @@ class Document extends \DOMDocument implements
     /**
      * @brief Create a document from XML text
      *
-     * @param $xml XML text
+     * @param $xmlText XML text
      *
-     * @param $libXmlOptions See $options in
+     * @param $documentFactory Document factory to use to create dependent
+     * documents, e.g. from links. If not specified, the Document factory will
+     * be created by createDocumentFactory() when needed.
+     *
+     * @param $loadFlags OR-Combination of the above load constants
+     *
+     * @param $libxmlOptions See $options in
      * [DOMDocument::load()](https://www.php.net/manual/en/domdocument.load)
+     *
+     * @param $url Document URL
      */
     public static function newFromXmlText(
-        string $xml,
-        ?int $libXmlOptions = null,
+        string $xmlText,
+        ?DocumentFactoryInterface $documentFactory = null,
         ?int $loadFlags = null,
+        ?int $libxmlOptions = null,
         ?string $url = null
     ) {
-        $doc = new static();
+        $doc = new static($documentFactory, $loadFlags, $libxmlOptions);
 
-        $doc->loadXmlText($xml, $libXmlOptions, $loadFlags, $url);
+        $doc->loadXmlText($xmlText, $url);
 
         return $doc;
     }
 
     private static $docRegistry_ = []; ///< Used for conserve()
 
-    private $xPath_;                 ///< XPath
-    private $xsltProcessor_ = false; ///< XSLTProcessor or `null`
-    private $schemaLocations_;       ///< Array of schema locations
+    protected $documentFactory_;      ///< DocumentFactoryInterface
+    protected $loadFlags_;            ///< int
+    protected $libxmlOptions_;        ///< int
+
+    private $xPath_;                  ///< XPath
+    private $xsltStylesheet_ = false; ///< Document or `null`
+    private $xsltProcessor_ = false;  ///< XSLTProcessor or `null`
+    private $schemaLocations_;        ///< Array of schema locations
 
     public function __clone()
     {
+        /* Each document need sits own XPath objec because the latter contains
+         * a reference to the former. */
         $this->xPath_ = null;
 
-        /* @ref $xsltProcessor_ and $schemaLocations_ may be shared among
-         * documents. */
+        /* All other properties may be shared among documents. */
     }
 
-    /// @sa See [DOMDocument::__construct()](https://www.php.net/manual/en/domdocument.construct)
-    public function __construct($version = null, $encoding = null)
-    {
+    /**
+     * @brief Construct an empty document
+     *
+     * @param $documentFactory Document factory to use to create dependent
+     * documents, e.g. from links. If not specified, the Document factory will
+     * be created by createDocumentFactory() when needed.
+     *
+     * @param $loadFlags OR-Combination of the above load constants
+     *
+     * @param $libxmlOptions See $options in
+     * [DOMDocument::load()](https://www.php.net/manual/en/domdocument.load)
+     *
+     * @param $version The version number of the document as part of the XML
+     * declaration.
+     *
+     * @param $encoding The encoding of the document as part of the XML
+     * declaration.
+     */
+    public function __construct(
+        ?DocumentFactoryInterface $documentFactory = null,
+        ?int $loadFlags = null,
+        ?int $libxmlOptions = null,
+        $version = null,
+        $encoding = null
+    ) {
         parent::__construct($version, $encoding);
+
+        $this->documentFactory_ = $documentFactory;
+
+        $this->loadFlags_ = $loadFlags
+            ?? (
+                isset($documentFactory)
+                    ? $documentFactory->getLoadFlags()
+                    : null
+            )
+            ?? static::LOAD_FLAGS;
+
+        $this->libxmlOptions_ = $libxmlOptions
+            ?? (
+                isset($documentFactory)
+                    ? $documentFactory->getLibxmlOptions()
+                    : null
+            )
+            ?? static::LIBXML_OPTIONS;
 
         /** Register @ref NODE_CLASSES. */
         foreach (static::NODE_CLASSES as $baseClass => $extendedClass) {
@@ -147,26 +218,24 @@ class Document extends \DOMDocument implements
     /// Return a new instance of DocumentFactory
     public function getDocumentFactory(): DocumentFactoryInterface
     {
-        return new DocumentFactory();
+        if (!isset($this->documentFactory_)) {
+            $this->documentFactory_ = $this->createDocumentFactory();
+        }
+
+        return $this->documentFactory_;
     }
 
     /**
      * @brief Load a URL into a document
      *
-     * @param $url URL to get the data from.
-     *
-     * @param $libXmlOptions See $options in
-     * [DOMDocument::load()](https://www.php.net/manual/en/domdocument.load)
+     * @param $url URL to get the data from
      */
-    public function loadUrl(
-        string $url,
-        ?int $libXmlOptions = null,
-        ?int $loadFlags = null
-    ): void {
+    public function loadUrl(string $url): void
+    {
         $handler = new ErrorHandler();
 
         try {
-            if (!$this->load($url, $libXmlOptions ?? static::LIBXML_OPTIONS)) {
+            if (!$this->load($url, $this->libxmlOptions_)) {
                 /** @throw alcamo::exception::FileLoadFailed if
                  *  [DOMDocument::load()](https://www.php.net/manual/en/domdocument.load)
                  *  fails. */
@@ -186,39 +255,34 @@ class Document extends \DOMDocument implements
         }
 
         /** After loading, run the afterLoad() hook. */
-        $this->afterLoad($libXmlOptions, $loadFlags);
+        $this->afterLoad();
     }
 
     /**
      * @brief Load XML text into a document
      *
-     * @param $xml XML text
+     * @param $xmlText XML text
      *
-     * @param $libXmlOptions See $options in
-     * [DOMDocument::load()](https://www.php.net/manual/en/domdocument.load)
+     * @param $url Document URL
      */
-    public function loadXmlText(
-        string $xml,
-        ?int $libXmlOptions = null,
-        ?int $loadFlags = null,
-        ?string $url = null
-    ): void {
+    public function loadXmlText(string $xmlText, ?string $url = null): void
+    {
         $handler = new ErrorHandler();
 
         try {
             if (
-                !$this->loadXML($xml, $libXmlOptions ?? static::LIBXML_OPTIONS)
+                !$this->loadXML($xmlText, $this->libxmlOptions_)
             ) {
                 /** @throw alcamo::exception::SyntaxError if
                  *  [DOMDocument::loadXML()](https://www.php.net/manual/en/domdocument.loadxml)
                  *  fails. */
                 throw (new SyntaxError())
-                    ->setMessageContext([ 'inData' => $xml ]);
+                    ->setMessageContext([ 'inData' => $xmlText ]);
             }
         } catch (\ErrorException $e) {
             /** @throw alcamo::exception::SyntaxError if any libxml warning or
              *  error occurs. */
-            throw SyntaxError::newFromPrevious($e, [ 'inData' => $xml ]);
+            throw SyntaxError::newFromPrevious($e, [ 'inData' => $xmlText ]);
         }
 
         if (isset($url)) {
@@ -226,7 +290,7 @@ class Document extends \DOMDocument implements
         }
 
         /** After loading, run the afterLoad() hook. */
-        $this->afterLoad($libXmlOptions, $loadFlags);
+        $this->afterLoad();
     }
 
     /**
@@ -235,7 +299,8 @@ class Document extends \DOMDocument implements
      * Thus, it remains available through the `$ownerDocument` property of its
      * nodes. Without this, when no PHP variable references the document
      * object, the `$ownerDocument` property returns the bare DOMDocument
-     * object, forgetting any properties added in derived classes.
+     * object, forgetting any properties added in this class and derived
+     * classes.
      */
     public function conserve(): self
     {
@@ -243,25 +308,25 @@ class Document extends \DOMDocument implements
     }
 
     /// Undo the effect of conserve(), allowing the object to be destroyed
-    public function unconserve()
+    public function unconserve(): void
     {
         unset(self::$docRegistry_[spl_object_hash($this)]);
     }
 
     /// Call Element::getIterator() on document element
-    public function getIterator()
+    public function getIterator(): \Traversable
     {
         return $this->documentElement->getIterator();
     }
 
     /// Readonly ArrayAccess access to elements by ID
-    public function offsetExists($id)
+    public function offsetExists($id): bool
     {
         return $this->getElementById($id) !== null;
     }
 
     /// Readonly ArrayAccess access to elements by ID
-    public function offsetGet($id)
+    public function offsetGet($id): ?Element
     {
         return $this->getElementById($id);
     }
@@ -270,7 +335,7 @@ class Document extends \DOMDocument implements
     public function getXPath(): XPath
     {
         if (!isset($this->xPath_)) {
-            if (!$this->documentElement) {
+            if (!isset($this->documentElement)) {
                 /** @throw alcamo::exception::Uninitialized if called on an
                  *  empty document. */
                 throw new Uninitialized();
@@ -295,19 +360,64 @@ class Document extends \DOMDocument implements
     }
 
     /**
-     * @brief Get pseudo attributes of the first processing instruction for
-     * the given target
+     * @brief Get document fragment for the processing instructions for the
+     * given target
      *
-     * @return SimpleXMLElement with the pseudo attributes as attributes, or
-     * `null` if ther is no instruction for that target.
+     * @return Document fragment with elements for the matching processing
+     *  instructions, with the pseudo attributes of the former as attributes
+     *  of the latter, or `null` if there is no processing instruction for
+     *  that target.
      */
-    public function getFirstPiPseudoAttrs(string $piTarget): ?\SimpleXMLElement
-    {
-        $firstPi = $this->query("/processing-instruction('$piTarget')")[0];
+    public function getFirstPiPseudoElement(
+        string $piTarget
+    ): ?\DOMDocumentFragment {
+        $fragment = $this->createDocumentFragment();
 
-        return isset($firstPi)
-            ? simplexml_load_string("<x {$firstPi->nodeValue}/>")
-            : null;
+        foreach ($this->query("/processing-instruction('$piTarget')") as $pi) {
+            $fragment->appendXML("<pi {$pi->nodeValue}/>");
+        }
+
+        return isset($fragment->firstChild) ? $fragment : null;
+    }
+
+    /**
+     * @brief XSLT stylesheet based on the first xml-stylesheet processing
+     * instruction, if any
+     */
+    public function getXsltStylesheet(): ?Document
+    {
+        if ($this->xsltStylesheet_ === false) {
+            if (!isset($this->documentElement)) {
+                /** @throw alcamo::exception::Uninitialized if called on an
+                 *  empty document. */
+                throw new Uninitialized();
+            }
+
+            $fragment = $this->getFirstPiPseudoElement('xml-stylesheet');
+
+            $pseudoElement = $fragment->firstChild;
+
+            if (
+                !isset($pseudoElement)
+                    || $pseudoElement->getAttribute('type') != 'text/xsl'
+            ) {
+                $this->xsltStylesheet_ = null;
+                return null;
+            }
+
+            $xslUrl = $this->resolveUri($pseudoElement->getAttribute('href'));
+
+            if (
+                !$this->xsltStylesheet_ = $this->getDocumentFactory()
+                    ->createFromUrl($xslUrl, Stylesheet::class)
+            ) {
+                /** @throw alcamo::exception::FileLoadFailed if a stylesheet
+                 *  is specified but cannot be loaded. */
+                throw new FileLoadFailed($xslUrl);
+            }
+        }
+
+        return $this->xsltStylesheet_;
     }
 
     /**
@@ -317,31 +427,19 @@ class Document extends \DOMDocument implements
     public function getXsltProcessor(): ?\XSLTProcessor
     {
         if ($this->xsltProcessor_ === false) {
-            if (!$this->documentElement) {
-                /** @throw alcamo::exception::Uninitialized if called on an
-                 *  empty document. */
-                throw new Uninitialized();
-            }
+            $xsltStylesheet = $this->getXsltStylesheet();
 
-            $pseudoAttrs = $this->getFirstPiPseudoAttrs('xml-stylesheet');
-
-            if (!isset($pseudoAttrs) || $pseudoAttrs['type'] != 'text/xsl') {
+            if (!isset($xsltStylesheet)) {
                 $this->xsltProcessor_ = null;
                 return null;
             }
 
             $this->xsltProcessor_ = new \XSLTProcessor();
 
-            $xslUrl = $this->resolveUri($pseudoAttrs['href']);
-
-            if (
-                !$this->xsltProcessor_->importStylesheet(
-                    Document::newFromUrl($xslUrl)
-                )
-            ) {
+            if (!$this->xsltProcessor_->importStylesheet($xsltStylesheet)) {
                 /** @throw alcamo::exception::FileLoadFailed if a stylesheet
                  *  is specified but cannot be loaded. */
-                throw new FileLoadFailed($xslUrl);
+                throw new FileLoadFailed($xsltStylesheet->documentURI);
             }
         }
 
@@ -385,7 +483,7 @@ class Document extends \DOMDocument implements
      *
      * @param $url URL of the XSD.
      *
-     * @param $libXmlOptions See $flags in
+     * @param $libxmlOptions See $flags in
      * [DOMDocument::schemaValidate()](https://www.php.net/manual/en/domdocument.schemavalidate)
      *
      * @throw alcamo::exception::DataValidationFailed when encountering
@@ -393,13 +491,23 @@ class Document extends \DOMDocument implements
      */
     public function validateAgainstXsd(
         string $schemaUrl,
-        ?int $libXmlOptions = null
+        ?int $libxmlOptions = null
     ): self {
         libxml_use_internal_errors(true);
         libxml_clear_errors();
 
-        if (!$this->schemaValidate($schemaUrl, $libXmlOptions)) {
-            $this->processLibxmlErrors();
+        try {
+            if (!$this->schemaValidate($schemaUrl, $libxmlOptions)) {
+                $this->processLibxmlErrors();
+            }
+        } catch (\Throwable $e) {
+            throw DataValidationFailed::newFromPrevious(
+                $e,
+                [
+                    'inData' => $this->saveXML(),
+                    'atUri' => $this->documentURI
+                ]
+            );
         }
 
         return $this;
@@ -410,7 +518,7 @@ class Document extends \DOMDocument implements
      *
      * @param $xsdText Source text of the XSD.
      *
-     * @param $libXmlOptions See $flags in
+     * @param $libxmlOptions See $flags in
      * [DOMDocument::schemaValidate()](https://www.php.net/manual/en/domdocument.schemavalidate)
      *
      * @throw alcamo::exception::DataValidationFailed when encountering
@@ -418,13 +526,13 @@ class Document extends \DOMDocument implements
      */
     public function validateAgainstXsdText(
         string $xsdText,
-        ?int $libXmlOptions = null
+        ?int $libxmlOptions = null
     ): self {
         libxml_use_internal_errors(true);
         libxml_clear_errors();
 
         try {
-            if (!$this->schemaValidateSource($xsdText, $libXmlOptions)) {
+            if (!$this->schemaValidateSource($xsdText, $libxmlOptions)) {
                 $this->processLibxmlErrors();
             }
         } catch (\Throwable $e) {
@@ -444,12 +552,12 @@ class Document extends \DOMDocument implements
      * @brief Validate with schemas given in xsi:schemaLocation or
      * xsi:noNamespaceSchemaLocation.
      *
-     * @param $libXmlOptions See $flags in
+     * @param $libxmlOptions See $flags in
      * [DOMDocument::schemaValidate()](https://www.php.net/manual/en/domdocument.schemavalidate)
      *
      * Silently do nothing if none of the two is present.
      */
-    public function validate(?int $libXmlOptions = null): self
+    public function validate(?int $libxmlOptions = null): self
     {
         if (
             $this->documentElement
@@ -462,7 +570,7 @@ class Document extends \DOMDocument implements
                         'noNamespaceSchemaLocation'
                     )
                 ),
-                $libXmlOptions
+                $libxmlOptions
             );
         }
 
@@ -490,20 +598,17 @@ class Document extends \DOMDocument implements
 
         $xsdText .= '</schema>';
 
-        return $this->validateAgainstXsdText($xsdText, $libXmlOptions);
+        return $this->validateAgainstXsdText($xsdText, $libxmlOptions);
     }
 
     /// Reparse - useful to get line numbers right after changes
-    public function reparse(?int $libXmlOptions = null): self
+    public function reparse(): self
     {
         $url = $this->documentURI;
 
         $this->formatOutput = true;
 
-        $this->loadXml(
-            $this->saveXML(),
-            $libXmlOptions ?? static::LIBXML_OPTIONS
-        );
+        $this->loadXml($this->saveXML(), $this->libxmlOptions_);
 
         $this->documentURI = $url;
 
@@ -539,28 +644,35 @@ class Document extends \DOMDocument implements
         return $doReparse ? $this->reparse() : $this;
     }
 
+    /// Return a new instance of DocumentFactory
+    protected function createDocumentFactory(): DocumentFactoryInterface
+    {
+        $class = static::DEFAULT_DOCUMENT_FACTOTRY_CLASS;
+
+        return new $class(
+            $this->baseURI,
+            $this->loadFlags_,
+            $this->libxmlOptions_
+        );
+    }
+
     /// Perform any initialization to be done after document loading
-    protected function afterLoad(
-        ?int $libXmlOptions = null,
-        ?int $loadFlags = null
-    ): void {
+    protected function afterLoad(): void
+    {
         /** Unset any properties that might refer to a preceding document
          * content. */
         $this->xPath_ = null;
+        $this->xsltStylesheet_ = false;
         $this->xsltProcessor_ = false;
         $this->schemaLocations_ = null;
 
-        if (!isset($loadFlags)) {
-            $loadFlags = static::LOAD_FLAGS;
-        }
-
-        if ($loadFlags & self::VALIDATE_AFTER_LOAD) {
+        if ($this->loadFlags_ & self::VALIDATE_AFTER_LOAD) {
             $this->validate();
         }
 
-        if ($loadFlags & self::XINCLUDE_AFTER_LOAD) {
+        if ($this->loadFlags_ & self::XINCLUDE_AFTER_LOAD) {
             try {
-                $this->xinclude($libXmlOptions ?? static::LIBXML_OPTIONS);
+                $this->xinclude($this->libxmlOptions_);
             } catch (\ErrorException $e) {
                 /* xinclude() may generate a warning if the file to include is
                  * not found, even when a fallback is defined. So this warning
@@ -570,13 +682,13 @@ class Document extends \DOMDocument implements
                 }
             }
 
-            if ($loadFlags & self::VALIDATE_AFTER_XINCLUDE) {
+            if ($this->loadFlags_ & self::VALIDATE_AFTER_XINCLUDE) {
                 $this->validate();
             }
         }
 
-        if ($loadFlags & self::FORMAT_AND_REPARSE) {
-            $this->reparse($libXmlOptions ?? static::LIBXML_OPTIONS);
+        if ($this->loadFlags_ & self::FORMAT_AND_REPARSE) {
+            $this->reparse();
         }
     }
 

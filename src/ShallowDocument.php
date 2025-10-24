@@ -24,11 +24,7 @@ class ShallowDocument extends Document
      * @warning The first tag must end within the first @ref MAX_LENGH of the
      * data.
      */
-    public function loadUrl(
-        string $url,
-        ?int $libXmlOptions = null,
-        ?int $loadFlags = null
-    ): void {
+    public function loadUrl(string $url): void {
         $errorLevel = error_reporting(E_ERROR);
 
         $xmlText = file_get_contents($url, false, null, 0, static::MAX_LENGH);
@@ -42,16 +38,12 @@ class ShallowDocument extends Document
                 ->setMessageContext([ 'filename' => $url ]);
         }
 
-        $this->loadXmlText($xmlText, $loadFlags);
+        $this->loadXmlText($xmlText);
     }
 
     /// @copydoc Document::loadXmlText()
-    public function loadXmlText(
-        string $xml,
-        ?int $libXmlOptions = null,
-        ?int $loadFlags = null,
-        ?string $url = null
-    ): void {
+    public function loadXmlText(string $xmlText, ?string $url = null): void
+    {
         /** Use a regular expression to find the first string in angular
          *  brackets which is neither an xml declaration or processing
          *  instruction nor a comment, and which contains quotes only in
@@ -62,7 +54,7 @@ class ShallowDocument extends Document
         if (
             !preg_match(
                 '/<[^!\?]([^"\'>]+=("[^"]*"|\'[^\']*\'))*[^"\'>]*>/',
-                $xml,
+                $xmlText,
                 $matches,
                 PREG_OFFSET_CAPTURE
             )
@@ -71,7 +63,7 @@ class ShallowDocument extends Document
              *  tag is found. */
             throw (new SyntaxError())->setMessageContext(
                 [
-                    'inData' => $xml,
+                    'inData' => $xmlText,
                     'extraMessage' => 'no complete opening tag found'
                 ]
             );
@@ -79,9 +71,9 @@ class ShallowDocument extends Document
 
         $bracketPos = $matches[0][1] + strlen($matches[0][0]) - 1;
 
-        $firstTagText = substr($xml, 0, $bracketPos)
-            . (($xml[$bracketPos - 1] == '/') ? '>' : '/>');
+        $firstTagText = substr($xmlText, 0, $bracketPos)
+            . (($xmlText[$bracketPos - 1] == '/') ? '>' : '/>');
 
-        parent::loadXmlText($firstTagText, $libXmlOptions, $loadFlags, $url);
+        parent::loadXmlText($firstTagText, $url);
     }
 }

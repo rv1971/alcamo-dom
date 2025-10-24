@@ -34,6 +34,8 @@ class Document extends BaseDocument
         ]
         + parent::NODE_CLASSES;
 
+    public const DEFAULT_DOCUMENT_FACTOTRY_CLASS = DocumentFactory::class;
+
     /// Map of XSD type XNames to conversion functions for attribute values
     public const ATTR_TYPE_MAP = [
         self::XH11D_NS . ' CURIE'          => CP::class . '::curieToUri',
@@ -68,12 +70,6 @@ class Document extends BaseDocument
     private $schema_;              ///< Schema
     private $attrConverters_;      ///< TypeMap
     private $elementDecoratorMap_; ///< TypeMap
-
-    /// @copybrief alcamo::dom::Document::getDocumentFactory()
-    public function getDocumentFactory(): DocumentFactoryInterface
-    {
-        return new DocumentFactory();
-    }
 
     /// Schema obtained from `xsi:schemaLocation`
     public function getSchema(): Schema

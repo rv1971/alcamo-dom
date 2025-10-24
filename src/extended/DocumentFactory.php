@@ -14,6 +14,6 @@ use alcamo\dom\DocumentFactory as DocumentFactoryBase;
  */
 class DocumentFactory extends DocumentFactoryBase
 {
-    /// @copybrief alcamo::dom::DocumentFactory::DEFAULT_CLASS
-    public const DEFAULT_CLASS = Document::class;
+    /// @copybrief alcamo::dom::DocumentFactory::DEFAULT_DOCUMENT_CLASS
+    public const DEFAULT_DOCUMENT_CLASS = Document::class;
 }
