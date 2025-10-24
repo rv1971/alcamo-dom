@@ -12,11 +12,13 @@ use Psr\Http\Message\UriInterface;
  */
 trait HavingBaseUriTrait
 {
+    /** @copydoc alcamo::dom::HavingBaseUriInterface::getBaseUri() */
     public function getBaseUri(): ?UriInterface
     {
         return isset($this->baseURI) ? new Uri($this->baseURI) : null;
     }
 
+    /** @copydoc alcamo::dom::HavingBaseUriInterface::resolveUri() */
     public function resolveUri($uri): ?UriInterface
     {
         if (!($uri instanceof UriInterface)) {

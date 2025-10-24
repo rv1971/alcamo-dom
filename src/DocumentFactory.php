@@ -132,6 +132,25 @@ class DocumentFactory implements DocumentFactoryInterface
         return $this->libxmlOptions_;
     }
 
+    /**
+     * @brief Create a document from a URL
+     *
+     * @param $url string|UriInterface URL to get the data from.
+     *
+     * @param $class Explicit PHP class to use for the new document.
+     *
+     * @param $useCache
+     * - If `true`, use the cache.
+     * - If `false`, do not use the cache.
+     * - If `null`, use the cache iff $url is absolute.
+     *
+     * @param $loadFlags OR-Combination of the load constants in class
+     * Document. If not given, getLoadFlags() is used.
+     *
+     * @param $libXmloptions See $options in
+     * [DOMDocument::load()](https://www.php.net/manual/en/domdocument.load). If
+     * not given, getLibxmlOptions() is used.
+     */
     public function createFromUrl(
         $url,
         ?string $class = null,
@@ -174,7 +193,7 @@ class DocumentFactory implements DocumentFactoryInterface
 
                         throw (new InvalidType())->setMessageContext(
                             [
-                                'value' => get_class($doc),
+                                'value' => $doc,
                                 'expectedOneOf' => [ $class ],
                                 'atUri' => $url
                             ]

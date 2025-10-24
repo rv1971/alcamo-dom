@@ -20,12 +20,14 @@ namespace alcamo\dom;
  */
 trait Rfc5147Trait
 {
+    /** @copydoc alcamo::dom::Rfc5147Interface::getRfc5147Fragment() */
     public function getRfc5147Fragment(): string
     {
         $lineNo = $this->getLineNo();
         return 'line=' . ($lineNo - 1) . ',' . $lineNo;
     }
 
+    /** @copydoc alcamo::dom::Rfc5147Interface::getRfc5147Uri() */
     public function getRfc5147Uri(): string
     {
         return

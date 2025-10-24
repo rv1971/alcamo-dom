@@ -11,7 +11,7 @@ use alcamo\xml\XName;
  */
 trait HavingXNameTrait
 {
-    /// Return node name as expanded name made of namespaceURI and localName
+    /// Return node name as expanded name made of namespace URI and local name
     public function getXName(): XName
     {
         return new XName($this->namespaceURI, $this->localName);

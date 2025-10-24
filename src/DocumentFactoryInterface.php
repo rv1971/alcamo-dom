@@ -14,20 +14,18 @@ interface DocumentFactoryInterface
      *
      * @param $url string|UriInterface URL to get the data from.
      *
-     * @param $class PHP class to use for the new document. If `null`,
-     * urlToClass() is called to get the class.
+     * @param $class Explicit PHP class to use for the new document.
      *
-     * @param $useCache ?bool
-     * - if `true`, use the cache
-     * - if `false`, do not use the cache
-     * - if `null`, use the cache iff $url is absolute
+     * @param $useCache
+     * - If `true`, use the cache.
+     * - If `false`, do not use the cache.
+     * - If `null`, use the cache iff $url is absolute.
      *
      * @param $loadFlags OR-Combination of the load constants in class
-     * Document. If not given, getLoadFlags() is used.
+     * Document.
      *
      * @param $libXmloptions See $options in
-     * [DOMDocument::load()](https://www.php.net/manual/en/domdocument.load). If
-     * not given, getLibxmlOptions() is used.
+     * [DOMDocument::load()](https://www.php.net/manual/en/domdocument.load).
      */
     public function createFromUrl(
         $url,

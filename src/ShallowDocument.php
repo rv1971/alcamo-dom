@@ -24,7 +24,8 @@ class ShallowDocument extends Document
      * @warning The first tag must end within the first @ref MAX_LENGH of the
      * data.
      */
-    public function loadUrl(string $url): void {
+    public function loadUrl(string $url): void
+    {
         $errorLevel = error_reporting(E_ERROR);
 
         $xmlText = file_get_contents($url, false, null, 0, static::MAX_LENGH);

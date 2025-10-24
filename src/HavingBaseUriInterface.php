@@ -11,6 +11,13 @@ use Psr\Http\Message\UriInterface;
  */
 interface HavingBaseUriInterface
 {
+    /**
+     * @brief Return the base URI of the current object
+     *
+     * If the current object is a DOM node, its base URI may differ from that
+     * of the document, if the object or one of its ancestors has an
+     * `xml:base` attribute. */
+     */
     public function getBaseUri(): ?UriInterface;
 
     /// Resolve $uri relative to base URI, if possible
