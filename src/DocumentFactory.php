@@ -147,7 +147,7 @@ class DocumentFactory implements DocumentFactoryInterface
      * @param $loadFlags OR-Combination of the load constants in class
      * Document. If not given, getLoadFlags() is used.
      *
-     * @param $libXmloptions See $options in
+     * @param $libxmlOptions See $options in
      * [DOMDocument::load()](https://www.php.net/manual/en/domdocument.load). If
      * not given, getLibxmlOptions() is used.
      */
@@ -156,7 +156,7 @@ class DocumentFactory implements DocumentFactoryInterface
         ?string $class = null,
         ?bool $useCache = null,
         ?int $loadFlags = null,
-        ?int $libXmloptions = null
+        ?int $libxmlOptions = null
     ): Document {
         if (!($url instanceof UriInterface)) {
             $url = new Uri($url);
@@ -206,12 +206,13 @@ class DocumentFactory implements DocumentFactoryInterface
         }
 
         if (!isset($class)) {
-            $class = $this->urlToClass($url);
+            $class =
+                $this->getClassForDocument(ShallowDocument::newFromUrl($url));
         }
 
         /** If the document is not taken from the cache, call the newFromUrl()
          *  method of the document class to create a new instance. */
-        $doc = $class::newFromUrl($url, $this, $loadFlags, $libXmloptions);
+        $doc = $class::newFromUrl($url, $this, $loadFlags, $libxmlOptions);
 
         if ($useCache) {
             self::$cache_[$url] = $doc;
@@ -239,11 +240,13 @@ class DocumentFactory implements DocumentFactoryInterface
         string $xmlText,
         ?string $class = null,
         ?int $loadFlags = null,
-        ?int $libXmloptions = null,
+        ?int $libxmlOptions = null,
         ?string $url = null
     ): Document {
         if (!isset($class)) {
-            $class = $this->xmlTextToClass($xmlText);
+            $class = $this->getClassForDocument(
+                ShallowDocument::newFromXmlText($xmlText)
+            );
         }
 
         if (isset($url)) {
@@ -260,17 +263,23 @@ class DocumentFactory implements DocumentFactoryInterface
             $xmlText,
             $this,
             $loadFlags,
-            $libXmloptions,
+            $libxmlOptions,
             $url
         );
 
         return $doc;
     }
 
-    /// Determine a document class to use from a document URL
-    public function urlToClass(string $url): string
+    /**
+     * @brief Determine a document class to use for a document
+     *
+     * Since this method evaluates the document element only, without looking
+     * into its children, this method is typically used with a
+     * ShallowDocument.
+     */
+    protected function getClassForDocument(Document $document): string
     {
-        $documentElement = ShallowDocument::newFromUrl($url)->documentElement;
+        $documentElement = $document->documentElement;
 
         /**
          * - If there is a dc:identifier attribute in the document element
@@ -290,40 +299,7 @@ class DocumentFactory implements DocumentFactoryInterface
         }
 
         return $class
-            ?? static::X_NAME_TO_CLASS[
-                "$documentElement->namespaceURI $documentElement->localName"
-            ]
-            ?? static::NS_NAME_TO_CLASS[$documentElement->namespaceURI]
-            ?? static::DEFAULT_DOCUMENT_CLASS;
-    }
-
-    /// Determine a document class to use from XML text
-    public function xmlTextToClass(string $xmlText): string
-    {
-        $documentElement =
-            ShallowDocument::newFromXmlText($xmlText)->documentElement;
-
-        /**
-         * - If there is a dc:identifier attribute in the document element
-         *   which matches a prefix in @ref DC_IDENTIFIER_PREFIX_TO_CLASS,
-         *   return the corresponding class name.
-         * - Otherwise, if @ref X_NAME_TO_CLASS contains an item for the
-         *   extended name of the document element, return its value.
-         * - Otherwise, if @ref NS_NAME_TO_CLASS contains an item for the
-         *   namespace name of the document element, return its value.
-         * - Otherwise, return @ref DEFAULT_DOCUMENT_CLASS.
-         */
-
-        if ($documentElement->hasAttributeNS(Document::DC_NS, 'identifier')) {
-            $class = $this->dcIdentifierPrefixToClass_[
-                $documentElement->getAttributeNS(Document::DC_NS, 'identifier')
-            ];
-        }
-
-        return $class
-            ?? static::X_NAME_TO_CLASS[
-                "$documentElement->namespaceURI $documentElement->localName"
-            ]
+            ?? static::X_NAME_TO_CLASS[(string)$documentElement->getXName()]
             ?? static::NS_NAME_TO_CLASS[$documentElement->namespaceURI]
             ?? static::DEFAULT_DOCUMENT_CLASS;
     }

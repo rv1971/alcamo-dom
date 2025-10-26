@@ -16,7 +16,7 @@ interface HavingBaseUriInterface
      *
      * If the current object is a DOM node, its base URI may differ from that
      * of the document, if the object or one of its ancestors has an
-     * `xml:base` attribute. */
+     * `xml:base` attribute.
      */
     public function getBaseUri(): ?UriInterface;
 

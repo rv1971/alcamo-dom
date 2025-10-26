@@ -13,6 +13,10 @@ class BarXsd extends Xsd
 {
 }
 
+class Corge extends Document
+{
+}
+
 class MyDocumentFactory extends DocumentFactory
 {
     public const DC_IDENTIFIER_PREFIX_TO_CLASS = [
@@ -20,7 +24,7 @@ class MyDocumentFactory extends DocumentFactory
     ];
 
     public const X_NAME_TO_CLASS = [
-        'https://corge.example.info corge' => __CLASS__
+        'https://corge.example.info corge' => Corge::class
     ];
 
     public const NS_NAME_TO_CLASS = [
@@ -31,21 +35,26 @@ class MyDocumentFactory extends DocumentFactory
 class DocumentFactoryTest extends TestCase
 {
     /**
-     * @dataProvider urlToClassProvider
+     * @dataProvider getClassForDocumentProvider
      */
-    public function testUrlToClass($url, $expectedClass)
+    public function testGetClassForDocument($url, $expectedClass)
     {
         $documentFactory = new MyDocumentFactory();
 
-        $this->assertSame($expectedClass, $documentFactory->urlToClass($url));
+        $this->assertSame(
+            $expectedClass,
+            get_class($documentFactory->createFromUrl($url))
+        );
 
         $this->assertSame(
             $expectedClass,
-            $documentFactory->xmlTextToClass(file_get_contents($url))
+            get_class(
+                $documentFactory->createFromXmlText(file_get_contents($url))
+            )
         );
     }
 
-    public function urlToClassProvider()
+    public function getClassForDocumentProvider()
     {
         return [
             'xml' => [
@@ -62,7 +71,7 @@ class DocumentFactoryTest extends TestCase
             ],
             'corge' => [
                 __DIR__ . DIRECTORY_SEPARATOR . 'corge.xml',
-                MyDocumentFactory::class
+                Corge::class
             ]
         ];
     }
