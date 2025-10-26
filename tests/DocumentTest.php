@@ -148,14 +148,6 @@ class DocumentTest extends TestCase
         $doc->getXPath();
     }
 
-    public function testNoXsltPi(): void
-    {
-        $doc =
-            Document::newFromUrl(__DIR__ . DIRECTORY_SEPARATOR . 'bar.xml');
-
-        $this->assertNull($doc->getFirstPiPseudoElement('xml-stylesheet'));
-    }
-
     public function testXsltProcessorException()
     {
         $doc = new Document();

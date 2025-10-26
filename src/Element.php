@@ -20,7 +20,8 @@ class Element extends \DOMElement implements
     HavingBaseUriInterface,
     HavingXNameInterface,
     NamespaceConstantsInterface,
-    Rfc5147Interface
+    Rfc5147Interface,
+    XPathQueryableInterface
 {
     use HavingBaseUriTrait;
     use HavingXNameTrait;

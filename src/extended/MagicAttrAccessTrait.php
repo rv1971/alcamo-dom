@@ -29,7 +29,7 @@ trait MagicAttrAccessTrait
         $this->attrCache_ = [];
     }
 
-    public function __isset(string $attrName)
+    public function __isset(string $attrName): bool
     {
         /* At first look in the cache. isset() is fast and works for all cases
          * where the attribute value is not `null`. To cover the latter as

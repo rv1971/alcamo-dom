@@ -36,16 +36,18 @@ class Document extends \DOMDocument implements
     HavingBaseUriInterface,
     HavingDocumentFactoryInterface,
     \IteratorAggregate,
-    NamespaceConstantsInterface
+    NamespaceConstantsInterface,
+    XPathQueryableInterface
 {
     use HavingBaseUriTrait;
     use PreventWriteArrayAccessTrait;
 
     /// Node classes that will be registered for each document instance
     public const NODE_CLASSES = [
-        'DOMAttr'    => Attr::class,
-        'DOMElement' => Element::class,
-        'DOMText'    => Text::class
+        'DOMAttr'                  => Attr::class,
+        'DOMElement'               => Element::class,
+        'DOMProcessingInstruction' => ProcessingInstruction::class,
+        'DOMText'                  => Text::class
     ];
 
     /**
@@ -358,27 +360,6 @@ class Document extends \DOMDocument implements
     }
 
     /**
-     * @brief Get document fragment for the processing instructions for the
-     * given target
-     *
-     * @return Document fragment with elements for the matching processing
-     *  instructions, with the pseudo attributes of the former as attributes
-     *  of the latter, or `null` if there is no processing instruction for
-     *  that target.
-     */
-    public function getFirstPiPseudoElement(
-        string $piTarget
-    ): ?\DOMDocumentFragment {
-        $fragment = $this->createDocumentFragment();
-
-        foreach ($this->query("/processing-instruction('$piTarget')") as $pi) {
-            $fragment->appendXML("<pi {$pi->nodeValue}/>");
-        }
-
-        return isset($fragment->firstChild) ? $fragment : null;
-    }
-
-    /**
      * @brief XSLT stylesheet based on the first xml-stylesheet processing
      * instruction, if any
      */
@@ -391,19 +372,14 @@ class Document extends \DOMDocument implements
                 throw new Uninitialized();
             }
 
-            $fragment = $this->getFirstPiPseudoElement('xml-stylesheet');
+            $pi = $this->query('/processing-instruction("xml-stylesheet")')[0];
 
-            $pseudoElement = $fragment->firstChild;
-
-            if (
-                !isset($pseudoElement)
-                    || $pseudoElement->getAttribute('type') != 'text/xsl'
-            ) {
+            if (!isset($pi) || $pi->type != 'text/xsl') {
                 $this->xsltStylesheet_ = null;
                 return null;
             }
 
-            $xslUrl = $this->resolveUri($pseudoElement->getAttribute('href'));
+            $xslUrl = $pi->resolveUri($pi->href) ?? $pi->href;
 
             if (
                 !$this->xsltStylesheet_ = $this->getDocumentFactory()
