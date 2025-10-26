@@ -77,4 +77,9 @@ class ShallowDocument extends Document
 
         parent::loadXmlText($firstTagText, $url);
     }
+
+    /// Do nothing after load
+    protected function afterLoad(): void
+    {
+    }
 }
