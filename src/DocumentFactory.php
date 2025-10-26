@@ -14,7 +14,7 @@ use Psr\Http\Message\UriInterface;
  *
  * Features caching as well as automatic determination of the document class.
  *
- * @date Last reviewed 2021-07-01
+ * @date Last reviewed 2025-10-26
  */
 class DocumentFactory implements DocumentFactoryInterface
 {
@@ -38,7 +38,7 @@ class DocumentFactory implements DocumentFactoryInterface
     private static $cache_ = [];
 
     /**
-     * @brief ?PrefixFirstMatchCollection created from @ref
+     * @brief PrefixFirstMatchCollection created from @ref
      * DC_IDENTIFIER_PREFIX_TO_CLASS
      */
     private $dcIdentifierPrefixToClass_;
@@ -82,6 +82,7 @@ class DocumentFactory implements DocumentFactoryInterface
         }
 
         self::$cache_[$doc->documentURI] = $doc;
+
         return true;
     }
 
@@ -92,8 +93,8 @@ class DocumentFactory implements DocumentFactoryInterface
     /**
      * @param $baseUrl string|UriInterface Base URL to locate documents
      *
-     * @param $loadFlags OR-Combination of the load constants in class
-     * Document.
+     * @param $loadFlags OR-Combination of the load class constants in the
+     * Document class.
      *
      * @param $libxmlOptions See $options in
      * [DOMDocument::load()](https://www.php.net/manual/en/domdocument.load)
@@ -167,7 +168,7 @@ class DocumentFactory implements DocumentFactoryInterface
         }
 
         if ($useCache !== false) {
-            if ($useCache == true) {
+            if ($useCache === true) {
                 if (!Uri::isAbsolute($url)) {
                     /** @throw alcamo::exception::AbsoluteUriNeeded when
                      * attempting to cache a document with a non-absolute

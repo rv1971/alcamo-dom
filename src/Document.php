@@ -22,14 +22,14 @@ use alcamo\dom\xsl\Document as Stylesheet;
  */
 
 /**
- * @brief DOM Document class with extra features
+ * @brief DOM Document class with additional interfaces and features
  *
  * The ArrayAccess interface provides read access to elements by ID.
  *
  * The IteratorAggregate interface is served with iteration over child
  * elements of the document element.
  *
- * @date Last reviewed 2021-07-01
+ * @date Last reviewed 2025-10-26
  */
 class Document extends \DOMDocument implements
     \ArrayAccess,
@@ -153,11 +153,7 @@ class Document extends \DOMDocument implements
 
     public function __clone()
     {
-        /* Each document need sits own XPath objec because the latter contains
-         * a reference to the former. */
-        $this->xPath_ = null;
-
-        /* All other properties may be shared among documents. */
+        $this->clearCache();
     }
 
     /**

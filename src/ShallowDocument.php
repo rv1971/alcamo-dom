@@ -7,11 +7,11 @@ use alcamo\exception\{FileLoadFailed, SyntaxError};
 /**
  * @brief DOM Document consisting in the document element without any content
  *
- * This is useful to inspect a document without parsing it completeley. For
+ * This is useful to inspect a document without parsing it completely. For
  * instance, the tag name or some attribute of the document element can be
  * used to choose an appropriate document class.
  *
- * @date Last reviewed 2021-07-01
+ * @date Last reviewed 2025-10-25
  */
 class ShallowDocument extends Document
 {
