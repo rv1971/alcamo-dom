@@ -12,7 +12,7 @@ use alcamo\dom\extended\Attr as BaseAttr;
  */
 class Attr extends BaseAttr
 {
-    /// Converters for attributes in the @ref XSL_NS namespace
+    /// Converters for attributes of elements in the @ref XSL_NS namespace
     public const XSL_CONVERTERS = [
         'disable-output-escaping'    => ConverterPool::class . '::yesNoToBool',
         'elements'                   => ConverterPool::class . '::toArray',
