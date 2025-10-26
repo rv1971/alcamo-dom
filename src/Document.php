@@ -4,7 +4,6 @@ namespace alcamo\dom;
 
 use alcamo\collection\PreventWriteArrayAccessTrait;
 use alcamo\exception\{
-    DataValidationFailed,
     ErrorHandler,
     FileLoadFailed,
     SyntaxError,
@@ -23,7 +22,7 @@ use alcamo\dom\xsl\Document as Stylesheet;
  */
 
 /**
- * @brief DOM Document class having factory methods with validation
+ * @brief DOM Document class with extra features
  *
  * The ArrayAccess interface provides read access to elements by ID.
  *
@@ -153,7 +152,6 @@ class Document extends \DOMDocument implements
     private $xPath_;                  ///< XPath
     private $xsltStylesheet_ = false; ///< Document or `null`
     private $xsltProcessor_ = false;  ///< XSLTProcessor or `null`
-    private $schemaLocations_;        ///< Array of schema locations
 
     public function __clone()
     {
@@ -446,161 +444,6 @@ class Document extends \DOMDocument implements
         return $this->xsltProcessor_;
     }
 
-    /**
-     * @brief Array of absolute Uri objects indexed by namespace.
-     *
-     * Empty if there is no `schemaLocation` attribute.
-     */
-    public function getSchemaLocations(): array
-    {
-        if (!isset($this->schemaLocations_)) {
-            if (
-                $this->documentElement
-                    ->hasAttributeNS(self::XSI_NS, 'schemaLocation')
-            ) {
-                $items = preg_split(
-                    '/\s+/',
-                    $this->documentElement
-                        ->getAttributeNS(self::XSI_NS, 'schemaLocation')
-                );
-
-                $this->schemaLocations_ = [];
-
-                for ($i = 0; isset($items[$i]); $i += 2) {
-                    $this->schemaLocations_[$items[$i]] =
-                        $this->resolveUri($items[$i + 1]);
-                }
-            } else {
-                $this->schemaLocations_ = [];
-            }
-        }
-
-        return $this->schemaLocations_;
-    }
-
-    /**
-     * @brief Validate against an XSD document supplied as a URL
-     *
-     * @param $url URL of the XSD.
-     *
-     * @param $libxmlOptions See $flags in
-     * [DOMDocument::schemaValidate()](https://www.php.net/manual/en/domdocument.schemavalidate)
-     *
-     * @throw alcamo::exception::DataValidationFailed when encountering
-     *  validation errors.
-     */
-    public function validateAgainstXsd(
-        string $schemaUrl,
-        ?int $libxmlOptions = null
-    ): self {
-        libxml_use_internal_errors(true);
-        libxml_clear_errors();
-
-        try {
-            if (!$this->schemaValidate($schemaUrl, $libxmlOptions)) {
-                $this->processLibxmlErrors();
-            }
-        } catch (\Throwable $e) {
-            throw DataValidationFailed::newFromPrevious(
-                $e,
-                [
-                    'inData' => $this->saveXML(),
-                    'atUri' => $this->documentURI
-                ]
-            );
-        }
-
-        return $this;
-    }
-
-    /**
-     * @brief Validate against an XSD document supplied as text
-     *
-     * @param $xsdText Source text of the XSD.
-     *
-     * @param $libxmlOptions See $flags in
-     * [DOMDocument::schemaValidate()](https://www.php.net/manual/en/domdocument.schemavalidate)
-     *
-     * @throw alcamo::exception::DataValidationFailed when encountering
-     *  validation errors.
-     */
-    public function validateAgainstXsdText(
-        string $xsdText,
-        ?int $libxmlOptions = null
-    ): self {
-        libxml_use_internal_errors(true);
-        libxml_clear_errors();
-
-        try {
-            if (!$this->schemaValidateSource($xsdText, $libxmlOptions)) {
-                $this->processLibxmlErrors();
-            }
-        } catch (\Throwable $e) {
-            throw DataValidationFailed::newFromPrevious(
-                $e,
-                [
-                    'inData' => $this->saveXML(),
-                    'atUri' => $this->documentURI
-                ]
-            );
-        }
-
-        return $this;
-    }
-
-    /**
-     * @brief Validate with schemas given in xsi:schemaLocation or
-     * xsi:noNamespaceSchemaLocation.
-     *
-     * @param $libxmlOptions See $flags in
-     * [DOMDocument::schemaValidate()](https://www.php.net/manual/en/domdocument.schemavalidate)
-     *
-     * Silently do nothing if none of the two is present.
-     */
-    public function validate(?int $libxmlOptions = null): self
-    {
-        if (
-            $this->documentElement
-                ->hasAttributeNS(self::XSI_NS, 'noNamespaceSchemaLocation')
-        ) {
-            return $this->validateAgainstXsd(
-                $this->resolveUri(
-                    $this->documentElement->getAttributeNS(
-                        self::XSI_NS,
-                        'noNamespaceSchemaLocation'
-                    )
-                ),
-                $libxmlOptions
-            );
-        }
-
-        if (
-            !$this->documentElement
-                ->hasAttributeNS(self::XSI_NS, 'schemaLocation')
-        ) {
-            return $this;
-        }
-
-        /**
-         * In the case of `schemaLocation`, create an XSD importing all
-         *  mentioned schemas and validate against it.
-         */
-
-        $xsdText =
-            '<?xml version="1.0" encoding="UTF-8"?>'
-            . '<schema xmlns="http://www.w3.org/2001/XMLSchema" '
-            . 'targetNamespace="' . self::ALCAMO_DOM_NS . 'validate#">';
-
-        foreach ($this->getSchemaLocations() as $ns => $schemaUrl) {
-            $xsdText .=
-                "<import namespace='$ns' schemaLocation='$schemaUrl'/>";
-        }
-
-        $xsdText .= '</schema>';
-
-        return $this->validateAgainstXsdText($xsdText, $libxmlOptions);
-    }
-
     /// Reparse - useful to get line numbers right after changes
     public function reparse(): self
     {
@@ -667,7 +510,7 @@ class Document extends \DOMDocument implements
         $this->schemaLocations_ = null;
 
         if ($this->loadFlags_ & self::VALIDATE_AFTER_LOAD) {
-            $this->validate();
+            (new DocumentValidator())->validate($this);
         }
 
         if ($this->loadFlags_ & self::XINCLUDE_AFTER_LOAD) {
@@ -683,39 +526,12 @@ class Document extends \DOMDocument implements
             }
 
             if ($this->loadFlags_ & self::VALIDATE_AFTER_XINCLUDE) {
-                $this->validate();
+                (new DocumentValidator())->validate($this);
             }
         }
 
         if ($this->loadFlags_ & self::FORMAT_AND_REPARSE) {
             $this->reparse();
         }
-    }
-
-    private function processLibxmlErrors(): void
-    {
-        $messages = [];
-
-        foreach (libxml_get_errors() as $error) {
-            /** Suppress warning "namespace was already imported". */
-            if (
-                strpos($error->message, 'namespace was already imported')
-                !== false
-            ) {
-                continue;
-            }
-
-            $messages[] = "$error->file:$error->line $error->message";
-        }
-
-        /** @throw alcamo::exception::DataValidationFailed when
-         *  encountering validation errors. */
-        throw (new DataValidationFailed())->setMessageContext(
-            [
-                'inData' => $this->saveXML(),
-                'atUri' => $this->documentURI,
-                'extraMessage' => implode('', $messages)
-            ]
-        );
     }
 }

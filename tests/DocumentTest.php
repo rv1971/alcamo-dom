@@ -6,16 +6,10 @@ use GuzzleHttp\Psr7\UriResolver;
 use PHPUnit\Framework\TestCase;
 use alcamo\exception\{
     AbsoluteUriNeeded,
-    DataValidationFailed,
     FileLoadFailed,
     Uninitialized
 };
 use alcamo\uri\FileUriFactory;
-
-class ValidatedDocument extends Document
-{
-    public const LOAD_FLAGS = self::VALIDATE_AFTER_LOAD;
-}
 
 class ReparsedDocument extends Document
 {
@@ -203,67 +197,6 @@ class DocumentTest extends TestCase
 
         $this->assertInstanceOf(\DOMDocument::class, $elem2->ownerDocument);
         $this->assertFalse($elem2->ownerDocument instanceof Document);
-    }
-
-    public function testNoSchemaLocation()
-    {
-        $baz = Document::newFromUrl(
-            __DIR__ . DIRECTORY_SEPARATOR . 'qux.xml'
-        )->validate();
-
-        $this->assertSame([], $baz->getSchemaLocations());
-    }
-
-    public function testNoNsValidate()
-    {
-        $bar = Document::newFromUrl(
-            __DIR__ . DIRECTORY_SEPARATOR . 'bar.xml'
-        )->validate();
-
-        $this->expectException(DataValidationFailed::class);
-
-        $bar->validateAgainstXsd(__DIR__ . DIRECTORY_SEPARATOR . 'baz.xsd');
-    }
-
-    public function testValidate()
-    {
-        $bar = Document::newFromUrl(
-            __DIR__ . DIRECTORY_SEPARATOR . 'foo.xml'
-        )->validate();
-
-        $this->assertEquals(
-            [
-                'http://foo.example.org',
-                'http://www.w3.org/2000/01/rdf-schema#'
-            ],
-            array_keys($bar->getSchemaLocations())
-        );
-    }
-
-    public function testNoNsValidateException()
-    {
-        ValidatedDocument::newFromUrl(
-            __DIR__ . DIRECTORY_SEPARATOR . 'bar.xml'
-        );
-
-        $this->expectException(DataValidationFailed::class);
-
-        ValidatedDocument::newFromUrl(
-            __DIR__ . DIRECTORY_SEPARATOR . 'bar-invalid.xml'
-        );
-    }
-
-    public function testValidateException()
-    {
-        ValidatedDocument::newFromUrl(
-            __DIR__ . DIRECTORY_SEPARATOR . 'foo.xml'
-        );
-
-        $this->expectException(DataValidationFailed::class);
-
-        ValidatedDocument::newFromUrl(
-            __DIR__ . DIRECTORY_SEPARATOR . 'foo-invalid.xml'
-        );
     }
 
     public function testXinclude()
