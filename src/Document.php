@@ -85,9 +85,6 @@ class Document extends \DOMDocument implements
      /// Default class for a new document factory
     public const DEFAULT_DOCUMENT_FACTOTRY_CLASS = DocumentFactory::class;
 
-    /// XPath to find all \<xsd:documentation> elements
-    private const ALL_DOCUMENTATION_XPATH = '//xsd:documentation';
-
     /**
      * @brief Create a document from a URL
      *
@@ -222,6 +219,11 @@ class Document extends \DOMDocument implements
         }
 
         return $this->documentFactory_;
+    }
+
+    public function getLibxmlOptions(): ?int
+    {
+        return $this->libxmlOptions_;
     }
 
     /**
@@ -390,47 +392,17 @@ class Document extends \DOMDocument implements
         return $this->xsltStylesheet_;
     }
 
-    /// Reparse - useful to get line numbers right after changes
-    public function reparse(): self
-    {
-        $url = $this->documentURI;
-
-        $this->formatOutput = true;
-
-        $this->loadXml($this->saveXML(), $this->libxmlOptions_);
-
-        $this->documentURI = $url;
-
-        unset($this->xPath_);
-
-        return $this;
-    }
-
     /**
-     * @brief Remove all \<xsd:documentation> elements
+     * @brief Unset any properties that might refer to a preceding document
+     * content.
      *
-     * @param ?bool $doReparse Whether to call reparse() afterwards
-     *
-     * Also remove any \<xsd:annotation> elements that have become empty this
-     * way.
+     * @note Derived classes that add properties may need to extend this
+     * method.
      */
-    public function stripXsdDocumentation(?bool $doReparse = null): self
+    public function clearCache(): void
     {
-        foreach ($this->query(self::ALL_DOCUMENTATION_XPATH) as $xsdElement) {
-            $parent = $xsdElement->parentNode;
-
-            $parent->removeChild($xsdElement);
-
-            if (
-                !isset($parent->firstChild)
-                && $parent->namespaceURI == self::XSD_NS
-                && $parent->localName == 'annotation'
-            ) {
-                $parent->parentNode->removeChild($parent);
-            }
-        }
-
-        return $doReparse ? $this->reparse() : $this;
+        $this->xPath_ = null;
+        $this->xsltStylesheet_ = false;
     }
 
     /// Return a new instance of DocumentFactory
@@ -448,11 +420,7 @@ class Document extends \DOMDocument implements
     /// Perform any initialization to be done after document loading
     protected function afterLoad(): void
     {
-        /** Unset any properties that might refer to a preceding document
-         * content. */
-        $this->xPath_ = null;
-        $this->xsltStylesheet_ = false;
-        $this->schemaLocations_ = null;
+        $this->clearCache();
 
         if ($this->loadFlags_ & self::VALIDATE_AFTER_LOAD) {
             (new DocumentValidator())->validate($this);
@@ -476,7 +444,7 @@ class Document extends \DOMDocument implements
         }
 
         if ($this->loadFlags_ & self::FORMAT_AND_REPARSE) {
-            $this->reparse();
+            (new DocumentModifier())->reparse($this);
         }
     }
 }

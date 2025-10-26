@@ -33,4 +33,11 @@ class Document extends BaseDocument
         + parent::NODE_CLASSES;
 
     public const DEFAULT_DOCUMENT_FACTOTRY_CLASS = DocumentFactory::class;
+
+    public function clearCache(): void
+    {
+        parent::clearCache();
+
+        $this->nodeRegistry_ = [];
+    }
 }

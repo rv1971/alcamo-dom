@@ -155,4 +155,13 @@ class Document extends BaseDocument
             }
         }
     }
+
+    public function clearCache(): void
+    {
+        parent::clearCache();
+
+        $this->schema_ = null;
+        $this->attrConverters_ = null;
+        $this->elementDecoratorMap_ = null;
+    }
 }

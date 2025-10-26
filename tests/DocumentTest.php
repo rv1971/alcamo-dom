@@ -206,36 +206,6 @@ class DocumentTest extends TestCase
         $this->assertEquals($url, $quux->documentURI);
     }
 
-    public function testStripXsdDocumentation()
-    {
-        $doc1 = Document::newFromUrl(
-            __DIR__ . DIRECTORY_SEPARATOR . 'fooWithDocumenation.xml'
-        );
-
-        $this->assertSame(
-            22,
-            $doc1->stripXsdDocumentation()
-                ->getElementsByTagName('baz')[0]->getLineNo()
-        );
-
-        $doc2 = Document::newFromUrl(
-            __DIR__ . DIRECTORY_SEPARATOR . 'fooWithDocumenation.xml'
-        );
-
-        $doc2->formatOutput = true;
-
-        $this->assertSame(
-            7,
-            $doc2->stripXsdDocumentation(true)
-                ->getElementsByTagName('baz')[0]->getLineNo()
-        );
-
-        $this->assertSame(
-            file_get_contents('fooWithDocumenation.stripped.xml'),
-            $doc2->saveXML()
-        );
-    }
-
     public function testIteration()
     {
         $expectedTagNames = [
