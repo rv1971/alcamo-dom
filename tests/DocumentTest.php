@@ -9,6 +9,7 @@ use alcamo\exception\{
     FileLoadFailed,
     Uninitialized
 };
+use alcamo\dom\xsl\Document as Stylesheet;
 use alcamo\uri\FileUriFactory;
 
 class ReparsedDocument extends Document
@@ -60,10 +61,7 @@ class DocumentTest extends TestCase
 
         $this->assertSame(24, (int)$doc->evaluate('count(//foo:baz)'));
 
-        $this->assertInstanceOf(
-            \XSLTProcessor::class,
-            $doc->getXsltProcessor()
-        );
+        $this->assertInstanceOf(Stylesheet::class, $doc->getXsltStylesheet());
     }
 
     public function contentProvider()
@@ -146,18 +144,6 @@ class DocumentTest extends TestCase
         );
 
         $doc->getXPath();
-    }
-
-    public function testXsltProcessorException()
-    {
-        $doc = new Document();
-
-        $this->expectException(Uninitialized::class);
-        $this->expectExceptionMessage(
-            'Attempt to access uninitialized object <' . Document::class . '>'
-        );
-
-        $doc->getXsltProcessor();
     }
 
     public function testScope()

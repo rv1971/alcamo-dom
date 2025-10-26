@@ -153,7 +153,6 @@ class Document extends \DOMDocument implements
 
     private $xPath_;                  ///< XPath
     private $xsltStylesheet_ = false; ///< Document or `null`
-    private $xsltProcessor_ = false;  ///< XSLTProcessor or `null`
 
     public function __clone()
     {
@@ -375,49 +374,20 @@ class Document extends \DOMDocument implements
             $pi = $this->query('/processing-instruction("xml-stylesheet")')[0];
 
             if (!isset($pi) || $pi->type != 'text/xsl') {
-                $this->xsltStylesheet_ = null;
-                return null;
+                return $this->xsltStylesheet_ = null;
             }
-
-            $xslUrl = $pi->resolveUri($pi->href) ?? $pi->href;
 
             if (
                 !$this->xsltStylesheet_ = $this->getDocumentFactory()
-                    ->createFromUrl($xslUrl, Stylesheet::class)
+                    ->createFromUrl($pi->href, Stylesheet::class)
             ) {
                 /** @throw alcamo::exception::FileLoadFailed if a stylesheet
                  *  is specified but cannot be loaded. */
-                throw new FileLoadFailed($xslUrl);
+                throw new FileLoadFailed($pi->href);
             }
         }
 
         return $this->xsltStylesheet_;
-    }
-
-    /**
-     * @brief XSLT processor based on the first xml-stylesheet processing
-     * instruction, if any
-     */
-    public function getXsltProcessor(): ?\XSLTProcessor
-    {
-        if ($this->xsltProcessor_ === false) {
-            $xsltStylesheet = $this->getXsltStylesheet();
-
-            if (!isset($xsltStylesheet)) {
-                $this->xsltProcessor_ = null;
-                return null;
-            }
-
-            $this->xsltProcessor_ = new \XSLTProcessor();
-
-            if (!$this->xsltProcessor_->importStylesheet($xsltStylesheet)) {
-                /** @throw alcamo::exception::FileLoadFailed if a stylesheet
-                 *  is specified but cannot be loaded. */
-                throw new FileLoadFailed($xsltStylesheet->documentURI);
-            }
-        }
-
-        return $this->xsltProcessor_;
     }
 
     /// Reparse - useful to get line numbers right after changes
@@ -482,7 +452,6 @@ class Document extends \DOMDocument implements
          * content. */
         $this->xPath_ = null;
         $this->xsltStylesheet_ = false;
-        $this->xsltProcessor_ = false;
         $this->schemaLocations_ = null;
 
         if ($this->loadFlags_ & self::VALIDATE_AFTER_LOAD) {
