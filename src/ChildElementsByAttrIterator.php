@@ -3,47 +3,41 @@
 namespace alcamo\dom;
 
 use alcamo\iterator\IteratorCurrentTrait;
+use alcamo\xml\XName;
 
 /**
  * @brief Iterator that walks through child elements indexed by an attribute
+ *
+ * Skips children which are not elements, such as text nodes and comments.
+ *
+ * @date Last reviewed 2025-10-27
  */
-class ChildElementsByAttrIterator implements \Iterator
+class ChildElementsByAttrIterator extends ChildElementsIterator implements
+    \Iterator
 {
-    use IteratorCurrentTrait;
+    private $attrNsName_;    ///< ?string
+    private $attrLocalName_; ///< string
 
-    private $parentElement_;
-    private $attrName_;
-
-    public function __construct(\DOMElement $parentElement, string $attrName)
+    /**
+     * @param $parentNode Node whose child elements are to be iterated.
+     *
+     * @param $attrName XName|string Attribute to use as iteration key.
+     */
+    public function __construct(\DOMNode $parentNode, $attrName)
     {
-        $this->parentElement_ = $parentElement;
-        $this->attrName_ = $attrName;
+        parent::__construct($parentNode);
+
+        if ($attrName instanceof XName) {
+            [ $this->attrNsName_, $this->attrLocalName_ ] =
+                $attrName->getPair();
+        } else {
+            $this->attrLocalName_ = $attrName;
+        }
     }
 
     public function key()
     {
-        return $this->current_->getAttribute($this->attrName_);
-    }
-
-    public function rewind()
-    {
-        // skip children wich are not element nodes
-        for (
-            $this->current_ = $this->parentElement_->firstChild;
-            isset($this->current_)
-                && $this->current_->nodeType != XML_ELEMENT_NODE;
-            $this->current_ = $this->current_->nextSibling
-        );
-    }
-
-    public function next()
-    {
-        // skip children wich are not element nodes
-        for (
-            $this->current_ = $this->current_->nextSibling;
-            isset($this->current_)
-                && $this->current_->nodeType != XML_ELEMENT_NODE;
-            $this->current_ = $this->current_->nextSibling
-        );
+        return $this->current()
+            ->getAttributeNS($this->attrNsName_, $this->attrLocalName_);
     }
 }

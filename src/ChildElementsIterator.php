@@ -16,18 +16,18 @@ class ChildElementsIterator implements \Iterator
 {
     use IteratorCurrentTrait;
 
-    private $parentElement_; ///< DOMElement
+    private $parentNode_; ///< DOMElement
 
-    public function __construct(\DOMElement $parentElement)
+    public function __construct(\DOMNode $parentNode)
     {
-        $this->parentElement_ = $parentElement;
+        $this->parentNode_ = $parentNode;
     }
 
     public function rewind()
     {
         // skip children wich are not element nodes
         for (
-            $this->current_ = $this->parentElement_->firstChild;
+            $this->current_ = $this->parentNode_->firstChild;
             isset($this->current_)
                 && $this->current_->nodeType != XML_ELEMENT_NODE;
             $this->current_ = $this->current_->nextSibling
