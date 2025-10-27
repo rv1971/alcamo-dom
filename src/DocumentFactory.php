@@ -16,7 +16,9 @@ use Psr\Http\Message\UriInterface;
  *
  * @date Last reviewed 2025-10-26
  */
-class DocumentFactory implements DocumentFactoryInterface
+class DocumentFactory implements
+    DocumentFactoryInterface,
+    HavingBaseUriInterface
 {
     /// Map of dc:identifier prefixes to PHP classes for DOM documents
     public const DC_IDENTIFIER_PREFIX_TO_CLASS = [
@@ -118,9 +120,24 @@ class DocumentFactory implements DocumentFactoryInterface
         );
     }
 
-    public function getBaseUrl(): ?UriInterface
+    public function getBaseUri(): ?UriInterface
     {
         return $this->baseUrl_;
+    }
+
+    public function resolveUri($uri): ?UriInterface
+    {
+        if (!($uri instanceof UriInterface)) {
+            $uri = new Uri($uri);
+        }
+
+        if ($uri->getScheme() !== '') {
+            return $uri;
+        }
+
+        return isset($this->baseUrl_)
+            ? UriResolver::resolve($this->baseUrl_, $uri)
+            : null;
     }
 
     public function getLoadFlags(): ?int

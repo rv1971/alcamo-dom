@@ -125,7 +125,7 @@ class DocumentFactoryTest extends TestCase
 
         $documentFactory = new MyDocumentFactory($baseUrl);
 
-        $this->assertEquals($baseUrl, $documentFactory->getBaseUrl());
+        $this->assertEquals($baseUrl, $documentFactory->getBaseUri());
 
         $barUrl = 'file://' . str_replace(DIRECTORY_SEPARATOR, '/', __DIR__)
             . '/bar.xml';
