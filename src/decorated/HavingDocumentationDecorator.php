@@ -4,7 +4,11 @@ namespace alcamo\dom\decorated;
 
 use alcamo\dom\HavingDocumentationInterface;
 
-/// Decorator providing getLabel()
+/**
+ * @brief Decorator providing documentation methods
+ *
+ * @date Last reviewed 2025-10-23
+ */
 class HavingDocumentationDecorator extends AbstractDecorator implements
     HavingDocumentationInterface
 {

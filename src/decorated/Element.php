@@ -12,12 +12,20 @@ use alcamo\dom\xsd\{Decorator as XsdDecorator, Enumerator};
  * The DOM framework has no means to generate different subclasses of
  * DOMElement for different XML elements. This element class allows to
  * delegate element-specific functionality to decorator objects.
+ *
+ * @date Last reviewed 2025-11-05
  */
 class Element extends BaseElement
 {
-    /// Map of element NSs to maps of element local names to decorator classes
+    /**
+     * @brief Map of element NSs to maps of element local names to decorator
+     * classes
+     *
+     * The element local name `*` matches all elements in that namespace that
+     * are not explicitly listed.
+     */
     public const DECORATOR_MAP = [
-        Document::XSD_NS => [
+        self::XSD_NS => [
             'enumeration' => Enumerator::class,
             '*' => XsdDecorator::class
         ]
@@ -33,7 +41,6 @@ class Element extends BaseElement
 
     private $decorator_ = false; ///< ?AbstractDecorator
 
-    /// The decorator object
     public function getDecorator(): ?AbstractDecorator
     {
         if ($this->decorator_ === false) {
@@ -57,7 +64,7 @@ class Element extends BaseElement
     {
         /* Call a method in the decorator only if it exists. Otherwise the
          * decorator would look for it in the Element class, leading to an
-         * infinite recursion that would end up in a stack overflow. */
+         * infinite recursion. */
         if (method_exists($this->getDecorator(), $name)) {
             return call_user_func_array(
                 [ $this->decorator_, $name ],
@@ -80,14 +87,13 @@ class Element extends BaseElement
      *  mechanisms. */
     protected function createDecorator(): ?AbstractDecorator
     {
-        if (isset(static::DECORATOR_MAP[$this->namespaceURI])) {
-            $className =
-                static::DECORATOR_MAP[$this->namespaceURI][$this->localName]
-                ?? static::DECORATOR_MAP[$this->namespaceURI]['*']
-                ?? static::DEFAULT_DECORATOR_CLASS;
-        } else {
-            $className = static::DEFAULT_DECORATOR_CLASS;
-        }
+        $decoratorMap = static::DECORATOR_MAP[$this->namespaceURI] ?? null;
+
+        $className = isset($decoratorMap)
+            ? ($decoratorMap[$this->localName]
+               ?? $decoratorMap['*']
+               ?? static::DEFAULT_DECORATOR_CLASS)
+            : static::DEFAULT_DECORATOR_CLASS;
 
         return isset($className) ? new $className($this) : null;
     }

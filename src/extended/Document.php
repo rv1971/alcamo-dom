@@ -35,7 +35,7 @@ class Document extends BaseDocument
 {
     use NodeRegistryTrait;
 
-    /// @copybrief alcamo::dom::Document::NODE_CLASSES
+    /** @copybrief alcamo::dom::Document::NODE_CLASSES */
     public const NODE_CLASSES =
         [
             'DOMAttr'    => Attr::class,
@@ -43,6 +43,7 @@ class Document extends BaseDocument
         ]
         + parent::NODE_CLASSES;
 
+    /** @copybrief alcamo::dom::Document::DEFAULT_DOCUMENT_FACTOTRY_CLASS */
     public const DEFAULT_DOCUMENT_FACTOTRY_CLASS = DocumentFactory::class;
 
     public function clearCache(): void

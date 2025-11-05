@@ -37,6 +37,9 @@ class Attr extends BaseAttr
     /**
      * @brief Map of element NSs to maps of element local names to maps of
      * attr local names to converters
+     *
+     * The element local name `*` matches all elements in that namespace that
+     * are not explicitly listed.
      */
     public const ELEMENT_ATTR_CONVERTERS = [
         self::XH_NS => [

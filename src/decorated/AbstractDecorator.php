@@ -6,6 +6,8 @@ use alcamo\decorator\DecoratorTrait;
 
 /**
  * @brief Decorator for Element objects
+ *
+ * @date Last reviewed 2025-10-23
  */
 abstract class AbstractDecorator implements
     \Countable,
@@ -14,14 +16,10 @@ abstract class AbstractDecorator implements
 {
     use DecoratorTrait;
 
-    public function __construct(Element $element)
-    {
-        $this->handler_ = $element;
-    }
-
+    /// Return DOMElement::textContent
     public function __toString(): string
     {
-        return $this->textContent;
+        return $this->handler_->textContent;
     }
 
     public function getElement(): Element

@@ -9,9 +9,12 @@ use alcamo\dom\HavingDocumentationInterface;
  *
  * This trait is used in a decorator class, not in the Element class because
  * otherwise it would be impossible to override its methods in a decorator.
+ *
+ * @date Last reviewed 2025-11-05
  */
 trait HavingDocumentationTrait
 {
+    /** @copydoc alcamo::dom::HavingDocumentationInterface::getLabel() */
     public function getLabel(
         ?string $lang = null,
         ?int $fallbackFlags = null
@@ -41,13 +44,15 @@ trait HavingDocumentationTrait
         /**
          * - Otherwise, if $fallbackFlags contains
          * HavingDocumentationInterface::FALLBACK_TO_NAME, return the present
-         * element's local name.  - Otherwise return `null`.
+         * element's local name.
+         * - Otherwise return `null`.
          */
         return $fallbackFlags & self::FALLBACK_TO_NAME
             ? $this->localName
             : null;
     }
 
+    /** @copydoc alcamo::dom::HavingDocumentationInterface::getComment() */
     public function getComment(
         ?string $lang = null,
         ?int $fallbackFlags = null
@@ -112,10 +117,11 @@ trait HavingDocumentationTrait
             }
         }
 
+        /** - Otherwise, return `null`. */
         return null;
     }
 
-    /// Get fragment of rdfs:label attribute, if any
+    /// Get fragment of owl:sameAs attribute, if any
     protected function getSameAsFragment(): ?string
     {
         $sameAs = $this->{'owl:sameAs'};
@@ -156,7 +162,7 @@ trait HavingDocumentationTrait
          * requested language has not been found), if the present element (not
          * a descendent of it) has an `rdfs:comment` attribute, return its
          * content. This way, the attribute, if present, acts as a
-         * language-agnostic default comment.
+          * language-agnostic default comment.
          */
         $commentAttr = $this->{'rdfs:comment'};
 

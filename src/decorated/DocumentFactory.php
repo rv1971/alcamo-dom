@@ -10,7 +10,7 @@ use alcamo\dom\extended\DocumentFactory as DocumentFactoryBase;
  * Unlike its parent, by default this creates Document objects rather than
  * alcamo::dom::extended::Document objects.
  *
- * @date Last reviewed 2021-07-11
+ * @date Last reviewed 2025-10-23
  */
 class DocumentFactory extends DocumentFactoryBase
 {

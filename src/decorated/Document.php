@@ -11,15 +11,20 @@ use alcamo\dom\extended\Document as BaseDocument;
  * @brief DOM classes providing element-specific element decorator objects
  */
 
-/// Document element-specific decorators
+/**
+ * @brief Document with element-specific decorators
+ *
+ * @date Last reviewed 2025-11-05
+ */
 class Document extends BaseDocument
 {
-    /// @copybrief alcamo::dom::Document::NODE_CLASSES
+    /** @copybrief alcamo::dom::Document::NODE_CLASSES */
     public const NODE_CLASSES =
         [
             'DOMElement' => Element::class
         ]
         + parent::NODE_CLASSES;
 
+    /** @copybrief alcamo::dom::Document::DEFAULT_DOCUMENT_FACTOTRY_CLASS */
     public const DEFAULT_DOCUMENT_FACTOTRY_CLASS = DocumentFactory::class;
 }
