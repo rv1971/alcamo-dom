@@ -5,7 +5,11 @@ namespace alcamo\dom\xsd;
 use alcamo\dom\decorated\HavingDocumentationDecorator;
 use alcamo\xml\XName;
 
-/// Decorator providing getLabel()
+/**
+ * @brief Decorator providing the component's extended name, if any
+ *
+ * @date Last reviewed 2025-11-05
+ */
 class Decorator extends HavingDocumentationDecorator
 {
     /// Relative XPath to <rdfs:label> elements
@@ -15,7 +19,7 @@ class Decorator extends HavingDocumentationDecorator
     protected const RDFS_COMMENT_XPATH =
         'xsd:annotation/xsd:appinfo/rdfs:comment';
 
-    private $xComponentName_ = false; ///< ?XName
+    private $componentXName_ = false; ///< ?XName
 
     /**
      * @brief Get the component's extended name, if possible
@@ -25,13 +29,13 @@ class Decorator extends HavingDocumentationDecorator
      */
     public function getComponentXName(): ?XName
     {
-        if ($this->xComponentName_ === false) {
+        if ($this->componentXName_ === false) {
             /* The implicit call to offsetGet() includes a call to
-             * RegisteredNodeTrait::register(). */
+             * alcamo::dom::extended::RegisteredNodeTrait::register(). */
 
             if (isset($this->ref)) {
                 /** - If there is a `ref` attribute, return its value. */
-                $this->xComponentName_ = $this->ref;
+                $this->componentXName_ = $this->ref;
             } elseif (isset($this->name)) {
                 /** - If there is a `name` attribute, build an extended name
                  * from it. */
@@ -57,14 +61,14 @@ class Decorator extends HavingDocumentationDecorator
                     ? $documentElement->targetNamespace
                     : null;
 
-                    $this->xComponentName_ = new XName($nsName, $this->name);
+                    $this->componentXName_ = new XName($nsName, $this->name);
             } else {
                 /** - Else return `null`. */
-                $this->xComponentName_ = null;
+                $this->componentXName_ = null;
             }
         }
 
-        return $this->xComponentName_;
+        return $this->componentXName_;
     }
 
     public function getLabel(
