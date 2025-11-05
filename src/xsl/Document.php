@@ -13,7 +13,7 @@ use alcamo\dom\extended\Document as BaseDocument;
 /**
  * @brief DOM class for XSL documents with a specialized attribute class
  *
- * @date Last reviewed 2021-07-01
+ * @date Last reviewed 2025-11-05
  */
 class Document extends BaseDocument
 {

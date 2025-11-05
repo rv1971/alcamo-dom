@@ -31,11 +31,11 @@ class Attr extends BaseAttr
     /// @copybrief alcamo::dom::Attr::createValue()
     protected function createValue()
     {
-        /** Convert values of attributes in the @ref XSL_NS namespace
-         *  using @ref XSL_CONVERTERS. */
+        /** Convert values of attributes in the XSL namespace using @ref
+         *  XSL_CONVERTERS. */
         if (
-            $this->parentNode->namespaceURI == self::XSL_NS
-            && !isset($this->namespaceURI)
+            !isset($this->namespaceURI)
+            && $this->parentNode->namespaceURI == self::XSL_NS
         ) {
             $converter = static::XSL_CONVERTERS[$this->localName] ?? null;
 
