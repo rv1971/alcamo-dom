@@ -6,7 +6,7 @@ use alcamo\dom\schema\Schema;
 use alcamo\xml\XName;
 
 /**
- * @brief XML %Schema component predefined in the XML %Schema specification
+ * @brief XML Schema component predefined in the XML Schema specification
  *
  * @date Last reviewed 2021-07-09
  */
@@ -20,7 +20,8 @@ abstract class AbstractPredefinedComponent extends AbstractComponent
         $this->xName_ = $xName;
     }
 
-    /// @copydoc ComponentInterface::getXName()
+    /** @copydoc
+     *  alcamo::dom::schema::component::ComponentInterface::getXName() */
     public function getXName(): XName
     {
         return $this->xName_;

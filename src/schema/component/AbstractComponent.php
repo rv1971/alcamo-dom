@@ -5,9 +5,9 @@ namespace alcamo\dom\schema\component;
 use alcamo\dom\schema\Schema;
 
 /**
- * @brief XML %Schema component
+ * @brief XML Schema component
  *
- * @date Last reviewed 2021-07-09
+ * @date Last reviewed 2025-11-05
  */
 abstract class AbstractComponent implements ComponentInterface
 {
@@ -18,7 +18,8 @@ abstract class AbstractComponent implements ComponentInterface
         $this->schema_ = $schema;
     }
 
-    /// @copydoc ComponentInterface::getSchema()
+    /** @copydoc
+     *  alcamo::dom::schema::component::ComponentInterface::getSchema() */
     public function getSchema(): Schema
     {
         return $this->schema_;
