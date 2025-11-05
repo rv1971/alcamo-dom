@@ -48,7 +48,7 @@ trait HavingDocumentationTrait
          * - Otherwise return `null`.
          */
         return $fallbackFlags & self::FALLBACK_TO_NAME
-            ? $this->localName
+            ? $this->handler_->localName
             : null;
     }
 
@@ -70,9 +70,8 @@ trait HavingDocumentationTrait
          * `\<rdfs:label>` child for it, return its value.
          */
         if (isset($lang)) {
-            $labelElement = $this->query(
-                static::RDFS_LABEL_XPATH . "[@xml:lang = '$lang']"
-            )[0];
+            $labelElement = $this->handler_
+                ->query(static::RDFS_LABEL_XPATH . "[@xml:lang = '$lang']")[0];
 
             if (isset($labelElement)) {
                 return $labelElement->nodeValue;
@@ -80,8 +79,8 @@ trait HavingDocumentationTrait
 
             /* If there is no element with an explicit corresponding language,
              * look for one that inherits the language. */
-            $labelElement =
-                $this->query(static::RDFS_LABEL_XPATH . "[not(@xml:lang)]")[0];
+            $labelElement = $this->handler_
+                ->query(static::RDFS_LABEL_XPATH . "[not(@xml:lang)]")[0];
 
             if (isset($labelElement) && $labelElement->getLang() == $lang) {
                 return $labelElement->nodeValue;
@@ -95,7 +94,7 @@ trait HavingDocumentationTrait
          * content. This way, the attribute, if present, acts as a
          * language-agnostic default label.
          */
-        $labelAttr = $this->{'rdfs:label'};
+        $labelAttr = $this->handler_->{'rdfs:label'};
 
         if (isset($labelAttr)) {
             return $labelAttr;
@@ -110,7 +109,7 @@ trait HavingDocumentationTrait
          * place.
          */
         if (!isset($lang) || $fallbackFlags & self::FALLBACK_TO_OTHER_LANG) {
-            $labelElement = $this->query(static::RDFS_LABEL_XPATH)[0];
+            $labelElement = $this->handler_->query(static::RDFS_LABEL_XPATH)[0];
 
             if (isset($labelElement)) {
                 return $labelElement->nodeValue;
@@ -124,7 +123,7 @@ trait HavingDocumentationTrait
     /// Get fragment of owl:sameAs attribute, if any
     protected function getSameAsFragment(): ?string
     {
-        $sameAs = $this->{'owl:sameAs'};
+        $sameAs = $this->handler_->{'owl:sameAs'};
 
         return isset($sameAs) ? $sameAs->getFragment() : null;
     }
@@ -139,7 +138,7 @@ trait HavingDocumentationTrait
          * `\<rdfs:comment>` child for it, return its value.
          */
         if (isset($lang)) {
-            $commentElement = $this->query(
+            $commentElement = $this->handler_->query(
                 static::RDFS_COMMENT_XPATH . "[@xml:lang = '$lang']"
             )[0];
 
@@ -149,8 +148,9 @@ trait HavingDocumentationTrait
 
             /* If there is no element with an explicit corresponding language,
              * look for one that inherits the language. */
-            $commentElement =
-                $this->query(static::RDFS_COMMENT_XPATH . "[not(@xml:lang)]")[0];
+            $commentElement = $this->handler_->query(
+                static::RDFS_COMMENT_XPATH . "[not(@xml:lang)]"
+            )[0];
 
             if (isset($commentElement) && $commentElement->getLang() == $lang) {
                 return $commentElement->nodeValue;
@@ -164,7 +164,7 @@ trait HavingDocumentationTrait
          * content. This way, the attribute, if present, acts as a
           * language-agnostic default comment.
          */
-        $commentAttr = $this->{'rdfs:comment'};
+        $commentAttr = $this->handler_->{'rdfs:comment'};
 
         if (isset($commentAttr)) {
             return $commentAttr;
@@ -179,7 +179,8 @@ trait HavingDocumentationTrait
          * place.
          */
         if (!isset($lang) || $fallbackFlags & self::FALLBACK_TO_OTHER_LANG) {
-            $commentElement = $this->query(static::RDFS_COMMENT_XPATH)[0];
+            $commentElement =
+                $this->handler_->query(static::RDFS_COMMENT_XPATH)[0];
 
             if (isset($commentElement)) {
                 return $commentElement->nodeValue;
