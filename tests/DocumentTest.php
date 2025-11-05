@@ -233,6 +233,14 @@ class DocumentTest extends TestCase
 
         $doc2 = clone $doc1;
 
+        $doc1->documentElement->setAttribute('foo', 'FOO');
+
+        $this->assertTrue($doc1->documentElement->hasAttribute('foo'));
+
+        /* Prove that a PHP clone of a document deep-clones the underlying DOM
+         * tree. */
+        $this->assertFalse($doc2->documentElement->hasAttribute('foo'));
+
         $this->assertNotSame($doc1->getXPath(), $doc2->getXPath());
 
         $this->assertSame($doc1, $doc1->getXPath()->document);

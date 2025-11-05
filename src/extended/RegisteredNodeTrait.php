@@ -21,7 +21,7 @@ namespace alcamo\dom\extended;
  * alcamo::dom::Document::conserve() must be used to prevent the derived
  * document from being destroyed.
  *
- * @date Last reviewed 2021-07-01
+ * @date Last reviewed 2025-11-05
  */
 trait RegisteredNodeTrait
 {
@@ -30,15 +30,12 @@ trait RegisteredNodeTrait
     /**
      * @brief Compute a hash and call NodeRegistryTrait::register()
      *
-     * When calling this method a second time, the cached hash is returned.
+     * @return The hash used in the registry.
      */
     public function register(): string
     {
         if (!isset($this->hash_)) {
-            $this->ownerDocument->register(
-                $this,
-                ($this->hash_ = spl_object_hash($this))
-            );
+            $this->hash_ = $this->ownerDocument->register($this);
         }
 
         return $this->hash_;

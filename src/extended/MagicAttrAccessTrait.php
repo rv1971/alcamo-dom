@@ -10,25 +10,27 @@ use alcamo\xml\XName;
  * There are three ways to specify an attribute as a property:
  * - Attribute name without namespace prefix.
  * - Qualified name with a prefix registered in the NS_PRFIX_TO_NS_URI
- *   constant of the document class.
+ *   constant of the document class (which the document class inherits from
+ *   alcamo::dom::NamespaceConstantsInterface).
  * - Serialization of an XName object.
  * Hence there may be more than one way to specify the same attribute. All
  * ways to specify an attribute are equally stored in the cache.
  *
- * @warning The cached attributes is never updated, not even when an attribute
+ * @warning The cached attributes are never updated, not even when an attribute
  * is changed.
  *
- * @date Last reviewed 2021-07-01
+ * @date Last reviewed 2025-11-05
  */
 trait MagicAttrAccessTrait
 {
     private $attrCache_ = []; ///< Map of attributes to values
 
-    public function __clone()
-    {
-        $this->attrCache_ = [];
-    }
-
+    /**
+     * @brief Check whether an element has the requested attribute
+     *
+     * Unlike __get(), this method does not compute the attribute value
+     * and may therefore be significantly faster than __get().
+     */
     public function __isset(string $attrName): bool
     {
         /* At first look in the cache. isset() is fast and works for all cases
@@ -62,7 +64,7 @@ trait MagicAttrAccessTrait
     /**
      * @brief Returns the result of Attr::getValue()
      *
-     * When a second time, the result is taken from a cache.
+     * When called a second time, the result is taken from a cache.
      */
     public function __get(string $attrName)
     {

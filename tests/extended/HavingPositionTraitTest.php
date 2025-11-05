@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 
 class MyElement extends Element
 {
-    use GetPositionTrait;
+    use HavingPositionTrait;
 }
 
 class MyDocument extends Document
@@ -18,7 +18,7 @@ class MyDocument extends Document
         + parent::NODE_CLASSES;
 }
 
-class GetPositionTraitTest extends TestCase
+class HavingPositionTraitTest extends TestCase
 {
     /**
      * @dataProvider positionProvider

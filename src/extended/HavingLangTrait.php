@@ -5,31 +5,26 @@ namespace alcamo\dom\extended;
 use alcamo\rdfa\Lang;
 
 /**
- * @brief Provides language of a node
+ * @brief Provide language of a node
  *
  * When calling getLang() a second time, the result is taken from the cache.
  *
  * @warning The cached result is never updated, not even when the language of
  * the node or one of its ancestors is changed.
  *
- * @date Last reviewed 2021-07-01
+ * @date Last reviewed 2025-11-05
  */
-trait GetLangTrait
+trait HavingLangTrait
 {
     use RegisteredNodeTrait;
 
     private $lang_ = false; ///< ?Lang
 
-    public function __clone()
-    {
-        $this->lang_ = clone $this->lang_;
-    }
-
     /// Return xml:lang of element or closest ancestor
     public function getLang(): ?Lang
     {
         if ($this->lang_ === false) {
-            // Ensure conservation of the derived object.
+            /* Ensure conservation of the derived object. */
             $this->register();
 
             /* For efficiency, first check if the element itself has an
@@ -40,7 +35,7 @@ trait GetLangTrait
                     $this->getAttributeNS(Document::XML_NS, 'lang')
                 );
             } else {
-                /* Then look for the first ancestor having such an
+                /* If it does not, look for the first ancestor having such an
                  * attribute. */
                 $langAttr =
                     $this->query('ancestor::*[@xml:lang][1]/@xml:lang')[0];

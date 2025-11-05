@@ -16,7 +16,7 @@ use Ds\Set;
 /**
  * @brief Pool of converter functions for DOM node values
  *
- * Each function takes the value as their first parameter. Some take the DOM
+ * Each function takes the value as its first parameter. Some take the DOM
  * node as their second one.
  *
  * @date Last reviewed 2021-07-01
@@ -44,6 +44,8 @@ class ConverterPool implements NamespaceConstantsInterface
     /**
      * @brief Call DocumentFactoryInterface::createFromUrl() on the owner
      * document's document factory
+     *
+     * @param $context must implement HavingBaseUriInterface
      */
     public static function toDocument($value, \DOMNode $context): Document
     {
@@ -152,7 +154,7 @@ class ConverterPool implements NamespaceConstantsInterface
         return XName::newFromQNameAndContext($value, $context);
     }
 
-    /// Split at whitespace and hanld each item as in toXName()
+    /// Split at whitespace and handle each item as in toXName()
     public static function toXNames($value, \DOMNode $context): array
     {
         $xNames = [];
@@ -167,7 +169,7 @@ class ConverterPool implements NamespaceConstantsInterface
     /// Resolve ID to DOM element it references
     public static function resolveIdRef($value, \DOMNode $context): \DOMElement
     {
-        return $context->ownerDocument[$value];
+        return $context->ownerDocument->getElementById($value);
     }
 
     /// Convert "yes" to `true`, anything else to `false`
@@ -176,11 +178,13 @@ class ConverterPool implements NamespaceConstantsInterface
         return $value == 'yes';
     }
 
+    /// Convert base64 data to binary data
     public static function base64ToBinary($value): BinaryString
     {
         return new BinaryString(base64_decode($value));
     }
 
+    /// Convert hex data to binary data
     public static function hexToBinary($value): BinaryString
     {
         return BinaryString::newFromHex($value);
@@ -263,7 +267,7 @@ class ConverterPool implements NamespaceConstantsInterface
         if (isset($nodes)) {
             foreach ($nodes as $node) {
                 /** On Attr, call Attr::getValue() to get a value; for any
-                 *  other node, take the nodeValue peroperty. */
+                 *  other node, take the nodeValue property. */
                 $result->add(
                     $node instanceof Attr ? $node->getValue() : $node->nodeValue
                 );

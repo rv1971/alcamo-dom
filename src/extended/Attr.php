@@ -8,7 +8,7 @@ use alcamo\rdfa\Lang;
 /**
  * @brief Attribute class for use in DOMDocument::registerNodeClass()
  *
- * @date Last reviewed 2021-07-01
+ * @date Last reviewed 2025-10-23
  */
 class Attr extends BaseAttr
 {
@@ -20,13 +20,13 @@ class Attr extends BaseAttr
      * @sa [Use of CURIEs in Specific Attributes](https://www.w3.org/TR/rdfa-syntax/#sec_5.4.4.)
      */
     public const ATTR_CONVERTERS = [
-        Document::OWL_NS => [
+        self::OWL_NS => [
             'sameAs'                    => CP::class . '::toUri'
         ],
-        Document::XML_NS => [
+        self::XML_NS => [
             'lang'                      => CP::class . '::toLang'
         ],
-        Document::XSI_NS => [
+        self::XSI_NS => [
             'nil'                       => CP::class . '::toBool',
             'noNamespaceSchemaLocation' => CP::class . '::toUri',
             'schemaLocation'            => CP::class . '::pairsToMap',
@@ -39,7 +39,7 @@ class Attr extends BaseAttr
      * attr local names to converters
      */
     public const ELEMENT_ATTR_CONVERTERS = [
-        Document::XH_NS => [
+        self::XH_NS => [
             '*' => [
                 'about'             => CP::class . '::uriOrSafeCurieToUri',
                 'datatype'          => CP::class . '::curieToUri',
@@ -50,7 +50,7 @@ class Attr extends BaseAttr
                 'typeof'            => CP::class . '::xhRelToUri'
             ]
         ],
-        Document::XSD_NS => [
+        self::XSD_NS => [
             '*' => [
                 'maxOccurs'         => CP::class . '::toAllNNI',
 
@@ -78,16 +78,11 @@ class Attr extends BaseAttr
 
     private $value_;
 
-    public function __clone()
-    {
-        $this->value_ = null;
-    }
-
     /// Call createValue() and cache the result
     public function getValue()
     {
-        /** Call RegisteredNodeTrait::register(). See RegisteredNodeTrait for
-         *  explanation why this is necessary.  */
+        /** Call alcamo::dom::extended::RegisteredNodeTrait::register(). See
+         *  RegisteredNodeTrait for explanation why this is necessary.  */
         if (!isset($this->value_)) {
             $this->value_ = $this->createValue();
             $this->register();
@@ -112,20 +107,22 @@ class Attr extends BaseAttr
 
         /** - Otherwise, for attributes without namespace, use the converter
          * in ELEMENT_ATTR_CONVERTERS, if present. */
-        if (
-            !isset($this->namespaceURI)
-            && isset(static::ELEMENT_ATTR_CONVERTERS[$this->parentNode->namespaceURI])
-        ) {
-            $converterMap =
-                static::ELEMENT_ATTR_CONVERTERS[$this->parentNode->namespaceURI][$this->parentNode->localName]
-                ?? static::ELEMENT_ATTR_CONVERTERS[$this->parentNode->namespaceURI]['*']
+        if (!isset($this->namespaceURI)) {
+            $converterMaps =
+                static::ELEMENT_ATTR_CONVERTERS[$this->parentNode->namespaceURI]
+            ?? null;
+
+            if (isset($converterMaps)) {
+                $converterMap = $converterMaps[$this->parentNode->localName]
+                ?? $converterMaps['*']
                 ?? null;
 
-            if (isset($converterMap)) {
-                $converter = $converterMap[$this->localName] ?? null;
+                if (isset($converterMap)) {
+                    $converter = $converterMap[$this->localName] ?? null;
 
-                if (isset($converter)) {
-                    return $converter($this->value, $this);
+                    if (isset($converter)) {
+                        return $converter($this->value, $this);
+                    }
                 }
             }
         }

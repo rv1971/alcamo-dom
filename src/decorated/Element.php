@@ -3,7 +3,7 @@
 namespace alcamo\dom\decorated;
 
 use alcamo\exception\MethodNotFound;
-use alcamo\dom\extended\{Element as BaseElement, GetLangTrait};
+use alcamo\dom\extended\Element as BaseElement;
 use alcamo\dom\xsd\{Decorator as XsdDecorator, Enumerator};
 
 /**
@@ -15,8 +15,6 @@ use alcamo\dom\xsd\{Decorator as XsdDecorator, Enumerator};
  */
 class Element extends BaseElement
 {
-    use GetLangTrait;
-
     /// Map of element NSs to maps of element local names to decorator classes
     public const DECORATOR_MAP = [
         Document::XSD_NS => [
@@ -34,11 +32,6 @@ class Element extends BaseElement
     public const DEFAULT_DECORATOR_CLASS = HavingDocumentationDecorator::class;
 
     private $decorator_ = false; ///< ?AbstractDecorator
-
-    public function __clone()
-    {
-        $this->decorator_ = null;
-    }
 
     /// The decorator object
     public function getDecorator(): ?AbstractDecorator

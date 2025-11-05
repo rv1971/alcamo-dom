@@ -5,12 +5,14 @@ namespace alcamo\dom\extended;
 /**
  * @brief Provides position of a node within its parent
  *
- * When calling getLang() a second time, the result is taken from the cache.
+ * When calling getPosition() a second time, the result is taken from the cache.
  *
- * @warning The cached result is never updated, not even when the language of
- * the node or one of its ancestors is changed.
+ * @warning The cached result is never updated, not even when children are
+ * inserted before this node.
+ *
+ * @date Last reviewed 2025-11-05
  */
-trait GetPositionTrait
+trait HavingPositionTrait
 {
     use RegisteredNodeTrait;
 

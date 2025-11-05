@@ -17,9 +17,6 @@ use alcamo\dom\schema\component\{
  * in create Value(), so that alcamo::dom::extended::Attr::getValue() returns
  * an appropriately converted value.
  *
- * This class does not need a __clone() method because all of its properties
- * can be shared among documents.
- *
  * @date Last reviewed 2021-07-11
  */
 class Attr extends BaseAttr
