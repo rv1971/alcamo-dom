@@ -5,7 +5,7 @@ namespace alcamo\dom\schema\component;
 /**
  * @brief Attribute group definition
  *
- * @date Last reviewed 2021-07-10
+ * @date Last reviewed 2025-11-06
  */
 class AttrGroup extends AbstractXsdComponent
 {

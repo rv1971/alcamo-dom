@@ -2,8 +2,8 @@
 
 namespace alcamo\dom\schema\component;
 
-use alcamo\dom\schema\Schema;
 use alcamo\dom\decorated\Element as XsdElement;
+use alcamo\dom\schema\Schema;
 
 /**
  * @brief Union type definition

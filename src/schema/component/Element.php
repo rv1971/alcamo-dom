@@ -2,13 +2,13 @@
 
 namespace alcamo\dom\schema\component;
 
-use alcamo\dom\schema\Schema;
 use alcamo\dom\decorated\Element as XsdElement;
+use alcamo\dom\schema\Schema;
 
 /**
  * @brief Element declaration
  *
- * @date Last reviewed 2021-07-10
+ * @date Last reviewed 2025-11-06
  */
 class Element extends AbstractXsdComponent
 {
@@ -45,21 +45,22 @@ class Element extends AbstractXsdComponent
 
                 case isset($this->xsdElement_->type):
                     $this->type_ =
-                        $this->schema_->getGlobalType($this->xsdElement_->type);
+                        $this->schema_->getGlobalType($this->xsdElement_->type)
+                        ?? $this->schema_->getAnyType();
                     break;
 
-                case ($complexTypeElement =
+                case ($typeElement =
                       $this->xsdElement_->query('xsd:complexType')[0]):
                     $this->type_ =
-                        new ComplexType($this->schema_, $complexTypeElement);
+                        new ComplexType($this->schema_, $typeElement);
                     break;
 
-                case ($simpleTypeElement =
+                case ($typeElement =
                       $this->xsdElement_->query('xsd:simpleType')[0]):
                     $this->type_ =
                         AbstractSimpleType::newFromSchemaAndXsdElement(
                             $this->schema_,
-                            $simpleTypeElement
+                            $typeElement
                         );
                     break;
 

@@ -2,8 +2,8 @@
 
 namespace alcamo\dom\schema\component;
 
+use alcamo\dom\decorated\Element as XsdElement;
 use alcamo\dom\schema\Schema;
-use alcamo\dom\decorated\Element;
 
 /**
  * @brief Simple type definition
@@ -15,10 +15,15 @@ abstract class AbstractSimpleType extends AbstractXsdComponent implements
 {
     private $baseType_; ///< ?SimpleTypeInterface
 
-    /// Factory method creating the most specific type that it can recognize
+    /**
+     * @brief Factory method creating the most specific type that it can
+     * recognize
+     *
+     * This implies that base/item/member types are looked up immediately.
+     */
     public static function newFromSchemaAndXsdElement(
         Schema $schema,
-        Element $xsdElement
+        XsdElement $xsdElement
     ): self {
         $restrictionElement = $xsdElement->query('xsd:restriction')[0];
 
@@ -107,7 +112,7 @@ abstract class AbstractSimpleType extends AbstractXsdComponent implements
 
     protected function __construct(
         Schema $schema,
-        Element $xsdElement,
+        XsdElement $xsdElement,
         ?SimpleTypeInterface $baseType = null
     ) {
         parent::__construct($schema, $xsdElement);

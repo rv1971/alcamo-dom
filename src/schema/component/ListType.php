@@ -2,8 +2,8 @@
 
 namespace alcamo\dom\schema\component;
 
+use alcamo\dom\decorated\Element as XsdElement;
 use alcamo\dom\schema\Schema;
-use alcamo\dom\decorated\Element as Element;
 
 /**
  * @brief List type definition
@@ -16,7 +16,7 @@ class ListType extends AbstractSimpleType
 
     public function __construct(
         Schema $schema,
-        Element $xsdElement,
+        XsdElement $xsdElement,
         SimpleTypeInterface $itemType,
         ?SimpleTypeInterface $baseType = null
     ) {

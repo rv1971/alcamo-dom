@@ -2,23 +2,29 @@
 
 namespace alcamo\dom\schema\component;
 
-use alcamo\dom\Document;
-use alcamo\dom\schema\Schema;
 use alcamo\dom\decorated\Element as XsdElement;
-use alcamo\xml\Xname;
+use alcamo\dom\schema\Schema;
 
 /**
  * @brief Complex type definition
  *
- * @date Last reviewed 2021-07-10
+ * @date Last reviewed 2025-11-06
  */
 class ComplexType extends AbstractXsdComponent implements TypeInterface
 {
-    public const XSI_TYPE_NAME = Document::XSI_NS . ' type';
+    private const DERIVATION_XPATH =
+        'xsd:simpleContent/xsd:restriction'
+        . '|xsd:simpleContent/xsd:extension'
+        . '|xsd:complexContent/xsd:restriction'
+        . '|xsd:complexContent/xsd:extension';
 
-    private $baseType_; ///< ?AbstractType
-    private $attrs_;    ///< Map of XName string to SimpleTypeInterface
-    private $elements_; ///< Map of element XName string to Element
+    private const XSI_TYPE_NAME = self::XSI_NS . ' type';
+
+    private $derivation_; ///< ?Element
+
+    private $baseType_;   ///< ?TypeInterface
+    private $attrs_;      ///< Map of XName string to SimpleTypeInterface
+    private $elements_;   ///< Map of element XName string to Element
 
     public function __construct(
         Schema $schema,
@@ -28,16 +34,25 @@ class ComplexType extends AbstractXsdComponent implements TypeInterface
         parent::__construct($schema, $xsdElement);
 
         $this->baseType_ = $baseType;
+
+        $this->derivation_ =
+            $this->xsdElement_->query(self::DERIVATION_XPATH)[0];
     }
 
+    /**
+     * @copybrief alcamo::dom::schema::component::TypeInterface::getBaseType()
+     *
+     * When calling this method a second time, the result is taken from the
+     * cache.
+     */
     public function getBaseType(): ?TypeInterface
     {
         if ($this->baseType_ === false) {
-            $baseXNameElement =
-                $this->xsdElement_->query('xsd:*/xsd:*[@base]')[0];
+            $baseXName =
+                isset($this->derivation_) ? $this->derivation_->base : null;
 
-            $this->baseType_ = isset($baseXNameElement)
-                ? $this->schema_->getGlobalType($baseXNameElement->base)
+            $this->baseType_ = isset($baseXName)
+                ? $this->schema_->getGlobalType($baseXName)
                 : null;
         }
 
@@ -56,33 +71,27 @@ class ComplexType extends AbstractXsdComponent implements TypeInterface
             if ($this->getBaseType() instanceof self) {
                 $this->attrs_ = $this->getBaseType()->getAttrs();
 
-                $attrParent =
-                    $this->xsdElement_->query(
-                        'xsd:complexContent/xsd:restriction'
-                        . '|xsd:complexContent/xsd:extension'
-                        . '|xsd:simpleContent/xsd:restriction'
-                        . '|xsd:simpleContent/xsd:extension'
-                    )[0];
+                $attrContainer = $this->derivation_;
             } else {
-                // predefine xsi:type if not inheriting it from base type
+                /* Predefine xsi:type if not inheriting it from base type. */
                 $this->attrs_ = [
                     self::XSI_TYPE_NAME
                     => $this->schema_->getGlobalAttr(self::XSI_TYPE_NAME)
                 ];
 
-                $attrParent = $this->xsdElement_;
+                $attrContainer = $this->xsdElement_;
             }
 
-            foreach ($attrParent as $element) {
-                switch ($element->localName) {
+            foreach ($attrContainer as $attrElement) {
+                switch ($attrElement->localName) {
                     case 'attribute':
-                        // remove prohibited attributes
-                        if ($element->use == 'prohibited') {
+                        /* Remove prohibited attributes. */
+                        if ($attrElement->use == 'prohibited') {
                             unset($this->attrs_[
-                                (string)$element->getComponentXName()
+                                (string)$attrElement->getComponentXName()
                             ]);
                         } else {
-                            $attr = new Attr($this->schema_, $element);
+                            $attr = new Attr($this->schema_, $attrElement);
 
                             $this->attrs_[(string)$attr->getXName()] = $attr;
                         }
@@ -91,7 +100,7 @@ class ComplexType extends AbstractXsdComponent implements TypeInterface
 
                     case 'attributeGroup':
                         $this->attrs_ += $this->schema_
-                            ->getGlobalAttrGroup($element->ref)->getAttrs();
+                            ->getGlobalAttrGroup($attrElement->ref)->getAttrs();
                         break;
                 }
             }
@@ -113,50 +122,48 @@ class ComplexType extends AbstractXsdComponent implements TypeInterface
     public function getElements(): array
     {
         if (!isset($this->elements_)) {
-            $stack = [ $this->xsdElement_ ];
-
             $this->elements_ = [];
 
+            $stack = [ $this->xsdElement_ ];
+
             while ($stack) {
-                foreach (array_pop($stack) as $child) {
-                    if ($child->namespaceURI == Document::XSD_NS) {
-                        switch ($child->localName) {
-                            case 'element':
-                                $element = new Element($this->schema_, $child);
+                foreach (array_pop($stack) as $element) {
+                    switch ($element->localName) {
+                        case 'element':
+                            $element = new Element($this->schema_, $element);
 
-                                $this->elements_[(string)$element->getXName()] =
-                                    $element;
+                            $this->elements_[(string)$element->getXName()] =
+                                $element;
 
-                                break;
+                            break;
 
-                            case 'choice':
-                            case 'complexContent':
-                            case 'sequence':
-                                $stack[] = $child;
-                                break;
+                        case 'choice':
+                        case 'complexContent':
+                        case 'sequence':
+                            $stack[] = $element;
+                            break;
 
-                            case 'extension':
-                            case 'restriction':
-                                if (isset($child->base)) {
-                                    $baseType = $this->schema_
-                                        ->getGlobalType($child->base);
+                        case 'extension':
+                        case 'restriction':
+                            if (isset($element->base)) {
+                                $baseType = $this->schema_
+                                    ->getGlobalType($element->base);
 
-                                    if ($baseType instanceof self) {
-                                        $this->elements_ +=
-                                            $baseType->getElements();
-                                    }
+                                if ($baseType instanceof self) {
+                                    $this->elements_ +=
+                                        $baseType->getElements();
                                 }
+                            }
 
-                                $stack[] = $child;
+                            $stack[] = $element;
 
-                                break;
+                            break;
 
-                            case 'group':
-                                $this->elements_ += $this->schema_
-                                    ->getGlobalGroup($child->ref)
-                                    ->getElements();
-                                break;
-                        }
+                        case 'group':
+                            $this->elements_ += $this->schema_
+                                ->getGlobalGroup($element->ref)
+                                ->getElements();
+                            break;
                     }
                 }
             }

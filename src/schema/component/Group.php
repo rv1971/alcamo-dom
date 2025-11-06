@@ -2,16 +2,14 @@
 
 namespace alcamo\dom\schema\component;
 
-use alcamo\dom\decorated\Document as Xsd;
-
 /**
  * @brief Model group definition
  *
- * @date Last reviewed 2021-07-10
+ * @date Last reviewed 2025-11-06
  */
 class Group extends AbstractXsdComponent
 {
-    private $elements_; ///< Array of Element
+    private $elements_; ///< XName string to Element
 
     /**
      * @brief Map of element XName string to Element for all elements in the
@@ -31,28 +29,26 @@ class Group extends AbstractXsdComponent
             $this->elements_ = [];
 
             while ($stack) {
-                foreach (array_pop($stack) as $child) {
-                    if ($child->namespaceURI == Xsd::XSD_NS) {
-                        switch ($child->localName) {
-                            case 'element':
-                                $element = new Element($this->schema_, $child);
+                foreach (array_pop($stack) as $element) {
+                    switch ($element->localName) {
+                        case 'element':
+                            $element = new Element($this->schema_, $element);
 
-                                $this->elements_[(string)$element->getXName()] =
-                                    $element;
+                            $this->elements_[(string)$element->getXName()] =
+                                $element;
 
-                                break;
+                            break;
 
-                            case 'choice':
-                            case 'sequence':
-                                $stack[] = $child;
-                                break;
+                        case 'choice':
+                        case 'sequence':
+                            $stack[] = $element;
+                            break;
 
-                            case 'group':
-                                $this->elements_ += $this->schema_
-                                    ->getGlobalGroup($child->ref)
-                                    ->getElements();
-                                break;
-                        }
+                        case 'group':
+                            $this->elements_ += $this->schema_
+                                ->getGlobalGroup($element->ref)
+                                ->getElements();
+                            break;
                     }
                 }
             }

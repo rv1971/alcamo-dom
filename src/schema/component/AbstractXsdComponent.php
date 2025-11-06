@@ -2,10 +2,10 @@
 
 namespace alcamo\dom\schema\component;
 
+use alcamo\dom\decorated\Element as XsdElement;
 use alcamo\dom\schema\Schema;
-use alcamo\dom\decorated\Element;
-use Psr\Http\Message\UriInterface;
 use alcamo\xml\XName;
+use Psr\Http\Message\UriInterface;
 
 /**
  * @brief XML Schema component defined in an XSD
@@ -23,7 +23,7 @@ abstract class AbstractXsdComponent extends AbstractComponent
     /// XPath to XHTML \<link> elements in <appinfo>
     protected const XH_LINK_XPATH = 'xsd:annotation/xsd:appinfo/xh:link[@rel]';
 
-    public function __construct(Schema $schema, Element $xsdElement)
+    public function __construct(Schema $schema, XsdElement $xsdElement)
     {
         parent::__construct($schema);
 
@@ -31,7 +31,7 @@ abstract class AbstractXsdComponent extends AbstractComponent
     }
 
     /// XSD element that defines the component
-    public function getXsdElement(): Element
+    public function getXsdElement(): XsdElement
     {
         return $this->xsdElement_;
     }
@@ -62,7 +62,7 @@ abstract class AbstractXsdComponent extends AbstractComponent
      * Get the first `<xh:meta>` element for the given property in this type
      * or its closest base type, if any.
      */
-    public function getAppinfoMeta(string $property): ?Element
+    public function getAppinfoMeta(string $property): ?XsdElement
     {
         for (
             $type = $this;
@@ -90,7 +90,7 @@ abstract class AbstractXsdComponent extends AbstractComponent
      * Get the first `<xh:link>` element for the given relation in this type
      * or its closest base type, if any.
      */
-    public function getAppinfoLink(string $rel): ?Element
+    public function getAppinfoLink(string $rel): ?XsdElement
     {
         for (
             $type = $this;
