@@ -17,8 +17,8 @@ use alcamo\dom\schema\component\{
     Group,
     ListType,
     Notation,
+    PredefinedAnySimpleType,
     PredefinedAttr,
-    PredefinedSimpleType,
     TypeInterface,
     UnionType
 };
@@ -88,9 +88,8 @@ class SchemaTest extends TestCase
         );
 
         $this->assertEquals(
-            new PredefinedSimpleType(
+            new PredefinedAnySimpleType(
                 $schema1,
-                new XName(self::XSD_NS, 'anySimpleType'),
                 $schema1->getAnyType()
             ),
             $schema1->getAnySimpleType()
@@ -727,7 +726,7 @@ class SchemaTest extends TestCase
 
         $comp = $schema->getGlobalType($xName);
 
-        $this->assertInstanceOf(PredefinedSimpleType::class, $comp);
+        $this->assertInstanceOf(PredefinedAnySimpleType::class, $comp);
         $this->assertSame($schema, $comp->getSchema());
         $this->assertEquals($xName, $comp->getXName());
         $this->assertEquals(

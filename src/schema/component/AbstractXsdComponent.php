@@ -3,18 +3,27 @@
 namespace alcamo\dom\schema\component;
 
 use alcamo\dom\schema\Schema;
-use alcamo\dom\decorated\Element as XsdElement;
+use alcamo\dom\decorated\Element;
 use Psr\Http\Message\UriInterface;
 use alcamo\xml\XName;
 
 /**
- * @brief XML %Schema component defined in an XSD
+ * @brief XML Schema component defined in an XSD
+ *
+ * @date Last reviewed 2025-11-06
  */
 abstract class AbstractXsdComponent extends AbstractComponent
 {
-    protected $xsdElement_; ///< alcamo::dom::xsd::Element
+    protected $xsdElement_; ///< alcamo::dom::decorated::Element
 
-    public function __construct(Schema $schema, XsdElement $xsdElement)
+    /// XPath to XHTML \<meta> elements in <appinfo>
+    protected const XH_META_XPATH =
+        'xsd:annotation/xsd:appinfo/xh:meta[@property]';
+
+    /// XPath to XHTML \<link> elements in <appinfo>
+    protected const XH_LINK_XPATH = 'xsd:annotation/xsd:appinfo/xh:link[@rel]';
+
+    public function __construct(Schema $schema, Element $xsdElement)
     {
         parent::__construct($schema);
 
@@ -22,12 +31,12 @@ abstract class AbstractXsdComponent extends AbstractComponent
     }
 
     /// XSD element that defines the component
-    public function getXsdElement(): XsdElement
+    public function getXsdElement(): Element
     {
         return $this->xsdElement_;
     }
 
-    /// @copydoc ComponentInterface::getXName()
+    /// @copydoc alcamo::dom::schema::component::ComponentInterface::getXName()
     public function getXName(): ?XName
     {
         return $this->xsdElement_->getComponentXName();
@@ -50,10 +59,10 @@ abstract class AbstractXsdComponent extends AbstractComponent
     }
 
     /**
-     * Get the first `xsd:annotation/xsd:appinfo/xh:meta` element for the
-     * given property in the closest ancestor-or-self type, if any.
+     * Get the first `<xh:meta>` element for the given property in this type
+     * or its closest base type, if any.
      */
-    public function getAppinfoMeta(string $property): ?XsdElement
+    public function getAppinfoMeta(string $property): ?Element
     {
         for (
             $type = $this;
@@ -61,10 +70,13 @@ abstract class AbstractXsdComponent extends AbstractComponent
             $type = $type->getBaseType()
         ) {
             foreach (
-                $type->getXsdElement()->query(
-                    "xsd:annotation/xsd:appinfo/xh:meta[@property]"
-                ) as $meta
+                $type->getXsdElement()->query(static::XH_META_XPATH) as $meta
             ) {
+                /* This takes advantage of the magic attribute access in class
+                alcamo::dom::extended::Attr which transforms the `property`
+                attribute from a CURIE to a URI. A simple comparison within
+                the XPath is not sufficient here because XPath 1.0 has no
+                means to handle CURIEs. */
                 if ($meta->property == $property) {
                     return $meta;
                 }
@@ -75,10 +87,10 @@ abstract class AbstractXsdComponent extends AbstractComponent
     }
 
     /**
-     * Get the first `xsd:annotation/xsd:appinfo/xh:link` element for the
-     * given property in the closest ancestor-or-self type, if any.
+     * Get the first `<xh:link>` element for the given relation in this type
+     * or its closest base type, if any.
      */
-    public function getAppinfoLink(string $rel): ?XsdElement
+    public function getAppinfoLink(string $rel): ?Element
     {
         for (
             $type = $this;
@@ -86,10 +98,9 @@ abstract class AbstractXsdComponent extends AbstractComponent
             $type = $type->getBaseType()
         ) {
             foreach (
-                $type->getXsdElement()->query(
-                    "xsd:annotation/xsd:appinfo/xh:link[@rel]"
-                ) as $link
+                $type->getXsdElement()->query(static::XH_LINK_XPATH) as $link
             ) {
+                /* See getAppinfoMeta(). */
                 if ($link->rel == $rel) {
                     return $link;
                 }

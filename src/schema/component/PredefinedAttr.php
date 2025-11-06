@@ -8,7 +8,7 @@ use alcamo\xml\XName;
 /**
  * @brief Attribute declaration predefined in the XML %Schema specification
  *
- * @date Last reviewed 2021-07-09
+ * @date Last reviewed 2025-11-06
  */
 class PredefinedAttr extends AbstractPredefinedComponent implements
     AttrInterface
@@ -25,7 +25,7 @@ class PredefinedAttr extends AbstractPredefinedComponent implements
         $this->type_ = $type;
     }
 
-    public function getType(): SimpleTypeInterface
+    public function getType(): AbstractSimpleType
     {
         return $this->type_;
     }

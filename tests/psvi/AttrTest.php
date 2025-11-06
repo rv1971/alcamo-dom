@@ -4,7 +4,7 @@ namespace alcamo\dom\psvi;
 
 use PHPUnit\Framework\TestCase;
 use alcamo\dom\schema\Schema;
-use alcamo\dom\schema\component\{AtomicType, PredefinedSimpleType};
+use alcamo\dom\schema\component\{AtomicType, PredefinedAnySimpleType};
 use alcamo\rdfa\Lang;
 use alcamo\uri\Uri;
 use alcamo\xml\XName;
@@ -76,7 +76,7 @@ class AttrTest extends TestCase
             // element type is anyType
             [
                 $doc['qux']->getAttributeNode('qux'),
-                PredefinedSimpleType::class,
+                PredefinedAnySimpleType::class,
                 new XName(self::XSD_NS, 'anySimpleType'),
                 null,
                 null
@@ -84,7 +84,7 @@ class AttrTest extends TestCase
             // attribute is unknwon
             [
                 $doc->documentElement->getAttributeNode('qux:qux'),
-                PredefinedSimpleType::class,
+                PredefinedAnySimpleType::class,
                 new XName(self::XSD_NS, 'anySimpleType'),
                 null,
                 null
@@ -92,7 +92,7 @@ class AttrTest extends TestCase
             // attribute type is anySimpleType
             [
                 $doc->documentElement->getAttributeNode('qux'),
-                PredefinedSimpleType::class,
+                PredefinedAnySimpleType::class,
                 new XName(self::XSD_NS, 'anySimpleType'),
                 null,
                 null

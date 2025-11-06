@@ -14,5 +14,6 @@ interface SimpleTypeInterface extends TypeInterface
 
     public function getHfpPropValue(string $propName): ?string;
 
+    /// Whether the value space is numeric
     public function isNumeric(): bool;
 }

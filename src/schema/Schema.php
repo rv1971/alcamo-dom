@@ -19,8 +19,8 @@ use alcamo\dom\schema\component\{
     Element,
     Group,
     Notation,
+    PredefinedAnySimpleType,
     PredefinedAttr,
-    PredefinedSimpleType,
     TypeInterface
 };
 use alcamo\exception\{AbsoluteUriNeeded, ExceptionInterface};
@@ -44,6 +44,9 @@ use Psr\Http\Message\UriInterface;
  */
 class Schema
 {
+    /// Predefined XSI attributes
+    public const XSI_ATTRS = [ 'nil' => 'boolean', 'type' => 'QName' ];
+
     private static $schemaCache_ = [];
 
     protected $documentFactory_; ///< DocumentFactoryInterface
@@ -182,7 +185,7 @@ class Schema
     private $getGlobalTypesAlreadyCalled_ = false;
 
     private $anyType_;                ///< ComplexType
-    private $anySimpleType;           ///< PredefinedSimpleType
+    private $anySimpleType;           ///< PredefinedAnySimpleType
 
     /// Construct new schema from XSDs
     protected function __construct(array $xsds)
@@ -340,7 +343,7 @@ class Schema
     }
 
     /// Instance of xsd:anySimpleType
-    public function getAnySimpleType(): PredefinedSimpleType
+    public function getAnySimpleType(): PredefinedAnySimpleType
     {
         return $this->anySimpleType_;
     }
@@ -492,26 +495,23 @@ class Schema
             $this->getGlobalType(new XName(Xsd::XSD_NS, 'anyType'));
 
         // Add `anySimpleType`.
-        $anySimpleTypeXName = new XName(Xsd::XSD_NS, 'anySimpleType');
-
-        $this->anySimpleType_ = new PredefinedSimpleType(
+        $this->anySimpleType_ = new PredefinedAnySimpleType(
             $this,
-            $anySimpleTypeXName,
             $this->anyType_
         );
 
-        $this->globalTypes_[(string)$anySimpleTypeXName] =
+        $this->globalTypes_[(string)$this->anySimpleType_->getXName()] =
             $this->anySimpleType_;
 
-        // Add `xsi:type` to be `xsd:QName` if undefined.
-        $xsiTypeXName = new XName(Xsd::XSI_NS, 'type');
+        // Add predefined XSI attributes
+        foreach (self::XSI_ATTRS as $attrLocalName => $typeLocalName) {
+            $attrXName = new XName(Xsd::XSI_NS, $attrLocalName);
 
-        if (!isset($this->globalAttrs_[(string)$xsiTypeXName])) {
-            $this->globalAttrs_[(string)$xsiTypeXName] =
+            $this->globalAttrs_[(string)$attrXName] =
                 new PredefinedAttr(
                     $this,
-                    $xsiTypeXName,
-                    $this->getGlobalType(new XName(Xsd::XSD_NS, 'QName'))
+                    $attrXName,
+                    $this->getGlobalType(new XName(Xsd::XSD_NS, $typeLocalName))
                 );
         }
     }

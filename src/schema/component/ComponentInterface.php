@@ -2,6 +2,7 @@
 
 namespace alcamo\dom\schema\component;
 
+use alcamo\dom\NamespaceConstantsInterface;
 use alcamo\dom\schema\Schema;
 use alcamo\xml\XName;
 
@@ -16,7 +17,7 @@ use alcamo\xml\XName;
  *
  * @date Last reviewed 2025-11-05
  */
-interface ComponentInterface
+interface ComponentInterface extends NamespaceConstantsInterface
 {
     /// Schema the component belongs to
     public function getSchema(): Schema;

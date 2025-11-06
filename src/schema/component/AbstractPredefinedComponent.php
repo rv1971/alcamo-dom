@@ -8,7 +8,7 @@ use alcamo\xml\XName;
 /**
  * @brief XML Schema component predefined in the XML Schema specification
  *
- * @date Last reviewed 2021-07-09
+ * @date Last reviewed 2025-11-06
  */
 abstract class AbstractPredefinedComponent extends AbstractComponent
 {
