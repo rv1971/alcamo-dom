@@ -152,7 +152,7 @@ abstract class AbstractSimpleType extends AbstractXsdComponent implements
             $type instanceof self;
             $type = $type->getBaseType()
         ) {
-            $facetValue = $type->getXsdElement()
+            $facetValue = $type->xsdElement_
                 ->query("xsd:restriction/xsd:$facetName/@value")[0];
 
             if (isset($facetValue)) {

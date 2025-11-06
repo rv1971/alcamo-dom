@@ -22,7 +22,7 @@ class AtomicType extends AbstractSimpleType
             $type instanceof self;
             $type = $type->getBaseType()
         ) {
-            $propValue = $type->getXsdElement()->query(
+            $propValue = $type->xsdElement_->query(
                 "xsd:annotation/xsd:appinfo/hfp:hasProperty[@name = '$propName']/@value"
             )[0];
 

@@ -10,11 +10,9 @@ use alcamo\dom\schema\Schema;
  *
  * @date Last reviewed 2025-11-06
  */
-class UnionType extends AbstractSimpleType
+class UnionType extends AtomicType
 {
     protected $memberTypes_; ///< Array of SimpleTypeInterface
-
-    private $isNumeric_; ///< ?bool
 
     /// @param $memberTypes @copybrief getMemberTypes()
     public function __construct(
@@ -85,20 +83,5 @@ class UnionType extends AbstractSimpleType
         }
 
         return $uniqueValue;
-    }
-
-    /**
-     * @copydoc
-     * alcamo::dom::schema::component::SimpleTypeInterface::isNumeric()
-     *
-     * @return `true` if all member types are numeric.
-     */
-    public function isNumeric(): bool
-    {
-        if (!isset($this->isNumeric_)) {
-            $this->isNumeric_ = $this->getHfpPropValue('numeric') == 'true';
-        }
-
-        return $this->isNumeric_;
     }
 }

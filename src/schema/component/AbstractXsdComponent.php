@@ -66,11 +66,11 @@ abstract class AbstractXsdComponent extends AbstractComponent
     {
         for (
             $type = $this;
-            $type instanceof AbstractXsdComponent;
+            $type instanceof self;
             $type = $type->getBaseType()
         ) {
             foreach (
-                $type->getXsdElement()->query(static::XH_META_XPATH) as $meta
+                $type->xsdElement_->query(static::XH_META_XPATH) as $meta
             ) {
                 /* This takes advantage of the magic attribute access in class
                 alcamo::dom::extended::Attr which transforms the `property`
@@ -94,11 +94,11 @@ abstract class AbstractXsdComponent extends AbstractComponent
     {
         for (
             $type = $this;
-            $type instanceof AbstractXsdComponent;
+            $type instanceof self;
             $type = $type->getBaseType()
         ) {
             foreach (
-                $type->getXsdElement()->query(static::XH_LINK_XPATH) as $link
+                $type->xsdElement_->query(static::XH_LINK_XPATH) as $link
             ) {
                 /* See getAppinfoMeta(). */
                 if ($link->rel == $rel) {
