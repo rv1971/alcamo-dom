@@ -8,11 +8,16 @@ use alcamo\dom\schema\Schema;
 /**
  * @brief Union type definition
  *
+ * Note that UnionType is not derived from AtomicType because its member types
+ * might contain a list type, in which case the union would not be atomic.
+ *
  * @date Last reviewed 2025-11-06
  */
-class UnionType extends AtomicType
+class UnionType extends AbstractSimpleType
 {
     protected $memberTypes_; ///< Array of SimpleTypeInterface
+
+    private $isNumeric_; ///< ?bool
 
     /// @param $memberTypes @copybrief getMemberTypes()
     public function __construct(
@@ -83,5 +88,20 @@ class UnionType extends AtomicType
         }
 
         return $uniqueValue;
+    }
+
+    /**
+     * @copydoc
+     * alcamo::dom::schema::component::SimpleTypeInterface::isNumeric()
+     *
+     * @return `true` if all member types are numeric.
+     */
+    public function isNumeric(): bool
+    {
+        if (!isset($this->isNumeric_)) {
+            $this->isNumeric_ = $this->getHfpPropValue('numeric') == 'true';
+        }
+
+        return $this->isNumeric_;
     }
 }
