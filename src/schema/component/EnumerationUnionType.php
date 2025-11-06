@@ -4,14 +4,17 @@ namespace alcamo\dom\schema\component;
 
 /**
  * @brief Definition of a simple type that is a union of enumerations
+ *
+ * @date Last reviewed 2025-11-06
  */
 class EnumerationUnionType extends UnionType implements
     EnumerationTypeInterface
 {
-    private $enumerators_; ///< Map of enumerator strings to DOM node objects
+    private $enumerators_; ///< Map of enumerator strings to DOMElement objects
 
     /**
-     * @copybrief EnumerationTypeInterface::getEnumerators()
+     * @copybrief
+     * alcamo::dom::schema::component::EnumerationTypeInterface::getEnumerators()
      *
      * When calling this method a second time, the result is taken from the
      * cache.

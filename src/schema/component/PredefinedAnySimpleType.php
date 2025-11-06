@@ -25,31 +25,47 @@ class PredefinedAnySimpleType extends AbstractPredefinedComponent implements
     }
 
    /** @copydoc
-    *  alcamo::dom::schema::component::TypeInterface::getBaseType() */
+    *  alcamo::dom::schema::component::TypeInterface::getBaseType()
+    */
     public function getBaseType(): ComplexType
     {
         return $this->baseType_;
     }
 
-    public function isEqualToOrDerivedFrom(string $xName): bool
+    public function isEqualToOrDerivedFrom(string $typeXName): bool
     {
-        return $xName == $this->getXName()
-            || $xName == $this->baseType_->getXName();
+        return $typeXName == $this->getXName()
+            || $typeXName == $this->baseType_->getXName();
     }
 
-    /// Always `null` since `anySimpleType` type has no facets
+    /**
+     * @copydoc
+     * alcamo::dom::schema::component::SimpleTypeInterface::getFacetValue()
+     *
+     * @return Always `null` since `anySimpleType` type has no facets.
+     */
     public function getFacetValue(string $facetName): ?string
     {
         return null;
     }
 
-    /// Always `null` since `anySimpleType` has no properties
+    /**
+     * @copydoc
+     * alcamo::dom::schema::component::SimpleTypeInterface::getHfpPropValue()
+     *
+     * @return Always `null` since `anySimpleType` type has no properties.
+     */
     public function getHfpPropValue(string $propName): ?string
     {
         return null;
     }
 
-    /// Always `false` since `anySimpleType` is not numeric
+    /**
+     * @copydoc
+     * alcamo::dom::schema::component::SimpleTypeInterface::isNumeric()
+     *
+     * @return Always `false` since `anySimpleType` is not numeric.
+     */
     public function isNumeric(): bool
     {
         return false;

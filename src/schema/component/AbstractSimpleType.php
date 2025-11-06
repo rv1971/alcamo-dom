@@ -3,84 +3,84 @@
 namespace alcamo\dom\schema\component;
 
 use alcamo\dom\schema\Schema;
-use alcamo\dom\decorated\Element as XsdElement;
+use alcamo\dom\decorated\Element;
 
 /**
  * @brief Simple type definition
  *
- * @date Last reviewed 2021-07-10
+ * @date Last reviewed 2025-11-06
  */
 abstract class AbstractSimpleType extends AbstractXsdComponent implements
     SimpleTypeInterface
 {
-    private $baseType_;  ///< ?AbstractType
+    private $baseType_; ///< ?SimpleTypeInterface
 
     /// Factory method creating the most specific type that it can recognize
     public static function newFromSchemaAndXsdElement(
         Schema $schema,
-        XsdElement $xsdElement
+        Element $xsdElement
     ): self {
-        $xPath = $xsdElement->ownerDocument->getXPath();
-
-        $restrictionElement = $xPath->query('xsd:restriction', $xsdElement)[0];
+        $restrictionElement = $xsdElement->query('xsd:restriction')[0];
 
         if (isset($restrictionElement)) {
             $baseType = isset($restrictionElement->base)
                 ? $schema->getGlobalType($restrictionElement->base)
                 : self::newFromSchemaAndXsdElement(
                     $schema,
-                    $xPath->query('xsd:simpleType', $restrictionElement)[0]
+                    $restrictionElement->query('xsd:simpleType')[0]
                 );
 
             if ($baseType instanceof ListType) {
                 return new ListType(
                     $schema,
                     $xsdElement,
-                    $baseType,
-                    $baseType->getItemType()
+                    $baseType->getItemType(),
+                    $baseType
                 );
             }
 
-            if ($xPath->query('xsd:enumeration', $restrictionElement)[0]) {
+            if ($baseType instanceof UnionType) {
+                return new UnionType(
+                    $schema,
+                    $xsdElement,
+                    $baseType->getMemberTypes(),
+                    $baseType
+                );
+            }
+
+            if (isset($restrictionElement->query('xsd:enumeration')[0])) {
                 return new EnumerationType($schema, $xsdElement, $baseType);
             }
 
             return new AtomicType($schema, $xsdElement, $baseType);
         }
 
-        $listElement = $xPath->query('xsd:list', $xsdElement)[0];
+        $listElement = $xsdElement->query('xsd:list')[0];
 
         if (isset($listElement)) {
-            if (isset($listElement->itemType)) {
-                $itemType =
-                    $schema->getGlobalType($listElement->itemType);
-            } else {
-                $itemType = self::newFromSchemaAndXsdElement(
+            $itemType = isset($listElement->itemType)
+                ? $schema->getGlobalType($listElement->itemType)
+                : self::newFromSchemaAndXsdElement(
                     $schema,
-                    $xPath->query('xsd:simpleType', $listElement)[0]
+                    $listElement->query('xsd:simpleType')[0]
                 );
-            }
 
-            return new ListType($schema, $xsdElement, null, $itemType);
+            return new ListType($schema, $xsdElement, $itemType);
         }
 
-        $unionElement = $xPath->query('xsd:union', $xsdElement)[0];
+        $unionElement = $xsdElement->query('xsd:union')[0];
 
         if (isset($unionElement)) {
             $memberTypes = [];
 
             if (isset($unionElement->memberTypes)) {
                 foreach ($unionElement->memberTypes as $memberTypeXName) {
-                    $memberTypes[] =
-                        $schema->getGlobalType($memberTypeXName);
+                    $memberTypes[] = $schema->getGlobalType($memberTypeXName);
                 }
             }
 
             foreach (
-                $xPath->query(
-                    'xsd:simpleType',
-                    $unionElement
-                ) as $memberTypeElement
+                $unionElement->query('xsd:simpleType') as $memberTypeElement
             ) {
                 $memberTypes[] = self::newFromSchemaAndXsdElement(
                     $schema,
@@ -102,32 +102,28 @@ abstract class AbstractSimpleType extends AbstractXsdComponent implements
                 : new UnionType($schema, $xsdElement, $memberTypes);
         }
 
-        return new AtomicType($schema, $xsdElement, null);
+        return new AtomicType($schema, $xsdElement);
     }
 
     protected function __construct(
         Schema $schema,
-        XsdElement $xsdElement,
-        ?TypeInterface $baseType
+        Element $xsdElement,
+        ?SimpleTypeInterface $baseType = null
     ) {
         parent::__construct($schema, $xsdElement);
 
         $this->baseType_ = $baseType;
     }
 
-    public function getBaseType(): ?TypeInterface
+    public function getBaseType(): ?SimpleTypeInterface
     {
         return $this->baseType_;
     }
 
-    public function isEqualToOrDerivedFrom(string $xName): bool
+    public function isEqualToOrDerivedFrom(string $typeXName): bool
     {
-        for (
-            $currentType = $this;
-            isset($currentType);
-            $currentType = $currentType->getBaseType()
-        ) {
-            if ($currentType->getXName() == $xName) {
+        for ($type = $this; isset($type); $type = $type->getBaseType()) {
+            if ($type->getXName() == $typeXName) {
                 return true;
             }
         }
@@ -136,7 +132,10 @@ abstract class AbstractSimpleType extends AbstractXsdComponent implements
     }
 
     /**
-     * @warning Only finds facets within the top-level `xsd:restriction´
+     * @copydoc
+     * alcamo::dom::schema::component::SimpleTypeInterface::getFacetValue()
+     *
+     * @warning Only finds facets within the top-level `<xsd:restriction>´
      * element. A facet within
      * `xsd:restriction/xsd:simpleType/xsd:restriction´ is not found; such
      * constructs are valid (up to any level of depth), but rarely needed.
@@ -145,14 +144,14 @@ abstract class AbstractSimpleType extends AbstractXsdComponent implements
     {
         for (
             $type = $this;
-            $type instanceof AbstractXsdComponent;
+            $type instanceof self;
             $type = $type->getBaseType()
         ) {
             $facetValue = $type->getXsdElement()
                 ->query("xsd:restriction/xsd:$facetName/@value")[0];
 
             if (isset($facetValue)) {
-                return (string)$facetValue;
+                return $facetValue->value;
             }
         }
 

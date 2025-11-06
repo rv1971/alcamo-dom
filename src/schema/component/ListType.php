@@ -3,12 +3,12 @@
 namespace alcamo\dom\schema\component;
 
 use alcamo\dom\schema\Schema;
-use alcamo\dom\decorated\Element as XsdElement;
+use alcamo\dom\decorated\Element as Element;
 
 /**
  * @brief List type definition
  *
- * @date Last reviewed 2021-07-09
+ * @date Last reviewed 2025-11-06
  */
 class ListType extends AbstractSimpleType
 {
@@ -16,9 +16,9 @@ class ListType extends AbstractSimpleType
 
     public function __construct(
         Schema $schema,
-        XsdElement $xsdElement,
-        ?SimpleTypeInterface $baseType,
-        SimpleTypeInterface $itemType
+        Element $xsdElement,
+        SimpleTypeInterface $itemType,
+        ?SimpleTypeInterface $baseType = null
     ) {
         parent::__construct($schema, $xsdElement, $baseType);
 
@@ -30,11 +30,23 @@ class ListType extends AbstractSimpleType
         return $this->itemType_;
     }
 
+    /**
+     * @copydoc
+     * alcamo::dom::schema::component::SimpleTypeInterface::getHfpPropValue()
+     *
+     * @return Always `null` since list types have no properties.
+     */
     public function getHfpPropValue(string $propName): ?string
     {
         return null;
     }
 
+    /**
+     * @copydoc
+     * alcamo::dom::schema::component::SimpleTypeInterface::isNumeric()
+     *
+     * @return Always `false` since list types are not numeric.
+     */
     public function isNumeric(): bool
     {
         return false;

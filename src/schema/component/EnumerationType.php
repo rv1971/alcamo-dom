@@ -4,13 +4,18 @@ namespace alcamo\dom\schema\component;
 
 /**
  * @brief Enumeration type definition
+ *
+ * @date Last reviewed 2025-11-06
  */
 class EnumerationType extends AtomicType implements EnumerationTypeInterface
 {
-    private $enumerators_; ///< Map of enumerator strings to DOM node objects
+    private const ENUMERATION_XPATH = 'xsd:restriction/xsd:enumeration';
+
+    private $enumerators_; ///< Map of enumerator strings to DOMElement objects
 
     /**
-     * @copybrief EnumerationTypeInterface::getEnumerators()
+     * @copybrief
+     * alcamo::dom::schema::component::EnumerationTypeInterface::getEnumerators()
      *
      * When calling this method a second time, the result is taken from the
      * cache.
@@ -18,9 +23,11 @@ class EnumerationType extends AtomicType implements EnumerationTypeInterface
     public function getEnumerators(): array
     {
         if (!isset($this->enumerators_)) {
+            $this->enumerators_ = [];
+
             foreach (
                 $this->xsdElement_
-                    ->query('xsd:restriction/xsd:enumeration') as $enumerator
+                    ->query(self::ENUMERATION_XPATH) as $enumerator
             ) {
                 $this->enumerators_[(string)$enumerator] = $enumerator;
             }
