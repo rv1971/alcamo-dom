@@ -2,16 +2,16 @@
 
 namespace alcamo\dom\schema;
 
-use alcamo\dom\Document;
-use Ds\Set;
+use alcamo\dom\{Document, NamespaceConstantsInterface};
 
 /**
  * @brief Base for classes that validate data of some some XSD simple type
  * against a schema.
  *
- * @date Last reviewed 2021-07-11
+ * @date Last reviewed 2025-11-07
  */
-abstract class AbstractSimpleTypeValidator
+abstract class AbstractSimpleTypeValidator implements
+    NamespaceConstantsInterface
 {
     private const XSD_TEXT_1 = "<?xml version='1.0' encoding='UTF-8'?>"
         . "<schema xmlns='http://www.w3.org/2001/XMLSchema' elementFormDefault='qualified'>";
@@ -27,11 +27,6 @@ abstract class AbstractSimpleTypeValidator
 
     /// Prefix to strip from error messages
     private const ERR_PREFIX = "Element 'y': ";
-
-    private $nsMap_ = []; ///< Map of namespace names to prefixes
-
-    /// String of namespace declarations
-    private $nsDeclText_ = 'xmlns:xsi="' . Document::XSI_NS . '"';
 
     /**
      * @brief Create XSD text suitable to validate a sequence of simple data
@@ -55,36 +50,42 @@ abstract class AbstractSimpleTypeValidator
      * @brief Create an instance document suitable for validation against the
      * XSD created by createXsdText()
      *
-     * @param $valueTypeXNamePairs Nonempty list of pairs consisting
+     * @param $valueTypeXNamePairs Nonempty iterable of pairs consisting
      * of a value and the XName of a type.
      */
     public function createInstanceDoc(iterable $valueTypeXNamePairs): Document
     {
-        $dataText = '';
+        $instanceText = '';
 
+        $nsNameToPrefix = [];
+
+        $nsDeclText = 'xmlns:xsi="' . self::XSI_NS . '"';
+
+        $i = 0;
         foreach ($valueTypeXNamePairs as $valueTypeXNamePair) {
             [ $value, $typeXName ] = $valueTypeXNamePair;
 
-            $nsName = $typeXName->getNsName();
+            [ $nsName, $localName ] = $typeXName->getPair();
 
-            $nsPrefix = $this->nsMap_[$nsName] ?? null;
+            $nsPrefix = $nsNameToPrefix[$nsName] ?? null;
 
             if (!isset($nsPrefix)) {
-                $nsPrefix = 'n' . count($this->nsMap_);
+                $nsPrefix = 'n' . ++$i;
 
-                $this->nsMap_[$nsName] = $nsPrefix;
+                $nsNameToPrefix[$nsName] = $nsPrefix;
 
-                $this->nsDeclText_ .= " xmlns:$nsPrefix='$nsName'";
+                $nsDeclText .= " xmlns:$nsPrefix='$nsName'";
             }
 
-            $dataText .=
-                "<y xsi:type='$nsPrefix:{$typeXName->getLocalName()}'>$value</y>\n";
+            $instanceText .= "<y xsi:type='$nsPrefix:$localName'>$value</y>\n";
         }
 
+        /* Line breaks must not be changed here because the line number where
+         * an errors occurs is used to identify the data pair. */
         return
             Document::newFromXmlText(
-                "<?xml version='1.0' encoding='UTF-8'?><x $this->nsDeclText_>\n"
-                . "$dataText\n</x>"
+                "<?xml version='1.0' encoding='UTF-8'?><x $nsDeclText>\n"
+                . "$instanceText\n</x>"
             );
     }
 
@@ -115,6 +116,9 @@ abstract class AbstractSimpleTypeValidator
         $errorMsgs = [];
 
         foreach (libxml_get_errors() as $libXmlError) {
+            /* Warnings are ignored, only errors are reported. In particular,
+             * this ignores warning about double import of the same document,
+             * which are unavoidable in a complex schema made of many XSDs. */
             if ($libXmlError->level == LIBXML_ERR_WARNING) {
                 continue;
             }

@@ -12,21 +12,23 @@ use alcamo\exception\Locked;
  * mapping. The result of the lookup is cached in the map to speed up further
  * lookups of the same type.
  *
- * @date Last reviewed 2021-07-10
+ * @date Last reviewed 2025-11-07
  */
 class TypeMap
 {
-    private $map_;          ///< Array whose keys are type hashes
+    private $map_;          ///< Array with SPL hashes of type objects as keys
     private $defaultValue_; ///< Default value if no element is found
     private $isLocked_;     ///< Whether entries have been added to $map_
 
     /**
      * @param $map Map whose keys are XName strings
+     *
+     * @return Array with SPL hashes of type objects as keys
      */
     public static function createHashMapFromSchemaAndXNameMap(
         Schema $schema,
         iterable $map
-    ) {
+    ): array {
         $hashMap = [];
 
         foreach ($map as $xNameString => $value) {
@@ -50,20 +52,23 @@ class TypeMap
         Schema $schema,
         iterable $map,
         $defaultValue = null
-    ) {
-        return new self(
-            self::createHashMapFromSchemaAndXNameMap($schema, $map),
+    ): self {
+        return new static(
+            static::createHashMapFromSchemaAndXNameMap($schema, $map),
             $defaultValue
         );
     }
 
+    /**
+     * @param $map Array with SPL hashes of type objects as keys
+     */
     public function __construct(array $map, $defaultValue = null)
     {
         $this->map_ = $map;
         $this->defaultValue_ = $defaultValue;
     }
 
-    /// Array whose keys are type hashes
+    /// Array with SPL hashes of type objects as keys
     public function getMap(): array
     {
         return $this->map_;
@@ -74,7 +79,11 @@ class TypeMap
         return $this->defaultValue_;
     }
 
-    /// Add map items, not replacing existing ones
+    /**
+     * @brief Add map items, not replacing existing ones
+     *
+     * @param $map Array with SPL hashes of type objects as keys
+     */
     public function addItems(array $map)
     {
         if ($this->isLocked_) {
@@ -86,7 +95,11 @@ class TypeMap
         $this->map_ = $this->map_ + $map;
     }
 
-    /// Add map items, replacing existing ones
+    /**
+     * @brief Add map items, replacing existing ones
+     *
+     * @param $map Array with SPL hashes of type objects as keys
+     */
     public function replaceItems(array $map)
     {
         if ($this->isLocked_) {

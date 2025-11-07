@@ -14,13 +14,16 @@ class TypeUriBasedSimpleTypeValidatorTest extends TestCase
     {
         $baseUrl = new Uri('http://foo.example.org');
 
-        $validator1 = new TypeUriBasedSimpleTypeValidator($baseUrl);
+        $validator1 = TypeUriBasedSimpleTypeValidator::newFromBaseUrl($baseUrl);
 
-        $this->assertSame($baseUrl, $validator1->getbaseUrl());
+        $this->assertSame(
+            $baseUrl,
+            $validator1->getDocumentFactory()->getBaseUri()
+        );
 
         $validator2 = new TypeUriBasedSimpleTypeValidator();
 
-        $this->assertEquals(new Uri(), $validator2->getbaseUrl());
+        $this->assertNull($validator2->getDocumentFactory()->getBaseUri());
     }
 
     /**
@@ -39,7 +42,7 @@ class TypeUriBasedSimpleTypeValidatorTest extends TestCase
 
     public function validateProvider()
     {
-        $validator = new TypeUriBasedSimpleTypeValidator(
+        $validator = TypeUriBasedSimpleTypeValidator::newFromBaseUrl(
             (new FileUriFactory())->create(
                 dirname(__DIR__) . DIRECTORY_SEPARATOR
             )

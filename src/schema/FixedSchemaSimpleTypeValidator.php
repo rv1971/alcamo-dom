@@ -3,10 +3,10 @@
 namespace alcamo\dom\schema;
 
 /**
- * @brief Class that validates data of some XSD simple type against a fixed
+ * @brief Class that validates data of XSD simple types against a fixed
  * schema.
  *
- * @date Last reviewed 2021-07-11
+ * @date Last reviewed 2025-11-07
  */
 class FixedSchemaSimpleTypeValidator extends AbstractSimpleTypeValidator
 {
@@ -20,7 +20,7 @@ class FixedSchemaSimpleTypeValidator extends AbstractSimpleTypeValidator
     /**
      * @param $xsds Collection of XSDs as DOMDocument objects
      *
-     * @warning The XSDs must have distinct target namespaces.
+     * @attention The XSDs must have distinct target namespaces.
      */
     public static function newFromXsds(iterable $xsds): self
     {
@@ -32,7 +32,7 @@ class FixedSchemaSimpleTypeValidator extends AbstractSimpleTypeValidator
             ] = $xsd->documentURI;
         }
 
-        return new self($nsNameToSchemaLocation);
+        return new static($nsNameToSchemaLocation);
     }
 
     /**
@@ -57,7 +57,7 @@ class FixedSchemaSimpleTypeValidator extends AbstractSimpleTypeValidator
      * (potentially multi-line) error messages. Empty array if no errors
      * occurred.
      */
-    public function validate($valueTypeXNamePairs): array
+    public function validate(iterable $valueTypeXNamePairs): array
     {
         return $this->validateAux($valueTypeXNamePairs, $this->xsdText_);
     }

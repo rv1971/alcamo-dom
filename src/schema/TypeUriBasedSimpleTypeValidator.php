@@ -2,36 +2,47 @@
 
 namespace alcamo\dom\schema;
 
-use alcamo\dom\decorated\{Document, DocumentFactory};
+use alcamo\dom\{DocumentFactoryInterface, HavingDocumentFactoryInterface};
 use alcamo\exception\Unsupported;
 use alcamo\uri\Uri;
 use GuzzleHttp\Psr7\UriResolver;
 use Psr\Http\Message\UriInterface;
 
 /**
- * @brief Class that validates data of some XSD simple type given by a URI
+ * @brief Class that validates data of XSD simple types given by URIs
  *
  * Supported are URIs that follow the id solution in [XML Schema Datatypes in
  * RDF and OWL](https://www.w3.org/TR/swbp-xsch-datatypes)
  *
  * @date Last reviewed 2021-07-11
  */
-class TypeUriBasedSimpleTypeValidator extends AbstractSimpleTypeValidator
+class TypeUriBasedSimpleTypeValidator extends AbstractSimpleTypeValidator implements
+    HavingDocumentFactoryInterface
 {
-    private $baseUrl_; ///< Uri
+    private $documentFactory_; ///< DocumentFactoryInterface
 
-    /**
-     * @param $baseUrl Uri Base URL to resolve the type URIs to absolute
-     * ones. This allows to use the cache for XSDs.
-     */
-    public function __construct(UriInterface $baseUrl = null)
+    public static function newFromBaseUrl($baseUrl): self
     {
-        $this->baseUrl_ = $baseUrl ?? new Uri();
+        $class = static::DEFAULT_DOCUMENT_FACTORY_CLASS;
+
+        return new static(new $class($baseUrl));
     }
 
-    public function getBaseUrl(): UriInterface
+    public function __construct(
+        ?DocumentFactoryInterface $documentFactory = null
+    ) {
+        if (isset($documentFactory)) {
+            $this->documentFactory_ = $documentFactory;
+        } else {
+            $class = static::DEFAULT_DOCUMENT_FACTORY_CLASS;
+
+            $this->documentFactory_ = new $class();
+        }
+    }
+
+    public function getDocumentFactory(): DocumentFactoryInterface
     {
-        return $this->baseUrl_;
+        return $this->documentFactory_;
     }
 
     /*
@@ -58,14 +69,12 @@ class TypeUriBasedSimpleTypeValidator extends AbstractSimpleTypeValidator
                 );
             }
 
-            $url = new Uri($schemaLocation);
+            $url = UriResolver::resolve(
+                $this->documentFactory_->getBaseUri(),
+                new Uri($schemaLocation)
+            );
 
-            if (!Uri::isAbsolute($url)) {
-                $url = UriResolver::resolve($this->baseUrl_, $url);
-            }
-
-            $xsd = (new DocumentFactory())
-                ->createFromUrl($url, Document::class, null, true);
+            $xsd = $this->documentFactory_->createFromUrl($url, null, true);
 
             $nsName = $xsd->documentElement->targetNamespace;
 
