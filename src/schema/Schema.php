@@ -42,7 +42,7 @@ use Psr\Http\Message\UriInterface;
  *
  * @warning `\<redefine>` is not supported.
  *
- * @date Last reviewed 2021-07-10
+ * @date Last reviewed 2025-11-07
  */
 class Schema implements
     HavingDocumentFactoryInterface,
@@ -370,22 +370,19 @@ class Schema implements
      * that. So a document may be valid but the schema details may not be
      * available for this class.
      *
-     * This method is the primary reason why the entire class was implemented.
+     * This method is the primary reason why all the schema-related classes
+     * were implemented.
      */
     public function lookupElementType(ExtElement $element): TypeInterface
     {
         // look up global type if explicitely given in `xsi:type`
-        if ($element->hasAttributeNS(self::XSI_NS, 'type')) {
-            return $this->getGlobalType(
-                ConverterPool::toXName(
-                    $element->getAttributeNS(self::XSI_NS, 'type'),
-                    $element
-                )
-            ) ?? $this->anyType_;
+        if (isset($element->{'xsi:type'})) {
+            return $this->getGlobalType($element->{'xsi:type'})
+                ?? $this->anyType_;
         }
 
         // look up global element, if there is one
-        $elementXName = $element->getXName();
+        $elementXName = (string)$element->getXName();
 
         $globalElement = $this->getGlobalElement($elementXName);
 
@@ -400,7 +397,7 @@ class Schema implements
 
             if (isset($parentType)) {
                 $elementDecl =
-                    $parentType->getElements()[(string)$elementXName] ?? null;
+                    $parentType->getElements()[$elementXName] ?? null;
 
                 if (isset($elementDecl)) {
                     return $elementDecl->getType();
