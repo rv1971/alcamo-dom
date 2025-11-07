@@ -25,7 +25,7 @@ use alcamo\dom\schema\component\{
     PredefinedAttr,
     TypeInterface
 };
-use alcamo\exception\{AbsoluteUriNeeded, ExceptionInterface};
+use alcamo\exception\ExceptionInterface;
 use alcamo\uri\{FileUriFactory, Uri, UriNormalizer};
 use alcamo\xml\XName;
 use GuzzleHttp\Psr7\UriResolver;
@@ -51,8 +51,6 @@ class Schema implements
     /// Predefined XSI attributes
     public const XSI_ATTRS = [ 'nil' => 'boolean', 'type' => 'QName' ];
 
-    private static $schemaCache_ = [];
-
     /**
      * @brief Construct new schema or get it from cache
      *
@@ -70,10 +68,7 @@ class Schema implements
 
         if ($schemaLocation) {
             foreach (
-                ConverterPool::pairsToMap(
-                    $schemaLocation,
-                    $schemaLocation
-                ) as $nsName => $url
+                ConverterPool::pairsToMap($schemaLocation) as $nsName => $url
             ) {
                 $urls[] = $doc->documentElement->resolveUri(new Uri($url));
             }
@@ -90,20 +85,11 @@ class Schema implements
         iterable $urls,
         ?DocumentFactoryInterface $documentFactory = null
     ): self {
-        $normalizedUrls = [];
+        $cacheKey = SchemaCache::getInstance()->createKey($urls);
 
-        foreach ($urls as $url) {
-            $normalizedUrls[] =
-                (string)UriNormalizer::normalize(
-                    $url instanceof UriInterface ? $url : new Uri($url)
-                );
-        }
+        $schema = SchemaCache::getInstance()[$cacheKey] ?? null;
 
-        sort($normalizedUrls);
-
-        $cacheKey = implode(' ', $normalizedUrls);
-
-        if (!isset(self::$schemaCache_[$cacheKey])) {
+        if (!isset($schema)) {
             $xsds = [];
 
             if (!isset($documentFactory)) {
@@ -112,17 +98,16 @@ class Schema implements
                 $documentFactory = new $class();
             }
 
-            foreach ($normalizedUrls as $url) {
+            foreach ($urls as $url) {
                 $xsds[] = $documentFactory->createFromUrl($url);
             }
 
-            $schema = new static($xsds, $documentFactory);
-            $schema->cacheKey_ = $cacheKey;
+            $schema = new static($xsds, $cacheKey, $documentFactory);
 
-            self::$schemaCache_[$cacheKey] = $schema;
+            SchemaCache::getInstance()->add($schema);
         }
 
-        return self::$schemaCache_[$cacheKey];
+        return $schema;
     }
 
     /// Construct new schema or get it from cache
@@ -130,49 +115,17 @@ class Schema implements
         array $xsds,
         ?DocumentFactoryInterface $documentFactory = null
     ): self {
-        $urls = [];
+        $cacheKey = SchemaCache::getInstance()->createKey($xsds);
 
-        foreach ($xsds as $xsd) {
-            $url = UriNormalizer::normalize(new Uri($xsd->documentURI));
+        $schema = SchemaCache::getInstance()[$cacheKey] ?? null;
 
-            if (!Uri::isAbsolute($url)) {
-                /** @throw AbsoluteUriNeeded when attempting to use a
-                 * non-absolute URL as a cache key. */
-                throw (new AbsoluteUriNeeded())
-                    ->setMessageContext(['uri' => $xsd->documentURI ]);
-            }
+        if (!isset($schema)) {
+            $schema = new static($xsds, $cacheKey, $documentFactory);
 
-            // normalize URL for use by caching
-            $xsd->documentURI = (string)$url;
-
-            $urls[] = $xsd->documentURI;
+            SchemaCache::getInstance()->add($schema);
         }
 
-        sort($urls);
-
-        $cacheKey = implode(' ', $urls);
-
-        if (!isset(self::$schemaCache_[$cacheKey])) {
-            $schema = new static($xsds, $documentFactory);
-            $schema->cacheKey_ = $cacheKey;
-
-            self::$schemaCache_[$cacheKey] = $schema;
-        }
-
-        return self::$schemaCache_[$cacheKey];
-    }
-
-    // Create type from a schema consisting of the element's owner document
-    public static function createTypeFromXsdElement(
-        XsdElement $xsdElement,
-        ?DocumentFactoryInterface $documentFactory = null
-    ): TypeInterface {
-        return self::newFromXsds(
-            [ $xsdElement->ownerDocument ],
-            $documentFactory ?? $xsdElement->ownerDocument->getDocumentFactory()
-        )->getGlobalType(
-            $xsdElement->getComponentXName()
-        );
+        return $schema;
     }
 
     // Create type from an URL reference indicating an XSD element by ID
@@ -198,6 +151,19 @@ class Schema implements
         );
     }
 
+    // Create type from a schema consisting of the element's owner document
+    public static function createTypeFromXsdElement(
+        XsdElement $xsdElement,
+        ?DocumentFactoryInterface $documentFactory = null
+    ): TypeInterface {
+        return self::newFromXsds(
+            [ $xsdElement->ownerDocument ],
+            $documentFactory ?? $xsdElement->ownerDocument->getDocumentFactory()
+        )->getGlobalType(
+            $xsdElement->getComponentXName()
+        );
+    }
+
     private $documentFactory_;       ///< DocumentFactoryInterface
     private $xsds_ = [];             ///< Map of URI string to Xsd
     private $cacheKey_;              ///< Key in the schema cache
@@ -219,8 +185,11 @@ class Schema implements
     /// Construct new schema from XSDs
     protected function __construct(
         array $xsds,
+        string $cacheKey,
         ?DocumentFactoryInterface $documentFactory = null
     ) {
+        $this->cacheKey_ = $cacheKey;
+
         $this->documentFactory_ =
             $documentFactory ?? reset($xsds)->getDocumentFactory();
 

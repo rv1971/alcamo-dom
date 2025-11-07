@@ -162,7 +162,6 @@ class DocumentFactory implements
                         /** @throw alcamo::exception::InvalidType when cached
                          *  document is not an instance of the
                          *  requested class. */
-
                         throw (new InvalidType())->setMessageContext(
                             [
                                 'value' => $doc,
