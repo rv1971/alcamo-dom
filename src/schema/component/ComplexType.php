@@ -10,7 +10,7 @@ use alcamo\dom\schema\Schema;
  *
  * @date Last reviewed 2025-11-06
  */
-class ComplexType extends AbstractXsdComponent implements TypeInterface
+class ComplexType extends AbstractType implements TypeInterface
 {
     private const DERIVATION_XPATH =
         'xsd:simpleContent/xsd:restriction'
@@ -22,18 +22,15 @@ class ComplexType extends AbstractXsdComponent implements TypeInterface
 
     private $derivation_; ///< ?Element
 
-    private $baseType_;   ///< ?TypeInterface
     private $attrs_;      ///< Map of XName string to SimpleTypeInterface
     private $elements_;   ///< Map of element XName string to Element
 
     public function __construct(
         Schema $schema,
         XsdElement $xsdElement,
-        $baseType = false
+        $baseType = null
     ) {
-        parent::__construct($schema, $xsdElement);
-
-        $this->baseType_ = $baseType;
+        parent::__construct($schema, $xsdElement, $baseType ?? false);
 
         $this->derivation_ =
             $this->xsdElement_->query(self::DERIVATION_XPATH)[0];

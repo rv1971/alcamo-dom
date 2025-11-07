@@ -10,11 +10,9 @@ use alcamo\dom\schema\Schema;
  *
  * @date Last reviewed 2025-11-06
  */
-abstract class AbstractSimpleType extends AbstractXsdComponent implements
+abstract class AbstractSimpleType extends AbstractType implements
     SimpleTypeInterface
 {
-    private $baseType_; ///< ?SimpleTypeInterface
-
     /**
      * @brief Factory method creating the most specific type that it can
      * recognize
@@ -108,21 +106,6 @@ abstract class AbstractSimpleType extends AbstractXsdComponent implements
         }
 
         return new AtomicType($schema, $xsdElement);
-    }
-
-    protected function __construct(
-        Schema $schema,
-        XsdElement $xsdElement,
-        ?SimpleTypeInterface $baseType = null
-    ) {
-        parent::__construct($schema, $xsdElement);
-
-        $this->baseType_ = $baseType;
-    }
-
-    public function getBaseType(): ?SimpleTypeInterface
-    {
-        return $this->baseType_;
     }
 
     public function isEqualToOrDerivedFrom(string $typeXName): bool

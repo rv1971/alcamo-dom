@@ -11,7 +11,7 @@ use alcamo\dom\decorated\{
 use alcamo\dom\extended\{Element as ExtElement};
 use alcamo\dom\schema\component\{
     AbstractComponent,
-    AbstractSimpleType,
+    AbstractType,
     Attr,
     AttrGroup,
     AttrInterface,
@@ -32,7 +32,7 @@ use Psr\Http\Message\UriInterface;
 /**
  * @namespace alcamo::dom::schema
  *
- * @brief Classes to model an XML %Schema
+ * @brief Classes to model an XML Schema
  */
 
 /**
@@ -190,7 +190,8 @@ class Schema
     /// Construct new schema from XSDs
     protected function __construct(array $xsds)
     {
-        /** @throw AbsoluteUriNeeded when an XSD has a non-absolute URI. */
+        /** @throw alcamo::exception::AbsoluteUriNeeded when an XSD has a
+         *  non-absolute URI. */
         $this->loadXsds($xsds);
         $this->initGlobals();
     }
@@ -296,12 +297,8 @@ class Schema
         }
 
         if ($globalType instanceof XsdElement) {
-            $globalType = $globalType->localName == 'simpleType'
-                ? AbstractSimpleType::newFromSchemaAndXsdElement(
-                    $this,
-                    $globalType
-                )
-                : new ComplexType($this, $globalType);
+            $globalType =
+                AbstractType::newFromSchemaAndXsdElement($this, $globalType);
 
             $this->globalTypes_[$xNameString] = $globalType;
         }
@@ -312,10 +309,10 @@ class Schema
     /**
      * @brief Get map of all global types.
      *
-     * @note Use this method only if you really need all types (e.g. to create
-     * a catalog of types). If you need only some types, use getGlobalType()
-     * which is nore efficient because it will only create the needed type
-     * objects.
+     * @attention Use this method only if you really need all types (e.g. to
+     * create a catalog of types). If you need only some types, use
+     * getGlobalType() which is nore efficient because it will only create the
+     * needed type objects.
      */
     public function getGlobalTypes(): array
     {
@@ -323,12 +320,10 @@ class Schema
             foreach ($this->globalTypes_ as $xNameString => $globalType) {
                 if ($globalType instanceof XsdElement) {
                     $this->globalTypes_[$xNameString] =
-                        $globalType->localName == 'simpleType'
-                        ? AbstractSimpleType::newFromSchemaAndXsdElement(
+                        AbstractType::newFromSchemaAndXsdElement(
                             $this,
                             $globalType
-                        )
-                        : new ComplexType($this, $globalType);
+                        );
                 }
             }
         }
