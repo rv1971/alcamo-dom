@@ -82,9 +82,6 @@ class Document extends \DOMDocument implements
     /// OR-Combination of the above constants
     public const LOAD_FLAGS = 0;
 
-     /// Default class for a new document factory
-    public const DEFAULT_DOCUMENT_FACTOTRY_CLASS = DocumentFactory::class;
-
     /**
      * @brief Create a document from a URL
      *
@@ -245,12 +242,6 @@ class Document extends \DOMDocument implements
             throw FileLoadFailed::newFromPrevious($e, [ 'filename' => $url ]);
         }
 
-        /** Ensure that the file:// protocol is preserved in the
-         *  `documentURI` property. */
-        if (substr($url, 0, 5) == 'file:' && $this->documentURI[0] == '/') {
-            $this->documentURI = "file://$this->documentURI";
-        }
-
         /** After loading, run the afterLoad() hook. */
         $this->afterLoad();
     }
@@ -404,7 +395,7 @@ class Document extends \DOMDocument implements
     /// Return a new instance of DocumentFactory
     protected function createDocumentFactory(): DocumentFactoryInterface
     {
-        $class = static::DEFAULT_DOCUMENT_FACTOTRY_CLASS;
+        $class = static::DEFAULT_DOCUMENT_FACTORY_CLASS;
 
         return new $class(
             $this->baseURI,
@@ -417,6 +408,12 @@ class Document extends \DOMDocument implements
     protected function afterLoad(): void
     {
         $this->clearCache();
+
+        /** Add file:// protocol to the `documentURI` property if no other
+         *  protocol given. */
+        if ($this->documentURI[0] == '/') {
+            $this->documentURI = "file://$this->documentURI";
+        }
 
         if ($this->loadFlags_ & self::VALIDATE_AFTER_LOAD) {
             (new DocumentValidator())->validate($this);

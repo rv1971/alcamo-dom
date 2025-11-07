@@ -6,10 +6,7 @@ use alcamo\uri\FileUriFactory;
 
 class DocumentsFactory implements HavingDocumentFactoryInterface
 {
-    /// Default class for a new document factory
-    public const DEFAULT_DOCUMENT_FACTOTRY_CLASS = DocumentFactory::class;
-
-   /// Default class for new documents objects
+    /// Default class for new documents objects
     public const DEFAULT_DOCUMENTS_CLASS = Documents::class;
 
     /// Default glob() flags for createFromGlob()
@@ -23,7 +20,7 @@ class DocumentsFactory implements HavingDocumentFactoryInterface
         if (isset($documentFactory)) {
             $this->documentFactory_ = $documentFactory;
         } else {
-            $class = static::DEFAULT_DOCUMENT_FACTOTRY_CLASS;
+            $class = static::DEFAULT_DOCUMENT_FACTORY_CLASS;
 
             $this->documentFactory_ = new $class();
         }

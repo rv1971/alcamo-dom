@@ -2,15 +2,16 @@
 
 namespace alcamo\dom\schema;
 
-use alcamo\dom\ConverterPool;
-use alcamo\dom\decorated\{
-    Document as Xsd,
-    DocumentFactory as XsdFactory,
-    Element as XsdElement
+use alcamo\dom\{
+    ConverterPool,
+    Document,
+    DocumentFactoryInterface,
+    HavingDocumentFactoryInterface,
+    NamespaceConstantsInterface
 };
-use alcamo\dom\extended\{Element as ExtElement};
+use alcamo\dom\decorated\Element as XsdElement;
+use alcamo\dom\extended\Element as ExtElement;
 use alcamo\dom\schema\component\{
-    AbstractComponent,
     AbstractType,
     Attr,
     AttrGroup,
@@ -24,7 +25,7 @@ use alcamo\dom\schema\component\{
     TypeInterface
 };
 use alcamo\exception\{AbsoluteUriNeeded, ExceptionInterface};
-use alcamo\uri\{Uri, UriNormalizer};
+use alcamo\uri\{FileUriFactory, Uri, UriNormalizer};
 use alcamo\xml\XName;
 use GuzzleHttp\Psr7\UriResolver;
 use Psr\Http\Message\UriInterface;
@@ -42,14 +43,14 @@ use Psr\Http\Message\UriInterface;
  *
  * @date Last reviewed 2021-07-10
  */
-class Schema
+class Schema implements
+    HavingDocumentFactoryInterface,
+    NamespaceConstantsInterface
 {
     /// Predefined XSI attributes
     public const XSI_ATTRS = [ 'nil' => 'boolean', 'type' => 'QName' ];
 
     private static $schemaCache_ = [];
-
-    protected $documentFactory_; ///< DocumentFactoryInterface
 
     /**
      * @brief Construct new schema or get it from cache
@@ -57,20 +58,14 @@ class Schema
      * This method works even if a document has no `xsi:schemaLocation`
      *  attribute, in which case the schema has only the predefined components
      *  in the `xml` and the `xsd` namespaces. */
-    public static function newFromDocument(\DOMDocument $doc): self
-    {
+    public static function newFromDocument(
+        Document $doc,
+        ?DocumentFactoryInterface $documentFactory = null
+    ): self {
         $urls = [];
 
-        $baseUri = new Uri($doc->baseURI);
-
-        /* Since PHP does not store the file:// prefix in baseURI, prepend it
-         * when encountering a document without scheme. */
-        if (!Uri::isAbsolute($baseUri)) {
-            $baseUri = $baseUri->withScheme('file');
-        }
-
         $schemaLocation = $doc->documentElement
-            ->getAttributeNodeNS(Xsd::XSI_NS, 'schemaLocation');
+            ->getAttributeNodeNS(self::XSI_NS, 'schemaLocation');
 
         if ($schemaLocation) {
             foreach (
@@ -79,16 +74,21 @@ class Schema
                     $schemaLocation
                 ) as $nsName => $url
             ) {
-                $urls[] = UriResolver::resolve($baseUri, new Uri($url));
+                $urls[] = $doc->documentElement->resolveUri(new Uri($url));
             }
         }
 
-        return static::newFromUrls($urls);
+        return static::newFromUrls(
+            $urls,
+            $documentFactory ?? $doc->getDocumentFactory()
+        );
     }
 
     /// Construct new schema or get it from cache
-    public static function newFromUrls(iterable $urls): self
-    {
+    public static function newFromUrls(
+        iterable $urls,
+        ?DocumentFactoryInterface $documentFactory = null
+    ): self {
         $normalizedUrls = [];
 
         foreach ($urls as $url) {
@@ -98,16 +98,24 @@ class Schema
                 );
         }
 
+        sort($normalizedUrls);
+
         $cacheKey = implode(' ', $normalizedUrls);
 
         if (!isset(self::$schemaCache_[$cacheKey])) {
             $xsds = [];
 
-            foreach ($normalizedUrls as $url) {
-                $xsds[] = static::createXsd($url);
+            if (!isset($documentFactory)) {
+                $class = static::DEFAULT_DOCUMENT_FACTORY_CLASS;
+
+                $documentFactory = new $class();
             }
 
-            $schema = new static($xsds);
+            foreach ($normalizedUrls as $url) {
+                $xsds[] = $documentFactory->createFromUrl($url);
+            }
+
+            $schema = new static($xsds, $documentFactory);
             $schema->cacheKey_ = $cacheKey;
 
             self::$schemaCache_[$cacheKey] = $schema;
@@ -117,8 +125,10 @@ class Schema
     }
 
     /// Construct new schema or get it from cache
-    public static function newFromXsds(array $xsds): self
-    {
+    public static function newFromXsds(
+        array $xsds,
+        ?DocumentFactoryInterface $documentFactory = null
+    ): self {
         $urls = [];
 
         foreach ($xsds as $xsd) {
@@ -137,10 +147,12 @@ class Schema
             $urls[] = $xsd->documentURI;
         }
 
+        sort($urls);
+
         $cacheKey = implode(' ', $urls);
 
         if (!isset(self::$schemaCache_[$cacheKey])) {
-            $schema = new static($xsds);
+            $schema = new static($xsds, $documentFactory);
             $schema->cacheKey_ = $cacheKey;
 
             self::$schemaCache_[$cacheKey] = $schema;
@@ -151,25 +163,41 @@ class Schema
 
     // Create type from a schema consisting of the element's owner document
     public static function createTypeFromXsdElement(
-        XsdElement $xsdElement
+        XsdElement $xsdElement,
+        ?DocumentFactoryInterface $documentFactory = null
     ): TypeInterface {
-        return self::newFromXsds([ $xsdElement->ownerDocument ])->getGlobalType(
+        return self::newFromXsds(
+            [ $xsdElement->ownerDocument ],
+            $documentFactory ?? $xsdElement->ownerDocument->getDocumentFactory()
+        )->getGlobalType(
             $xsdElement->getComponentXName()
         );
     }
 
     // Create type from an URL reference indicating an XSD element by ID
-    public static function createTypeFromUrl($url): TypeInterface
-    {
+    public static function createTypeFromUrl(
+        $url,
+        ?DocumentFactoryInterface $documentFactory = null
+    ): TypeInterface {
         $url = UriNormalizer::normalize(
             $url instanceof UriInterface ? $url : new Uri($url)
         );
 
+        if (!isset($documentFactory)) {
+            $class = static::DEFAULT_DOCUMENT_FACTORY_CLASS;
+
+            $documentFactory = new $class();
+        }
+
         return static::createTypeFromXsdElement(
-            static::createXsd($url->withFragment(''))[$url->getFragment()]
+            $documentFactory->createFromUrl(
+                $url->withFragment('')
+            )[$url->getFragment()],
+            $documentFactory
         );
     }
 
+    private $documentFactory_;       ///< DocumentFactoryInterface
     private $xsds_ = [];             ///< Map of URI string to Xsd
     private $cacheKey_;              ///< Key in the schema cache
 
@@ -188,12 +216,27 @@ class Schema
     private $anySimpleType;           ///< PredefinedAnySimpleType
 
     /// Construct new schema from XSDs
-    protected function __construct(array $xsds)
-    {
+    protected function __construct(
+        array $xsds,
+        ?DocumentFactoryInterface $documentFactory = null
+    ) {
+        $this->documentFactory_ =
+            $documentFactory ?? reset($xsds)->getDocumentFactory();
+
         /** @throw alcamo::exception::AbsoluteUriNeeded when an XSD has a
          *  non-absolute URI. */
         $this->loadXsds($xsds);
         $this->initGlobals();
+    }
+
+    /// Return a new instance of DocumentFactory
+    public function getDocumentFactory(): DocumentFactoryInterface
+    {
+        if (!isset($this->documentFactory_)) {
+            $this->documentFactory_ = $this->createDocumentFactory();
+        }
+
+        return $this->documentFactory_;
     }
 
     /// Map of URI string to alcamo::dom::xsd::Document
@@ -362,10 +405,10 @@ class Schema
     public function lookupElementType(ExtElement $element): TypeInterface
     {
         // look up global type if explicitely given in `xsi:type`
-        if ($element->hasAttributeNS(Xsd::XSI_NS, 'type')) {
+        if ($element->hasAttributeNS(self::XSI_NS, 'type')) {
             return $this->getGlobalType(
                 ConverterPool::toXName(
-                    $element->getAttributeNS(Xsd::XSI_NS, 'type'),
+                    $element->getAttributeNS(self::XSI_NS, 'type'),
                     $element
                 )
             ) ?? $this->anyType_;
@@ -399,25 +442,20 @@ class Schema
         return $this->anyType_;
     }
 
-    protected static function createXsd(string $url): Xsd
-    {
-        return (new XsdFactory())->createFromUrl($url, null, null, true);
-    }
-
     /// Load XSDs into @ref $xsds_
     private function loadXsds(array $xsds): void
     {
-        // always load XMLSchema.xsd (or get it from cache)
-        $xmlSchemaXsd = static::createXsd(
-            'file://' . realpath(
+        $documentFactoryClass = static::DEFAULT_DOCUMENT_FACTORY_CLASS;
+
+        /* Always load XMLSchema.xsd (or get it from cache). */
+        $xsds[] = $this->documentFactory_->createFromUrl(
+            (new FileUriFactory())->create(
                 dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR
                 . 'xsd' . DIRECTORY_SEPARATOR . 'XMLSchema.xsd'
             )
         );
 
-        $xsds[] = $xmlSchemaXsd;
-
-        // load indicated XSDs and XSDs referenced therein
+        /* Load indicated XSDs and XSDs referenced therein. */
         while ($xsds) {
             $xsd = array_pop($xsds);
 
@@ -427,22 +465,25 @@ class Schema
             if (!isset($this->xsds_[$url])) {
                 $this->xsds_[$url] = $xsd;
 
-                /* Cache all XSDs. addToCache() will throw if documentURI is
-                 * not absolute. */
-                XsdFactory::addToCache($xsd);
+                /* Cache all provided XSDs. addToCache() will throw if
+                 * documentURI is not absolute. */
+                $documentFactoryClass::addToCache($xsd);
 
-                // Also load imported XSDs.
+                /* Also load imported and included XSDs. */
                 foreach ($xsd->query('xsd:import|xsd:include') as $import) {
-                    /** Ignore imports without schema location. */
+                    /* Ignore imports without schema location. */
                     if (!isset($import->schemaLocation)) {
                         continue;
                     }
 
-                    $url = $import->resolveUri($import->schemaLocation);
+                    $url = UriNormalizer::normalize(
+                        $import->resolveUri($import->schemaLocation)
+                    );
 
                     if (!isset($this->xsds_[(string)$url])) {
                         try {
-                            $xsds[] = $this->createXsd($url);
+                            $xsds[] =
+                                $this->documentFactory_->createFromUrl($url);
                         } catch (ExceptionInterface $e) {
                             $e->addMessageContext(
                                 [
@@ -462,7 +503,7 @@ class Schema
     /// Initialize all global definitions
     private function initGlobals(): void
     {
-        // setup maps of all global definitions
+        /* Setup maps of all global definitions. */
         $globalDefs = [
             'attribute'      => &$this->globalAttrs_,
             'attributeGroup' => &$this->globalAttrGroups_,
@@ -487,9 +528,9 @@ class Schema
         }
 
         $this->anyType_ =
-            $this->getGlobalType(new XName(Xsd::XSD_NS, 'anyType'));
+            $this->getGlobalType(new XName(self::XSD_NS, 'anyType'));
 
-        // Add `anySimpleType`.
+        /* Add `anySimpleType`. */
         $this->anySimpleType_ = new PredefinedAnySimpleType(
             $this,
             $this->anyType_
@@ -500,13 +541,15 @@ class Schema
 
         // Add predefined XSI attributes
         foreach (self::XSI_ATTRS as $attrLocalName => $typeLocalName) {
-            $attrXName = new XName(Xsd::XSI_NS, $attrLocalName);
+            $attrXName = new XName(self::XSI_NS, $attrLocalName);
 
             $this->globalAttrs_[(string)$attrXName] =
                 new PredefinedAttr(
                     $this,
                     $attrXName,
-                    $this->getGlobalType(new XName(Xsd::XSD_NS, $typeLocalName))
+                    $this->getGlobalType(
+                        new XName(self::XSD_NS, $typeLocalName)
+                    )
                 );
         }
     }

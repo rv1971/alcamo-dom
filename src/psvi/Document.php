@@ -34,7 +34,7 @@ class Document extends BaseDocument
         ]
         + parent::NODE_CLASSES;
 
-    public const DEFAULT_DOCUMENT_FACTOTRY_CLASS = DocumentFactory::class;
+    public const DEFAULT_DOCUMENT_FACTORY_CLASS = DocumentFactory::class;
 
     /// Map of XSD type XNames to conversion functions for attribute values
     public const ATTR_TYPE_MAP = [

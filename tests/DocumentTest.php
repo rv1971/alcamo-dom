@@ -37,7 +37,7 @@ class DocumentTest extends TestCase
             $doc->documentElement->firstChild->firstChild
         );
 
-        $this->assertSame($expectedUri, $doc->documentURI);
+        $this->assertSame((string)$expectedUri, $doc->documentURI);
 
         $this->assertSame(
             '42-43',
@@ -79,7 +79,7 @@ class DocumentTest extends TestCase
 
         $doc2->getXPath()->registerNamespace('foo', 'http://foo.example.org');
 
-        $doc3Url = __DIR__ . DIRECTORY_SEPARATOR . 'bar.xml';
+        $doc3Url = 'file://' . __DIR__ . DIRECTORY_SEPARATOR . 'bar.xml';
 
         $doc3 = Document::newFromXmlText(
             file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'foo.xml'),
@@ -94,15 +94,15 @@ class DocumentTest extends TestCase
         return [
             'from-url' => [
                 $doc1,
-                (new FileUriFactory())->fsPath2FileUrlPath(
+                (new FileUriFactory())->create(
                     __DIR__ . DIRECTORY_SEPARATOR . 'foo.xml'
                 )
             ],
             'from-xml' => [
                 $doc2,
-                (new FileUriFactory())->fsPath2FileUrlPath(
-                    __DIR__ . DIRECTORY_SEPARATOR
-                )
+                (new FileUriFactory())->create(
+                    __DIR__
+                ) . DIRECTORY_SEPARATOR
             ],
             'from-xml-with-url' => [ $doc3, $doc3Url ]
         ];
@@ -193,7 +193,7 @@ class DocumentTest extends TestCase
 
     public function testReparse()
     {
-        $url = __DIR__ . DIRECTORY_SEPARATOR . 'quux.xml';
+        $url = 'file://' . __DIR__ . DIRECTORY_SEPARATOR . 'quux.xml';
 
         $quux = ReparsedDocument::newFromUrl($url);
 

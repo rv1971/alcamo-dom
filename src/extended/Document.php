@@ -43,8 +43,8 @@ class Document extends BaseDocument
         ]
         + parent::NODE_CLASSES;
 
-    /** @copybrief alcamo::dom::Document::DEFAULT_DOCUMENT_FACTOTRY_CLASS */
-    public const DEFAULT_DOCUMENT_FACTOTRY_CLASS = DocumentFactory::class;
+    /** @copybrief alcamo::dom::Document::DEFAULT_DOCUMENT_FACTORY_CLASS */
+    public const DEFAULT_DOCUMENT_FACTORY_CLASS = DocumentFactory::class;
 
     public function clearCache(): void
     {

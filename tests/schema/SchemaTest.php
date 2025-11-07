@@ -176,9 +176,13 @@ class SchemaTest extends TestCase
         $path = dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR
             . 'xsd' . DIRECTORY_SEPARATOR . 'XMLSchema.xsd';
 
+        $xsd = Xsd::newFromUrl($path);
+
+        $xsd->documentURI = $path;
+
         $this->expectException(AbsoluteUriNeeded::class);
 
-        Schema::newFromXsds([ Xsd::newFromUrl($path) ]);
+        Schema::newFromXsds([ $xsd ]);
     }
 
     public function testCreateTypeFromUrl()
