@@ -4,7 +4,7 @@ namespace alcamo\dom;
 
 use alcamo\collection\PrefixFirstMatchCollection;
 use alcamo\dom\decorated\Document as Xsd;
-use alcamo\exception\{AbsoluteUriNeeded, InvalidType, ReadonlyViolation};
+use alcamo\exception\{AbsoluteUriNeeded, InvalidType};
 use alcamo\uri\{Uri, UriNormalizer};
 use GuzzleHttp\Psr7\UriResolver;
 use Psr\Http\Message\UriInterface;
@@ -26,7 +26,7 @@ class DocumentFactory implements
 
     /// Map of document element extended names to PHP classes for DOM documents
     public const X_NAME_TO_CLASS = [
-        Document::XSD_NS . ' schema' => Xsd::class
+        self::XSD_NS . ' schema' => Xsd::class
     ];
 
     /// Map of document element namespaces to PHP classes for DOM documents
@@ -36,57 +36,11 @@ class DocumentFactory implements
     /// Default class for new DOM documents
     public const DEFAULT_DOCUMENT_CLASS = Document::class;
 
-    /// Array mapping absolute URLs to Document objects
-    private static $cache_ = [];
-
     /**
      * @brief PrefixFirstMatchCollection created from @ref
      * DC_IDENTIFIER_PREFIX_TO_CLASS
      */
     private $dcIdentifierPrefixToClass_;
-
-    /**
-     * @brief Add a document to the cache
-     *
-     * @return Whether the document was actually added. `false` if it was
-     * already in the cache.
-     */
-    public static function addToCache(Document $doc): bool
-    {
-        $url = new Uri($doc->documentURI);
-
-        if (!Uri::isAbsolute($url)) {
-            /** @throw alcamo::exception::AbsoluteUriNeeded when attempting to
-             * cache a document with a non-absolute URL. */
-            throw (new AbsoluteUriNeeded())
-                ->setMessageContext([ 'uri' => $doc->documentURI ]);
-        }
-
-        // normalize URL for use in caching
-        $doc->documentURI = (string)UriNormalizer::normalize($url);
-
-        if (isset(self::$cache_[$doc->documentURI])) {
-            if (self::$cache_[$doc->documentURI] !== $doc) {
-                /** @throw alcamo::exception::ReadonlyViolation when
-                 * attempting to replace a cache entry with a different
-                 * document. */
-                throw (new ReadonlyViolation())->setMessageContext(
-                    [
-                        'object' => self::class . ' cache',
-                        'extraMessage' => 'attempt to replace cache entry '
-                        . "\"{$doc->documentURI}\" "
-                        . 'by a different document'
-                    ]
-                );
-            }
-
-            return false;
-        }
-
-        self::$cache_[$doc->documentURI] = $doc;
-
-        return true;
-    }
 
     private $baseUrl_;       ///< ?UriInterface
     private $loadFlags_;     ///< ?int
@@ -201,8 +155,8 @@ class DocumentFactory implements
                 // normalize URL when used for caching
                 $url = (string)UriNormalizer::normalize($url);
 
-                if (isset(self::$cache_[$url])) {
-                    $doc = self::$cache_[$url];
+                if (isset(DocumentCache::getInstance()[$url])) {
+                    $doc = DocumentCache::getInstance()[$url];
 
                     if (isset($class) && !($doc instanceof $class)) {
                         /** @throw alcamo::exception::InvalidType when cached
@@ -233,7 +187,7 @@ class DocumentFactory implements
         $doc = $class::newFromUrl($url, $this, $loadFlags, $libxmlOptions);
 
         if ($useCache) {
-            self::$cache_[$url] = $doc;
+            DocumentCache::getInstance()->add($doc);
         }
 
         return $doc;

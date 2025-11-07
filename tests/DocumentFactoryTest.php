@@ -159,7 +159,7 @@ class DocumentFactoryTest extends TestCase
 
         $this->assertSame('BAZ', $baz->documentElement->getAttribute('baz'));
 
-        MyDocumentFactory::addToCache($baz);
+        DocumentCache::getInstance()->add($baz);
 
         // $baz2 sees the change in the cached document
         $baz2 = $documentFactory->createFromUrl('baz.xml');
@@ -195,15 +195,15 @@ class DocumentFactoryTest extends TestCase
 
         $bar2 = $documentFactory->createFromUrl($barUrl, null, false);
 
-        MyDocumentFactory::addToCache($bar1);
+        DocumentCache::getInstance()->add($bar1);
 
         $this->expectException(ReadonlyViolation::class);
         $this->expectExceptionMessage(
             'Attempt to modify readonly object '
-            . '"alcamo\dom\DocumentFactory cache"; '
+            . '<alcamo\dom\DocumentCache> in method add(); '
             . 'attempt to replace cache entry "file:///'
         );
 
-        MyDocumentFactory::addToCache($bar2);
+        DocumentCache::getInstance()->add($bar2);
     }
 }

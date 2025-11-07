@@ -5,6 +5,7 @@ namespace alcamo\dom\schema;
 use alcamo\dom\{
     ConverterPool,
     Document,
+    DocumentCache,
     DocumentFactoryInterface,
     HavingDocumentFactoryInterface,
     NamespaceConstantsInterface
@@ -465,9 +466,9 @@ class Schema implements
             if (!isset($this->xsds_[$url])) {
                 $this->xsds_[$url] = $xsd;
 
-                /* Cache all provided XSDs. addToCache() will throw if
+                /* Cache all provided XSDs. add() will throw if
                  * documentURI is not absolute. */
-                $documentFactoryClass::addToCache($xsd);
+                DocumentCache::getInstance()->add($xsd);
 
                 /* Also load imported and included XSDs. */
                 foreach ($xsd->query('xsd:import|xsd:include') as $import) {

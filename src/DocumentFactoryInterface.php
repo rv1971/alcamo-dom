@@ -7,7 +7,7 @@ namespace alcamo\dom;
  *
  * @date Last reviewed 2025-09-15
  */
-interface DocumentFactoryInterface
+interface DocumentFactoryInterface extends NamespaceConstantsInterface
 {
     /**
      * @brief Create a document from a URL
