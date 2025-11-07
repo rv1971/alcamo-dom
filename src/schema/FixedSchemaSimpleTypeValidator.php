@@ -20,7 +20,12 @@ class FixedSchemaSimpleTypeValidator extends AbstractSimpleTypeValidator
     /**
      * @param $xsds Collection of XSDs as DOMDocument objects
      *
-     * @attention The XSDs must have distinct target namespaces.
+     * @attention The XSDs must have distinct target namespaces because it is
+     * not possible to import more than one XSD for the same namespace. This
+     * could be circumvented by creating an XSD for each namespace which
+     * includes all XSDs for that namespace, but then temporary XSD files on
+     * disk would be needed in addition to the XSD text in memory, making the
+     * whole process much more complex.
      */
     public static function newFromXsds(iterable $xsds): self
     {
