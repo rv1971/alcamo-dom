@@ -17,7 +17,8 @@ class UnionType extends AbstractSimpleType
 {
     protected $memberTypes_; ///< Array of SimpleTypeInterface
 
-    private $isNumeric_; ///< ?bool
+    private $isNumeric_;  ///< bool
+    private $isIntegral_; ///< bool
 
     /// @param $memberTypes @copybrief getMemberTypes()
     public function __construct(
@@ -115,5 +116,27 @@ class UnionType extends AbstractSimpleType
         }
 
         return $this->isNumeric_;
+    }
+
+    /**
+     * @copydoc
+     * alcamo::dom::schema::component::SimpleTypeInterface::isIntegral()
+     *
+     * @return `true` if all member types are integral.
+     */
+    public function isIntegral(): bool
+    {
+        if (!isset($this->isIntegral_)) {
+            $this->isIntegral_ = true;
+
+            foreach ($this->memberTypes_ as $memberType) {
+                if (!$memberType->isIntegral()) {
+                    $this->isIntegral_ = false;
+                    break;
+                }
+            }
+        }
+
+        return $this->isIntegral_;
     }
 }

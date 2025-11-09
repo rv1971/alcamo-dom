@@ -51,4 +51,15 @@ class ListType extends AbstractSimpleType
     {
         return false;
     }
+
+    /**
+     * @copydoc
+     * alcamo::dom::schema::component::SimpleTypeInterface::isIntegral()
+     *
+     * @return Always `false` since list types are not integral.
+     */
+    public function isIntegral(): bool
+    {
+        return false;
+    }
 }

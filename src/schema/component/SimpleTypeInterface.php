@@ -24,4 +24,7 @@ interface SimpleTypeInterface extends TypeInterface
 
     /// Whether the value space is numeric
     public function isNumeric(): bool;
+
+    /// Whether the value space is made of integers
+    public function isIntegral(): bool;
 }

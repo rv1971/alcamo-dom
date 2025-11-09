@@ -9,7 +9,8 @@ namespace alcamo\dom\schema\component;
  */
 class AtomicType extends AbstractSimpleType
 {
-    private $isNumeric_; ///< ?bool
+    private $isNumeric_;  ///< bool
+    private $isIntegral_; ///< bool
 
     /**
      * @copydoc
@@ -45,5 +46,21 @@ class AtomicType extends AbstractSimpleType
         }
 
         return $this->isNumeric_;
+    }
+
+    /**
+     * @copydoc
+     * alcamo::dom::schema::component::SimpleTypeInterface::isIntegral()
+     */
+    public function isIntegral(): bool
+    {
+        if (!isset($this->isIntegral_)) {
+            $fractionDigitsFacet = $this->getFacet('fractionDigits');
+
+            $this->isIntegral_ = isset($fractionDigitsFacet)
+                && $fractionDigitsFacet->value == 0;
+        }
+
+        return $this->isIntegral_;
     }
 }

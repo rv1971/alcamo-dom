@@ -71,4 +71,15 @@ class PredefinedAnySimpleType extends AbstractPredefinedComponent implements
     {
         return false;
     }
+
+    /**
+     * @copydoc
+     * alcamo::dom::schema::component::SimpleTypeInterface::isIntegral()
+     *
+     * @return Always `false` since `anySimpleType` is not made of integers.
+     */
+    public function isIntegral(): bool
+    {
+        return false;
+    }
 }

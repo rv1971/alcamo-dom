@@ -1143,11 +1143,20 @@ class SchemaTest extends TestCase
     /**
      * @dataProvider getIsNumericProvider
      */
-    public function testIsNumeric($schema, $type, $expectedValue)
-    {
+    public function testIsNumeric(
+        $schema,
+        $type,
+        $expectedIsNumeric,
+        $expectedIsIntegral
+    ) {
         $this->assertSame(
-            $expectedValue,
+            $expectedIsNumeric,
             $schema->getGlobalType($type)->isNumeric()
+        );
+
+        $this->assertSame(
+            $expectedIsIntegral,
+            $schema->getGlobalType($type)->isIntegral()
         );
     }
 
@@ -1160,13 +1169,14 @@ class SchemaTest extends TestCase
         $schema = Schema::newFromDocument($foo);
 
         return [
-            [ $schema, Xsd::XSD_NS . ' anySimpleType', false ],
-            [ $schema, Xsd::XSD_NS . ' string', false ],
-            [ $schema, Xsd::XSD_NS . ' decimal', true ],
-            [ $schema, Xsd::XSD_NS . ' short', true ],
-            [ $schema, Xsd::XSD_NS . ' formChoice', false ],
-            [ $schema, Xsd::XSD_NS . ' allNNI', false ],
-            [ $schema, self::FOO_NS . ' numericUnion', true ]
+            [ $schema, Xsd::XSD_NS . ' anySimpleType', false, false ],
+            [ $schema, Xsd::XSD_NS . ' string', false, false ],
+            [ $schema, Xsd::XSD_NS . ' decimal', true, false ],
+            [ $schema, Xsd::XSD_NS . ' short', true, true ],
+            [ $schema, Xsd::XSD_NS . ' formChoice', false, false ],
+            [ $schema, Xsd::XSD_NS . ' allNNI', false, false ],
+            [ $schema, self::FOO_NS . ' numericUnion', true, false ],
+            [ $schema, self::FOO_NS . ' integralUnion', true, true ]
         ];
     }
 

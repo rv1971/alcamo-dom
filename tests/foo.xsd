@@ -231,6 +231,14 @@
   <xsd:simpleType name="numericUnion">
     <xsd:union memberTypes="xsd:byte xsd:unsignedShort">
       <xsd:simpleType>
+        <xsd:restriction base="xsd:decimal"/>
+      </xsd:simpleType>
+    </xsd:union>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="integralUnion">
+    <xsd:union memberTypes="xsd:byte xsd:unsignedShort">
+      <xsd:simpleType>
         <xsd:restriction base="xsd:unsignedInt"/>
       </xsd:simpleType>
     </xsd:union>
