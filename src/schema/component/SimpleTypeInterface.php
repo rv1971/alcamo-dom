@@ -2,6 +2,8 @@
 
 namespace alcamo\dom\schema\component;
 
+use alcamo\dom\decorated\Element as XsdElement;
+
 /**
  * @brief Simple type definition
  *
@@ -11,8 +13,8 @@ interface SimpleTypeInterface extends TypeInterface
 {
     public function isEqualToOrDerivedFrom(string $typeXName): bool;
 
-    /// Value of first facet in closest ancestor, if any
-    public function getFacetValue(string $facetName): ?string;
+    /// First facet in closest ancestor, if any
+    public function getFacet(string $facetName): ?XsdElement;
 
     /**
      * @brief Value of first hasFacetAndProperty `<hasProperty>` element in

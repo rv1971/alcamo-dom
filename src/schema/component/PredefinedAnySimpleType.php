@@ -2,6 +2,7 @@
 
 namespace alcamo\dom\schema\component;
 
+use alcamo\dom\decorated\Element as XsdElement;
 use alcamo\dom\schema\Schema;
 use alcamo\xml\XName;
 
@@ -40,11 +41,11 @@ class PredefinedAnySimpleType extends AbstractPredefinedComponent implements
 
     /**
      * @copydoc
-     * alcamo::dom::schema::component::SimpleTypeInterface::getFacetValue()
+     * alcamo::dom::schema::component::SimpleTypeInterface::getFacet()
      *
      * @return Always `null` since `anySimpleType` type has no facets.
      */
-    public function getFacetValue(string $facetName): ?string
+    public function getFacet(string $facetName): ?XsdElement
     {
         return null;
     }

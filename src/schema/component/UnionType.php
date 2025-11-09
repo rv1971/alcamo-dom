@@ -39,28 +39,40 @@ class UnionType extends AbstractSimpleType
 
     /**
      * @copydoc
-     * alcamo::dom::schema::component::SimpleTypeInterface::getFacetValue()
+     * alcamo::dom::schema::component::SimpleTypeInterface::getFacet()
      *
-     * @return A value if all member types have this facet with the same value.
+     * @return The first facet element encountered if all member types have
+     * this facet with the same attributes.
      */
-    public function getFacetValue(string $facetName): ?string
+    public function getFacet(string $facetName): ?XsdElement
     {
-        $uniqueValue = null;
+        $commonFacet = null;
 
         foreach ($this->memberTypes_ as $memberType) {
-            $value = $memberType->getFacetValue($facetName);
+            $facet = $memberType->getFacet($facetName);
 
-            if (
-                !isset($value)
-                || isset($uniqueValue) && $uniqueValue != $value
-            ) {
+            if (!isset($facet)) {
                 return null;
             }
 
-            $uniqueValue = $value;
+            if (isset($commonFacet)) {
+                if (
+                    count($facet->attributes) != count($commonFacet->attributes)
+                ) {
+                    return null;
+                }
+
+                foreach ($facet->attributes as $name => $attr) {
+                    if ($attr->value != $commonFacet[$name]->value) {
+                        return null;
+                    }
+                }
+            } else {
+                $commonFacet = $facet;
+            }
         }
 
-        return $uniqueValue;
+        return $commonFacet;
     }
 
     /**

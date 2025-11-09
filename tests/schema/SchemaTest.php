@@ -1102,17 +1102,21 @@ class SchemaTest extends TestCase
     }
 
     /**
-     * @dataProvider getFacetValueProvider
+     * @dataProvider getFacetProvider
      */
-    public function testGetFacetValue($schema, $type, $facet, $expectedValue)
+    public function testGetFacet($schema, $type, $facet, $expectedValue)
     {
-        $this->assertSame(
-            $expectedValue,
-            $schema->getGlobalType($type)->getFacetValue($facet)
-        );
+        if (isset($expectedValue)) {
+            $this->assertSame(
+                $expectedValue,
+                $schema->getGlobalType($type)->getFacet($facet)->value
+            );
+        } else {
+            $this->assertNull($schema->getGlobalType($type)->getFacet($facet));
+        }
     }
 
-    public function getFacetValueProvider()
+    public function getFacetProvider()
     {
         $foo = Document::newFromUrl(
             'file://' . dirname(__DIR__) . '/foo.xml'

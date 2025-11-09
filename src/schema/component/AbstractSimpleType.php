@@ -121,25 +121,25 @@ abstract class AbstractSimpleType extends AbstractType implements
 
     /**
      * @copydoc
-     * alcamo::dom::schema::component::SimpleTypeInterface::getFacetValue()
+     * alcamo::dom::schema::component::SimpleTypeInterface::getFacet()
      *
      * @warning Only finds facets within the top-level `<xsd:restriction>´
      * element. A facet within
      * `xsd:restriction/xsd:simpleType/xsd:restriction´ is not found; such
      * constructs are valid (up to any level of depth), but rarely needed.
      */
-    public function getFacetValue(string $facetName): ?string
+    public function getFacet(string $facetName): ?XsdElement
     {
         for (
             $type = $this;
             $type instanceof self;
             $type = $type->getBaseType()
         ) {
-            $facetValue = $type->xsdElement_
-                ->query("xsd:restriction/xsd:$facetName/@value")[0];
+            $facet =
+                $type->xsdElement_->query("xsd:restriction/xsd:$facetName")[0];
 
-            if (isset($facetValue)) {
-                return $facetValue->value;
+            if (isset($facet)) {
+                return $facet;
             }
         }
 
