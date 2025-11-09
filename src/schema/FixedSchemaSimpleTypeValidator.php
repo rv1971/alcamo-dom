@@ -14,7 +14,7 @@ class FixedSchemaSimpleTypeValidator extends AbstractSimpleTypeValidator
 
     public static function newFromSchema(Schema $schema): self
     {
-        return static::newFromXsds($schema->getXsds());
+        return static::newFromXsds($schema->getTopXsds());
     }
 
     /**

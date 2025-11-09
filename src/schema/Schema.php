@@ -166,6 +166,7 @@ class Schema implements
 
     private $documentFactory_;       ///< DocumentFactoryInterface
     private $xsds_ = [];             ///< Map of URI string to Xsd
+    private $topXsds_ = [];          ///< Map of URI string to Xsd
     private $cacheKey_;              ///< Key in the schema cache
 
     private $globalAttrs_      = []; ///< Map of XName string to Attr
@@ -213,6 +214,18 @@ class Schema implements
     public function getXsds(): array
     {
         return $this->xsds_;
+    }
+
+    /**
+     * @brief Map of URI string to alcamo::dom::xsd::Document
+     *
+     * Unlike getXsds(), this does not contain the XSDs `<include>`d by other
+     * XSDs. Used in alcamo::dom::schema::FixedSchemaSimpleTypeValidator to
+     * create a list of `<import>` elements withput duplicate namespaces.
+     */
+    public function getTopXsds(): array
+    {
+        return $this->topXsds_;
     }
 
     /// Key in the schema cache
@@ -470,6 +483,8 @@ class Schema implements
     /// Initialize all global definitions
     private function initGlobals(): void
     {
+        $this->topXsds_ = $this->xsds_;
+
         /* Setup maps of all global definitions. */
         $globalDefs = [
             'attribute'      => &$this->globalAttrs_,
@@ -486,6 +501,23 @@ class Schema implements
 
             // loop top-level XSD elements having name attributes
             foreach ($xsd->documentElement as $elem) {
+                /* Remove XSDs included in other XSDs from
+                 * $this->topXsds_. This must be done here, not in loadXsds(),
+                 * because the XSDs given to the latter might redundantly
+                 * contain XSDs also included in other XSDs. */
+                if (
+                    $elem->namespaceURI == self::XSD_NS
+                    && $elem->localName == 'include'
+                ) {
+                    unset(
+                        $this->topXsds_[
+                            (string)UriNormalizer::normalize(
+                                $elem->resolveUri($elem->schemaLocation)
+                            )
+                        ]
+                    );
+                }
+
                 if (isset($elem->name)) {
                     $globalDefs[$elem->localName]
                         [(string)(new XName($targetNs, $elem->name))]
