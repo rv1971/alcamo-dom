@@ -60,7 +60,7 @@ class TypeUriBasedSimpleTypeValidatorTest extends TestCase
                     [ '42 43 44', 'tests/foo2.xsd#ListOfNamedItemType' ],
                     [ 'bob', 'tests/foo2a.xsd#UnionOfNamed' ],
                     [ 'claire', 'tests/foo2a.xsd#UnionOfNamed' ],
-                    [ 'quux', 'tests/foo2.xsd#FooBarType' ]
+                    [ 'quux', 'tests/foo2.xsd#EnumUnion' ]
                 ],
                 []
             ],
@@ -73,7 +73,7 @@ class TypeUriBasedSimpleTypeValidatorTest extends TestCase
                     [ 'ach-UG', 'xsd/XMLSchema.xsd#language' ],
                     [ '42 43 x 44', 'tests/foo2.xsd#ListOfNamedItemType' ],
                     [ '42 43 44', 'tests/foo2.xsd#ListOfNamedItemType' ],
-                    [ 'quuux', 'tests/foo2.xsd#FooBarType' ]
+                    [ 'quuux', 'tests/foo2.xsd#EnumUnion' ]
                 ],
                 [
                     0 => "'truex' is not a valid value of the atomic type 'xs:boolean'.",

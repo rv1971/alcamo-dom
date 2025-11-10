@@ -67,17 +67,22 @@ abstract class AbstractSimpleTypeValidator implements
 
             [ $nsName, $localName ] = $typeXName->getPair();
 
-            $nsPrefix = $nsNameToPrefix[$nsName] ?? null;
+            if (isset($nsName)) {
+                $nsPrefix = $nsNameToPrefix[$nsName] ?? null;
 
-            if (!isset($nsPrefix)) {
-                $nsPrefix = 'n' . ++$i;
+                if (!isset($nsPrefix)) {
+                    $nsPrefix = 'n' . ++$i;
 
-                $nsNameToPrefix[$nsName] = $nsPrefix;
+                    $nsNameToPrefix[$nsName] = $nsPrefix;
 
-                $nsDeclText .= " xmlns:$nsPrefix='$nsName'";
+                    $nsDeclText .= " xmlns:$nsPrefix='$nsName'";
+                }
+
+                $instanceText .=
+                    "<y xsi:type='$nsPrefix:$localName'>$value</y>\n";
+            } else {
+                $instanceText .= "<y xsi:type='$localName'>$value</y>\n";
             }
-
-            $instanceText .= "<y xsi:type='$nsPrefix:$localName'>$value</y>\n";
         }
 
         /* Line breaks must not be changed here because the line number where

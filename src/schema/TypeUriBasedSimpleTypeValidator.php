@@ -5,6 +5,7 @@ namespace alcamo\dom\schema;
 use alcamo\dom\{DocumentFactoryInterface, HavingDocumentFactoryInterface};
 use alcamo\exception\Unsupported;
 use alcamo\uri\Uri;
+use alcamo\xml\XName;
 use GuzzleHttp\Psr7\UriResolver;
 use Psr\Http\Message\UriInterface;
 
@@ -12,7 +13,10 @@ use Psr\Http\Message\UriInterface;
  * @brief Class that validates data of XSD simple types given by URIs
  *
  * Supported are URIs that follow the id solution in [XML Schema Datatypes in
- * RDF and OWL](https://www.w3.org/TR/swbp-xsch-datatypes)
+ * RDF and OWL](https://www.w3.org/TR/swbp-xsch-datatypes), provided that each
+ * referenced type has an ID attribute (either `id` which is declared to be ID
+ * in the internal subset of the XSD, or `xml:id`) identical to the name of
+ * the type.
  *
  * @date Last reviewed 2021-07-11
  */
@@ -51,6 +55,12 @@ class TypeUriBasedSimpleTypeValidator extends AbstractSimpleTypeValidator implem
      */
     public function validate($valueTypeUriPairs): array
     {
+        /* The input may contain references to two or more XSDs for the
+         * same namespace none of which is included in the other. Since an XSD
+         * cannot import more than one XSD with the same target namespace, the
+         * following algorithm creates additional in-memory XSDs as needed. This
+         * makes it possible to do without intermediate XSDs in disk files. */
+
         /* Array of maps mapping namespace names to schema locations. */
         $nsNameToSchemaLocations = [];
 
@@ -74,9 +84,7 @@ class TypeUriBasedSimpleTypeValidator extends AbstractSimpleTypeValidator implem
                 new Uri($schemaLocation)
             );
 
-            $xsd = $this->documentFactory_->createFromUrl($url, null, true);
-
-            $nsName = $xsd->documentElement->targetNamespace;
+            $nsName = TargetNsCache::getInstance()[$url];
 
             /* Store the mapping of namespace name to schema location in a map
              * so that it does not conflict with other schema locations for
@@ -101,7 +109,7 @@ class TypeUriBasedSimpleTypeValidator extends AbstractSimpleTypeValidator implem
             }
 
             $valueTypeXNamePairMaps[$i][] =
-                [ $value, $xsd[$typeId]->getComponentXName() ];
+                [ $value, new XName($nsName, $typeId) ];
         }
 
         $result = [];

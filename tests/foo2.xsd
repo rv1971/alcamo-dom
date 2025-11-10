@@ -45,7 +45,7 @@
     <xsd:restriction base="ListOfNamedItemType"/>
   </xsd:simpleType>
 
-  <xsd:simpleType name="EnumUnion" xml:id="FooBarType">
+  <xsd:simpleType name="EnumUnion" xml:id="EnumUnion">
     <xsd:union memberTypes="xsd:formChoice xsd:derivationControl">
       <xsd:simpleType>
         <xsd:restriction base="xsd:string">

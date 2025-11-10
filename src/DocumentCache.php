@@ -7,6 +7,9 @@ use alcamo\uri\{Uri, UriNormalizer};
 
 /**
  * @brief Cache for DOM documents
+ *
+ * Data is accessed through the readonly ArrayAccess interface via normalized
+ * absolute URIs as keys. Other keys will not find any data.
  */
 class DocumentCache implements \ArrayAccess
 {
@@ -14,6 +17,9 @@ class DocumentCache implements \ArrayAccess
 
     /**
      * @brief Add a document to the cache
+     *
+     * Unlike the ArrayAccess methods, this method checks whether the
+     * document's URL is absolute and normalizes it.
      *
      * @return Whether the document was actually added. `false` if it was
      * already in the cache.
@@ -29,7 +35,7 @@ class DocumentCache implements \ArrayAccess
                 ->setMessageContext([ 'uri' => $doc->documentURI ]);
         }
 
-        // normalize URL for use in caching
+        /* Normalize URL for use in caching. */
         $doc->documentURI = (string)UriNormalizer::normalize($url);
 
         if (isset($this->data_[$doc->documentURI])) {
