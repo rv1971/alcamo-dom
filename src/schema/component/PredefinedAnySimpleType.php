@@ -28,7 +28,7 @@ class PredefinedAnySimpleType extends AbstractPredefinedComponent implements
    /** @copydoc
     *  alcamo::dom::schema::component::TypeInterface::getBaseType()
     */
-    public function getBaseType(): ComplexType
+    public function getBaseType(): TypeInterface
     {
         return $this->baseType_;
     }

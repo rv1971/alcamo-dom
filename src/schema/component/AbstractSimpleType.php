@@ -22,7 +22,7 @@ abstract class AbstractSimpleType extends AbstractType implements
     public static function newFromSchemaAndXsdElement(
         Schema $schema,
         XsdElement $xsdElement
-    ): self {
+    ): AbstractType {
         $restrictionElement = $xsdElement->query('xsd:restriction')[0];
 
         if (isset($restrictionElement)) {

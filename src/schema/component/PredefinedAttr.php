@@ -25,7 +25,7 @@ class PredefinedAttr extends AbstractPredefinedComponent implements
         $this->type_ = $type;
     }
 
-    public function getType(): AbstractSimpleType
+    public function getType(): SimpleTypeInterface
     {
         return $this->type_;
     }
