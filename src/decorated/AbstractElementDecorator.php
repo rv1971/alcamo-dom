@@ -9,7 +9,7 @@ use alcamo\decorator\DecoratorTrait;
  *
  * @date Last reviewed 2025-10-23
  */
-abstract class AbstractDecorator implements
+abstract class AbstractElementDecorator implements
     \Countable,
     \IteratorAggregate,
     \Arrayaccess
@@ -22,6 +22,7 @@ abstract class AbstractDecorator implements
         return $this->handler_->textContent;
     }
 
+    /// Get the underlying element
     public function getElement(): Element
     {
         return $this->handler_;

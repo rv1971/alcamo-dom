@@ -26,8 +26,9 @@ interface HavingDocumentationInterface
      *
      * @param $lang Desired language.
      *
-     * @param $fallbackFlags OR-Combination of the above constants: which
-     * fallbacks to try if a label in the desired language is not available.
+     * @param $fallbackFlags OR-Combination of the constants in
+     * alcamo::dom::HavingDocumentationInterface: which fallbacks to try if a
+     * label in the desired language is not available.
      */
     public function getLabel(
         ?string $lang = null,
@@ -39,8 +40,9 @@ interface HavingDocumentationInterface
      *
      * @param $lang Desired language.
      *
-     * @param $fallbackFlags OR-Combination of the above constants: which
-     * fallbacks to try if a comment in the desired language is not available.
+     * @param $fallbackFlags OR-Combination of the constants in
+     * alcamo::dom::HavingDocumentationInterface: which fallbacks to try if a
+     * comment in the desired language is not available.
      */
     public function getComment(
         ?string $lang = null,

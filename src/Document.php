@@ -26,8 +26,8 @@ use alcamo\dom\xsl\Document as Stylesheet;
  *
  * The ArrayAccess interface provides read access to elements by ID.
  *
- * The IteratorAggregate interface is served with iteration over child
- * elements of the document element.
+ * The IteratorAggregate interface provides iteration over child elements of
+ * the document element.
  *
  * @date Last reviewed 2025-10-26
  */
@@ -148,6 +148,7 @@ class Document extends \DOMDocument implements
     private $xPath_;                  ///< XPath
     private $xsltStylesheet_ = false; ///< Document or `null`
 
+    /// Call clearCache()
     public function __clone()
     {
         $this->clearCache();
@@ -157,7 +158,7 @@ class Document extends \DOMDocument implements
      * @brief Construct an empty document
      *
      * @param $documentFactory Document factory to use to create dependent
-     * documents, e.g. from links. If not specified, the Document factory will
+     * documents, e.g. from links. If not specified, the document factory will
      * be created by createDocumentFactory() when needed.
      *
      * @param $loadFlags OR-Combination of the above load constants
@@ -198,13 +199,12 @@ class Document extends \DOMDocument implements
             )
             ?? static::LIBXML_OPTIONS;
 
-        /** Register @ref NODE_CLASSES. */
         foreach (static::NODE_CLASSES as $baseClass => $extendedClass) {
             $this->registerNodeClass($baseClass, $extendedClass);
         }
     }
 
-    /// Return a new instance of DocumentFactory
+    /// Get the document factory used to create dependent documents
     public function getDocumentFactory(): DocumentFactoryInterface
     {
         if (!isset($this->documentFactory_)) {
@@ -220,7 +220,7 @@ class Document extends \DOMDocument implements
     }
 
     /**
-     * @brief Load a URL into a document
+     * @brief Load a URL into this document
      *
      * @param $url URL to get the data from
      */
@@ -247,7 +247,7 @@ class Document extends \DOMDocument implements
     }
 
     /**
-     * @brief Load XML text into a document
+     * @brief Load XML text into this document
      *
      * @param $xmlText XML text
      *
@@ -301,19 +301,19 @@ class Document extends \DOMDocument implements
         unset(self::$docRegistry_[spl_object_hash($this)]);
     }
 
-    /// Call Element::getIterator() on document element
+    /// Call alcamo::dom::Element::getIterator() on the document element
     public function getIterator(): \Traversable
     {
         return $this->documentElement->getIterator();
     }
 
-    /// Readonly ArrayAccess access to elements by ID
+    /// Provide readonly ArrayAccess access to elements by ID
     public function offsetExists($id): bool
     {
         return $this->getElementById($id) !== null;
     }
 
-    /// Readonly ArrayAccess access to elements by ID
+    /// Provide readonly ArrayAccess access to elements by ID
     public function offsetGet($id): ?Element
     {
         return $this->getElementById($id);
@@ -335,21 +335,21 @@ class Document extends \DOMDocument implements
         return $this->xPath_;
     }
 
-    /// Run DOMXPath::query() relative to root node
+    /// Run DOMXPath::query() relative to the document's root node
     public function query(string $expr)
     {
         return $this->getXPath()->query($expr);
     }
 
-    /// Run DOMXPath::evaluate() relative to root node
+    /// Run DOMXPath::evaluate() relative the document's root node
     public function evaluate(string $expr)
     {
         return $this->getXPath()->evaluate($expr);
     }
 
     /**
-     * @brief XSLT stylesheet based on the first xml-stylesheet processing
-     * instruction, if any
+     * @brief Get an XSLT stylesheet based on the first xml-stylesheet
+     * processing instruction, if any
      */
     public function getXsltStylesheet(): ?Document
     {

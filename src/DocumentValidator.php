@@ -4,6 +4,9 @@ namespace alcamo\dom;
 
 use alcamo\exception\DataValidationFailed;
 
+/**
+ * @brief Checks whether XML documents are valid
+ */
 class DocumentValidator implements NamespaceConstantsInterface
 {
     private $libxmlFlags_; ///< int

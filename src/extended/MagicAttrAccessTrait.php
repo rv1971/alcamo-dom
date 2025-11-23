@@ -13,6 +13,7 @@ use alcamo\xml\XName;
  *   constant of the document class (which the document class inherits from
  *   alcamo::dom::NamespaceConstantsInterface).
  * - Serialization of an XName object.
+ *
  * Hence there may be more than one way to specify the same attribute. All
  * ways to specify an attribute are equally stored in the cache.
  *
@@ -62,7 +63,7 @@ trait MagicAttrAccessTrait
     }
 
     /**
-     * @brief Returns the result of Attr::getValue()
+     * @brief Return the result of Attr::getValue()
      *
      * When called a second time, the result is taken from a cache.
      */

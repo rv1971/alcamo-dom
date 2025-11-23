@@ -12,8 +12,8 @@ class Group extends AbstractXsdComponent
     private $elements_; ///< XName string to Element
 
     /**
-     * @brief Map of element XName string to Element for all elements in the
-     * content model
+     * @brief Get map of element XName strings to Elements for all elements in
+     * the content model
      *
      * @warning Content models containing two elements with the same expanded
      * name but different types are not supported.

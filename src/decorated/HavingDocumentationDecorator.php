@@ -9,7 +9,7 @@ use alcamo\dom\HavingDocumentationInterface;
  *
  * @date Last reviewed 2025-10-23
  */
-class HavingDocumentationDecorator extends AbstractDecorator implements
+class HavingDocumentationDecorator extends AbstractElementDecorator implements
     HavingDocumentationInterface
 {
     use HavingDocumentationTrait;

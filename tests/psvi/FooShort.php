@@ -2,9 +2,9 @@
 
 namespace alcamo\dom\psvi;
 
-use alcamo\dom\decorated\AbstractDecorator;
+use alcamo\dom\decorated\AbstractElementDecorator;
 
-class FooShort extends AbstractDecorator
+class FooShort extends AbstractElementDecorator
 {
     public function hello(): string
     {

@@ -8,7 +8,8 @@ namespace alcamo\dom\extended;
  * When a derived class for a node adds properties, these properties are lost
  * when the node is not referenced by a PHP variable any more. When accessing
  * the node again via other means (e.g. via XPath or as a child or sibling of
- * another node), a new instance of the derived class is constructed.
+ * another node), a new instance of the derived class is constructed. This may
+ * be inefficient because any data cached with the node is lost.
  *
  * To avoid this, NodeRegistryTrait provides a node registry for use in a
  * derived document class, which is simply an array of node

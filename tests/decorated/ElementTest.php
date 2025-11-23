@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 use alcamo\exception\MethodNotFound;
 use alcamo\xml\XName;
 
-class FooBar extends AbstractDecorator
+class FooBar extends AbstractElementDecorator
 {
     public function hello(): string
     {
@@ -14,7 +14,7 @@ class FooBar extends AbstractDecorator
     }
 }
 
-class FooLiteral extends AbstractDecorator
+class FooLiteral extends AbstractElementDecorator
 {
     public function hello(): string
     {
@@ -22,7 +22,7 @@ class FooLiteral extends AbstractDecorator
     }
 }
 
-class FooShort extends AbstractDecorator
+class FooShort extends AbstractElementDecorator
 {
     public function hello(): string
     {

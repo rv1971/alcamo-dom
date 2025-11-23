@@ -17,7 +17,9 @@ abstract class AbstractSimpleType extends AbstractType implements
      * @brief Factory method creating the most specific type that it can
      * recognize
      *
-     * This implies that base/item/member types are looked up immediately.
+     * This implies that this methods looks up base/item/member types
+     * immediately, unlike other parts of the implementation which delay such
+     * lookups until there are explicitly needed.
      */
     public static function newFromSchemaAndXsdElement(
         Schema $schema,
@@ -120,12 +122,11 @@ abstract class AbstractSimpleType extends AbstractType implements
     }
 
     /**
-     * @copydoc
-     * alcamo::dom::schema::component::SimpleTypeInterface::getFacet()
+     * @copydoc alcamo::dom::schema::component::SimpleTypeInterface::getFacet()
      *
      * @warning Only finds facets within the top-level `<xsd:restriction>´
      * element. A facet within
-     * `xsd:restriction/xsd:simpleType/xsd:restriction´ is not found; such
+     * `xsd:restriction/xsd:simpleType/xsd:restriction` is not found; such
      * constructs are valid (up to any level of depth), but rarely needed.
      */
     public function getFacet(string $facetName): ?XsdElement

@@ -2,7 +2,7 @@
 
 namespace alcamo\dom\decorated;
 
-class FooBar extends AbstractDecorator
+class FooBar extends AbstractElementDecorator
 {
     public function hello(): string
     {

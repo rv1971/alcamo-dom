@@ -18,8 +18,8 @@ use alcamo\dom\xsd\{Decorator as XsdDecorator, Enumerator};
 class Element extends BaseElement
 {
     /**
-     * @brief Map of element NSs to maps of element local names to decorator
-     * classes
+     * @brief Map of element namespaces to maps of element local names to
+     * decorator classes
      *
      * The element local name `*` matches all elements in that namespace that
      * are not explicitly listed.
@@ -39,9 +39,10 @@ class Element extends BaseElement
      */
     public const DEFAULT_DECORATOR_CLASS = HavingDocumentationDecorator::class;
 
-    private $decorator_ = false; ///< ?AbstractDecorator
+    private $decorator_ = false; ///< ?AbstractElementDecorator
 
-    public function getDecorator(): ?AbstractDecorator
+    /// Create the decorator or get it from the cache
+    public function getDecorator(): ?AbstractElementDecorator
     {
         if ($this->decorator_ === false) {
             // Ensure conservation of the derived object.
@@ -53,7 +54,12 @@ class Element extends BaseElement
         return $this->decorator_;
     }
 
-    /// Allow for element-specific implementations in the decorator
+    /**
+     * @brief Allow for element-specific implementations in the decorator
+     *
+     * Without this, it would not be possible to override an existing
+     * __toString() implementation in a parent class.
+     */
     public function __toString(): string
     {
         return $this->getDecorator();
@@ -82,10 +88,9 @@ class Element extends BaseElement
         }
     }
 
-    /** The default implementation calls the constructor of a class looked up
-     *  in @ref DECORATOR_MAP. Derived classes may implement other
-     *  mechanisms. */
-    protected function createDecorator(): ?AbstractDecorator
+    /** This implementation calls the constructor of a class looked up in @ref
+     *  DECORATOR_MAP. Derived classes may implement other mechanisms. */
+    protected function createDecorator(): ?AbstractElementDecorator
     {
         $decoratorMap = static::DECORATOR_MAP[$this->namespaceURI] ?? null;
 

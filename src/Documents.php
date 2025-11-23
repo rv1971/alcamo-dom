@@ -7,10 +7,10 @@ use alcamo\exception\InvalidType;
 use alcamo\uri\Uri;
 
 /**
- * @brief Array of DOM documents indexed by their dc:identifier
+ * @brief Collection of DOM documents indexed by their dc:identifier
  *
- * Uses DocumentFactory, hence features caching as well as automatic
- * determination of the document classes.
+ * Uses alcamo::dom::DocumentFactory, hence features caching as well as
+ * automatic determination of the document classes.
  *
  * @date Last reviewed 2021-07-01
  */
@@ -19,7 +19,7 @@ class Documents extends ReadonlyCollection
     /**
      * @brief Construct from a collection of documents
      *
-     * @param $docs Iterable whose values are Document objects.
+     * @param $docs Iterable whose values are alcamo::dom::Document objects.
      */
     public function __construct(iterable $docs)
     {
@@ -28,7 +28,7 @@ class Documents extends ReadonlyCollection
         foreach ($docs as $key => $doc) {
             if (!($doc instanceof Document)) {
                 /** @throw alcamo::exception::InvalidType when item value is
-                 *  not a document. */
+                 *  not a alcamo::dom::Document object. */
                 throw (new InvalidType())->setMessageContext(
                     [
                         'value' => $doc,

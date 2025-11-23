@@ -12,7 +12,7 @@ class AttrGroup extends AbstractXsdComponent
     private $attrs_; ///< Map of XName string to SimpleTypeInterface
 
     /**
-     * @brief Map of XName string to Attr
+     * @brief Get map of XName string to Attr
      *
      * When calling this method a second time, the result is taken from the
      * cache.

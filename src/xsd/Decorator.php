@@ -6,7 +6,17 @@ use alcamo\dom\decorated\HavingDocumentationDecorator;
 use alcamo\xml\XName;
 
 /**
- * @brief Decorator providing the component's extended name, if any
+ * @namespace alcamo::dom::xsd
+ *
+ * XSD-specific classes. Since this package supports use of XSD elements (such
+ * as \<xsd:annotation>) within non-XSD documents, no XSD-specific document or
+ * element class is provided. XSD-specific functionality is provided in
+ * element decorators.
+ */
+
+/**
+ * @brief Decorator providing, among others, the component's extended name, if
+ * any
  *
  * @date Last reviewed 2025-11-05
  */
@@ -30,7 +40,8 @@ class Decorator extends HavingDocumentationDecorator
     public function getComponentXName(): ?XName
     {
         if ($this->componentXName_ === false) {
-            /* The implicit call to offsetGet() includes a call to
+            /* The implicit call to offsetGet() in `$this->ref` includes a
+             * call to
              * alcamo::dom::extended::RegisteredNodeTrait::register(). */
 
             if (isset($this->ref)) {
@@ -71,6 +82,7 @@ class Decorator extends HavingDocumentationDecorator
         return $this->componentXName_;
     }
 
+    /** @copybrief alcamo::dom::decorated::HavingDocumentationDecorator */
     public function getLabel(
         ?string $lang = null,
         ?int $fallbackFlags = null

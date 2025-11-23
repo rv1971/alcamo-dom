@@ -20,7 +20,7 @@ class UnionType extends AbstractSimpleType
     private $isNumeric_;  ///< bool
     private $isIntegral_; ///< bool
 
-    /// @param $memberTypes @copybrief getMemberTypes()
+    /** @param $memberTypes array of SimpleTypeInterface */
     public function __construct(
         Schema $schema,
         XsdElement $xsdElement,
@@ -32,15 +32,14 @@ class UnionType extends AbstractSimpleType
         $this->memberTypes_ = $memberTypes;
     }
 
-    /// Array of SimpleTypeInterface
+    /// Get array of SimpleTypeInterface
     public function getMemberTypes(): array
     {
         return $this->memberTypes_;
     }
 
     /**
-     * @copydoc
-     * alcamo::dom::schema::component::SimpleTypeInterface::getFacet()
+     * @copydoc alcamo::dom::schema::component::SimpleTypeInterface::getFacet()
      *
      * @return The first facet element encountered if all member types have
      * this facet with the same attributes.
@@ -77,8 +76,7 @@ class UnionType extends AbstractSimpleType
     }
 
     /**
-     * @copydoc
-     * alcamo::dom::schema::component::SimpleTypeInterface::getHfpPropValue()
+     * @copydoc alcamo::dom::schema::component::SimpleTypeInterface::getHfpPropValue()
      *
      * @return A value if all member types have this property with the same
      * value.
@@ -104,8 +102,7 @@ class UnionType extends AbstractSimpleType
     }
 
     /**
-     * @copydoc
-     * alcamo::dom::schema::component::SimpleTypeInterface::isNumeric()
+     * @copydoc alcamo::dom::schema::component::SimpleTypeInterface::isNumeric()
      *
      * @return `true` if all member types are numeric.
      */
@@ -119,8 +116,7 @@ class UnionType extends AbstractSimpleType
     }
 
     /**
-     * @copydoc
-     * alcamo::dom::schema::component::SimpleTypeInterface::isIntegral()
+     * @copydoc alcamo::dom::schema::component::SimpleTypeInterface::isIntegral()
      *
      * @return `true` if all member types are integral.
      */

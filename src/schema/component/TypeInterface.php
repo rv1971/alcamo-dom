@@ -9,6 +9,6 @@ namespace alcamo\dom\schema\component;
  */
 interface TypeInterface extends ComponentInterface
 {
-    /// Base type, if any
+    /// Get base type, if any
     public function getBaseType(): ?self;
 }

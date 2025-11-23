@@ -31,10 +31,9 @@ class ListType extends AbstractSimpleType
     }
 
     /**
-     * @copydoc
-     * alcamo::dom::schema::component::SimpleTypeInterface::getHfpPropValue()
+     * @copydoc alcamo::dom::schema::component::SimpleTypeInterface::getHfpPropValue()
      *
-     * @return Always `null` since list types have no properties.
+     * @return Always `null` since list types have no HFP properties.
      */
     public function getHfpPropValue(string $propName): ?string
     {
@@ -42,8 +41,7 @@ class ListType extends AbstractSimpleType
     }
 
     /**
-     * @copydoc
-     * alcamo::dom::schema::component::SimpleTypeInterface::isNumeric()
+     * @copydoc alcamo::dom::schema::component::SimpleTypeInterface::isNumeric()
      *
      * @return Always `false` since list types are not numeric.
      */
@@ -53,8 +51,7 @@ class ListType extends AbstractSimpleType
     }
 
     /**
-     * @copydoc
-     * alcamo::dom::schema::component::SimpleTypeInterface::isIntegral()
+     * @copydoc alcamo::dom::schema::component::SimpleTypeInterface::isIntegral()
      *
      * @return Always `false` since list types are not integral.
      */

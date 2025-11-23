@@ -29,8 +29,8 @@ trait HavingDocumentationTrait
         /*
          * - Otherwise, if the present element has an owl:sameAs attribute and
          * $fallbackFlags contains
-         * HavingDocumentationInterface::FALLBACK_TO_SAME_AS_FRAGMENT, return
-         * the fragment part of owl:sameAs.
+         * alcamo::dom::HavingDocumentationInterface::FALLBACK_TO_SAME_AS_FRAGMENT,
+         * return the fragment part of owl:sameAs.
          */
 
         if ($fallbackFlags & self::FALLBACK_TO_SAME_AS_FRAGMENT) {
@@ -43,9 +43,8 @@ trait HavingDocumentationTrait
 
         /**
          * - Otherwise, if $fallbackFlags contains
-         * HavingDocumentationInterface::FALLBACK_TO_NAME, return the present
-         * element's local name.
-         * - Otherwise return `null`.
+         * alcamo::dom::HavingDocumentationInterface::FALLBACK_TO_NAME, return
+         * the present element's local name.  - Otherwise return `null`.
          */
         return $fallbackFlags & self::FALLBACK_TO_NAME
             ? $this->handler_->localName
@@ -120,7 +119,7 @@ trait HavingDocumentationTrait
         return null;
     }
 
-    /// Get fragment of owl:sameAs attribute, if any
+    /// Get fragment part of URI in owl:sameAs attribute, if any
     protected function getSameAsFragment(): ?string
     {
         $sameAs = $this->handler_->{'owl:sameAs'};

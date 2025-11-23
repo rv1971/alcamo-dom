@@ -20,7 +20,7 @@ class DocumentFactory implements
     DocumentFactoryInterface,
     HavingBaseUriInterface
 {
-    /// Map of dc:identifier prefixes to PHP classes for DOM documents
+    /// Map of `dc:identifier` prefixes to PHP classes for DOM documents
     public const DC_IDENTIFIER_PREFIX_TO_CLASS = [
     ];
 
@@ -50,7 +50,7 @@ class DocumentFactory implements
      * @param $baseUrl string|UriInterface Base URL to locate documents
      *
      * @param $loadFlags OR-Combination of the load class constants in the
-     * Document class.
+     * alcamo::dom::Document class.
      *
      * @param $libxmlOptions See $options in
      * [DOMDocument::load()](https://www.php.net/manual/en/domdocument.load)
@@ -74,6 +74,7 @@ class DocumentFactory implements
         );
     }
 
+    /// Return the base URI used to resolve relative URLs
     public function getBaseUri(): ?UriInterface
     {
         return $this->baseUrl_;
@@ -116,8 +117,8 @@ class DocumentFactory implements
      * - If `false`, do not use the cache.
      * - If `null`, use the cache iff $url is absolute.
      *
-     * @param $loadFlags OR-Combination of the load constants in class
-     * Document. If not given, getLoadFlags() is used.
+     * @param $loadFlags OR-Combination of the load constants in the
+     * alcamo::dom::Document class. If not given, getLoadFlags() is used.
      *
      * @param $libxmlOptions See $options in
      * [DOMDocument::load()](https://www.php.net/manual/en/domdocument.load). If
@@ -142,8 +143,8 @@ class DocumentFactory implements
             if ($useCache === true) {
                 if (!Uri::isAbsolute($url)) {
                     /** @throw alcamo::exception::AbsoluteUriNeeded when
-                     * attempting to cache a document with a non-absolute
-                     * URL. */
+                     * attempting to use the cache for a document with a
+                     * non-absolute URL. */
                     throw (new AbsoluteUriNeeded())
                         ->setMessageContext([ 'uri' => $url ]);
                 }
@@ -200,10 +201,12 @@ class DocumentFactory implements
      * @param $class PHP class to use for the new document. If `null`,
      * xmlTextToClass() is called to get the class.
      *
-     * @param $loadFlags OR-Combination of the above load constants
+     * @param $loadFlags OR-Combination of the load constants in the
+     * alcamo::dom::Document class. If not given, getLoadFlags() is used.
      *
      * @param $libxmlOptions See $options in
-     * [DOMDocument::load()](https://www.php.net/manual/en/domdocument.load)
+     * [DOMDocument::load()](https://www.php.net/manual/en/domdocument.load). If
+     * not given, getLibxmlOptions() is used.
      *
      * @param $url Document URL
      */
@@ -253,7 +256,7 @@ class DocumentFactory implements
         $documentElement = $document->documentElement;
 
         /**
-         * - If there is a dc:identifier attribute in the document element
+         * - If there is a `dc:identifier` attribute in the document element
          *   which matches a prefix in @ref DC_IDENTIFIER_PREFIX_TO_CLASS,
          *   return the corresponding class name.
          * - Otherwise, if @ref X_NAME_TO_CLASS contains an item for the

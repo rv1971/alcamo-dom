@@ -2,7 +2,7 @@
 
 namespace alcamo\dom\psvi;
 
-use alcamo\dom\decorated\{AbstractDecorator, Element as BaseElement};
+use alcamo\dom\decorated\{AbstractElementDecorator, Element as BaseElement};
 use alcamo\dom\schema\component\TypeInterface;
 
 /**
@@ -29,7 +29,7 @@ class Element extends BaseElement
     /** The default implementation calls the constructor of a class looked up
      *  in Document::getElementDecoratorMap(). Derived classes may implement
      *  other mechanisms. */
-    protected function createDecorator(): ?AbstractDecorator
+    protected function createDecorator(): ?AbstractElementDecorator
     {
         $className = $this->ownerDocument->getElementDecoratorMap()
             ->lookup($this->getType());

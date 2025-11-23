@@ -9,6 +9,6 @@ namespace alcamo\dom\schema\component;
  */
 interface EnumerationTypeInterface extends SimpleTypeInterface
 {
-    /// Map of enumerator strings to DOMElement objects
+    /// Get map of enumerator strings to DOMElement objects
     public function getEnumerators(): array;
 }

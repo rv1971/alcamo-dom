@@ -15,9 +15,12 @@ trait NodeRegistryTrait
     private $nodeRegistry_ = [];
 
     /**
-     * @brief Add $node to the registry, using $hash as its key
+     * @brief Add $node to the registry
      *
      * @return The hash used as a key in the registry.
+     *
+     * The method does not tell whether the node was already registered
+     * because this makes no difference.
      */
     public function register(\DOMNode $node): string
     {
@@ -28,6 +31,7 @@ trait NodeRegistryTrait
         return $hash;
     }
 
+    /// Needed in alcamo::dom::extended::Document::clearCache()
     private function clearNodeRegistry()
     {
         $this->nodeRegistry_ = [];

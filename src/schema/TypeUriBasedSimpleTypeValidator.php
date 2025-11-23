@@ -58,14 +58,18 @@ class TypeUriBasedSimpleTypeValidator extends AbstractSimpleTypeValidator implem
         /* The input may contain references to two or more XSDs for the
          * same namespace none of which is included in the other. Since an XSD
          * cannot import more than one XSD with the same target namespace, the
-         * following algorithm creates additional in-memory XSDs as needed. This
-         * makes it possible to do without intermediate XSDs in disk files. */
+         * following algorithm creates a number of in-memory XSDs as
+         * needed. This makes it possible to do without intermediate XSDs in
+         * disk files. */
 
-        /* Array of maps mapping namespace names to schema locations. */
-        $nsNameToSchemaLocations = [];
+        /* Numerically-indexed array of maps mapping namespace names to
+         * schema locations. */
+        $nsNameToSchemaLocationMaps = [];
 
-        /* Array of maps mapping values to XNames. */
+        /* Numerically-indexed array of maps mapping values to type XNames. */
         $valueTypeXNamePairMaps = [];
+
+        $baseUri = $this->documentFactory_->getBaseUri();
 
         foreach ($valueTypeUriPairs as $pair) {
             [ $value, $typeUri ] = $pair;
@@ -73,16 +77,13 @@ class TypeUriBasedSimpleTypeValidator extends AbstractSimpleTypeValidator implem
 
             if (strpos($typeId, '(') !== false) {
                 /** @throw alcamo::exception::Unsupported when attempting to
-                 *  use a pointer that is not an id. */
+                 *  use a type URI containing a pointer that is not an id. */
                 throw (new Unsupported())->setMessageContext(
                     [ 'feature' => 'Non-id pointers to XSD types' ]
                 );
             }
 
-            $url = UriResolver::resolve(
-                $this->documentFactory_->getBaseUri(),
-                new Uri($schemaLocation)
-            );
+            $url = UriResolver::resolve($baseUri, new Uri($schemaLocation));
 
             $nsName = TargetNsCache::getInstance()[$url];
 
@@ -90,20 +91,29 @@ class TypeUriBasedSimpleTypeValidator extends AbstractSimpleTypeValidator implem
              * so that it does not conflict with other schema locations for
              * the same namespace. */
             for ($i = 0;; $i++) {
-                if (!isset($nsNameToSchemaLocations[$i])) {
-                    $nsNameToSchemaLocations[$i] = [];
-                }
-
-                if (!isset($nsNameToSchemaLocations[$i][$nsName])) {
-                    $nsNameToSchemaLocations[$i][$nsName] = $url;
+                /* Create a new map if none of those created so far is
+                 * suitable. */
+                if (!isset($nsNameToSchemaLocationMaps[$i])) {
+                    $nsNameToSchemaLocationMaps[$i] = [ $nsName => $url ];
                     break;
                 }
 
-                if ($nsNameToSchemaLocations[$i][$nsName] == $url) {
+                /* Add to the map if not yet present. */
+                if (!isset($nsNameToSchemaLocationMaps[$i][$nsName])) {
+                    $nsNameToSchemaLocationMaps[$i][$nsName] = $url;
                     break;
                 }
+
+                /* Accept existing mapping if schema location is the desired
+                 * one. */
+                if ($nsNameToSchemaLocationMaps[$i][$nsName] == $url) {
+                    break;
+                }
+
+                /* If none of the above applies, try next map. */
             }
 
+            /* Create a new map if needed. */
             if (!isset($valueTypeXNamePairMaps[$i])) {
                 $valueTypeXNamePairMaps[$i] = [];
             }
@@ -114,12 +124,12 @@ class TypeUriBasedSimpleTypeValidator extends AbstractSimpleTypeValidator implem
 
         $result = [];
 
-        for ($i = 0; $i < count($valueTypeXNamePairMaps); $i++) {
+        for ($i = 0; isset($valueTypeXNamePairMaps[$i]); $i++) {
             $result = array_merge(
                 $result,
                 self::validateAux(
                     $valueTypeXNamePairMaps[$i],
-                    self::createXsdText($nsNameToSchemaLocations[$i])
+                    self::createXsdText($nsNameToSchemaLocationMaps[$i])
                 )
             );
         }

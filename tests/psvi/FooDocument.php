@@ -2,7 +2,7 @@
 
 namespace alcamo\dom\psvi;
 
-use alcamo\dom\decorated\AbstractDecorator;
+use alcamo\dom\decorated\AbstractElementDecorator;
 
 require "FooBar.php";
 require "FooLiteral.php";

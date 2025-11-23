@@ -7,9 +7,10 @@ use alcamo\exception\{FileLoadFailed, SyntaxError};
 /**
  * @brief DOM Document consisting in the document element without any content
  *
- * This is useful to inspect a document without parsing it completely. For
- * instance, the tag name or some attribute of the document element can be
- * used to choose an appropriate document class.
+ * This is useful to rapidly inspect a document without parsing it
+ * completely. For instance, the tag name or some attribute of the document
+ * element can be used to choose an appropriate document class in which to
+ * load the document.
  *
  * @date Last reviewed 2025-10-25
  */
@@ -19,10 +20,9 @@ class ShallowDocument extends Document
     public const MAX_LENGH = 4096;
 
     /**
-     * @copydoc Document::loadUrl()
+     * @copydoc alcamo::dom::Document::loadUrl()
      *
-     * @warning The first tag must end within the first @ref MAX_LENGH of the
-     * data.
+     * See loadXmlText() for details.
      */
     public function loadUrl(string $url): void
     {
@@ -42,7 +42,12 @@ class ShallowDocument extends Document
         $this->loadXmlText($xmlText);
     }
 
-    /// @copydoc Document::loadXmlText()
+    /**
+     * @copydoc alcamo::dom::Document::loadXmlText()
+     *
+     * @warning The first tag must end within the first @ref MAX_LENGH bytes
+     * of the data.
+     */
     public function loadXmlText(string $xmlText, ?string $url = null): void
     {
         /** Use a regular expression to find the first string in angular

@@ -4,6 +4,9 @@ namespace alcamo\dom;
 
 use alcamo\uri\FileUriFactory;
 
+/**
+ * @brief Factory for collections of DOM documents
+ */
 class DocumentsFactory implements HavingDocumentFactoryInterface
 {
     /// Default class for new documents objects
@@ -14,6 +17,9 @@ class DocumentsFactory implements HavingDocumentFactoryInterface
 
     protected $documentFactory_; ///< DocumentFactoryInterface
 
+    /**
+     * @param $documentFactory Factory used to create documents.
+     */
     public function __construct(
         ?DocumentFactoryInterface $documentFactory = null
     ) {
@@ -26,6 +32,7 @@ class DocumentsFactory implements HavingDocumentFactoryInterface
         }
     }
 
+    /// Get the factory used to create documents
     public function getDocumentFactory(): DocumentFactoryInterface
     {
         return $this->documentFactory_;

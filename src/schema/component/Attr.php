@@ -25,7 +25,7 @@ class Attr extends AbstractXsdComponent implements AttrInterface
         }
     }
 
-    /// Attribute indicated by the `ref` attribute, if any
+    /// Get attribute indicated by the `ref` attribute, if any
     public function getRefAttr(): ?self
     {
         return $this->refAttr_;

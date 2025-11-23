@@ -19,9 +19,9 @@ use alcamo\xml\XName;
  */
 interface ComponentInterface extends NamespaceConstantsInterface
 {
-    /// Schema the component belongs to
+    /// Get schema the component belongs to
     public function getSchema(): Schema;
 
-    /// Extended name of component, if any
+    /// Get extended name of component, if any
     public function getXName(): ?XName;
 }

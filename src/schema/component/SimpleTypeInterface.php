@@ -11,14 +11,15 @@ use alcamo\dom\decorated\Element as XsdElement;
  */
 interface SimpleTypeInterface extends TypeInterface
 {
+    /// Whether this type is equal to or derived from the indicated type
     public function isEqualToOrDerivedFrom(string $typeXName): bool;
 
-    /// First facet in closest ancestor, if any
+    /// Get first such facet in closest ancestor, if any
     public function getFacet(string $facetName): ?XsdElement;
 
     /**
-     * @brief Value of first hasFacetAndProperty `<hasProperty>` element in
-     * closest ancestor, if any
+     * @brief Get value of first such HFP `<hasProperty>` element in closest
+     * ancestor, if any
      */
     public function getHfpPropValue(string $propName): ?string;
 

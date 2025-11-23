@@ -42,8 +42,7 @@ class ConverterPool implements NamespaceConstantsInterface
     }
 
     /**
-     * @brief Call DocumentFactoryInterface::createFromUrl() on the owner
-     * document's document factory
+     * @brief Call createFromUrl() on the owner document's document factory
      *
      * @param $context must implement HavingBaseUriInterface
      */
@@ -86,7 +85,7 @@ class ConverterPool implements NamespaceConstantsInterface
         }
     }
 
-    /// To integer, return -1 for `unbounded`
+    /// To integer, return -1 for "unbounded"
     public static function toAllNNI($value): int
     {
         return $value == 'unbounded' ? -1 : (int)$value;
@@ -166,7 +165,7 @@ class ConverterPool implements NamespaceConstantsInterface
         return $xNames;
     }
 
-    /// Resolve ID to DOM element it references
+    /// Resolve an ID to the DOM element it references
     public static function resolveIdRef($value, \DOMNode $context): \DOMElement
     {
         return $context->ownerDocument->getElementById($value);
@@ -258,7 +257,7 @@ class ConverterPool implements NamespaceConstantsInterface
         return $xPointer->process($doc);
     }
 
-    /// Process an XPointer URL, returning a set of values
+    /// Process an XPointer URL, returning the set of the values of the nodes found
     public static function xPointerUrlToValueSet($value, \DOMNode $context): Set
     {
         $result = new Set();

@@ -7,7 +7,7 @@ use alcamo\dom\schema\Schema;
 use alcamo\xml\XName;
 
 /**
- * @brief Type definition predefined in the XML Schema specification
+ * @brief Type definition for the predefined type anySimpleType
  *
  * @date Last reviewed 2025-11-06
  */
@@ -25,9 +25,7 @@ class PredefinedAnySimpleType extends AbstractPredefinedComponent implements
         $this->baseType_ = $baseType;
     }
 
-   /** @copydoc
-    *  alcamo::dom::schema::component::TypeInterface::getBaseType()
-    */
+   /** @copydoc alcamo::dom::schema::component::TypeInterface::getBaseType() */
     public function getBaseType(): TypeInterface
     {
         return $this->baseType_;
@@ -40,8 +38,7 @@ class PredefinedAnySimpleType extends AbstractPredefinedComponent implements
     }
 
     /**
-     * @copydoc
-     * alcamo::dom::schema::component::SimpleTypeInterface::getFacet()
+     * @copydoc alcamo::dom::schema::component::SimpleTypeInterface::getFacet()
      *
      * @return Always `null` since `anySimpleType` type has no facets.
      */
@@ -51,10 +48,9 @@ class PredefinedAnySimpleType extends AbstractPredefinedComponent implements
     }
 
     /**
-     * @copydoc
-     * alcamo::dom::schema::component::SimpleTypeInterface::getHfpPropValue()
+     * @copydoc alcamo::dom::schema::component::SimpleTypeInterface::getHfpPropValue()
      *
-     * @return Always `null` since `anySimpleType` type has no properties.
+     * @return Always `null` since `anySimpleType` type has no HFP properties.
      */
     public function getHfpPropValue(string $propName): ?string
     {
@@ -62,8 +58,7 @@ class PredefinedAnySimpleType extends AbstractPredefinedComponent implements
     }
 
     /**
-     * @copydoc
-     * alcamo::dom::schema::component::SimpleTypeInterface::isNumeric()
+     * @copydoc alcamo::dom::schema::component::SimpleTypeInterface::isNumeric()
      *
      * @return Always `false` since `anySimpleType` is not numeric.
      */
@@ -73,8 +68,7 @@ class PredefinedAnySimpleType extends AbstractPredefinedComponent implements
     }
 
     /**
-     * @copydoc
-     * alcamo::dom::schema::component::SimpleTypeInterface::isIntegral()
+     * @copydoc alcamo::dom::schema::component::SimpleTypeInterface::isIntegral()
      *
      * @return Always `false` since `anySimpleType` is not made of integers.
      */

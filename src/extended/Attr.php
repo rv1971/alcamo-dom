@@ -15,7 +15,8 @@ class Attr extends BaseAttr
     use RegisteredNodeTrait;
 
     /**
-     * @brief Map of attr NSs to maps of attr local names to converters
+     * @brief Map of attribute namespaces to maps of attribute local names to
+     * converters
      *
      * @sa [Use of CURIEs in Specific Attributes](https://www.w3.org/TR/rdfa-syntax/#sec_5.4.4.)
      */
@@ -35,8 +36,8 @@ class Attr extends BaseAttr
     ];
 
     /**
-     * @brief Map of element NSs to maps of element local names to maps of
-     * attr local names to converters
+     * @brief Map of element namespaces to maps of element local names to maps
+     * of attribute local names to converters
      *
      * The element local name `*` matches all elements in that namespace that
      * are not explicitly listed.
@@ -85,7 +86,8 @@ class Attr extends BaseAttr
     public function getValue()
     {
         /** Call alcamo::dom::extended::RegisteredNodeTrait::register(). See
-         *  RegisteredNodeTrait for explanation why this is necessary.  */
+         *  alcamo::dom::extended::RegisteredNodeTrait for an explanation why
+         *  this is necessary. */
         if (!isset($this->value_)) {
             $this->value_ = $this->createValue();
             $this->register();
@@ -130,7 +132,7 @@ class Attr extends BaseAttr
             }
         }
 
-        /** - Otherwise, return value unchanged. */
+        /** - Otherwise, return $value unchanged. */
         return $this->value;
     }
 }

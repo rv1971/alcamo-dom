@@ -2,6 +2,9 @@
 
 namespace alcamo\dom;
 
+/**
+ * @brief Modify XML documents in various ways
+ */
 class DocumentModifier implements NamespaceConstantsInterface
 {
     /// Validate document after modification
@@ -10,8 +13,9 @@ class DocumentModifier implements NamespaceConstantsInterface
     /**
      * @brief Pretty-format and re-parse the document
      *
-     * This is useful to get reasonable line numbers because otherwise all
-     * nodes keep their line numbers.
+     * This is useful to get reasonable line numbers after changes (for
+     * instance, after xinclude()) because otherwise all nodes keep their line
+     * numbers.
      */
     public const FORMAT_AND_REPARSE = 2;
 
@@ -19,12 +23,13 @@ class DocumentModifier implements NamespaceConstantsInterface
     private const ALL_DOCUMENTATION_XPATH = '//xsd:documentation';
 
     /**
-     * @brief Reparse - useful to get line numbers right after changes
+     * @brief Reparse - useful to get line numbers right after changes, for
+     * instance after xinclude()
      *
      * @param $document The document object that will be modified.
      *
      * @return The $document object after modification. The document is
-     * modified itsel, no new document is created.
+     * modified itself, no new document is created.
      */
     public function reparse(Document $document): Document
     {
@@ -49,7 +54,7 @@ class DocumentModifier implements NamespaceConstantsInterface
      * @param $flags OR-Combination of the above class constant flags.
      *
      * @return The $document object after modification. The document is
-     * modified itsel, no new document is created.
+     * modified itself, no new document is created.
      *
      * Also remove any \<xsd:annotation> elements that have become empty
      * document way.

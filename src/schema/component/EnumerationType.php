@@ -14,8 +14,7 @@ class EnumerationType extends AtomicType implements EnumerationTypeInterface
     private $enumerators_; ///< Map of enumerator strings to DOMElement objects
 
     /**
-     * @copybrief
-     * alcamo::dom::schema::component::EnumerationTypeInterface::getEnumerators()
+     * @copybrief alcamo::dom::schema::component::EnumerationTypeInterface::getEnumerators()
      *
      * When calling this method a second time, the result is taken from the
      * cache.

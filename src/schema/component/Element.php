@@ -25,7 +25,7 @@ class Element extends AbstractXsdComponent
         }
     }
 
-    /// Element indicated by the `ref` attribute, if any
+    /// Get element indicated by the `ref` attribute, if any
     public function getRefElement(): ?self
     {
         return $this->refElement_;
