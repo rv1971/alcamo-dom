@@ -10,9 +10,9 @@ use GuzzleHttp\Psr7\UriResolver;
 use Psr\Http\Message\UriInterface;
 
 /**
- * @brief Class that validates data of XSD simple types given by URIs
+ * @brief Class that validates data of XSD simple types given by URLs
  *
- * Supported are URIs that follow the id solution in [XML Schema Datatypes in
+ * Supported are URLs that follow the id solution in [XML Schema Datatypes in
  * RDF and OWL](https://www.w3.org/TR/swbp-xsch-datatypes), provided that each
  * referenced type has an ID attribute (either `id` which is declared to be ID
  * in the internal subset of the XSD, or `xml:id`) identical to the name of
@@ -25,6 +25,9 @@ class TypeUriBasedSimpleTypeValidator extends AbstractSimpleTypeValidator implem
 {
     private $documentFactory_; ///< DocumentFactoryInterface
 
+    /**
+     * @param $baseUrl string|UriInterface Base URL to locate XSDs
+     */
     public static function newFromBaseUrl($baseUrl): self
     {
         $class = static::DEFAULT_DOCUMENT_FACTORY_CLASS;
@@ -32,6 +35,9 @@ class TypeUriBasedSimpleTypeValidator extends AbstractSimpleTypeValidator implem
         return new static(new $class($baseUrl));
     }
 
+    /**
+     * @param $documentFactory Document factory to create XSDs from URLs
+     */
     public function __construct(
         ?DocumentFactoryInterface $documentFactory = null
     ) {
@@ -44,14 +50,21 @@ class TypeUriBasedSimpleTypeValidator extends AbstractSimpleTypeValidator implem
         }
     }
 
+    /// Get document factory used to create XSDs from URLs
     public function getDocumentFactory(): DocumentFactoryInterface
     {
         return $this->documentFactory_;
     }
 
     /*
+     * @brief Validate data
+     *
      * @param $valueTypeUriPairs Pairs consisting of a value and the URI of a
      * type.
+     *
+     * @return Array mapping keys of items in $valueTypeXNamePairs to
+     * (potentially multi-line) error messages. Empty array if no errors
+     * occurred.
      */
     public function validate($valueTypeUriPairs): array
     {
@@ -71,7 +84,7 @@ class TypeUriBasedSimpleTypeValidator extends AbstractSimpleTypeValidator implem
 
         $baseUri = $this->documentFactory_->getBaseUri();
 
-        foreach ($valueTypeUriPairs as $pair) {
+        foreach ($valueTypeUriPairs as $key => $pair) {
             [ $value, $typeUri ] = $pair;
             [ $schemaLocation, $typeId ] = explode('#', $typeUri, 2);
 
@@ -118,19 +131,16 @@ class TypeUriBasedSimpleTypeValidator extends AbstractSimpleTypeValidator implem
                 $valueTypeXNamePairMaps[$i] = [];
             }
 
-            $valueTypeXNamePairMaps[$i][] =
+            $valueTypeXNamePairMaps[$i][$key] =
                 [ $value, new XName($nsName, $typeId) ];
         }
 
         $result = [];
 
         for ($i = 0; isset($valueTypeXNamePairMaps[$i]); $i++) {
-            $result = array_merge(
-                $result,
-                self::validateAux(
-                    $valueTypeXNamePairMaps[$i],
-                    self::createXsdText($nsNameToSchemaLocationMaps[$i])
-                )
+            $result += $this->validateAux(
+                $valueTypeXNamePairMaps[$i],
+                $this->createXsdText($nsNameToSchemaLocationMaps[$i])
             );
         }
 

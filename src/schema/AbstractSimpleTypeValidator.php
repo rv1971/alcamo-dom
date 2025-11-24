@@ -32,9 +32,10 @@ abstract class AbstractSimpleTypeValidator implements
      * @brief Create XSD text suitable to validate a sequence of simple data
      * items
      *
-     * @param $nsNameToSchemaLocation Map of namespace names to schema locations
+     * @param $nsNameToSchemaLocation Map of namespace names to schema
+     * locations.
      */
-    public function createXsdText(iterable $nsNameToSchemaLocation): string
+    protected function createXsdText(iterable $nsNameToSchemaLocation): string
     {
         $xsdText = self::XSD_TEXT_1;
 
@@ -51,18 +52,25 @@ abstract class AbstractSimpleTypeValidator implements
      * XSD created by createXsdText()
      *
      * @param $valueTypeXNamePairs Nonempty iterable of pairs consisting
-     * of a value and the XName of a type.
+     * of a value and the extended name of a type.
+     *
+     * @param $keys Will be filled with a nNumerically-indexed array of the
+     * keys of $valueTypeXNamePairs, with indexes starting at 0.
      */
-    public function createInstanceDoc(iterable $valueTypeXNamePairs): Document
-    {
+    protected function createInstanceDoc(
+        iterable $valueTypeXNamePairs,
+        ?array &$keys
+    ): Document {
         $instanceText = '';
 
         $nsNameToPrefix = [];
 
         $nsDeclText = 'xmlns:xsi="' . self::XSI_NS . '"';
 
+        $keys = [];
+
         $i = 0;
-        foreach ($valueTypeXNamePairs as $valueTypeXNamePair) {
+        foreach ($valueTypeXNamePairs as $key => $valueTypeXNamePair) {
             [ $value, $typeXName ] = $valueTypeXNamePair;
 
             [ $nsName, $localName ] = $typeXName->getPair();
@@ -83,6 +91,8 @@ abstract class AbstractSimpleTypeValidator implements
             } else {
                 $instanceText .= "<y xsi:type='$localName'>$value</y>\n";
             }
+
+            $keys[] = $key;
         }
 
         /* Line breaks must not be changed here because the line number where
@@ -101,7 +111,7 @@ abstract class AbstractSimpleTypeValidator implements
      *
      * @param $xsdText XSD document text to use for validation
      *
-     * @return Array mapping indexes of items in $valueTypeXNamePairs to
+     * @return Array mapping keys of items in $valueTypeXNamePairs to
      * (potentially multi-line) error messages. Empty array if no errors
      * occurred.
      */
@@ -109,7 +119,7 @@ abstract class AbstractSimpleTypeValidator implements
         iterable $valueTypeXNamePairs,
         string $xsdText
     ): array {
-        $doc = $this->createInstanceDoc($valueTypeXNamePairs);
+        $doc = $this->createInstanceDoc($valueTypeXNamePairs, $keys);
 
         libxml_use_internal_errors(true);
         libxml_clear_errors();
@@ -128,7 +138,7 @@ abstract class AbstractSimpleTypeValidator implements
                 continue;
             }
 
-            $index = $libXmlError->line - 2;
+            $key = $keys[$libXmlError->line - 2];
 
             $message = $libXmlError->message;
 
@@ -136,10 +146,10 @@ abstract class AbstractSimpleTypeValidator implements
                 $message = rtrim(substr($message, $prefixLen), "\n");
             }
 
-            if (isset($errorMsgs[$index])) {
-                $errorMsgs[$index] .= "\n$message";
+            if (isset($errorMsgs[$key])) {
+                $errorMsgs[$key] .= "\n$message";
             } else {
-                $errorMsgs[$index] = $message;
+                $errorMsgs[$key] = $message;
             }
         }
 

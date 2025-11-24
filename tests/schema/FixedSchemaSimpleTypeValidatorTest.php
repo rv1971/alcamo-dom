@@ -106,7 +106,7 @@ class FixedSchemaSimpleTypeValidatorTest extends TestCase
                     ],
                     [ 'true', new XName(self::XSD_NS, 'boolean') ],
                     [ 43.44, new XName(self::XSD_NS, 'float') ],
-                    [ 'P100X', new XName(self::XSD_NS, 'duration') ]
+                    'P100X' => [ 'P100X', new XName(self::XSD_NS, 'duration') ]
                 ],
                 [
                     0 =>
@@ -114,7 +114,7 @@ class FixedSchemaSimpleTypeValidatorTest extends TestCase
                     2 => "'list union bar' is not a valid value of the union "
                     . "type '{http://www.w3.org/2001/XMLSchema}fullDerivationSet'.",
                     3 => "'-42' is not a valid value of the union type '{http://www.w3.org/2001/XMLSchema}allNNI'.",
-                    7 => "'P100X' is not a valid value of the atomic type 'xs:duration'."
+                    'P100X' => "'P100X' is not a valid value of the atomic type 'xs:duration'."
                 ]
             ]
         ];

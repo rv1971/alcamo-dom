@@ -48,6 +48,7 @@ class FixedSchemaSimpleTypeValidator extends AbstractSimpleTypeValidator
         $this->xsdText_ = $this->createXsdText($nsNameToSchemaLocation);
     }
 
+    /// Get auxiliary XSD text created for validation
     public function getXsdText(): string
     {
         return $this->xsdText_;
@@ -58,7 +59,7 @@ class FixedSchemaSimpleTypeValidator extends AbstractSimpleTypeValidator
      *
      * @param $valueTypeXNamePairs Pairs of value and type XName
      *
-     * @return Array mapping indexes of items in $valueTypeXNamePairs to
+     * @return Array mapping keys of items in $valueTypeXNamePairs to
      * (potentially multi-line) error messages. Empty array if no errors
      * occurred.
      */
