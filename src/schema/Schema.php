@@ -49,10 +49,12 @@ class Schema implements
     NamespaceConstantsInterface
 {
     /// Predefined XSI attributes
-    public const XSI_ATTRS = [ 'nil' => 'boolean', 'type' => 'QName' ];
+    public const PREDEFINED_XSI_ATTRS = [ 'nil' => 'boolean', 'type' => 'QName' ];
 
     /**
      * @brief Construct new schema or get it from cache
+     *
+     * @param $doc XML document for which the schema is to be created.
      *
      * This method works even if a document has no `xsi:schemaLocation`
      *  attribute, in which case the schema has only the predefined components
@@ -80,7 +82,11 @@ class Schema implements
         );
     }
 
-    /// Construct new schema or get it from cache
+    /**
+     * @brief Construct new schema or get it from cache
+     *
+     * @param $urls URLs of XSDs to include into the schema.
+     */
     public static function newFromUrls(
         iterable $urls,
         ?DocumentFactoryInterface $documentFactory = null
@@ -110,7 +116,12 @@ class Schema implements
         return $schema;
     }
 
-    /// Construct new schema or get it from cache
+    /**
+     * @brief Construct new schema or get it from cache
+     *
+     * @param $xsds alcamo::dom::Document objects containing XSDs to include
+     * into the schema.
+     */
     public static function newFromXsds(
         array $xsds,
         ?DocumentFactoryInterface $documentFactory = null
@@ -128,7 +139,7 @@ class Schema implements
         return $schema;
     }
 
-    // Create type from an URL reference indicating an XSD element by ID
+    /// Create a type from an URL reference indicating an XSD element by ID
     public static function createTypeFromUrl(
         $url,
         ?DocumentFactoryInterface $documentFactory = null
@@ -151,7 +162,7 @@ class Schema implements
         );
     }
 
-    // Create type from a schema consisting of the element's owner document
+    /// Create type from a schema consisting of the element's owner document
     public static function createTypeFromXsdElement(
         XsdElement $xsdElement,
         ?DocumentFactoryInterface $documentFactory = null
@@ -183,7 +194,17 @@ class Schema implements
     private $anyType_;                ///< ComplexType
     private $anySimpleType;           ///< PredefinedAnySimpleType
 
-    /// Construct new schema from XSDs
+    /**
+     * @brief Construct new schema from XSDs
+     *
+     * @param $xsds alcamo::dom::Document objects containing XSDs to include
+     * into the schema.
+     *
+     * @param $cacheKey Key to use for this schema in the schema cache.
+     *
+     * @param $documentFactory Document factory used to create document
+     * objects for XSDs imported or included by the given ones.
+     */
     protected function __construct(
         array $xsds,
         string $cacheKey,
@@ -200,7 +221,7 @@ class Schema implements
         $this->initGlobals();
     }
 
-    /// Return a new instance of DocumentFactory
+    /// Get the document factory used to create XSDs from URLs
     public function getDocumentFactory(): DocumentFactoryInterface
     {
         if (!isset($this->documentFactory_)) {
@@ -210,14 +231,14 @@ class Schema implements
         return $this->documentFactory_;
     }
 
-    /// Map of URI string to alcamo::dom::xsd::Document
+    /// Map of URI string to alcamo::dom::Document
     public function getXsds(): array
     {
         return $this->xsds_;
     }
 
     /**
-     * @brief Map of URI string to alcamo::dom::xsd::Document
+     * @brief Map of URI string to alcamo::dom::Document
      *
      * Unlike getXsds(), this does not contain the XSDs `<include>`d by other
      * XSDs. Used in alcamo::dom::schema::FixedSchemaSimpleTypeValidator to
@@ -337,8 +358,8 @@ class Schema implements
      *
      * @attention Use this method only if you really need all types (e.g. to
      * create a catalog of types). If you need only some types, use
-     * getGlobalType() which is nore efficient because it will only create the
-     * needed type objects.
+     * getGlobalType() which is much more efficient because it will only
+     * create the needed type objects.
      */
     public function getGlobalTypes(): array
     {
@@ -357,13 +378,13 @@ class Schema implements
         return $this->globalTypes_;
     }
 
-    /// Instance of xsd:anyType
+    /// Get an instance of xsd:anyType
     public function getAnyType(): ComplexType
     {
         return $this->anyType_;
     }
 
-    /// Instance of xsd:anySimpleType
+    /// Get an instance of xsd:anySimpleType
     public function getAnySimpleType(): PredefinedAnySimpleType
     {
         return $this->anySimpleType_;
@@ -539,7 +560,9 @@ class Schema implements
             $this->anySimpleType_;
 
         // Add predefined XSI attributes
-        foreach (self::XSI_ATTRS as $attrLocalName => $typeLocalName) {
+        foreach (
+            self::PREDEFINED_XSI_ATTRS as $attrLocalName => $typeLocalName
+        ) {
             $attrXName = new XName(self::XSI_NS, $attrLocalName);
 
             $this->globalAttrs_[(string)$attrXName] =

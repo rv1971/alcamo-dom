@@ -50,7 +50,7 @@ class TypeUriBasedSimpleTypeValidator extends AbstractSimpleTypeValidator implem
         }
     }
 
-    /// Get document factory used to create XSDs from URLs
+    /// Get the document factory used to create XSDs from URLs
     public function getDocumentFactory(): DocumentFactoryInterface
     {
         return $this->documentFactory_;
