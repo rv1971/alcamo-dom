@@ -4,6 +4,7 @@ namespace alcamo\dom;
 
 use alcamo\collection\{
     ArrayDataTrait,
+    CountableTrait,
     PreventWriteArrayAccessTrait,
     StringIndexedReadArrayAccessTrait
 };
@@ -16,6 +17,7 @@ use alcamo\collection\{
 trait CacheTrait
 {
     use ArrayDataTrait;
+    use CountableTrait;
     use PreventWriteArrayAccessTrait;
     use StringIndexedReadArrayAccessTrait;
 

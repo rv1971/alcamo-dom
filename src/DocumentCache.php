@@ -11,7 +11,7 @@ use alcamo\uri\{Uri, UriNormalizer};
  * Data is accessed through the readonly ArrayAccess interface via normalized
  * absolute URIs as keys. Other keys will not find any data.
  */
-class DocumentCache implements \ArrayAccess
+class DocumentCache implements \ArrayAccess, \Countable
 {
     use CacheTrait;
 
