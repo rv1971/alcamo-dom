@@ -2,7 +2,7 @@
 
 namespace alcamo\dom\psvi;
 
-use alcamo\dom\{ConverterPool as CP, DocumentFactoryInterface, ValidationTrait};
+use alcamo\dom\ConverterPool as CP;
 use alcamo\dom\decorated\Document as BaseDocument;
 use alcamo\dom\schema\{Schema, TypeMap};
 use alcamo\exception\DataValidationFailed;
@@ -14,16 +14,14 @@ use alcamo\exception\DataValidationFailed;
  */
 
 /**
- * @brief DOM class for %Documents that make the Post-Schema-Validation
+ * @brief DOM class for Documents that makes the Post-Schema-Validation
  * Infoset available
  *
- * @date Last reviewed 2021-07-11
- *
- * This class does not need a __clone() method because all of its properties
- * can be shared among documents.
+ * @date Last reviewed 2025-11-25
  */
 class Document extends BaseDocument
 {
+    /// @copybrief alcamo::dom::Document::LOAD_FLAFS
     public const LOAD_FLAGS = self::VALIDATE_AFTER_LOAD;
 
     /// @copybrief alcamo::dom::Document::NODE_CLASSES
@@ -34,6 +32,7 @@ class Document extends BaseDocument
         ]
         + parent::NODE_CLASSES;
 
+    /** @copybrief alcamo::dom::Document::DEFAULT_DOCUMENT_FACTORY_CLASS */
     public const DEFAULT_DOCUMENT_FACTORY_CLASS = DocumentFactory::class;
 
     /// Map of XSD type XNames to conversion functions for attribute values
@@ -71,7 +70,7 @@ class Document extends BaseDocument
     private $attrConverters_;      ///< TypeMap
     private $elementDecoratorMap_; ///< TypeMap
 
-    /// Schema obtained from `xsi:schemaLocation`
+    /// Get schema obtained from `xsi:schemaLocation`
     public function getSchema(): Schema
     {
         if (!isset($this->schema_)) {
@@ -81,7 +80,7 @@ class Document extends BaseDocument
         return $this->schema_;
     }
 
-    /// Type map used to convert attribute values
+    /// Get type map used to convert attribute values
     public function getAttrConverters(): TypeMap
     {
         if (!isset($this->attrConverters_)) {
@@ -94,7 +93,7 @@ class Document extends BaseDocument
         return $this->attrConverters_;
     }
 
-    /// Map of XSD element types to decorator classes
+    /// Get map of XSD element types to decorator classes
     public function getElementDecoratorMap(): TypeMap
     {
         if (!isset($this->elementDecoratorMap_)) {
@@ -111,8 +110,8 @@ class Document extends BaseDocument
     public function validateIdrefs()
     {
         /**
-         * @note This method may be expensive because it iterates over *all*
-         * attributes in the document.
+         * @attention This method may be expensive because it iterates over
+         * *all* attributes in the document.
          */
         foreach ($this->query('//@*') as $attr) {
             switch ((string)$attr->getType()->getXName()) {

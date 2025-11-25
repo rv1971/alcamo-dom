@@ -8,44 +8,36 @@ use alcamo\dom\schema\component\AbstractXsdComponent;
 
 /**
  * @brief Use XML Schema information for documentation
+ *
+ * @date Last reviewed 2025-11-25
  */
 trait HavingDocumentationTrait
 {
     use BaseHavingDocumentationTrait;
 
+    /** @copydoc alcamo::dom::HavingDocumentationInterface::getLabel() */
     public function getLabel(
         ?string $lang = null,
         ?int $fallbackFlags = null
     ): ?string {
-        /** - Use <rdfs:label> or rdfs:label attribute, if applicable. */
-        $label = $this->getRdfsLabel($lang, $fallbackFlags);
+        /** Proceed as in
+         *  alcamo::dom::decorated::HavingDocumentationTrait::getLabel(), but
+         *  without fallback to element's local name. If a label is found,
+         *  return it. */
+        $label =
+            parent::getLabel($lang, $fallbackFlags & ~self::FALLBACK_TO_NAME);
 
         if (isset($label)) {
             return $label;
         }
 
-        /*
-         * - Otherwise, if the present element has an owl:sameAs attribute and
-         * $fallbackFlags contains
-         * HavingDocumentationInterface::FALLBACK_TO_SAME_AS_FRAGMENT, return
-         * the fragment part of owl:sameAs.
-         */
-
-        if ($fallbackFlags & self::FALLBACK_TO_SAME_AS_FRAGMENT) {
-            $label = $this->getSameAsFragment();
-
-            if (isset($label)) {
-                return $label;
-            }
-        }
-
         /**
          * - Otherwise, if the present element has a type declared in an XSD
          * document and $fallbackFlags contains
-         * HavingDocumentationInterface::FALLBACK_TO_TYPE_NAME, call
-         * getLabel() on the type declaration element.
+         * alcamo::dom::HavingDocumentationInterface::FALLBACK_TO_TYPE_NAME,
+         * call getLabel() on the type declaration element.
          */
-        $type = $this->getType();
+        $type = $this->handler_->getType();
 
         if (
             $type instanceof AbstractXsdComponent
@@ -61,7 +53,7 @@ trait HavingDocumentationTrait
          * element's local name.  - Otherwise return `null`.
          */
         return $fallbackFlags & self::FALLBACK_TO_NAME
-            ? $this->localName
+            ? $this->handler_->localName
             : null;
     }
 }

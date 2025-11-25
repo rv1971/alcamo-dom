@@ -9,26 +9,30 @@ use alcamo\dom\schema\component\{
     ListType,
     SimpleTypeInterface
 };
+use alcamo\exception\{DataValidationFailed, ExceptionInterface};
 
 /**
  * @brief Attribute class for use in DOMDocument::registerNodeClass()
  *
  * Provides getType() to retrieve the XSD type of this attribute and uses this
- * in create Value(), so that alcamo::dom::extended::Attr::getValue() returns
+ * in createValue(), so that alcamo::dom::extended::Attr::getValue() returns
  * an appropriately converted value.
  *
- * @date Last reviewed 2021-07-11
+ * @date Last reviewed 2025-11-25
  */
 class Attr extends BaseAttr
 {
     private $type_;  ///< SimpleTypeInterface
 
+    /// Get the attribute type as precisely as possible
     public function getType(): SimpleTypeInterface
     {
         if (!isset($this->type_)) {
             do {
                 $elementType = $this->parentNode->getType();
 
+                /** - If the element type is unknown, the attribute type is
+                 *  `xsd:anySimpleType`. */
                 if (!($elementType instanceof ComplexType)) {
                     $this->type_ =
                         $this->ownerDocument->getSchema()->getAnySimpleType();
@@ -38,12 +42,18 @@ class Attr extends BaseAttr
                 $attr = $elementType->getAttrs()[(string)$this->getXName()]
                     ?? null;
 
+                /** - Otherwise, if the element type does not define the
+                 *  current attribute, the attribute type is
+                 *  `xsd:anySimpleType`. This is not necessarily an error
+                 *  since the element could use `xsd:anyAttribute`. */
                 if (!isset($attr)) {
                     $this->type_ =
                         $this->ownerDocument->getSchema()->getAnySimpleType();
                     break;
                 }
 
+                /** Otherwise, the type is obtained from the attribute
+                 *  declaration in the element's type. */
                 $this->type_ = $attr->getType();
             } while (false);
         }
@@ -58,20 +68,20 @@ class Attr extends BaseAttr
          *  alcamo::dom::extended::Attr::createValue() immediately. */
         if (
             !isset($this->namespaceURI)
-            && $this->parentNode->namespaceURI == Document::XSD_NS
+            && $this->parentNode->namespaceURI == self::XSD_NS
         ) {
             return parent::createValue();
         }
 
+        /** Otherwise, if alcamo::dom::extended::Attr::createValue()
+         *  converts the value, return its result. */
+        $value = parent::createValue();
+
+        if ($value !== $this->value) {
+            return $value;
+        }
+
         try {
-            /** Otherwise, if alcamo::dom::extended::Attr::createValue()
-             *  converts the value, return its result. */
-            $value = parent::createValue();
-
-            if ($value !== $this->value) {
-                return $value;
-            }
-
             /** Otherwise convert based on the XML Schema type. */
             $attrType = $this->getType();
 
@@ -92,17 +102,16 @@ class Attr extends BaseAttr
             }
 
             /** - Otherwise, if the type is a list type, convert the value to
-             * a numerically-indexed array by splitting at whitespace. */
+             * an array by splitting at whitespace. */
             if ($attrType instanceof ListType) {
                 $value = preg_split('/\s+/', $this->value);
 
                 $itemType = $attrType->getItemType();
                 $converter = $converters->lookup($itemType);
 
-                /** - However, if the type is a list type and there is a
-                 * converter for the item type, replace the value by an
-                 * associative array, mapping each item literal to its
-                 * conversion result.
+                /** - If the type is a list type and there is a converter for
+                 * the item type, replace the value by an associative array,
+                 * mapping each item literal to its conversion result.
                  */
                 if (isset($converter)) {
                     $convertedValue = [];
@@ -118,8 +127,8 @@ class Attr extends BaseAttr
                  * enumerators, replace the value by an associative array,
                  * mapping each item literal to its enumerator object.
                  *
-                 * @warning This implies that repeated items will silently be
-                 * dropped int he last two cases. To model such cases with
+                 * @attention This implies that repeated items will silently
+                 * be dropped in the last two cases. To model such cases with
                  * possible repetition, an explicit converter for the list
                  * type is necessary.
                  */
@@ -140,12 +149,25 @@ class Attr extends BaseAttr
 
             /** If none of the above applies, return the literal value. */
             return $this->value;
+        } catch (ExceptionInterface $e) {
+            throw $e->addMessageContext(
+                [
+                    'inData' => $this->ownerDocument->saveXML(),
+                    'atUri' => $this->ownerDocument->documentURI,
+                    'atLine' => $this->getLineNo(),
+                    'forKey' => $this->name
+                ]
+            );
         } catch (\Throwable $e) {
-            $e->name = $this->name;
-            $e->documentURI = $this->ownerDocument->documentURI;
-            $e->lineNo = $this->getLineNo();
-
-            throw $e;
+            throw DataValidationFailed::newFromPrevious(
+                $e,
+                [
+                    'inData' => $this->ownerDocument->saveXML(),
+                    'atUri' => $this->ownerDocument->documentURI,
+                    'atLine' => $this->getLineNo(),
+                    'forKey' => $this->name
+                ]
+            );
         }
     }
 }

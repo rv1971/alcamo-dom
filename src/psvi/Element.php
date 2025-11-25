@@ -6,14 +6,15 @@ use alcamo\dom\decorated\{AbstractElementDecorator, Element as BaseElement};
 use alcamo\dom\schema\component\TypeInterface;
 
 /**
- * @brief %Element class for use in DOMDocument::registerNodeClass()
+ * @brief Element class for use in DOMDocument::registerNodeClass()
  *
- * Provides getType() to retrieve the XSD type of this element.
+ * @date Last reviewed 2025-11-25
  */
 class Element extends BaseElement
 {
     private $type_ = false;  ///< TypeInterface
 
+    /** @copybrief alcamo::dom::decorated::element::DEFAULT_DECORATOR_CLASS */
     public const DEFAULT_DECORATOR_CLASS = HavingDocumentationDecorator::class;
 
     public function getType(): TypeInterface
@@ -31,11 +32,11 @@ class Element extends BaseElement
      *  other mechanisms. */
     protected function createDecorator(): ?AbstractElementDecorator
     {
-        $className = $this->ownerDocument->getElementDecoratorMap()
+        $class = $this->ownerDocument->getElementDecoratorMap()
             ->lookup($this->getType());
 
-        if (isset($className)) {
-            return new $className($this);
+        if (isset($class)) {
+            return new $class($this);
         }
 
         return parent::createDecorator();

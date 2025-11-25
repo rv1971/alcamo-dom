@@ -7,10 +7,10 @@ use alcamo\dom\decorated\DocumentFactory as DocumentFactoryBase;
 /**
  * @brief Factory for DOM documents
  *
- * Unlike its parent, by default this creates Document objects rather than
- * alcamo::dom::extended::Document objects.
+ * Unlike its parent, by default this creates alcamo::dom::psvi::Document
+ * objects rather than alcamo::dom::decorated::Document objects.
  *
- * @date Last reviewed 2021-07-11
+ * @date Last reviewed 2025-11-25
  */
 class DocumentFactory extends DocumentFactoryBase
 {
