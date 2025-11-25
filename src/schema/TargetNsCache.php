@@ -12,6 +12,10 @@ use Psr\Http\Message\UriInterface;
  *
  * Data is accessed through the readonly ArrayAccess interface via absolute
  * URIs as keys.
+ *
+ * Non-normalized URIs can be used as keys since they are normalized in the
+ * access methods. However, access via normalized URIs is more efficient since
+ * they are directly found in the cache.
  */
 class TargetNsCache implements \ArrayAccess
 {
@@ -58,9 +62,6 @@ class TargetNsCache implements \ArrayAccess
 
     /**
      * @brief Add the target namespace of the XSD at $url to the cache
-     *
-     * Unlike the ArrayAccess methods, this method checks whether $url is
-     * absolute and normalizes it.
      *
      * @return Whether the URL was actually added. `false` if it was
      * already in the cache.

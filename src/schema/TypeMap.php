@@ -6,7 +6,7 @@ use alcamo\dom\schema\component\TypeInterface;
 use alcamo\exception\Locked;
 
 /**
- * @brief Map whose keys are type hashes
+ * @brief Map assigning any kind of data to (base) types
  *
  * The lookup() method searches for base types if the type itself has no
  * mapping. The result of the lookup is cached in the map to speed up further
@@ -21,6 +21,22 @@ class TypeMap
     private $isLocked_;     ///< Whether entries have been added to $map_
 
     /**
+     * @param $map Map whose keys are type XName strings
+     */
+    public static function newFromSchemaAndXNameMap(
+        Schema $schema,
+        iterable $map,
+        $defaultValue = null
+    ): self {
+        return new static(
+            static::createHashMapFromSchemaAndXNameMap($schema, $map),
+            $defaultValue
+        );
+    }
+
+    /**
+     * @brief Create map as needed by __construct()
+     *
      * @param $map Map whose keys are XName strings
      *
      * @return Array with SPL hashes of type objects as keys
@@ -43,20 +59,6 @@ class TypeMap
         }
 
         return $hashMap;
-    }
-
-    /**
-     * @param $map Map whose keys are XName strings
-     */
-    public static function newFromSchemaAndXNameMap(
-        Schema $schema,
-        iterable $map,
-        $defaultValue = null
-    ): self {
-        return new static(
-            static::createHashMapFromSchemaAndXNameMap($schema, $map),
-            $defaultValue
-        );
     }
 
     /**
@@ -88,7 +90,7 @@ class TypeMap
     {
         if ($this->isLocked_) {
             /** @throw alcamo::exception::Locked when attempting to modify a
-             *  map to which entries have already been added. */
+             *  map to which entries have already been added by lookup(). */
             throw new Locked();
         }
 
@@ -104,7 +106,7 @@ class TypeMap
     {
         if ($this->isLocked_) {
             /** @throw alcamo::exception::Locked when attempting to modify a
-             *  map to which entries have already been added. */
+             *  map to which entries have already been added by lookup(). */
             throw new Locked();
         }
 
@@ -116,7 +118,11 @@ class TypeMap
         $hash = spl_object_hash($type);
 
         /** If $type appears in the map, return the value assigned to it. */
-        if (isset($this->map_[$hash])) {
+
+        /* First try isset() which is fast but does not find a value of
+         * `null`. If not successfull, try the slower array_key_exists() which
+         * also finds `null`. */
+        if (isset($this->map_[$hash]) || array_key_exists($hash, $this->map_)) {
             return $this->map_[$hash];
         }
 
