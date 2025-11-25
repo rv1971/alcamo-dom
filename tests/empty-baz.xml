@@ -1,0 +1,6 @@
+<?xml version='1.0'?>
+
+<baz
+    xmlns="http://bar.example.com"
+    xmlns:dc="http://purl.org/dc/terms/"
+    dc:identifier="BAZ"/>
