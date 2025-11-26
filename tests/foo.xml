@@ -1,0 +1,16 @@
+<?xml version='1.0'?>
+
+<foo xmlns="http://foo.example.org">
+  <bar
+      xmlns="https://bar.example.com"
+      xmlns:owl="http://www.w3.org/2002/07/owl#"
+      xml:id="bar"
+      xml:base="http://bar.example.biz">
+    <baz id="A" owl:sameAs="#a">Lorem ipsum</baz>
+    <baz id="B" owl:sameAs="#b">dolor sit amet</baz>
+    <baz id="C">consetetur <b
+    xmlns="http://www.w3.org/1999/xhtml"
+    xml:base="http://baz.example.edu"
+    owl:sameAs="#s">sadipscing</b> elitr</baz>
+  </bar>
+</foo>

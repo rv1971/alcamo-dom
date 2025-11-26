@@ -33,7 +33,7 @@ class Element extends \DOMElement implements
         return $this->textContent;
     }
 
-    /// Return a ChildElementsIterator on this element
+    /// Return an alcamo::dom::ChildElementsIterator on this element
     public function getIterator()
     {
         return new ChildElementsIterator($this);
@@ -52,14 +52,14 @@ class Element extends \DOMElement implements
     }
 
     /**
-     * @brief Get the first element which is semantically the same as a given
-     * URI
+     * @brief Get the first element along the `descendant-or-self` axis which
+     * is semantically the same as a given URI
      *
      * I.e. return the first element that declares itself to be the same as
      * $uri. The result may be the context element itself. Return `null` if no
      * such element is found.
      *
-     * @param $uri Asbolute URI which is compared to `owl:sameAs` attributes,
+     * @param $uri Absolute URI which is compared to `owl:sameAs` attributes,
      * the latter resolved to absolute URIs.
      *
      * @param $normalizations For comparison, both $uri and the values of

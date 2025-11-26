@@ -20,35 +20,35 @@ class DocumentCacheTest extends TestCase
 
         /* Does not use cache because URI is relative. */
         $doc1 = (new MyDocumentFactory())->createFromUrl(
-            __DIR__ . DIRECTORY_SEPARATOR . 'empty-foo.xml'
+            __DIR__ . DIRECTORY_SEPARATOR . 'foo.xml'
         );
 
         $this->assertSame(0, count(DocumentCache::getInstance()));
 
         /* Does not use cache because explicitely deactivated. */
-        $doc2 = $factory->createFromUrl('empty-foo.xml', null, false);
+        $doc2 = $factory->createFromUrl('foo.xml', null, false);
 
         $this->assertSame(0, count(DocumentCache::getInstance()));
 
         /* Does use cache. */
-        $doc3 = $factory->createFromUrl('empty-foo.xml');
+        $doc3 = $factory->createFromUrl('foo.xml');
 
         $this->assertSame(1, count(DocumentCache::getInstance()));
 
         /* Does use cache. */
-        $doc4 = $factory->createFromUrl('empty-foo.xml');
+        $doc4 = $factory->createFromUrl('foo.xml');
 
         $this->assertSame($doc3, $doc4);
 
         /* Does not use cache because explicitely deactivated. */
-        $doc5 = $factory->createFromUrl('empty-foo.xml', null, false);
+        $doc5 = $factory->createFromUrl('foo.xml', null, false);
 
         $this->assertNotSame($doc3, $doc5);
 
         /* Does use cached document because URL is normalized */
         $doc6 = $factory->createFromUrl(
             '..' . DIRECTORY_SEPARATOR . 'tests' . DIRECTORY_SEPARATOR
-                . 'empty-foo.xml'
+                . 'foo.xml'
         );
 
         $this->assertSame($doc3, $doc6);
@@ -61,11 +61,11 @@ class DocumentCacheTest extends TestCase
     {
         $this->expectException(AbsoluteUriNeeded::class);
         $this->expectExceptionMessage(
-            'Relative URI <alcamo\uri\Uri>"empty-foo.xml" given '
+            'Relative URI <alcamo\uri\Uri>"foo.xml" given '
                 . 'where absolute URI is needed'
         );
 
-        (new MyDocumentFactory())->createFromUrl('empty-foo.xml', null, true);
+        (new MyDocumentFactory())->createFromUrl('foo.xml', null, true);
     }
 
     public function testReadonlyViolationException()
@@ -74,7 +74,7 @@ class DocumentCacheTest extends TestCase
             (new FileUriFactory())->create(__DIR__ . DIRECTORY_SEPARATOR)
         );
 
-        $doc1 = $factory->createFromUrl('empty-foo.xml');
+        $doc1 = $factory->createFromUrl('foo.xml');
 
         $this->expectException(ReadonlyViolation::class);
         $this->expectExceptionMessage(
@@ -95,13 +95,13 @@ class DocumentCacheTest extends TestCase
             (new FileUriFactory())->create(__DIR__ . DIRECTORY_SEPARATOR)
         );
 
-        $factory->createFromUrl('empty-foo.xml');
+        $factory->createFromUrl('foo.xml');
 
         $this->expectException(InvalidType::class);
         $this->expectExceptionMessage(
             'Invalid type "alcamo\dom\Document", expected one of ["alcamo\dom\MyCachedDocument"]'
         );
 
-        $factory->createFromUrl('empty-foo.xml', MyCachedDocument::class);
+        $factory->createFromUrl('foo.xml', MyCachedDocument::class);
     }
 }

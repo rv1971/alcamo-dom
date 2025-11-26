@@ -28,6 +28,8 @@ class MyDocumentFactory extends DocumentFactory
 
 class DocumentFactoryTest extends TestCase
 {
+    public const DATA_DIR = __DIR__ . DIRECTORY_SEPARATOR;
+
     public const XSD_DIR =
         '..' . DIRECTORY_SEPARATOR . 'xsd' . DIRECTORY_SEPARATOR;
 
@@ -59,8 +61,7 @@ class DocumentFactoryTest extends TestCase
      */
     public function testCreate($url, $class, $expectedNamespace): void
     {
-        $baseUrl =
-            (new FileUriFactory())->create(__DIR__ . DIRECTORY_SEPARATOR);
+        $baseUrl = (new FileUriFactory())->create(self::DATA_DIR);
         $loadFlags = Document::XINCLUDE_AFTER_LOAD;
         $libXmlOptions = LIBXML_NOBLANKS;
 
@@ -153,7 +154,7 @@ class DocumentFactoryTest extends TestCase
     public function testGetClassForDocument($url, $expectedClass): void
     {
         $factory = new MyDocumentFactory(
-            (new FileUriFactory())->create(__DIR__ . DIRECTORY_SEPARATOR)
+            (new FileUriFactory())->create(self::DATA_DIR)
         );
 
         $doc = $factory->createFromUrl($url, null, false);
@@ -165,7 +166,7 @@ class DocumentFactoryTest extends TestCase
     {
         return [
             [ self::XSD_DIR . 'xml.xsd', Xsd::class ],
-            [ 'empty-foo.xml', Document::class ],
+            [ 'foo.xml', Document::class ],
             [ 'empty-bar.xml', BarDocument::class ],
             [ 'empty-baz.xml', BazDocument::class ]
         ];
