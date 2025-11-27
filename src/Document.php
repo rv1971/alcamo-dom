@@ -50,6 +50,9 @@ class Document extends \DOMDocument implements
         'DOMText'                  => Text::class
     ];
 
+    /// Default class for a new document factory
+    public const DEFAULT_DOCUMENT_FACTORY_CLASS = DocumentFactory::class;
+
     /**
      * @brief Default libxml options when loading a document
      *
@@ -83,9 +86,9 @@ class Document extends \DOMDocument implements
     public const LOAD_FLAGS = 0;
 
     /**
-     * @brief Create a document from a URL
+     * @brief Create a document from a URI
      *
-     * @param $url URL to get the data from.
+     * @param $uri URI to get the data from.
      *
      * @param $documentFactory Document factory to use to create dependent
      * documents, e.g. from links. If not specified, the Document factory will
@@ -96,15 +99,15 @@ class Document extends \DOMDocument implements
      * @param $libxmlOptions See $options in
      * [DOMDocument::load()](https://www.php.net/manual/en/domdocument.load)
      */
-    public static function newFromUrl(
-        string $url,
+    public static function newFromUri(
+        string $uri,
         ?DocumentFactoryInterface $documentFactory = null,
         ?int $loadFlags = null,
         ?int $libxmlOptions = null
     ): self {
         $doc = new static($documentFactory, $loadFlags, $libxmlOptions);
 
-        $doc->loadUrl($url);
+        $doc->loadUri($uri);
 
         return $doc;
     }
@@ -123,18 +126,18 @@ class Document extends \DOMDocument implements
      * @param $libxmlOptions See $options in
      * [DOMDocument::load()](https://www.php.net/manual/en/domdocument.load)
      *
-     * @param $url Document URL
+     * @param $uri Document URI
      */
     public static function newFromXmlText(
         string $xmlText,
         ?DocumentFactoryInterface $documentFactory = null,
         ?int $loadFlags = null,
         ?int $libxmlOptions = null,
-        ?string $url = null
+        ?string $uri = null
     ) {
         $doc = new static($documentFactory, $loadFlags, $libxmlOptions);
 
-        $doc->loadXmlText($xmlText, $url);
+        $doc->loadXmlText($xmlText, $uri);
 
         return $doc;
     }
@@ -220,26 +223,26 @@ class Document extends \DOMDocument implements
     }
 
     /**
-     * @brief Load a URL into this document
+     * @brief Load a URI into this document
      *
-     * @param $url URL to get the data from
+     * @param $uri URI to get the data from
      */
-    public function loadUrl(string $url): void
+    public function loadUri(string $uri): void
     {
         $handler = new ErrorHandler();
 
         try {
-            if (!$this->load($url, $this->libxmlOptions_)) {
+            if (!$this->load($uri, $this->libxmlOptions_)) {
                 /** @throw alcamo::exception::FileLoadFailed if
                  *  [DOMDocument::load()](https://www.php.net/manual/en/domdocument.load)
                  *  fails. */
                 throw (new FileLoadFailed())
-                    ->setMessageContext([ 'filename' => $url ]);
+                    ->setMessageContext([ 'filename' => $uri ]);
             }
         } catch (\ErrorException $e) {
             /** @throw alcamo::exception::FileLoadFailed if any libxml warning
              *  or error occurs. */
-            throw FileLoadFailed::newFromPrevious($e, [ 'filename' => $url ]);
+            throw FileLoadFailed::newFromPrevious($e, [ 'filename' => $uri ]);
         }
 
         /** After loading, run the afterLoad() hook. */
@@ -251,9 +254,9 @@ class Document extends \DOMDocument implements
      *
      * @param $xmlText XML text
      *
-     * @param $url Document URL
+     * @param $uri Document URI
      */
-    public function loadXmlText(string $xmlText, ?string $url = null): void
+    public function loadXmlText(string $xmlText, ?string $uri = null): void
     {
         $handler = new ErrorHandler();
 
@@ -273,8 +276,8 @@ class Document extends \DOMDocument implements
             throw SyntaxError::newFromPrevious($e, [ 'inData' => $xmlText ]);
         }
 
-        if (isset($url)) {
-            $this->documentURI = $url;
+        if (isset($uri)) {
+            $this->documentURI = $uri;
         }
 
         /** After loading, run the afterLoad() hook. */
@@ -368,7 +371,7 @@ class Document extends \DOMDocument implements
 
             if (
                 !$this->xsltStylesheet_ = $this->getDocumentFactory()
-                    ->createFromUrl($pi->href, Stylesheet::class)
+                    ->createFromUri($pi->href, Stylesheet::class)
             ) {
                 /** @throw alcamo::exception::FileLoadFailed if a stylesheet
                  *  is specified but cannot be loaded. */
@@ -409,8 +412,8 @@ class Document extends \DOMDocument implements
     {
         $this->clearCache();
 
-        /** Add file:// protocol to the `documentURI` property if no other
-         *  protocol given. */
+        /** Add file:// protocol to the `documentURI` property if it has an
+         *  absolute path and no other protocol given. */
         if ($this->documentURI[0] == '/') {
             $this->documentURI = "file://$this->documentURI";
         }

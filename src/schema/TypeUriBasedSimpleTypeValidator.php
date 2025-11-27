@@ -10,9 +10,9 @@ use GuzzleHttp\Psr7\UriResolver;
 use Psr\Http\Message\UriInterface;
 
 /**
- * @brief Class that validates data of XSD simple types given by URLs
+ * @brief Class that validates data of XSD simple types given by URIs
  *
- * Supported are URLs that follow the id solution in [XML Schema Datatypes in
+ * Supported are URIs that follow the id solution in [XML Schema Datatypes in
  * RDF and OWL](https://www.w3.org/TR/swbp-xsch-datatypes), provided that each
  * referenced type has an ID attribute (either `id` which is declared to be ID
  * in the internal subset of the XSD, or `xml:id`) identical to the name of
@@ -26,17 +26,17 @@ class TypeUriBasedSimpleTypeValidator extends AbstractSimpleTypeValidator implem
     private $documentFactory_; ///< DocumentFactoryInterface
 
     /**
-     * @param $baseUrl string|UriInterface Base URL to locate XSDs
+     * @param $baseUri string|UriInterface Base URI to locate XSDs
      */
-    public static function newFromBaseUrl($baseUrl): self
+    public static function newFromBaseUri($baseUri): self
     {
         $class = static::DEFAULT_DOCUMENT_FACTORY_CLASS;
 
-        return new static(new $class($baseUrl));
+        return new static(new $class($baseUri));
     }
 
     /**
-     * @param $documentFactory Document factory to create XSDs from URLs
+     * @param $documentFactory Document factory to create XSDs from URIs
      */
     public function __construct(
         ?DocumentFactoryInterface $documentFactory = null
@@ -50,7 +50,7 @@ class TypeUriBasedSimpleTypeValidator extends AbstractSimpleTypeValidator implem
         }
     }
 
-    /// Get the document factory used to create XSDs from URLs
+    /// Get the document factory used to create XSDs from URIs
     public function getDocumentFactory(): DocumentFactoryInterface
     {
         return $this->documentFactory_;
@@ -96,9 +96,9 @@ class TypeUriBasedSimpleTypeValidator extends AbstractSimpleTypeValidator implem
                 );
             }
 
-            $url = UriResolver::resolve($baseUri, new Uri($schemaLocation));
+            $uri = UriResolver::resolve($baseUri, new Uri($schemaLocation));
 
-            $nsName = TargetNsCache::getInstance()[$url];
+            $nsName = TargetNsCache::getInstance()[$uri];
 
             /* Store the mapping of namespace name to schema location in a map
              * so that it does not conflict with other schema locations for
@@ -107,19 +107,19 @@ class TypeUriBasedSimpleTypeValidator extends AbstractSimpleTypeValidator implem
                 /* Create a new map if none of those created so far is
                  * suitable. */
                 if (!isset($nsNameToSchemaLocationMaps[$i])) {
-                    $nsNameToSchemaLocationMaps[$i] = [ $nsName => $url ];
+                    $nsNameToSchemaLocationMaps[$i] = [ $nsName => $uri ];
                     break;
                 }
 
                 /* Add to the map if not yet present. */
                 if (!isset($nsNameToSchemaLocationMaps[$i][$nsName])) {
-                    $nsNameToSchemaLocationMaps[$i][$nsName] = $url;
+                    $nsNameToSchemaLocationMaps[$i][$nsName] = $uri;
                     break;
                 }
 
                 /* Accept existing mapping if schema location is the desired
                  * one. */
-                if ($nsNameToSchemaLocationMaps[$i][$nsName] == $url) {
+                if ($nsNameToSchemaLocationMaps[$i][$nsName] == $uri) {
                     break;
                 }
 

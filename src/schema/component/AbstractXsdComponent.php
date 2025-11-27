@@ -43,7 +43,7 @@ abstract class AbstractXsdComponent extends AbstractComponent
     }
 
     /**
-     * @brief URL that allows to access to definition
+     * @brief URI that allows to access to definition
      *
      * Can be used to refer to an XSD type as explaind in [Using the id
      * Attribute](https://www.w3.org/TR/swbp-xsch-datatypes/#sec-id-attr).

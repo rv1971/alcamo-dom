@@ -39,20 +39,20 @@ class DocumentsFactory implements HavingDocumentFactoryInterface
     }
 
     /**
-     * @brief Create documents from a collection of URLs
+     * @brief Create documents from a collection of URIs
      *
-     * @param $urls Collection of URLs.
+     * @param $uris Collection of URIs.
      *
-     * If the keys of $urls are strings, they are used as key in the resulting
+     * If the keys of $uris are strings, they are used as key in the resulting
      * Documents object. Otherwise the keys are created as explained in
      * Documents::__construct().
      */
-    public function createFromUrls(iterable $urls): Documents
+    public function createFromUris(iterable $uris): Documents
     {
         $docs = [];
 
-        foreach ($urls as $key => $url) {
-            $docs[$key] = $this->documentFactory_->createFromUrl($url);
+        foreach ($uris as $key => $uri) {
+            $docs[$key] = $this->documentFactory_->createFromUri($uri);
         }
 
         $class = static::DEFAULT_DOCUMENTS_CLASS;
@@ -79,7 +79,7 @@ class DocumentsFactory implements HavingDocumentFactoryInterface
         foreach (
             glob($pattern, $globFlags ?? static::DEFAULT_GLOB_FLAGS) as $path
         ) {
-            $docs[] = $this->documentFactory_->createFromUrl(
+            $docs[] = $this->documentFactory_->createFromUri(
                 $fileUriFactory->create($path)
             );
         }

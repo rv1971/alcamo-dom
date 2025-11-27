@@ -19,24 +19,24 @@ class DocumentCache implements \ArrayAccess, \Countable
      * @brief Add a document to the cache
      *
      * Unlike the ArrayAccess methods, this method checks whether the
-     * document's URL is absolute and normalizes it.
+     * document's URI is absolute and normalizes it.
      *
      * @return Whether the document was actually added. `false` if it was
      * already in the cache.
      */
     public function add(Document $doc): bool
     {
-        $url = new Uri($doc->documentURI);
+        $uri = new Uri($doc->documentURI);
 
-        if (!Uri::isAbsolute($url)) {
+        if (!Uri::isAbsolute($uri)) {
             /** @throw alcamo::exception::AbsoluteUriNeeded when attempting to
-             * cache a document with a non-absolute URL. */
+             * cache a document with a non-absolute URI. */
             throw (new AbsoluteUriNeeded())
                 ->setMessageContext([ 'uri' => $doc->documentURI ]);
         }
 
-        /* Normalize URL for use in caching. */
-        $doc->documentURI = (string)UriNormalizer::normalize($url);
+        /* Normalize URI for use in caching. */
+        $doc->documentURI = (string)UriNormalizer::normalize($uri);
 
         if (isset($this->data_[$doc->documentURI])) {
             if ($this->data_[$doc->documentURI] !== $doc) {

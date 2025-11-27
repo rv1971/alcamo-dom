@@ -42,16 +42,16 @@ class ConverterPool implements NamespaceConstantsInterface
     }
 
     /**
-     * @brief Call createFromUrl() on the owner document's document factory
+     * @brief Call createFromUri() on the owner document's document factory
      *
      * @param $context must implement HavingBaseUriInterface
      */
     public static function toDocument($value, \DOMNode $context): Document
     {
-        $url = $context->resolveUri($value);
+        $uri = $context->resolveUri($value);
 
         return
-            $context->ownerDocument->getDocumentFactory()->createFromUrl($url);
+            $context->ownerDocument->getDocumentFactory()->createFromUri($uri);
     }
 
     /// Call alcamo::time::Duration::__construct()
@@ -231,8 +231,8 @@ class ConverterPool implements NamespaceConstantsInterface
             ->createFromCurieAndContext($value, $context, self::XHV_NS);
     }
 
-    /// Process an XPointer URL
-    public static function xPointerUrlToSubset($value, \DOMNode $context)
+    /// Process an XPointer URI
+    public static function xPointerUriToSubset($value, \DOMNode $context)
     {
         $a = explode('#', $value, 2);
 
@@ -246,10 +246,10 @@ class ConverterPool implements NamespaceConstantsInterface
             );
         }
 
-        [ $url, $fragment ] = $a;
+        [ $uri, $fragment ] = $a;
 
-        $doc = $url
-            ? static::toDocument($url, $context)
+        $doc = $uri
+            ? static::toDocument($uri, $context)
             : $context->ownerDocument;
 
         $xPointer = Pointer::newFromString($fragment);
@@ -257,12 +257,12 @@ class ConverterPool implements NamespaceConstantsInterface
         return $xPointer->process($doc);
     }
 
-    /// Process an XPointer URL, returning the set of the values of the nodes found
-    public static function xPointerUrlToValueSet($value, \DOMNode $context): Set
+    /// Process an XPointer URI, returning the set of the values of the nodes found
+    public static function xPointerUriToValueSet($value, \DOMNode $context): Set
     {
         $result = new Set();
 
-        $nodes = static::xPointerUrlToSubset($value, $context);
+        $nodes = static::xPointerUriToSubset($value, $context);
         if (isset($nodes)) {
             foreach ($nodes as $node) {
                 /** On Attr, call Attr::getValue() to get a value; for any

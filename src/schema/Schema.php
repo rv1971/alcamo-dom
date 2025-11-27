@@ -63,21 +63,21 @@ class Schema implements
         Document $doc,
         ?DocumentFactoryInterface $documentFactory = null
     ): self {
-        $urls = [];
+        $uris = [];
 
         $schemaLocation = $doc->documentElement
             ->getAttributeNodeNS(self::XSI_NS, 'schemaLocation');
 
         if ($schemaLocation) {
             foreach (
-                ConverterPool::pairsToMap($schemaLocation) as $nsName => $url
+                ConverterPool::pairsToMap($schemaLocation) as $nsName => $uri
             ) {
-                $urls[] = $doc->documentElement->resolveUri(new Uri($url));
+                $uris[] = $doc->documentElement->resolveUri(new Uri($uri));
             }
         }
 
-        return static::newFromUrls(
-            $urls,
+        return static::newFromUris(
+            $uris,
             $documentFactory ?? $doc->getDocumentFactory()
         );
     }
@@ -85,13 +85,13 @@ class Schema implements
     /**
      * @brief Construct new schema or get it from cache
      *
-     * @param $urls URLs of XSDs to include into the schema.
+     * @param $uris URIs of XSDs to include into the schema.
      */
-    public static function newFromUrls(
-        iterable $urls,
+    public static function newFromUris(
+        iterable $uris,
         ?DocumentFactoryInterface $documentFactory = null
     ): self {
-        $cacheKey = SchemaCache::getInstance()->createKey($urls);
+        $cacheKey = SchemaCache::getInstance()->createKey($uris);
 
         $schema = SchemaCache::getInstance()[$cacheKey] ?? null;
 
@@ -104,8 +104,8 @@ class Schema implements
                 $documentFactory = new $class();
             }
 
-            foreach ($urls as $url) {
-                $xsds[] = $documentFactory->createFromUrl($url);
+            foreach ($uris as $uri) {
+                $xsds[] = $documentFactory->createFromUri($uri);
             }
 
             $schema = new static($xsds, $cacheKey, $documentFactory);
@@ -139,15 +139,11 @@ class Schema implements
         return $schema;
     }
 
-    /// Create a type from an URL reference indicating an XSD element by ID
-    public static function createTypeFromUrl(
-        $url,
+    /// Create a type from an URI reference indicating an XSD element by ID
+    public static function createTypeFromUri(
+        $uri,
         ?DocumentFactoryInterface $documentFactory = null
     ): TypeInterface {
-        $url = UriNormalizer::normalize(
-            $url instanceof UriInterface ? $url : new Uri($url)
-        );
-
         if (!isset($documentFactory)) {
             $class = static::DEFAULT_DOCUMENT_FACTORY_CLASS;
 
@@ -155,9 +151,7 @@ class Schema implements
         }
 
         return static::createTypeFromXsdElement(
-            $documentFactory->createFromUrl(
-                $url->withFragment('')
-            )[$url->getFragment()],
+            $documentFactory->createFromUri($uri),
             $documentFactory
         );
     }
@@ -221,7 +215,7 @@ class Schema implements
         $this->initGlobals();
     }
 
-    /// Get the document factory used to create XSDs from URLs
+    /// Get the document factory used to create XSDs from URIs
     public function getDocumentFactory(): DocumentFactoryInterface
     {
         if (!isset($this->documentFactory_)) {
@@ -449,7 +443,7 @@ class Schema implements
         $documentFactoryClass = static::DEFAULT_DOCUMENT_FACTORY_CLASS;
 
         /* Always load XMLSchema.xsd (or get it from cache). */
-        $xsds[] = $this->documentFactory_->createFromUrl(
+        $xsds[] = $this->documentFactory_->createFromUri(
             (new FileUriFactory())->create(
                 dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR
                 . 'xsd' . DIRECTORY_SEPARATOR . 'XMLSchema.xsd'
@@ -460,11 +454,11 @@ class Schema implements
         while ($xsds) {
             $xsd = array_pop($xsds);
 
-            $url =
+            $uri =
                 (string)UriNormalizer::normalize(new Uri($xsd->documentURI));
 
-            if (!isset($this->xsds_[$url])) {
-                $this->xsds_[$url] = $xsd;
+            if (!isset($this->xsds_[$uri])) {
+                $this->xsds_[$uri] = $xsd;
 
                 /* Cache all provided XSDs. add() will throw if
                  * documentURI is not absolute. */
@@ -477,14 +471,14 @@ class Schema implements
                         continue;
                     }
 
-                    $url = UriNormalizer::normalize(
+                    $uri = UriNormalizer::normalize(
                         $import->resolveUri($import->schemaLocation)
                     );
 
-                    if (!isset($this->xsds_[(string)$url])) {
+                    if (!isset($this->xsds_[(string)$uri])) {
                         try {
                             $xsds[] =
-                                $this->documentFactory_->createFromUrl($url);
+                                $this->documentFactory_->createFromUri($uri);
                         } catch (ExceptionInterface $e) {
                             $e->addMessageContext(
                                 [

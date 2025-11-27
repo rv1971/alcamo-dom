@@ -42,12 +42,12 @@ class DocumentFactory implements
      */
     private $dcIdentifierPrefixToClass_;
 
-    private $baseUrl_;       ///< ?UriInterface
+    private $baseUri_;       ///< ?UriInterface
     private $loadFlags_;     ///< ?int
     private $libxmlOptions_; ///< ?int
 
     /**
-     * @param $baseUrl string|UriInterface Base URL to locate documents
+     * @param $baseUri string|UriInterface Base URI to locate documents
      *
      * @param $loadFlags OR-Combination of the load class constants in the
      * alcamo::dom::Document class.
@@ -56,14 +56,14 @@ class DocumentFactory implements
      * [DOMDocument::load()](https://www.php.net/manual/en/domdocument.load)
      */
     public function __construct(
-        $baseUrl = null,
+        $baseUri = null,
         ?int $loadFlags = null,
         ?int $libxmlOptions = null
     ) {
-        if (isset($baseUrl)) {
-            $this->baseUrl_ = $baseUrl instanceof UriInterface
-                ? $baseUrl
-                : new Uri($baseUrl);
+        if (isset($baseUri)) {
+            $this->baseUri_ = $baseUri instanceof UriInterface
+                ? $baseUri
+                : new Uri($baseUri);
         }
 
         $this->loadFlags_ = $loadFlags;
@@ -74,10 +74,10 @@ class DocumentFactory implements
         );
     }
 
-    /// Return the base URI used to resolve relative URLs
+    /// Return the base URI used to resolve relative URIs
     public function getBaseUri(): ?UriInterface
     {
-        return $this->baseUrl_;
+        return $this->baseUri_;
     }
 
     public function resolveUri($uri): ?UriInterface
@@ -90,8 +90,8 @@ class DocumentFactory implements
             return $uri;
         }
 
-        return isset($this->baseUrl_)
-            ? UriResolver::resolve($this->baseUrl_, $uri)
+        return isset($this->baseUri_)
+            ? UriResolver::resolve($this->baseUri_, $uri)
             : null;
     }
 
@@ -105,59 +105,43 @@ class DocumentFactory implements
         return $this->libxmlOptions_;
     }
 
-    /**
-     * @brief Create a document from a URL
-     *
-     * @param $url string|UriInterface URL to get the data from.
-     *
-     * @param $class Explicit PHP class to use for the new document.
-     *
-     * @param $useCache
-     * - If `true`, use the cache.
-     * - If `false`, do not use the cache.
-     * - If `null`, use the cache iff $url is absolute.
-     *
-     * @param $loadFlags OR-Combination of the load constants in the
-     * alcamo::dom::Document class. If not given, getLoadFlags() is used.
-     *
-     * @param $libxmlOptions See $options in
-     * [DOMDocument::load()](https://www.php.net/manual/en/domdocument.load). If
-     * not given, getLibxmlOptions() is used.
-     */
-    public function createFromUrl(
-        $url,
+    public function createFromUri(
+        $uri,
         ?string $class = null,
         ?bool $useCache = null,
         ?int $loadFlags = null,
         ?int $libxmlOptions = null
-    ): Document {
-        if (!($url instanceof UriInterface)) {
-            $url = new Uri($url);
+    ): ?\DOMNode {
+        if (!($uri instanceof UriInterface)) {
+            $uri = new Uri($uri);
         }
 
-        if (isset($this->baseUrl_)) {
-            $url = UriResolver::resolve($this->baseUrl_, $url);
+        if (isset($this->baseUri_)) {
+            $uri = UriResolver::resolve($this->baseUri_, $uri);
         }
+
+        $docUri = $uri->withFragment('');
+        $fragment = $uri->getFragment();
 
         if ($useCache !== false) {
             if ($useCache === true) {
-                if (!Uri::isAbsolute($url)) {
+                if (!Uri::isAbsolute($docUri)) {
                     /** @throw alcamo::exception::AbsoluteUriNeeded when
                      * attempting to use the cache for a document with a
-                     * non-absolute URL. */
+                     * non-absolute URI. */
                     throw (new AbsoluteUriNeeded())
-                        ->setMessageContext([ 'uri' => $url ]);
+                        ->setMessageContext([ 'uri' => $docUri ]);
                 }
             } else {
-                $useCache = Uri::isAbsolute($url);
+                $useCache = Uri::isAbsolute($docUri);
             }
 
             if ($useCache) {
-                // normalize URL when used for caching
-                $url = (string)UriNormalizer::normalize($url);
+                // normalize URI when used for caching
+                $docUri = (string)UriNormalizer::normalize($docUri);
 
-                if (isset(DocumentCache::getInstance()[$url])) {
-                    $doc = DocumentCache::getInstance()[$url];
+                if (isset(DocumentCache::getInstance()[$docUri])) {
+                    $doc = DocumentCache::getInstance()[$docUri];
 
                     if (isset($class) && !($doc instanceof $class)) {
                         /** @throw alcamo::exception::InvalidType when cached
@@ -167,30 +151,30 @@ class DocumentFactory implements
                             [
                                 'value' => $doc,
                                 'expectedOneOf' => [ $class ],
-                                'atUri' => $url
+                                'atUri' => $docUri
                             ]
                         );
                     }
 
-                    return $doc;
+                    return $fragment === '' ? $doc : $doc[$fragment];
                 }
             }
         }
 
         if (!isset($class)) {
-            $class =
-                $this->getClassForDocument(ShallowDocument::newFromUrl($url));
+            $class = $this
+                ->getClassForDocument(ShallowDocument::newFromUri($docUri));
         }
 
-        /** If the document is not taken from the cache, call the newFromUrl()
+        /** If the document is not taken from the cache, call the newFromUri()
          *  method of the document class to create a new instance. */
-        $doc = $class::newFromUrl($url, $this, $loadFlags, $libxmlOptions);
+        $doc = $class::newFromUri($docUri, $this, $loadFlags, $libxmlOptions);
 
         if ($useCache) {
             DocumentCache::getInstance()->add($doc);
         }
 
-        return $doc;
+        return $fragment === '' ? $doc : $doc[$fragment];
     }
 
     /**
@@ -208,14 +192,14 @@ class DocumentFactory implements
      * [DOMDocument::load()](https://www.php.net/manual/en/domdocument.load). If
      * not given, getLibxmlOptions() is used.
      *
-     * @param $url Document URL
+     * @param $uri Document URI
      */
     public function createFromXmlText(
         string $xmlText,
         ?string $class = null,
         ?int $loadFlags = null,
         ?int $libxmlOptions = null,
-        ?string $url = null
+        ?string $uri = null
     ): Document {
         if (!isset($class)) {
             $class = $this->getClassForDocument(
@@ -223,13 +207,13 @@ class DocumentFactory implements
             );
         }
 
-        if (isset($url)) {
-            if (isset($this->baseUrl_)) {
-                if (!($url instanceof UriInterface)) {
-                    $url = new Uri($url);
+        if (isset($uri)) {
+            if (isset($this->baseUri_)) {
+                if (!($uri instanceof UriInterface)) {
+                    $uri = new Uri($uri);
                 }
 
-                $url = UriResolver::resolve($this->baseUrl_, $url);
+                $uri = UriResolver::resolve($this->baseUri_, $uri);
             }
         }
 
@@ -238,7 +222,7 @@ class DocumentFactory implements
             $this,
             $loadFlags,
             $libxmlOptions,
-            $url
+            $uri
         );
 
         return $doc;

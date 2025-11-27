@@ -17,39 +17,39 @@ class SchemaCache implements \ArrayAccess
     /**
      * @brief Create a key for use in this cache
      *
-     * @param $items Iterable of URLs or DOM documents
+     * @param $items Iterable of URIs or DOM documents
      */
     public function createKey(iterable $items): string
     {
-        $urls = [];
+        $uris = [];
 
         foreach ($items as $item) {
             switch (true) {
                 case $item instanceof UriInterface:
-                    $url = $item;
+                    $uri = $item;
                     break;
 
                 case $item instanceof \DOMDocument:
-                    $url = new Uri($item->documentURI);
+                    $uri = new Uri($item->documentURI);
                     break;
 
                 default:
-                    $url = new Uri((string)$item);
+                    $uri = new Uri((string)$item);
             }
 
-            if (!Uri::isAbsolute($url)) {
+            if (!Uri::isAbsolute($uri)) {
                 /** @throw alcamo::exception::AbsoluteUriNeeded when
-                 * encountering a non-absolute URL. */
+                 * encountering a non-absolute URI. */
                 throw (new AbsoluteUriNeeded())
-                    ->setMessageContext(['uri' => $url ]);
+                    ->setMessageContext(['uri' => $uri ]);
             }
 
-            $urls[] = (string)UriNormalizer::normalize($url);
+            $uris[] = (string)UriNormalizer::normalize($uri);
         }
 
-        sort($urls);
+        sort($uris);
 
-        return implode(' ', $urls);
+        return implode(' ', $uris);
     }
 
     /**

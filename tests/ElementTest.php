@@ -53,7 +53,7 @@ class ElementTest extends TestCase
     {
         $fileUriFactory = new FileUriFactory(null, false);
 
-        $fooDoc = Document::newFromUrl(
+        $fooDoc = Document::newFromUri(
             $fileUriFactory->create(self::DATA_DIR . 'foo.xml')
         );
 
@@ -89,7 +89,7 @@ class ElementTest extends TestCase
     {
         /* This also tests class ChildElementsIterator. */
 
-        $fooDoc = Document::newFromUrl(
+        $fooDoc = Document::newFromUri(
             (new FileUriFactory())->create(self::DATA_DIR . 'foo.xml')
         );
 
@@ -110,15 +110,68 @@ class ElementTest extends TestCase
     }
 
     /**
-     * @dataProvider getFirstSameAsProvider
+     * @dataProvider queryProvider
      */
-    public function getFirstSameAs($uri, $expectedText): void
+    public function testQuery($xPath, $expectedText): void
     {
-        $fooDoc = Document::newFromUrl(
+        /* This also tests the class XPath. */
+
+        $fooDoc = Document::newFromUri(
             (new FileUriFactory())->create(self::DATA_DIR . 'foo.xml')
         );
 
-        $this->assertSame($expectedText, (string)$fooDoc->getFirstSameAs($uri));
+        $element = $fooDoc->documentElement->query($xPath)[0];
+
+        $this->assertSame($expectedText, (string)$element);
+    }
+
+    public function queryProvider(): array
+    {
+        return [
+            [ '//*[@owl:sameAs][2]', 'dolor sit amet' ],
+            [ '*//xh:b', 'sadipscing' ]
+        ];
+    }
+
+    /**
+     * @dataProvider evaluateProvider
+     */
+    public function testEvaluate($xPath, $expectedResult): void
+    {
+        /* This also tests the class XPath. */
+
+        $fooDoc = Document::newFromUri(
+            (new FileUriFactory())->create(self::DATA_DIR . 'foo.xml')
+        );
+
+        $fooDoc->getXPath()->registerPhpFunctions();
+
+        $result = $fooDoc->documentElement->evaluate($xPath);
+
+        $this->assertSame($expectedResult, $result);
+    }
+
+    public function evaluateProvider(): array
+    {
+        return [
+            [ 'count(id("bar")/*)', 3.0 ],
+            [ 'php:functionString("strtoupper", *//xh:b)', 'SADIPSCING' ]
+        ];
+    }
+
+    /**
+     * @dataProvider getFirstSameAsProvider
+     */
+    public function testGetFirstSameAs($uri, $expectedText): void
+    {
+        $fooDoc = Document::newFromUri(
+            (new FileUriFactory())->create(self::DATA_DIR . 'foo.xml')
+        );
+
+        $this->assertSame(
+            $expectedText,
+            (string)$fooDoc->documentElement->getFirstSameAs($uri)
+        );
     }
 
     public function getFirstSameAsProvider(): array

@@ -33,13 +33,13 @@ class DocumentModifier implements NamespaceConstantsInterface
      */
     public function reparse(Document $document): Document
     {
-        $url = $document->documentURI;
+        $uri = $document->documentURI;
 
         $document->formatOutput = true;
 
         $document->loadXML($document->saveXML(), $document->getLibxmlOptions());
 
-        $document->documentURI = $url;
+        $document->documentURI = $uri;
 
         $document->clearCache();
 

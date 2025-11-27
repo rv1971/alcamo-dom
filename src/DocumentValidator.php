@@ -51,16 +51,16 @@ class DocumentValidator implements NamespaceConstantsInterface
         return $schemaLocationsMap;
     }
 
-    /// Validate against an XSD given by its URL
-    public function validateAgainstXsdUrl(
+    /// Validate against an XSD given by its URI
+    public function validateAgainstXsdUri(
         \DOMDocument $document,
-        string $xsdUrl
+        string $xsdUri
     ): \DOMDocument {
         libxml_use_internal_errors(true);
         libxml_clear_errors();
 
         try {
-            if (!$document->schemaValidate($xsdUrl, $this->libxmlFlags_)) {
+            if (!$document->schemaValidate($xsdUri, $this->libxmlFlags_)) {
                 $this->processLibxmlErrors($document);
             }
         } catch (\Throwable $e) {
@@ -127,7 +127,7 @@ class DocumentValidator implements NamespaceConstantsInterface
                 'noNamespaceSchemaLocation'
             );
 
-            return $this->validateAgainstXsdUrl(
+            return $this->validateAgainstXsdUri(
                 $document,
                 $documentElement->resolveUri($noNamespaceSchemaLocation)
                     ?? $noNamespaceSchemaLocation
@@ -154,10 +154,10 @@ class DocumentValidator implements NamespaceConstantsInterface
             . "$xmlBaseAttr>";
 
         foreach (
-            $this->createSchemaLocationsMap($document) as $nsName => $schemaUrl
+            $this->createSchemaLocationsMap($document) as $nsName => $schemaUri
         ) {
             $xsdText .=
-                "<import namespace='$nsName' schemaLocation='$schemaUrl'/>";
+                "<import namespace='$nsName' schemaLocation='$schemaUri'/>";
         }
 
         $xsdText .= '</schema>';

@@ -59,28 +59,28 @@ class DocumentFactoryTest extends TestCase
     /**
      * @dataProvider createProvider
      */
-    public function testCreate($url, $class, $expectedNamespace): void
+    public function testCreate($uri, $class, $expectedNamespace): void
     {
-        $baseUrl = (new FileUriFactory())->create(self::DATA_DIR);
+        $baseUri = (new FileUriFactory())->create(self::DATA_DIR);
         $loadFlags = Document::XINCLUDE_AFTER_LOAD;
         $libXmlOptions = LIBXML_NOBLANKS;
 
-        $factory = new DocumentFactory($baseUrl, $loadFlags, $libXmlOptions);
+        $factory = new DocumentFactory($baseUri, $loadFlags, $libXmlOptions);
 
-        $doc1 = $factory->createFromUrl($url, $class, false);
+        $doc1 = $factory->createFromUri($uri, $class, false);
 
-        $doc2 = $factory->createFromUrl($url, $class, false, 0, LIBXML_COMPACT);
+        $doc2 = $factory->createFromUri($uri, $class, false, 0, LIBXML_COMPACT);
 
         $doc3 = $factory->createFromXmlText(
-            file_get_contents($url),
+            file_get_contents($uri),
             $class,
             null,
             null,
-            $url
+            $uri
         );
 
         $doc4 = $factory->createFromXmlText(
-            file_get_contents($url),
+            file_get_contents($uri),
             $class,
             0,
             LIBXML_COMPACT
@@ -99,21 +99,21 @@ class DocumentFactoryTest extends TestCase
         $this->assertSame(LIBXML_COMPACT, $doc4->getLibxmlOptions());
 
         $this->assertSame(
-            (string)UriResolver::resolve($baseUrl, new Uri($url)),
+            (string)UriResolver::resolve($baseUri, new Uri($uri)),
             $doc1->documentURI
         );
 
         $this->assertSame(
-            (string)UriResolver::resolve($baseUrl, new Uri($url)),
+            (string)UriResolver::resolve($baseUri, new Uri($uri)),
             $doc2->documentURI
         );
 
         $this->assertSame(
-            (string)UriResolver::resolve($baseUrl, new Uri($url)),
+            (string)UriResolver::resolve($baseUri, new Uri($uri)),
             $doc3->documentURI
         );
 
-        $this->assertSame((string)$baseUrl, $doc4->documentURI);
+        $this->assertSame((string)$baseUri, $doc4->documentURI);
 
         $this->assertSame(
             $expectedNamespace,
@@ -148,16 +148,47 @@ class DocumentFactoryTest extends TestCase
         ];
     }
 
+    public function testCreateElement(): void
+    {
+        $factory = new DocumentFactory(
+            (new FileUriFactory())->create(self::DATA_DIR)
+        );
+
+        $bar = $factory->createFromUri('foo.xml#bar');
+
+        $this->assertSame('bar', $bar->localName);
+        $this->assertInstanceOf(Document::class, $bar->ownerDocument);
+
+        /* $bar2 document is taken from cache */
+        $bar2 = $factory->createFromUri('foo.xml#bar');
+
+        $this->assertSame($bar, $bar2);
+
+        $baz = $factory->createFromUri('foo.xml#baz');
+
+        $this->assertNull($baz);
+
+        chdir(__DIR__);
+
+        /* $bar3 document is not taken from cache */
+        $bar3 = (new DocumentFactory())->createFromUri('foo.xml#bar');
+
+        $this->assertSame('bar', $bar->localName);
+        $this->assertFalse($bar === $bar3);
+        $this->assertInstanceOf(\DOMDocument::class, $bar->ownerDocument);
+        $this->assertFalse($bar3->ownerDocument instanceof Document);
+    }
+
     /**
      * @dataProvider getClassForDocumentProvider
      */
-    public function testGetClassForDocument($url, $expectedClass): void
+    public function testGetClassForDocument($uri, $expectedClass): void
     {
         $factory = new MyDocumentFactory(
             (new FileUriFactory())->create(self::DATA_DIR)
         );
 
-        $doc = $factory->createFromUrl($url, null, false);
+        $doc = $factory->createFromUri($uri, null, false);
 
         $this->assertSame($expectedClass, get_class($doc));
     }
