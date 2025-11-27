@@ -69,8 +69,8 @@ class AttrTest extends TestCase
                 'http://bar.example.biz',
                 'http://bar.example.biz/README.md',
                 Document::XML_NS . ' base',
-                'line=7',
-                $fooDoc->documentURI . '#line=7'
+                'line=14',
+                $fooDoc->documentURI . '#line=14'
             ],
             [
                 $fooDoc['bar']->firstChild->getAttributeNode('id'),
@@ -78,8 +78,8 @@ class AttrTest extends TestCase
                 'http://bar.example.biz',
                 'http://bar.example.biz/README.md',
                 'id',
-                'line=8',
-                $fooDoc->documentURI . '#line=8'
+                'line=15',
+                $fooDoc->documentURI . '#line=15'
             ]
         ];
     }

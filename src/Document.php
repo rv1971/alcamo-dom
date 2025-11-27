@@ -45,6 +45,7 @@ class Document extends \DOMDocument implements
     /// Node classes that will be registered for each document instance
     public const NODE_CLASSES = [
         'DOMAttr'                  => Attr::class,
+        'DOMComment'               => Comment::class,
         'DOMElement'               => Element::class,
         'DOMProcessingInstruction' => ProcessingInstruction::class,
         'DOMText'                  => Text::class

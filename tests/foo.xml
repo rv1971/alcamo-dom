@@ -1,5 +1,12 @@
 <?xml version='1.0'?>
 
+<!-- initial
+multi-line comment -->
+
+<?alcamo foo="FOO" bar="BAR"?>
+
+<?alcamo2 baz="BAZ"?>
+
 <foo xmlns="http://foo.example.org">
   <bar
       xmlns="https://bar.example.com"
@@ -13,4 +20,6 @@
     xml:base="http://baz.example.edu"
     owl:sameAs="#s">sadipscing</b> elitr</baz>
   </bar>
+
+  <!-- final comment -->
 </foo>

@@ -63,24 +63,24 @@ class ElementTest extends TestCase
                 $fooDoc->documentURI,
                 $fileUriFactory->create(self::DATA_DIR . 'README.md'),
                 'http://foo.example.org foo',
-                'line=2',
-                $fooDoc->documentURI . '#line=2'
+                'line=9',
+                $fooDoc->documentURI . '#line=9'
             ],
             [
                 $fooDoc['bar'],
                 'http://bar.example.biz',
                 'http://bar.example.biz/README.md',
                 'https://bar.example.com bar',
-                'line=7',
-                $fooDoc->documentURI . '#line=7'
+                'line=14',
+                $fooDoc->documentURI . '#line=14'
             ],
             [
                 $fooDoc['bar']->firstChild,
                 'http://bar.example.biz',
                 'http://bar.example.biz/README.md',
                 'https://bar.example.com baz',
-                'line=8',
-                $fooDoc->documentURI . '#line=8'
+                'line=15',
+                $fooDoc->documentURI . '#line=15'
             ]
         ];
     }

@@ -5,7 +5,7 @@ namespace alcamo\dom;
 use alcamo\uri\FileUriFactory;
 use PHPUnit\Framework\TestCase;
 
-class TextTest extends TestCase
+class CommentTest extends TestCase
 {
     public const DATA_DIR = __DIR__ . DIRECTORY_SEPARATOR;
 
@@ -13,8 +13,8 @@ class TextTest extends TestCase
      * @dataProvider getDataProvider
      */
     public function testData(
-        $textNode,
-        $expectedText,
+        $commentNode,
+        $expectedComment,
         $expectedBaseUri,
         $expectedResolvedUri,
         $expectedRfc5147Fragment,
@@ -23,26 +23,26 @@ class TextTest extends TestCase
         /* This also tests the traits HavingBaseUriTrait, HavingXNameTrait,
          * Rfc5147Trait. */
 
-        $this->assertSame((string)$expectedText, (string)$textNode);
+        $this->assertSame((string)$expectedComment, (string)$commentNode);
 
         $this->assertSame(
             (string)$expectedBaseUri,
-            (string)$textNode->getBaseUri()
+            (string)$commentNode->getBaseUri()
         );
 
         $this->assertSame(
             (string)$expectedResolvedUri,
-            (string)$textNode->resolveUri('README.md')
+            (string)$commentNode->resolveUri('README.md')
         );
 
         $this->assertSame(
             $expectedRfc5147Fragment,
-            $textNode->getRfc5147Fragment()
+            $commentNode->getRfc5147Fragment()
         );
 
         $this->assertSame(
             $expectedRfc5147Uri,
-            $textNode->getRfc5147Uri()
+            $commentNode->getRfc5147Uri()
         );
     }
 
@@ -56,20 +56,20 @@ class TextTest extends TestCase
 
         return [
             [
-                $fooDoc['bar']->firstChild->firstChild,
-                'Lorem ipsum',
-                'http://bar.example.biz',
-                'http://bar.example.biz/README.md',
-                'line=15',
-                $fooDoc->documentURI . '#line=15'
+                $fooDoc->firstChild,
+                " initial\nmulti-line comment ",
+                $fooDoc->documentURI,
+                $fileUriFactory->create(self::DATA_DIR . 'README.md'),
+                'line=3',
+                $fooDoc->documentURI . '#line=3'
             ],
             [
-                $fooDoc['bar']->query('*[3]/xh:b/text()')[0],
-                'sadipscing',
-                'http://baz.example.edu',
-                'http://baz.example.edu/README.md',
-                'line=20',
-                $fooDoc->documentURI . '#line=20'
+                $fooDoc['bar']->nextSibling,
+                ' final comment ',
+                $fooDoc->documentURI,
+                $fileUriFactory->create(self::DATA_DIR . 'README.md'),
+                'line=23',
+                $fooDoc->documentURI . '#line=23'
             ]
         ];
     }
