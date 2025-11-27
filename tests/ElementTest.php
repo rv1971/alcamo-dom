@@ -2,6 +2,7 @@
 
 namespace alcamo\dom;
 
+use alcamo\exception\AbsoluteUriNeeded;
 use alcamo\uri\FileUriFactory;
 use PHPUnit\Framework\TestCase;
 
@@ -181,5 +182,20 @@ class ElementTest extends TestCase
             [ 'http://bar.example.biz#b', 'dolor sit amet' ],
             [ 'http://baz.example.edu#s', 'sadipscing' ]
         ];
+    }
+
+    public function testGetFirstSameAsException(): void
+    {
+        $fooDoc = Document::newFromUri(
+            (new FileUriFactory())->create(self::DATA_DIR . 'foo.xml')
+        );
+
+        $this->expectException(AbsoluteUriNeeded::class);
+        $this->expectExceptionMessage(
+            'Relative URI <alcamo\uri\Uri>"foo" given '
+                . 'where absolute URI is needed'
+        );
+
+        $fooDoc->documentElement->getFirstSameAs('foo');
     }
 }

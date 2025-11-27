@@ -5,7 +5,7 @@ namespace alcamo\dom;
 use alcamo\uri\FileUriFactory;
 use PHPUnit\Framework\TestCase;
 
-class CommentTest extends TestCase
+class ProcessingInstructionTest extends TestCase
 {
     public const DATA_DIR = __DIR__ . DIRECTORY_SEPARATOR;
 
@@ -13,36 +13,47 @@ class CommentTest extends TestCase
      * @dataProvider getDataProvider
      */
     public function testData(
-        $commentNode,
-        $expectedComment,
+        $piNode,
         $expectedBaseUri,
         $expectedResolvedUri,
         $expectedRfc5147Fragment,
-        $expectedRfc5147Uri
+        $expectedRfc5147Uri,
+        $expectedAttributes
     ): void {
         /* This also tests the traits HavingBaseUriTrait, Rfc5147Trait. */
 
-        $this->assertSame((string)$expectedComment, (string)$commentNode);
-
         $this->assertSame(
             (string)$expectedBaseUri,
-            (string)$commentNode->getBaseUri()
+            (string)$piNode->getBaseUri()
         );
 
         $this->assertSame(
             (string)$expectedResolvedUri,
-            (string)$commentNode->resolveUri('README.md')
+            (string)$piNode->resolveUri('README.md')
         );
 
         $this->assertSame(
             $expectedRfc5147Fragment,
-            $commentNode->getRfc5147Fragment()
+            $piNode->getRfc5147Fragment()
         );
 
         $this->assertSame(
             $expectedRfc5147Uri,
-            $commentNode->getRfc5147Uri()
+            $piNode->getRfc5147Uri()
         );
+
+        $this->assertFalse(isset($piNode->foO));
+
+        $attrs = [];
+
+        foreach ($piNode as $key => $value) {
+            $attrs[$key] = (string)$value;
+
+            $this->assertTrue(isset($piNode->$key));
+            $this->assertSame((string)$value, $piNode->$key);
+        }
+
+        $this->assertSame($expectedAttributes, $attrs);
     }
 
     public function getDataProvider(): array
@@ -55,20 +66,23 @@ class CommentTest extends TestCase
 
         return [
             [
-                $fooDoc->firstChild,
-                " initial\nmulti-line comment ",
+                $fooDoc->firstChild->nextSibling,
                 $fooDoc->documentURI,
                 $fileUriFactory->create(self::DATA_DIR . 'README.md'),
-                'line=3',
-                $fooDoc->documentURI . '#line=3'
+                'line=5',
+                $fooDoc->documentURI . '#line=5',
+                [ 'foo' => 'FOO', 'bar' => 'BAR' ]
             ],
             [
-                $fooDoc['bar']->nextSibling,
-                ' final comment ',
+                $fooDoc->firstChild->nextSibling->nextSibling,
                 $fooDoc->documentURI,
                 $fileUriFactory->create(self::DATA_DIR . 'README.md'),
-                'line=23',
-                $fooDoc->documentURI . '#line=23'
+                'line=7',
+                $fooDoc->documentURI . '#line=7',
+                [
+                    'href' => 'foo.xsl',
+                    'type' => 'text/xsl'
+                ]
             ]
         ];
     }

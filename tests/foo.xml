@@ -5,7 +5,7 @@ multi-line comment -->
 
 <?alcamo foo="FOO" bar="BAR"?>
 
-<?alcamo2 baz="BAZ"?>
+<?xml-stylesheet href="foo.xsl" type="text/xsl"?>
 
 <foo xmlns="http://foo.example.org">
   <bar

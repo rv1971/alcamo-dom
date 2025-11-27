@@ -20,8 +20,7 @@ class TextTest extends TestCase
         $expectedRfc5147Fragment,
         $expectedRfc5147Uri
     ): void {
-        /* This also tests the traits HavingBaseUriTrait, HavingXNameTrait,
-         * Rfc5147Trait. */
+        /* This also tests the traits HavingBaseUriTrait, Rfc5147Trait. */
 
         $this->assertSame((string)$expectedText, (string)$textNode);
 

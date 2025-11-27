@@ -168,7 +168,12 @@ class DocumentFactory implements
 
         /** If the document is not taken from the cache, call the newFromUri()
          *  method of the document class to create a new instance. */
-        $doc = $class::newFromUri($docUri, $this, $loadFlags, $libxmlOptions);
+        $doc = $class::newFromUri(
+            $docUri,
+            $this,
+            $loadFlags,
+            $libxmlOptions ?? $this->libxmlOptions_
+        );
 
         if ($useCache) {
             DocumentCache::getInstance()->add($doc);
@@ -221,7 +226,7 @@ class DocumentFactory implements
             $xmlText,
             $this,
             $loadFlags,
-            $libxmlOptions,
+            $libxmlOptions ?? $this->libxmlOptions_,
             $uri
         );
 

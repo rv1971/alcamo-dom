@@ -2,7 +2,7 @@
 
 namespace alcamo\dom;
 
-use alcamo\exception\{AbsoluteUriNeeded, InvalidType, ReadonlyViolation};
+use alcamo\exception\{AbsoluteUriNeeded, ReadonlyViolation};
 use alcamo\uri\FileUriFactory;
 use PHPUnit\Framework\TestCase;
 
@@ -59,13 +59,19 @@ class DocumentCacheTest extends TestCase
 
     public function testAbsoluteUriNeededException()
     {
-        $this->expectException(AbsoluteUriNeeded::class);
-        $this->expectExceptionMessage(
-            'Relative URI <alcamo\uri\Uri>"foo.xml" given '
-                . 'where absolute URI is needed'
+        $factory = new MyDocumentFactory(
+            (new FileUriFactory())->create(__DIR__ . DIRECTORY_SEPARATOR)
         );
 
-        (new MyDocumentFactory())->createFromUri('foo.xml', null, true);
+        $fooDoc = $factory->createFromUri('foo.xml');
+        $fooDoc->documentURI = 'foo.xml';
+
+        $this->expectException(AbsoluteUriNeeded::class);
+        $this->expectExceptionMessage(
+            'Relative URI "foo.xml" given where absolute URI is needed'
+        );
+
+        DocumentCache::getInstance()->add($fooDoc);
     }
 
     public function testReadonlyViolationException()
@@ -74,7 +80,7 @@ class DocumentCacheTest extends TestCase
             (new FileUriFactory())->create(__DIR__ . DIRECTORY_SEPARATOR)
         );
 
-        $doc1 = $factory->createFromUri('foo.xml');
+        $doc1 = $factory->createFromUri('foo.xml', null, false);
 
         $this->expectException(ReadonlyViolation::class);
         $this->expectExceptionMessage(
@@ -87,21 +93,5 @@ class DocumentCacheTest extends TestCase
         $doc2->documentURI = $doc1->documentURI;
 
         DocumentCache::getInstance()->add($doc2);
-    }
-
-    public function testInvalidTypeException()
-    {
-        $factory = new MyDocumentFactory(
-            (new FileUriFactory())->create(__DIR__ . DIRECTORY_SEPARATOR)
-        );
-
-        $factory->createFromUri('foo.xml');
-
-        $this->expectException(InvalidType::class);
-        $this->expectExceptionMessage(
-            'Invalid type "alcamo\dom\Document", expected one of ["alcamo\dom\MyCachedDocument"]'
-        );
-
-        $factory->createFromUri('foo.xml', MyCachedDocument::class);
     }
 }

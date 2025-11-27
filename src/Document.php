@@ -370,14 +370,8 @@ class Document extends \DOMDocument implements
                 return $this->xsltStylesheet_ = null;
             }
 
-            if (
-                !$this->xsltStylesheet_ = $this->getDocumentFactory()
-                    ->createFromUri($pi->href, Stylesheet::class)
-            ) {
-                /** @throw alcamo::exception::FileLoadFailed if a stylesheet
-                 *  is specified but cannot be loaded. */
-                throw new FileLoadFailed($pi->href);
-            }
+            $this->xsltStylesheet_ = $this->getDocumentFactory()
+                ->createFromUri($pi->href, Stylesheet::class);
         }
 
         return $this->xsltStylesheet_;

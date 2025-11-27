@@ -3,6 +3,7 @@
 namespace alcamo\dom;
 
 use alcamo\dom\decorated\Document as Xsd;
+use alcamo\exception\{AbsoluteUriNeeded, InvalidType};
 use alcamo\uri\{FileUriFactory, Uri};
 use GuzzleHttp\Psr7\UriResolver;
 use PHPUnit\Framework\TestCase;
@@ -72,7 +73,7 @@ class DocumentFactoryTest extends TestCase
         $doc2 = $factory->createFromUri($uri, $class, false, 0, LIBXML_COMPACT);
 
         $doc3 = $factory->createFromXmlText(
-            file_get_contents($uri),
+            file_get_contents($factory->resolveUri($uri)),
             $class,
             null,
             null,
@@ -80,7 +81,7 @@ class DocumentFactoryTest extends TestCase
         );
 
         $doc4 = $factory->createFromXmlText(
-            file_get_contents($uri),
+            file_get_contents($factory->resolveUri($uri)),
             $class,
             0,
             LIBXML_COMPACT
@@ -92,6 +93,11 @@ class DocumentFactoryTest extends TestCase
             $this->assertSame($class, get_class($doc3));
             $this->assertSame($class, get_class($doc4));
         }
+
+        $this->assertSame($factory, $doc1->getDocumentFactory());
+        $this->assertSame($factory, $doc2->getDocumentFactory());
+        $this->assertSame($factory, $doc3->getDocumentFactory());
+        $this->assertSame($factory, $doc4->getDocumentFactory());
 
         $this->assertSame($libXmlOptions, $doc1->getLibxmlOptions());
         $this->assertSame(LIBXML_COMPACT, $doc2->getLibxmlOptions());
@@ -113,7 +119,11 @@ class DocumentFactoryTest extends TestCase
             $doc3->documentURI
         );
 
-        $this->assertSame((string)$baseUri, $doc4->documentURI);
+        $this->assertSame(
+            (string)(new FileUriFactory())
+                ->create(getcwd() . DIRECTORY_SEPARATOR),
+            $doc4->documentURI
+        );
 
         $this->assertSame(
             $expectedNamespace,
@@ -201,5 +211,32 @@ class DocumentFactoryTest extends TestCase
             [ 'empty-bar.xml', BarDocument::class ],
             [ 'empty-baz.xml', BazDocument::class ]
         ];
+    }
+
+    public function testAbsoluteUriNeededException()
+    {
+        $this->expectException(AbsoluteUriNeeded::class);
+        $this->expectExceptionMessage(
+            'Relative URI <alcamo\uri\Uri>"foo.xml" given '
+                . 'where absolute URI is needed'
+        );
+
+        (new DocumentFactory())->createFromUri('foo.xml', null, true);
+    }
+
+    public function testInvalidTypeException()
+    {
+        $factory = new DocumentFactory(
+            (new FileUriFactory())->create(__DIR__ . DIRECTORY_SEPARATOR)
+        );
+
+        $factory->createFromUri('foo.xml');
+
+        $this->expectException(InvalidType::class);
+        $this->expectExceptionMessage(
+            'Invalid type "alcamo\dom\Document", expected one of ["alcamo\dom\MyCachedDocument"]'
+        );
+
+        $factory->createFromUri('foo.xml', MyCachedDocument::class);
     }
 }
