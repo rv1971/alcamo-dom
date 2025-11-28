@@ -233,13 +233,9 @@ class Document extends \DOMDocument implements
         $handler = new ErrorHandler();
 
         try {
-            if (!$this->load($uri, $this->libxmlOptions_)) {
-                /** @throw alcamo::exception::FileLoadFailed if
-                 *  [DOMDocument::load()](https://www.php.net/manual/en/domdocument.load)
-                 *  fails. */
-                throw (new FileLoadFailed())
-                    ->setMessageContext([ 'filename' => $uri ]);
-            }
+            libxml_use_internal_errors(false);
+
+            $this->load($uri, $this->libxmlOptions_);
         } catch (\ErrorException $e) {
             /** @throw alcamo::exception::FileLoadFailed if any libxml warning
              *  or error occurs. */
@@ -262,15 +258,9 @@ class Document extends \DOMDocument implements
         $handler = new ErrorHandler();
 
         try {
-            if (
-                !$this->loadXML($xmlText, $this->libxmlOptions_)
-            ) {
-                /** @throw alcamo::exception::SyntaxError if
-                 *  [DOMDocument::loadXML()](https://www.php.net/manual/en/domdocument.loadxml)
-                 *  fails. */
-                throw (new SyntaxError())
-                    ->setMessageContext([ 'inData' => $xmlText ]);
-            }
+            libxml_use_internal_errors(false);
+
+            $this->loadXML($xmlText, $this->libxmlOptions_);
         } catch (\ErrorException $e) {
             /** @throw alcamo::exception::SyntaxError if any libxml warning or
              *  error occurs. */
@@ -342,13 +332,13 @@ class Document extends \DOMDocument implements
     /// Run DOMXPath::query() relative to the document's root node
     public function query(string $expr)
     {
-        return $this->getXPath()->query($expr);
+        return $this->getXPath()->query($expr, $this);
     }
 
     /// Run DOMXPath::evaluate() relative the document's root node
     public function evaluate(string $expr)
     {
-        return $this->getXPath()->evaluate($expr);
+        return $this->getXPath()->evaluate($expr, $this);
     }
 
     /**
@@ -364,7 +354,7 @@ class Document extends \DOMDocument implements
                 throw new Uninitialized();
             }
 
-            $pi = $this->query('/processing-instruction("xml-stylesheet")')[0];
+            $pi = $this->query('processing-instruction("xml-stylesheet")')[0];
 
             if (!isset($pi) || $pi->type != 'text/xsl') {
                 return $this->xsltStylesheet_ = null;

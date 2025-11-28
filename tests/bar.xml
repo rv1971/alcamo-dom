@@ -13,12 +13,12 @@
       sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut
       labore et dolore magna aliquyam erat, sed diam
       voluptua.</xsd:documentation>
+
+      <xsd:appinfo
+          xmlns="https://qux.example.info"
+          xml:id="appinfo2">lorem-ipsum</xsd:appinfo>
     </xsd:annotation>
 
-    <xsd:appinfo xmlns="https://qux.example.info">lorem-ipsum</xsd:appinfo>
-  </baz>
-
-  <baz>
     <xsd:annotation>
       <xsd:documentation>At vero eos et accusam et justo duo dolores
       et ea rebum.</xsd:documentation>
