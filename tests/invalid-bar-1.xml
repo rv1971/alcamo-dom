@@ -3,4 +3,8 @@
 <bar
     xmlns="https://bar.example.com"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="https://bar.example.com bar.xsd"/>
+    xsi:schemaLocation="https://bar.example.com bar.xsd">
+  <baz>
+    <qux/>
+  </baz>
+</bar>

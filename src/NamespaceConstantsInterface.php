@@ -63,7 +63,4 @@ interface NamespaceConstantsInterface
         'xsi'   => self::XSI_NS,
         'xsl'   => self::XSL_NS
     ];
-
-    /// alcamo-dom namespace
-    public const ALCAMO_DOM_NS = 'https://github.com/rv1971/alcamo-dom/';
 }

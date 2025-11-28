@@ -109,8 +109,8 @@ class DocumentValidator implements NamespaceConstantsInterface
     }
 
     /**
-     * @brief Validate with schemas given in xsi:schemaLocation or
-     * xsi:noNamespaceSchemaLocation.
+     * @brief Validate with schemas given in `xsi:schemaLocation` or
+     * `xsi:noNamespaceSchemaLocation`.
      *
      * Silently do nothing if none of the two is present.
      */
@@ -118,6 +118,8 @@ class DocumentValidator implements NamespaceConstantsInterface
     {
         $documentElement = $document->documentElement;
 
+        /** If `xsi:noNamespaceSchemaLocation` is present, validate against
+         *  it. */
         if (
             $documentElement
                 ->hasAttributeNS(self::XSI_NS, 'noNamespaceSchemaLocation')
@@ -134,28 +136,40 @@ class DocumentValidator implements NamespaceConstantsInterface
             );
         }
 
+        /** Otherwise, if no `xsi:namespaceSchemaLocation` is present, do
+         *  nothing. */
         if (!$documentElement->hasAttributeNS(self::XSI_NS, 'schemaLocation')) {
             return $document;
         }
 
+        /** Otherwise, if `xsi:namespaceSchemaLocation` is present and
+         *  contains one pair only, validate against it. */
+
+        $schemaLocationsMap = $this->createSchemaLocationsMap($document);
+
+        if (count($schemaLocationsMap) == 1) {
+            $schemaLocation = reset($schemaLocationsMap);
+
+            return $this->validateAgainstXsdUri(
+                $document,
+                $documentElement->resolveUri($schemaLocation)
+                    ?? $schemaLocation
+            );
+        }
+
         /**
-         * In the case of `schemaLocation`, create an XSD importing all
-         *  mentioned schemas and validate against it.
+         * Otherwise, create an XSD importing all mentioned schemas and
+         * validate against it.
          */
 
-        $xmlBaseAttr = isset($documentElement->baseURI)
-            ? "xml:base=\"{$documentElement->baseURI}\""
-            : '';
-
-        $xsdText =
-            '<?xml version="1.0" encoding="UTF-8"?>'
+        $xsdText = '<?xml version="1.0"?>'
             . '<schema xmlns="http://www.w3.org/2001/XMLSchema" '
-            . 'targetNamespace="' . self::ALCAMO_DOM_NS . 'validate#" '
-            . "$xmlBaseAttr>";
+            . (isset($documentElement->baseURI)
+               ? "xml:base='$documentElement->baseURI'"
+               : '')
+            . '>';
 
-        foreach (
-            $this->createSchemaLocationsMap($document) as $nsName => $schemaUri
-        ) {
+        foreach ($schemaLocationsMap as $nsName => $schemaUri) {
             $xsdText .=
                 "<import namespace='$nsName' schemaLocation='$schemaUri'/>";
         }
@@ -170,14 +184,6 @@ class DocumentValidator implements NamespaceConstantsInterface
         $messages = [];
 
         foreach (libxml_get_errors() as $error) {
-            /** Suppress warning "namespace was already imported". */
-            if (
-                strpos($error->message, 'namespace was already imported')
-                !== false
-            ) {
-                continue;
-            }
-
             $messages[] = "$error->file:$error->line $error->message";
         }
 

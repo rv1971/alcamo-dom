@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xsd:schema
+    xmlns="https://bar.example.com"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="https://bar.example.com"
+    elementFormDefault="qualified">
+
+  <xsd:import namespace="http://foo.example.org" schemaLocation="foo.xsd"/>
+
+  <xsd:include schemaLocation="aux-bar.xsd"/>
+
+  <xsd:element name="bar">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="baz" minOccurs="0" maxOccurs="unbounded">
+          <xsd:complexType>
+            <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+              <xsd:any
+                  namespace="http://www.w3.org/2001/XMLSchema"
+                  processContents="lax"/>
+            </xsd:sequence>
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+</xsd:schema>

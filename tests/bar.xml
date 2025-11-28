@@ -1,0 +1,27 @@
+<?xml version='1.0'?>
+
+<bar
+    xmlns="https://bar.example.com"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="https://bar.example.com bar.xsd http://www.w3.org/2001/XMLSchema ../xsd/XMLSchema.xsd">
+  <baz>
+    <xsd:annotation>
+      <xsd:appinfo xmlns="https://baz.example.info">IMPORTANT</xsd:appinfo>
+
+      <xsd:documentation>Lorem ipsum dolor sit amet, consetetur
+      sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut
+      labore et dolore magna aliquyam erat, sed diam
+      voluptua.</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:appinfo xmlns="https://qux.example.info">lorem-ipsum</xsd:appinfo>
+  </baz>
+
+  <baz>
+    <xsd:annotation>
+      <xsd:documentation>At vero eos et accusam et justo duo dolores
+      et ea rebum.</xsd:documentation>
+    </xsd:annotation>
+  </baz>
+</bar>
