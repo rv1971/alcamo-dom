@@ -5,7 +5,7 @@
     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="https://bar.example.com bar.xsd http://www.w3.org/2001/XMLSchema ../xsd/XMLSchema.xsd">
-  <baz>
+  <baz xml:id="baz">
     <xsd:annotation>
       <xsd:appinfo xmlns="https://baz.example.info">IMPORTANT</xsd:appinfo>
 

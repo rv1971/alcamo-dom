@@ -1,0 +1,11 @@
+<?xml version='1.0'?>
+
+<bar
+    xmlns="https://bar.example.com"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="https://bar.example.com bar.xsd http://www.w3.org/2001/XMLSchema ../xsd/XMLSchema.xsd">
+  <include
+      xmlns="http://www.w3.org/2001/XInclude"
+      href="bar.xml"
+      xpointer="baz"/>
+</bar>

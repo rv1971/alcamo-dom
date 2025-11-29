@@ -3,7 +3,7 @@
 namespace alcamo\dom;
 
 use alcamo\dom\decorated\Document as Xsd;
-use alcamo\exception\{AbsoluteUriNeeded, InvalidType};
+use alcamo\exception\{AbsoluteUriNeeded, DataValidationFailed, InvalidType};
 use alcamo\uri\{FileUriFactory, Uri};
 use GuzzleHttp\Psr7\UriResolver;
 use PHPUnit\Framework\TestCase;
@@ -227,7 +227,7 @@ class DocumentFactoryTest extends TestCase
     public function testInvalidTypeException()
     {
         $factory = new DocumentFactory(
-            (new FileUriFactory())->create(__DIR__ . DIRECTORY_SEPARATOR)
+            (new FileUriFactory())->create(self::DATA_DIR)
         );
 
         $factory->createFromUri('foo.xml');
@@ -238,5 +238,81 @@ class DocumentFactoryTest extends TestCase
         );
 
         $factory->createFromUri('foo.xml', MyCachedDocument::class);
+    }
+
+    public function testValidateAfterLoad(): void
+    {
+        $factory = new DocumentFactory(
+            (new FileUriFactory())->create(self::DATA_DIR),
+            Document::VALIDATE_AFTER_LOAD
+        );
+
+        /* Valid document. */
+        $this->assertInstanceOf(
+            Document::class,
+            $factory->createFromUri('bar.xml')
+        );
+
+        /* Invalid document. */
+        $this->expectException(DataValidationFailed::class);
+
+        $factory->createFromUri('invalid-bar-2.xml');
+    }
+
+
+    public function testXInclude(): void
+    {
+        $factory = new DocumentFactory(
+            (new FileUriFactory())->create(self::DATA_DIR)
+        );
+
+        $bar1 = $factory->createFromUri('bar-includer.xml', null, false);
+
+        $this->assertSame(
+            'include',
+            $bar1->documentElement->firstChild->localName
+        );
+
+        $bar2 = $factory->createFromUri(
+            'bar-includer.xml',
+            null,
+            false,
+            Document::XINCLUDE_AFTER_LOAD | Document::VALIDATE_AFTER_XINCLUDE
+        );
+
+        $this->assertSame(
+            'baz',
+            $bar2->documentElement->firstChild->localName
+        );
+
+        /* Document valid only after xinclude. */
+        $this->expectException(DataValidationFailed::class);
+        $this->expectExceptionMessage(
+            "Element '{http://www.w3.org/2001/XInclude}include': "
+                . "This element is not expected"
+        );
+
+        $bar3 = $factory->createFromUri(
+            'bar-includer.xml',
+            null,
+            false,
+            Document::VALIDATE_AFTER_LOAD
+        );
+    }
+
+    public function testXIncludeInvalid(): void
+    {
+        $factory = new DocumentFactory(
+            (new FileUriFactory())->create(self::DATA_DIR),
+            Document::XINCLUDE_AFTER_LOAD | Document::VALIDATE_AFTER_XINCLUDE
+        );
+
+        $this->expectException(DataValidationFailed::class);
+        $this->expectExceptionMessage(
+            "Element '{http://foo.example.org}foo': "
+                . "This element is not expected"
+        );
+
+        $factory->createFromUri('invalid-bar-includer.xml', null, false);
     }
 }
