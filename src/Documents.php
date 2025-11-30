@@ -3,11 +3,11 @@
 namespace alcamo\dom;
 
 use alcamo\collection\ReadonlyCollection;
-use alcamo\exception\InvalidType;
+use alcamo\exception\{DataValidationFailed, InvalidType};
 use alcamo\uri\Uri;
 
 /**
- * @brief Collection of DOM documents indexed by their dc:identifier
+ * @brief Collection of DOM documents indexed by their identifier
  *
  * Uses alcamo::dom::DocumentFactory, hence features caching as well as
  * automatic determination of the document classes.
@@ -52,8 +52,21 @@ class Documents extends ReadonlyCollection
             }
 
             if ($key == '') {
-                /*  Otherwise use the file name. */
+                /*  Otherwise use the document URI path. */
                 $key = basename((new Uri($doc->documentURI))->getPath());
+            }
+
+            if (isset($docs2[$key]) && $docs2[$key] !== $doc) {
+                /** @throw alcamo::exception::DataValidationFailed when a key
+                 *  appears twice for two difefrent documents. */
+                throw (new DataValidationFailed())->setMessageContext(
+                    [
+                        'value' => $doc,
+                        'forKey' => $key,
+                        'extraMessage' =>
+                            'two different documents for the same key'
+                    ]
+                );
             }
 
             $docs2[$key] = $doc;

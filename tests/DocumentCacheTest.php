@@ -14,6 +14,8 @@ class DocumentCacheTest extends TestCase
 {
     public function testBasics(): void
     {
+        DocumentCache::getInstance()->clear();
+
         $factory = new MyDocumentFactory(
             (new FileUriFactory())->create(__DIR__ . DIRECTORY_SEPARATOR)
         );
@@ -55,6 +57,10 @@ class DocumentCacheTest extends TestCase
 
         /* Still one document cached since it is always the same. */
         $this->assertSame(1, count(DocumentCache::getInstance()));
+
+        DocumentCache::getInstance()->clear();
+
+        $this->assertSame(0, count(DocumentCache::getInstance()));
     }
 
     public function testAbsoluteUriNeededException()

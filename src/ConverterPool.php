@@ -24,19 +24,19 @@ use Ds\Set;
 class ConverterPool implements NamespaceConstantsInterface
 {
     /// Split at whitespace
-    public static function toArray($value): array
+    public static function toArray(string $value): array
     {
         return preg_split('/\s+/', $value);
     }
 
     /// Convert "true" to `true`, anything else to `false`
-    public static function toBool($value): bool
+    public static function toBool(string $value): bool
     {
         return $value == 'true';
     }
 
     /// Call [DateTime::__construct()](https://www.php.net/manual/en/datetime.construct)
-    public static function toDateTime($value): \DateTime
+    public static function toDateTime(string $value): \DateTime
     {
         return new \DateTime($value);
     }
@@ -46,7 +46,7 @@ class ConverterPool implements NamespaceConstantsInterface
      *
      * @param $context must implement HavingBaseUriInterface
      */
-    public static function toDocument($value, \DOMNode $context): Document
+    public static function toDocument(string $value, \DOMNode $context): Document
     {
         $uri = $context->resolveUri($value);
 
@@ -55,19 +55,19 @@ class ConverterPool implements NamespaceConstantsInterface
     }
 
     /// Call alcamo::time::Duration::__construct()
-    public static function toDuration($value): Duration
+    public static function toDuration(string $value): Duration
     {
         return new Duration($value);
     }
 
     /// Convert to float
-    public static function toFloat($value): float
+    public static function toFloat(string $value): float
     {
         return (float)$value;
     }
 
     /// Convert to integer
-    public static function toInt($value): int
+    public static function toInt(string $value): int
     {
         if (is_int($value + 0)) {
             return (int)$value;
@@ -86,13 +86,13 @@ class ConverterPool implements NamespaceConstantsInterface
     }
 
     /// To integer, return -1 for "unbounded"
-    public static function toAllNNI($value): int
+    public static function toAllNNI(string $value): int
     {
         return $value == 'unbounded' ? -1 : (int)$value;
     }
 
     /// Split at whitespace, return set of integers
-    public static function toIntSet($value): Set
+    public static function toIntSet(string $value): Set
     {
         $result = new Set();
 
@@ -104,57 +104,57 @@ class ConverterPool implements NamespaceConstantsInterface
     }
 
     /// Call alcamo::rdfa::Lang::newFromString()
-    public static function toLang($value): Lang
+    public static function toLang(string $value): Lang
     {
         return Lang::newFromString($value);
     }
 
     /// Call alcamo::rdfa::MediaType::newFromString()
-    public static function toMediaType($value): MediaType
+    public static function toMediaType(string $value): MediaType
     {
         return MediaType::newFromString($value);
     }
 
     /// Call alcamo::range::NonNegativeRange::newFromString()
-    public static function toNonNegativeRange($value): NonNegativeRange
+    public static function toNonNegativeRange(string $value): NonNegativeRange
     {
         return NonNegativeRange::newFromString($value);
     }
 
     /// Call alcamo::collection::ReadonlyPrefixSet::newFromString()
-    public static function toPrefixSet($value): ReadonlyPrefixSet
+    public static function toPrefixSet(string $value): ReadonlyPrefixSet
     {
         return ReadonlyPrefixSet::newFromString($value);
     }
 
     /// Call alcamo::collection::ReadonlyPrefixBlackWhiteList::newFromStringWithOperator()
     public static function toPrefixBlackWhiteList(
-        $value
+        string $value
     ): ReadonlyPrefixBlackWhiteList {
         return
             ReadonlyPrefixBlackWhiteList::newFromStringWithOperator($value);
     }
 
     /// Split at whitespace
-    public static function toSet($value): Set
+    public static function toSet(string $value): Set
     {
         return $value == '' ? new Set() : new Set(preg_split('/\s+/', $value));
     }
 
     /// Call alcamo::uri::Uri::__construct()
-    public static function toUri($value): Uri
+    public static function toUri(string $value): Uri
     {
         return new Uri($value);
     }
 
     /// Call alcamo::xml::XName::newFromQNameAndContext()
-    public static function toXName($value, \DOMNode $context): XName
+    public static function toXName(string $value, \DOMNode $context): XName
     {
         return XName::newFromQNameAndContext($value, $context);
     }
 
     /// Split at whitespace and handle each item as in toXName()
-    public static function toXNames($value, \DOMNode $context): array
+    public static function toXNames(string $value, \DOMNode $context): array
     {
         $xNames = [];
 
@@ -166,31 +166,31 @@ class ConverterPool implements NamespaceConstantsInterface
     }
 
     /// Resolve an ID to the DOM element it references
-    public static function resolveIdRef($value, \DOMNode $context): \DOMElement
+    public static function resolveIdRef(string $value, \DOMNode $context): \DOMElement
     {
         return $context->ownerDocument->getElementById($value);
     }
 
     /// Convert "yes" to `true`, anything else to `false`
-    public static function yesNoToBool($value): bool
+    public static function yesNoToBool(string $value): bool
     {
         return $value == 'yes';
     }
 
     /// Convert base64 data to binary data
-    public static function base64ToBinary($value): BinaryString
+    public static function base64ToBinary(string $value): BinaryString
     {
         return new BinaryString(base64_decode($value));
     }
 
     /// Convert hex data to binary data
-    public static function hexToBinary($value): BinaryString
+    public static function hexToBinary(string $value): BinaryString
     {
         return BinaryString::newFromHex($value);
     }
 
     /// Transform a value such as in `xsi:schemaLocation` to a map
-    public static function pairsToMap($value): array
+    public static function pairsToMap(string $value): array
     {
         $items = static::toArray($value);
 
@@ -204,35 +204,35 @@ class ConverterPool implements NamespaceConstantsInterface
     }
 
     /// Call alcamo::uri::UriFromCurieFactory::createFromCurieAndContext()
-    public static function curieToUri($value, \DOMNode $context): Uri
+    public static function curieToUri(string $value, \DOMNode $context): Uri
     {
         return (new UriFromCurieFactory())
             ->createFromCurieAndContext($value, $context);
     }
 
     /// Call alcamo::uri::UriFromCurieFactory::createFromSafeCurieAndContext()
-    public static function safeCurieToUri($value, \DOMNode $context): Uri
+    public static function safeCurieToUri(string $value, \DOMNode $context): Uri
     {
         return (new UriFromCurieFactory())
             ->createFromSafeCurieAndContext($value, $context);
     }
 
     /// Call alcamo::uri::UriFromCurieFactory::createFromUriOrSafeCurieAndContext()
-    public static function uriOrSafeCurieToUri($value, \DOMNode $context): Uri
+    public static function uriOrSafeCurieToUri(string $value, \DOMNode $context): Uri
     {
         return (new UriFromCurieFactory())
             ->createFromUriOrSafeCurieAndContext($value, $context);
     }
 
     /// Call alcamo::uri::UriFromCurieFactory::createFromCurieAndContext()
-    public static function xhRelToUri($value, \DOMNode $context): Uri
+    public static function xhRelToUri(string $value, \DOMNode $context): Uri
     {
         return (new UriFromCurieFactory())
             ->createFromCurieAndContext($value, $context, self::XHV_NS);
     }
 
     /// Process an XPointer URI
-    public static function xPointerUriToSubset($value, \DOMNode $context)
+    public static function xPointerUriToSubset(string $value, \DOMNode $context)
     {
         $a = explode('#', $value, 2);
 
@@ -258,8 +258,10 @@ class ConverterPool implements NamespaceConstantsInterface
     }
 
     /// Process an XPointer URI, returning the set of the values of the nodes found
-    public static function xPointerUriToValueSet($value, \DOMNode $context): Set
-    {
+    public static function xPointerUriToValueSet(
+        string $value,
+        \DOMNode $context
+    ): Set {
         $result = new Set();
 
         $nodes = static::xPointerUriToSubset($value, $context);

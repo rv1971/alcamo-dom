@@ -51,9 +51,6 @@ class Document extends \DOMDocument implements
         'DOMText'                  => Text::class
     ];
 
-    /// Default class for a new document factory
-    public const DEFAULT_DOCUMENT_FACTORY_CLASS = DocumentFactory::class;
-
     /**
      * @brief Default libxml options when loading a document
      *
