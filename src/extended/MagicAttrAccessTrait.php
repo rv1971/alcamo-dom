@@ -29,37 +29,19 @@ trait MagicAttrAccessTrait
     /**
      * @brief Check whether an element has the requested attribute
      *
-     * Unlike __get(), this method does not compute the attribute value
-     * and may therefore be significantly faster than __get().
+     * This calls __get() because __get() returns `null` even if the attribute
+     * exists, in the case that the conversion function converts the attribute
+     * value to `null`.
+     *
+     * If the attribute does not exist, calling __get() does not add much
+     * procsssing time. If it exitsts, __get() calculates and caches its
+     * value. This may add considerable processing time but ensures that the
+     * next access via __isset() or __get() uses the cache and is therefore
+     * fast.
      */
     public function __isset(string $attrName): bool
     {
-        /* At first look in the cache. isset() is fast and works for all cases
-         * where the attribute value is not `null`. To cover the latter as
-         * well, the slower array_key_exists() is used. */
-        if (
-            isset($this->attrCache_[$attrName])
-            || array_key_exists($attrName, $this->attrCache_)
-        ) {
-            return true;
-        }
-
-        /* If not found in the cache, check which kind of attribute name is
-         * given. */
-        if (strpos($attrName, ' ') === false) {
-            if (strpos($attrName, ':') === false) {
-                return $this->hasAttribute($attrName);
-            } else {
-                $a = explode(':', $attrName, 2);
-
-                return $this->hasAttributeNS(
-                    $this->ownerDocument::NS_PRFIX_TO_NS_URI[$a[0]],
-                    $a[1]
-                );
-            }
-        } else {
-            return $this->hasAttributeNS(...explode(' ', $attrName, 2));
-        }
+        return $this->__get($attrName) !== null;
     }
 
     /**
@@ -69,7 +51,9 @@ trait MagicAttrAccessTrait
      */
     public function __get(string $attrName)
     {
-        /* At first look in the cache just as in __isset(). */
+        /* At first look in the cache. isset() is fast and works for all cases
+         * where the attribute value is not `null`. To cover the latter as
+         * well, the slower array_key_exists() is used. */
         if (
             isset($this->attrCache_[$attrName])
             || array_key_exists($attrName, $this->attrCache_)

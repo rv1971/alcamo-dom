@@ -12,5 +12,6 @@ use alcamo\dom\Element as BaseElement;
 class Element extends BaseElement
 {
     use HavingLangTrait;
+    use HavingPositionTrait;
     use MagicAttrAccessTrait;
 }

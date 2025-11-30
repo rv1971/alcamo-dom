@@ -21,7 +21,7 @@ trait HavingPositionTrait
     /**
      * @brief Return position within parent
      *
-     * The first child element has position 1. Only element nodes are counted.
+     * The first child element has position 0. Only element nodes are counted.
      */
     public function getPosition(): int
     {
@@ -29,8 +29,7 @@ trait HavingPositionTrait
             // Ensure conservation of the derived object.
             $this->register();
 
-            $this->position_ =
-                $this->evaluate('count(preceding-sibling::*)') + 1;
+            $this->position_ = $this->evaluate('count(preceding-sibling::*)');
         }
 
         return $this->position_;

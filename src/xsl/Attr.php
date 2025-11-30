@@ -3,7 +3,7 @@
 namespace alcamo\dom\xsl;
 
 use alcamo\dom\ConverterPool;
-use alcamo\dom\extended\Attr as BaseAttr;
+use alcamo\dom\decorated\Attr as BaseAttr;
 
 /**
  * @brief Attribute class for use in DOMDocument::registerNodeClass()

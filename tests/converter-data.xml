@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+
+<foo
+    xmlns:dc="http://purl.org/dc/terms/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:qux="http://qux.example.org">
+  <bar xml:id="base64ToBinary" value="Zm9vCg=="/>
+  <bar xml:id="curieToUri" value="dc:source"/>
+  <bar xml:id="hexToBinary" value="1234abcdef"/>
+  <bar xml:id="pairsToMap" value="foo bar baz-qux 42"/>
+  <bar xml:id="resolveIdRef" value="toLang"/>
+  <bar xml:id="safeCurieToUri" value="[qux:#1234]"/>
+  <bar xml:id="toArray" value="foo   bar	baz"/>
+  <bar xml:id="toBool.1" value="true"/>
+  <bar xml:id="toBool.2" value="false"/>
+  <bar xml:id="toDateTime" value="2021-02-16T18:04:03.123+00:00"/>
+  <bar xml:id="toDocument" value="foo.xml"/>
+  <bar xml:id="toDuration" value="PT5M"/>
+  <bar xml:id="toFloat" value="3.141"/>
+  <bar xml:id="toInt" value="42"/>
+  <bar xml:id="toIntSet" value="42 -42 0 7 5"/>
+  <bar xml:id="toLang" value="yo-NG"/>
+  <bar xml:id="toMediaType" value="application/json"/>
+  <bar xml:id="toNonNegativeRange" value="42-43"/>
+  <bar xml:id="toSet" value="foo&#x0d;bar&#x0a;baz"/>
+  <bar xml:id="toUri" value="http://www.example.org/foo"/>
+  <bar xml:id="toXName" value="dc:title"/>
+  <bar xml:id="uriOrSafeCurieToUri.1" value="http://www.example.biz/foo"/>
+  <bar xml:id="uriOrSafeCurieToUri.2" value="[xsd:#token]"/>
+  <bar xml:id="xhRelToUri" value="icon"/>
+  <bar xml:id="xPointerUriToSubset" value="bar.xml#appinfo2"/>
+  <baz
+      xml:id="xPointerUriToValueSet"
+      value="#xpointer(//@xml:id[starts-with^(., 'toD'^)])"/>
+  <bar xml:id="yesNoToBool.1" value="yes"/>
+  <bar xml:id="yesNoToBool.2" value="no"/>
+</foo>

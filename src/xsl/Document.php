@@ -2,7 +2,7 @@
 
 namespace alcamo\dom\xsl;
 
-use alcamo\dom\extended\Document as BaseDocument;
+use alcamo\dom\decorated\Document as BaseDocument;
 
 /**
  * @namespace alcamo::dom::xsl

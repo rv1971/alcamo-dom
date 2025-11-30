@@ -1,0 +1,21 @@
+<?xml version='1.0'?>
+
+<foo
+    xmlns="http://foo.example.org"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:xh="http://www.w3.org/1999/xhtml"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:bar="https://bar.example.info/"
+    xmlns:baz="https://baz.example.edu#"
+    xml:lang="is"
+    owl:sameAs="foo.json"
+    xsi:nil="false"
+    xsi:type="bar:bar"
+    baz="BAZ"
+    baz:special="">
+  <xh:p about="[bar:foo]" xml:lang="fo">
+    <baz/>
+  </xh:p>
+
+  <bar baz:special="Lorem ipsum"/>
+</foo>

@@ -342,7 +342,7 @@ class Document extends \DOMDocument implements
      * @brief Get an XSLT stylesheet based on the first xml-stylesheet
      * processing instruction, if any
      */
-    public function getXsltStylesheet(): ?Document
+    public function getXsltStylesheet(): ?Stylesheet
     {
         if ($this->xsltStylesheet_ === false) {
             if (!isset($this->documentElement)) {

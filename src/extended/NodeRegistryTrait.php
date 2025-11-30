@@ -14,6 +14,12 @@ trait NodeRegistryTrait
 {
     private $nodeRegistry_ = [];
 
+    /// Get size of node registry (for testing and debugging purposes)
+    public function getNodeRegistrySize(): int
+    {
+        return count($this->nodeRegistry_);
+    }
+
     /**
      * @brief Add $node to the registry
      *

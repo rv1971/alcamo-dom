@@ -28,7 +28,7 @@ trait CacheTrait
         return self::$instance_ ?? (self::$instance_ = new self());
     }
 
-    /// Remove all cached data
+    /// Remove all cached data (for testing and debugging purposes)
     public function clear(): void
     {
         $this->data_ = [];
