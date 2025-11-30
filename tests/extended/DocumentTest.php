@@ -2,9 +2,7 @@
 
 namespace alcamo\dom\extended;
 
-use alcamo\rdfa\Lang;
-use alcamo\uri\{FileUriFactory, Uri};
-use alcamo\xml\XName;
+use alcamo\uri\FileUriFactory;
 use PHPUnit\Framework\TestCase;
 
 class DocumentTest extends TestCase

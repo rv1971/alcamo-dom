@@ -19,12 +19,18 @@ class MyAttr extends Attr
 
     public static function convertSpecial(string $value): ?string
     {
-        return $value !== '' ? $value : null;
+        return $value !== '' ? "+$value+" : null;
     }
 }
 
 class MyDocument extends Document
 {
+    public const NS_PRFIX_TO_NS_URI =
+        [
+            'baz' => 'https://baz.example.edu#'
+        ]
+        + parent::NS_PRFIX_TO_NS_URI;
+
     public const NODE_CLASSES =
         [
             'DOMAttr'    => MyAttr::class,
@@ -132,7 +138,7 @@ class ElementTest extends TestCase
             [ '*', 'https://baz.example.edu# special', null ],
             [ '*/xh:p', 'about', new Uri('https://bar.example.info/foo') ],
             [ '*', 'baz', 'BAZ' ],
-            [ '*/*[2]', 'https://baz.example.edu# special', 'Lorem ipsum' ]
+            [ '*/*[2]', 'baz:special', '+Lorem ipsum+' ]
         ];
     }
 

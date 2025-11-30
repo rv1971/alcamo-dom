@@ -1,0 +1,25 @@
+<?xml version='1.0'?>
+
+<foo
+    xmlns="http://foo.example.org"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xml:lang="en">
+  <bar
+      owl:sameAs="http://bar.example.com#short"
+      rdfs:comment="empty">
+    <text></text>
+  </bar>
+
+  <bar xml:id="short" rdfs:label="Very short text">
+    <text>Lorem ipsum.</text>
+    <rdfs:comment xml:lang="it">Questo testo è piuttosto breve.</rdfs:comment>
+    <rdfs:comment>This is a quite short text.</rdfs:comment>
+  </bar>
+
+  <bar>
+    <text>Lorem ipsum dolor sit amet.</text>
+    <rdfs:label xml:lang="fr">Text bref</rdfs:label>
+    <rdfs:label>Short text</rdfs:label>
+  </bar>
+</foo>
