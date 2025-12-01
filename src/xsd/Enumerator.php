@@ -14,6 +14,6 @@ class Enumerator extends Decorator
     /// Return the content of the `value` attribute
     public function __toString(): string
     {
-        return $this->handler_->value;
+        return $this->handler_->value ?? '';
     }
 }

@@ -4,6 +4,7 @@
     xmlns="http://foo.example.org"
     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
     xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
     xml:lang="en">
   <bar
       owl:sameAs="http://bar.example.com#short"
@@ -13,6 +14,7 @@
 
   <bar xml:id="short" rdfs:label="Very short text">
     <text>Lorem ipsum.</text>
+    <alternativeText>L. i.</alternativeText>
     <rdfs:comment xml:lang="it">Questo testo è piuttosto breve.</rdfs:comment>
     <rdfs:comment>This is a quite short text.</rdfs:comment>
   </bar>
@@ -22,4 +24,7 @@
     <rdfs:label xml:lang="fr">Text bref</rdfs:label>
     <rdfs:label>Short text</rdfs:label>
   </bar>
+
+  <xsd:simpleType>Not a valid type element</xsd:simpleType>
+  <xsd:enumeration value="Not a valid enumeration element"/>
 </foo>

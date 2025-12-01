@@ -3,7 +3,7 @@
 namespace alcamo\dom\decorated;
 
 use alcamo\dom\decorated\HavingDocumentationDecorator as HDD;
-use alcamo\uri\{FileUriFactory, Uri};
+use alcamo\uri\FileUriFactory;
 use PHPUnit\Framework\TestCase;
 
 class HavingDocumentationDecoratorTest extends TestCase
