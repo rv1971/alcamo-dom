@@ -77,6 +77,22 @@ class Attr extends BaseAttr
 
                 'memberTypes'       => CP::class . '::toXNames'
             ]
+        ],
+        self::XSL_NS => [
+            '*' => [
+                'disable-output-escaping'    => CP::class . '::yesNoToBool',
+                'elements'                   => CP::class . '::toArray',
+                'extension-element-prefixes' => CP::class . '::toArray',
+                'exclude-result-prefixes'    => CP::class . '::toArray',
+                'href'                       => CP::class . '::toUri',
+                'indent'                     => CP::class . '::yesNoToBool',
+                'lang'                       => CP::class . '::toLang',
+                'media-type'                 => CP::class . '::toMediaType',
+                'omit-xml-declaration'       => CP::class . '::yesNoToBool',
+                'standalone'                 => CP::class . '::yesNoToBool',
+                'terminate'                  => CP::class . '::yesNoToBool',
+                'use-attribute-sets'         => CP::class . '::toArray'
+            ]
         ]
     ];
 
