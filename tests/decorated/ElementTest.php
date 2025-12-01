@@ -81,6 +81,8 @@ class ElementTest extends TestCase
                 XsdDecorator::class,
                 'Not a valid type element'
             ],
+
+            /* This also tests class alcamo::dom::xsd::enumerator */
             [
                 '*/xsd:enumeration',
                 Enumerator::class,

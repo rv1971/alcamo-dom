@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xsd:schema
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://foo.example.org"
+    attributeFormDefault="qualified"
+    xml:lang="en">
+  <xsd:simpleType name="Foo" xml:id="Foo">
+    <xsd:annotation>
+      <xsd:appinfo>
+        <rdfs:label>Foo type</rdfs:label>
+      </xsd:appinfo>
+
+      <xsd:appinfo>
+        <rdfs:label xml:lang="it">Tipo Foo</rdfs:label>
+        <rdfs:comment xml:lang="it">Tipo come esempio.</rdfs:comment>
+        <rdfs:comment>Example type.</rdfs:comment>
+      </xsd:appinfo>
+    </xsd:annotation>
+  </xsd:simpleType>
+
+  <xsd:complexType name="Bar">
+    <xsd:sequence>
+      <xsd:element name="baz"/>
+      <xsd:element form="qualified" name="qux"/>
+    </xsd:sequence>
+
+    <xsd:attribute name="corge"/>
+  </xsd:complexType>
+</xsd:schema>
