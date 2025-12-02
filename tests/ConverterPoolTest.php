@@ -17,13 +17,20 @@ class ConverterPoolTestDocument extends PsviDocument
     public const TYPE_CONVERTER_MAP =
         [
             Document::XSD_NS . ' formChoice'
-                => __CLASS__ . '::formChoiceConverter'
+                => __CLASS__ . '::formChoiceConverter',
+            'http://foo.example.org UpperString'
+                => __CLASS__ . '::upperConverter'
         ]
     + parent::TYPE_CONVERTER_MAP;
 
     public static function formChoiceConverter(string $value, \DOMNode $context)
     {
         return $context->parentNode->getAttribute('prefix') . $value;
+    }
+
+    public static function upperConverter(string $value, \DOMNode $context)
+    {
+        return strtoupper($value);
     }
 }
 
@@ -150,7 +157,8 @@ class ConverterPoolTest extends TestCase
             [ 'toRdfaDatatype.1', 'true' ],
             [ 'toRdfaDatatype.2', 'true' ],
             [ 'toRdfaDatatype.3', true ],
-            [ 'toRdfaDatatype.4', '**qualified' ]
+            [ 'toRdfaDatatype.4', '**qualified' ],
+            [ 'toRdfaDatatype.5', 'LOREM IPSUM.' ]
         ];
     }
 

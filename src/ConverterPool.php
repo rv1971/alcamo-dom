@@ -5,7 +5,7 @@ namespace alcamo\dom;
 use alcamo\binary_data\BinaryString;
 use alcamo\collection\ReadonlyPrefixSet;
 use alcamo\dom\psvi\Document as PsviDocument;
-use alcamo\dom\schema\{Schema, TypeMap};
+use alcamo\dom\schema\{Schema, TargetNsCache, TypeMap};
 use alcamo\exception\{OutOfRange, SyntaxError};
 use alcamo\range\NonNegativeRange;
 use alcamo\rdfa\{Lang, MediaType};
@@ -308,34 +308,25 @@ class ConverterPool implements NamespaceConstantsInterface
         $element =
             $context instanceof \DOMAttr ? $context->parentNode : $context;
 
-        if (!$element->hasAttribute('datatype')) {
+        if (!isset($element->datatype)) {
             return $value;
         }
 
-        $typeXName = XName::newFromUri(
-            (new UriFromCurieFactory())->createFromCurieAndContext(
-                $element->getAttribute('datatype'),
-                $element
-            )
+        $typeXName = TargetNsCache::getInstance()->typeUriToTypeXName(
+            $element->resolveUri($element->datatype)
         );
 
         /** Look for a converter in the $context document, if it is of type
          *  alcamo::dom::psvi::Document, otherwise use the converters in
          *  alcamo::dom::Document. */
 
-        if ($element->ownerDocument instanceof PsviDocument) {
-            $converters = $element->ownerDocument->getTypeConverters();
-
-            $converter = $converters->lookup(
+        $converter = $element->ownerDocument instanceof PsviDocument
+            ? $element->ownerDocument->getTypeConverters()->lookup(
                 $element->ownerDocument->getSchema()->getGlobalType($typeXName)
-            );
-        } else {
-            $converters = static::getTypeConverters();
-
-            $converter = $converters->lookup(
+            )
+            : static::getTypeConverters()->lookup(
                 Schema::getBuiltinSchema()->getGlobalType($typeXName)
             );
-        }
 
         return isset($converter) ? $converter($value, $context) : $value;
     }

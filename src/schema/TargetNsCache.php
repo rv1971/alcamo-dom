@@ -2,9 +2,15 @@
 
 namespace alcamo\dom\schema;
 
-use alcamo\dom\{CacheTrait, DocumentCache, ShallowDocument};
+use alcamo\dom\{
+    CacheTrait,
+    DocumentCache,
+    NamespaceConstantsInterface,
+    ShallowDocument
+};
 use alcamo\exception\AbsoluteUriNeeded;
 use alcamo\uri\{Uri, UriNormalizer};
+use alcamo\xml\XName;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -17,7 +23,7 @@ use Psr\Http\Message\UriInterface;
  * access methods. However, access via normalized URIs is more efficient since
  * they are directly found in the cache.
  */
-class TargetNsCache implements \ArrayAccess
+class TargetNsCache implements \ArrayAccess, NamespaceConstantsInterface
 {
     use CacheTrait;
 
@@ -96,5 +102,25 @@ class TargetNsCache implements \ArrayAccess
             : false;
 
         return true;
+    }
+
+    /**
+     */
+    public function typeUriToTypeXName(string $uri): XName
+    {
+        [ $nsUri, $localName ] = explode('#', $uri);
+
+        return new XName($this[$nsUri], $localName);
+    }
+
+    /**
+     * Initialize with normalized namespaces from NS_PRFIX_TO_NS_URI.
+     */
+    protected function __construct()
+    {
+        foreach (static::NS_PRFIX_TO_NS_URI as $nsName) {
+            $this->data_[(string)UriNormalizer::normalize(new Uri($nsName))] =
+                $nsName;
+        }
     }
 }

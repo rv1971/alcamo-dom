@@ -3,7 +3,9 @@
 <foo
     xmlns:dc="http://purl.org/dc/terms/"
     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-    xmlns:qux="http://qux.example.org">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:qux="http://qux.example.org"
+    xsi:schemaLocation="http://foo.example.org foo.xsd">
   <bar xml:id="base64ToBinary" value="Zm9vCg=="/>
   <bar xml:id="curieToUri" value="dc:source"/>
   <bar xml:id="hexToBinary" value="1234abcdef"/>
@@ -36,13 +38,25 @@
   <bar xml:id="yesNoToBool.2" value="no"/>
   <bar xml:id="toRdfaDatatype.1" value="true"/>
   <bar
+      xmlns="http://www.w3.org/1999/xhtml"
       xml:id="toRdfaDatatype.2"
       datatype="xsd:reducedDerivationControl"
       value="true"/>
-  <bar xml:id="toRdfaDatatype.3" datatype="xsd:boolean" value="true"/>
   <bar
+      xmlns="http://www.w3.org/1999/xhtml"
+      xml:id="toRdfaDatatype.3"
+      datatype="xsd:boolean"
+      value="true"/>
+  <bar
+      xmlns="http://www.w3.org/1999/xhtml"
       xml:id="toRdfaDatatype.4"
       datatype="xsd:formChoice"
       value="qualified"
       prefix="**"/>
+  <bar
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:foo="foo.xsd#"
+      xml:id="toRdfaDatatype.5"
+      datatype="foo:UpperString"
+      value="Lorem ipsum."/>
 </foo>
