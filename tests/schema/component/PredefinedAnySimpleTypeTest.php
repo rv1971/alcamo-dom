@@ -19,8 +19,7 @@ class PredefinedAnySimpleTypeTest extends TestCase
      * AbstractPredefinedComponent. */
     public function testProps(): void
     {
-        /* Contains XMLSchema.xsd as built-in. */
-        $schema = Schema::newFromUris([]);
+        $schema = Schema::getBuiltinSchema();
 
         $type = $schema->getAnySimpleType();
 

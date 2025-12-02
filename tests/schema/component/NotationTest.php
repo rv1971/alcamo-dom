@@ -16,7 +16,7 @@ class NotationTest extends TestCase
     /* This also tests class AbstractXsdComponent. */
     public function testProps(): void
     {
-        $fooUri = (new FileUriFactory)
+        $fooUri = (new FileUriFactory())
             ->create(__DIR__ . DIRECTORY_SEPARATOR . 'foo.xsd');
 
         /* Contains XMLSchema.xsd as built-in. */
@@ -40,14 +40,16 @@ class NotationTest extends TestCase
         );
 
         $this->assertSame(
-            'false',
+            false,
             $notation->getAppinfoMeta(self::BAR_NS . 'fooish')->content
         );
 
         $this->assertSame(
-            'true',
+            true,
             $notation->getAppinfoMeta(self::BAR_NS . 'fooable')->content
         );
+
+        $this->assertNull($notation->getAppinfoMeta(self::BAR_NS . 'barish'));
 
         $this->assertSame(
             'http://foo.example.org/documentation/FooNotation',

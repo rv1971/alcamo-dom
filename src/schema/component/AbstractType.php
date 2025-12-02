@@ -51,6 +51,10 @@ abstract class AbstractType extends AbstractXsdComponent implements
     /**
      * @brief Get the first `<xh:meta>` element for the given property in this
      * type or its closest base type, if any
+     *
+     * If the first such element has no `content` attribute, return
+     * `null`. This allows to prevent a type from inheriting a base type's
+     * `<xh:meta>`.
      */
     public function getAppinfoMeta(string $property): ?XsdElement
     {
@@ -68,7 +72,7 @@ abstract class AbstractType extends AbstractXsdComponent implements
                 the XPath is not sufficient here because XPath 1.0 has no
                 means to handle CURIEs. */
                 if ($meta->property == $property) {
-                    return $meta;
+                    return isset($meta->content) ? $meta : null;
                 }
             }
         }
@@ -76,9 +80,14 @@ abstract class AbstractType extends AbstractXsdComponent implements
         return null;
     }
 
+
     /**
      * @brief Get the first `<xh:link>` element for the given relation in this
      * type or its closest base type, if any
+     *
+     * If the first such element has no `href` attribute, return
+     * `null`. This allows to prevent a type from inheriting a base type's
+     * `<xh:link>`.
      */
     public function getAppinfoLink(string $rel): ?XsdElement
     {
@@ -92,7 +101,7 @@ abstract class AbstractType extends AbstractXsdComponent implements
             ) {
                 /* See getAppinfoMeta(). */
                 if ($link->rel == $rel) {
-                    return $link;
+                    return isset($link->href) ? $link : null;
                 }
             }
         }

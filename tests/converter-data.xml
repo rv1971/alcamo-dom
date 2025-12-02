@@ -34,4 +34,15 @@
       value="#xpointer(//@xml:id[starts-with^(., 'toD'^)])"/>
   <bar xml:id="yesNoToBool.1" value="yes"/>
   <bar xml:id="yesNoToBool.2" value="no"/>
+  <bar xml:id="toRdfaDatatype.1" value="true"/>
+  <bar
+      xml:id="toRdfaDatatype.2"
+      datatype="xsd:reducedDerivationControl"
+      value="true"/>
+  <bar xml:id="toRdfaDatatype.3" datatype="xsd:boolean" value="true"/>
+  <bar
+      xml:id="toRdfaDatatype.4"
+      datatype="xsd:formChoice"
+      value="qualified"
+      prefix="**"/>
 </foo>

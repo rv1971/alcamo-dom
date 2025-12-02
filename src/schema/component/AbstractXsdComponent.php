@@ -58,7 +58,14 @@ abstract class AbstractXsdComponent extends AbstractComponent
         }
     }
 
-    /// Get the first `<xh:meta>` element for the given property, if any
+    /**
+     * @brief Get the first `<xh:meta>` element for the given property, if any
+     *
+     * If the first such element has no `content` attribute, return
+     * `null`. This feature might not be particularly useful but is for
+     * coherency with
+     * alcamo::dom::schema::component::AbstractType::getAppinfoMeta().
+     */
     public function getAppinfoMeta(string $property): ?XsdElement
     {
         foreach ($this->xsdElement_->query(static::XH_META_XPATH) as $meta) {
@@ -68,7 +75,7 @@ abstract class AbstractXsdComponent extends AbstractComponent
                the XPath is not sufficient here because XPath 1.0 has no
                means to handle CURIEs. */
             if ($meta->property == $property) {
-                return $meta;
+                    return isset($meta->content) ? $meta : null;
             }
         }
 

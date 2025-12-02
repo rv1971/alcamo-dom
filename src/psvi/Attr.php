@@ -85,7 +85,7 @@ class Attr extends BaseAttr
             /** Otherwise convert based on the XML Schema type. */
             $attrType = $this->getType();
 
-            $converters = $this->ownerDocument->getAttrConverters();
+            $converters = $this->ownerDocument->getTypeConverters();
 
             $converter = $converters->lookup($attrType);
 

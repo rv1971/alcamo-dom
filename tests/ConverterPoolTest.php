@@ -2,6 +2,7 @@
 
 namespace alcamo\dom;
 
+use alcamo\dom\psvi\Document as PsviDocument;
 use alcamo\exception\{OutOfRange, SyntaxError};
 use alcamo\range\NonNegativeRange;
 use alcamo\rdfa\{Lang, MediaType};
@@ -11,6 +12,21 @@ use alcamo\xml\XName;
 use Ds\Set;
 use PHPUnit\Framework\TestCase;
 
+class ConverterPoolTestDocument extends PsviDocument
+{
+    public const TYPE_CONVERTER_MAP =
+        [
+            Document::XSD_NS . ' formChoice'
+                => __CLASS__ . '::formChoiceConverter'
+        ]
+    + parent::TYPE_CONVERTER_MAP;
+
+    public static function formChoiceConverter(string $value, \DOMNode $context)
+    {
+        return $context->parentNode->getAttribute('prefix') . $value;
+    }
+}
+
 class ConverterPoolTest extends TestCase
 {
     public const DATA_DIR = __DIR__ . DIRECTORY_SEPARATOR;
@@ -19,10 +35,15 @@ class ConverterPoolTest extends TestCase
 
     public static function setUpBeforeClass(): void
     {
-        $factory =
-            new DocumentFactory((new FileUriFactory())->create(self::DATA_DIR));
+        $factory = new DocumentFactory(
+            (new FileUriFactory())->create(self::DATA_DIR),
+            0
+        );
 
-        self::$doc_ = $factory->createFromUri('converter-data.xml');
+        self::$doc_ = $factory->createFromUri(
+            'converter-data.xml',
+            ConverterPoolTestDocument::class
+        );
     }
 
     /**
@@ -125,8 +146,37 @@ class ConverterPoolTest extends TestCase
                 (new Set())->merge([ 'toDateTime', 'toDocument', 'toDuration' ])
             ],
             [ 'yesNoToBool.1', true ],
-            [ 'yesNoToBool.2', false ]
+            [ 'yesNoToBool.2', false ],
+            [ 'toRdfaDatatype.1', 'true' ],
+            [ 'toRdfaDatatype.2', 'true' ],
+            [ 'toRdfaDatatype.3', true ],
+            [ 'toRdfaDatatype.4', '**qualified' ]
         ];
+    }
+
+    public function testToRdfaDatatypeFallback(): void
+    {
+        $factory = new DocumentFactory(
+            (new FileUriFactory())->create(self::DATA_DIR)
+        );
+
+        $doc = $factory->createFromUri('converter-data.xml');
+
+        $qualifiedConverter = ConverterPool::class . '::toRdfaDatatype';
+
+        $element3 = $doc->getElementById('toRdfaDatatype.3');
+
+        $this->assertSame(
+            true,
+            $qualifiedConverter($element3->getAttribute('value'), $element3)
+        );
+
+        $element4 = $doc->getElementById('toRdfaDatatype.4');
+
+        $this->assertSame(
+            'qualified',
+            $qualifiedConverter($element4->getAttribute('value'), $element4)
+        );
     }
 
     public function testToIntException()

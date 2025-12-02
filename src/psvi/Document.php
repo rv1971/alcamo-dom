@@ -2,7 +2,6 @@
 
 namespace alcamo\dom\psvi;
 
-use alcamo\dom\ConverterPool as CP;
 use alcamo\dom\decorated\Document as BaseDocument;
 use alcamo\dom\schema\{Schema, TypeMap};
 use alcamo\exception\DataValidationFailed;
@@ -35,27 +34,6 @@ class Document extends BaseDocument
     /** @copybrief alcamo::dom::Document::DEFAULT_DOCUMENT_FACTORY_CLASS */
     public const DEFAULT_DOCUMENT_FACTORY_CLASS = DocumentFactory::class;
 
-    /// Map of XSD type XNames to conversion functions for attribute values
-    public const ATTR_TYPE_MAP = [
-        self::XH11D_NS . ' CURIE'          => CP::class . '::curieToUri',
-        self::XH11D_NS . ' SafeCURIE'      => CP::class . '::safeCurieToUri',
-        self::XH11D_NS . ' URIorSafeCURIE' => CP::class . '::uriOrSafeCurieToUri',
-
-        self::XSD_NS . ' anyURI'       => CP::class . '::toUri',
-        self::XSD_NS . ' base64Binary' => CP::class . '::base64ToBinary',
-        self::XSD_NS . ' boolean'      => CP::class . '::toBool',
-        self::XSD_NS . ' date'         => CP::class . '::toDateTime',
-        self::XSD_NS . ' dateTime'     => CP::class . '::toDateTime',
-        self::XSD_NS . ' decimal'      => CP::class . '::toFloat',
-        self::XSD_NS . ' double'       => CP::class . '::toFloat',
-        self::XSD_NS . ' duration'     => CP::class . '::toDuration',
-        self::XSD_NS . ' float'        => CP::class . '::toFloat',
-        self::XSD_NS . ' hexBinary'    => CP::class . '::hexToBinary',
-        self::XSD_NS . ' integer'      => CP::class . '::toInt',
-        self::XSD_NS . ' language'     => CP::class . '::toLang',
-        self::XSD_NS . ' QName'        => CP::class . '::toXName'
-    ];
-
     /**
      * @brief Map of XSD type XNames to decorator classes for elements
      *
@@ -67,7 +45,7 @@ class Document extends BaseDocument
     public const IDREFS_XNAME = self::XSD_NS . ' IDREFS';
 
     private $schema_;              ///< Schema
-    private $attrConverters_;      ///< TypeMap
+    private $typeConverters_;      ///< TypeMap
     private $elementDecoratorMap_; ///< TypeMap
 
     /// Get schema obtained from `xsi:schemaLocation`
@@ -80,17 +58,17 @@ class Document extends BaseDocument
         return $this->schema_;
     }
 
-    /// Get type map used to convert attribute values
-    public function getAttrConverters(): TypeMap
+    /// Get type map used to convert node values
+    public function getTypeConverters(): TypeMap
     {
-        if (!isset($this->attrConverters_)) {
-            $this->attrConverters_ = TypeMap::newFromSchemaAndXNameMap(
+        if (!isset($this->typeConverters_)) {
+            $this->typeConverters_ = TypeMap::newFromSchemaAndXNameMap(
                 $this->getSchema(),
-                static::ATTR_TYPE_MAP
+                static::TYPE_CONVERTER_MAP
             );
         }
 
-        return $this->attrConverters_;
+        return $this->typeConverters_;
     }
 
     /// Get map of XSD element types to decorator classes
@@ -160,7 +138,7 @@ class Document extends BaseDocument
         parent::clearCache();
 
         $this->schema_ = null;
-        $this->attrConverters_ = null;
+        $this->typeConverters_ = null;
         $this->elementDecoratorMap_ = null;
     }
 }

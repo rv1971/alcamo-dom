@@ -4,6 +4,8 @@ namespace alcamo\dom;
 
 use alcamo\binary_data\BinaryString;
 use alcamo\collection\ReadonlyPrefixSet;
+use alcamo\dom\psvi\Document as PsviDocument;
+use alcamo\dom\schema\{Schema, TypeMap};
 use alcamo\exception\{OutOfRange, SyntaxError};
 use alcamo\range\NonNegativeRange;
 use alcamo\rdfa\{Lang, MediaType};
@@ -23,6 +25,20 @@ use Ds\Set;
  */
 class ConverterPool implements NamespaceConstantsInterface
 {
+    private static $typeConverters_; ///< TypeMap
+
+    public static function getTypeConverters(): TypeMap
+    {
+        if (!isset(self::$typeConverters_)) {
+            self::$typeConverters_ = TypeMap::newFromSchemaAndXNameMap(
+                Schema::getBuiltinSchema(),
+                Document::TYPE_CONVERTER_MAP
+            );
+        }
+
+        return self::$typeConverters_;
+    }
+
     /// Split at whitespace
     public static function toArray(string $value): array
     {
@@ -276,5 +292,51 @@ class ConverterPool implements NamespaceConstantsInterface
         }
 
         return $result;
+    }
+
+    /**
+     * @brief Convert according to RDFa datatype, if given
+     *
+     * @sa [Typed literals](https://www.w3.org/TR/rdfa-core/#typed-literals-1)
+     */
+    public static function toRdfaDatatype(string $value, \DOMNode $context)
+    {
+        /** Take the datatype URI from the `datatype` attribute of $context
+         *  (or $context's parent node if $context is an attribute), if
+         *  present. */
+
+        $element =
+            $context instanceof \DOMAttr ? $context->parentNode : $context;
+
+        if (!$element->hasAttribute('datatype')) {
+            return $value;
+        }
+
+        $typeXName = XName::newFromUri(
+            (new UriFromCurieFactory())->createFromCurieAndContext(
+                $element->getAttribute('datatype'),
+                $element
+            )
+        );
+
+        /** Look for a converter in the $context document, if it is of type
+         *  alcamo::dom::psvi::Document, otherwise use the converters in
+         *  alcamo::dom::Document. */
+
+        if ($element->ownerDocument instanceof PsviDocument) {
+            $converters = $element->ownerDocument->getTypeConverters();
+
+            $converter = $converters->lookup(
+                $element->ownerDocument->getSchema()->getGlobalType($typeXName)
+            );
+        } else {
+            $converters = static::getTypeConverters();
+
+            $converter = $converters->lookup(
+                Schema::getBuiltinSchema()->getGlobalType($typeXName)
+            );
+        }
+
+        return isset($converter) ? $converter($value, $context) : $value;
     }
 }

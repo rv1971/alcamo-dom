@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <xsd:schema
+    xmlns="http://foo.example.org"
     xmlns:dc="http://purl.org/dc/terms/"
     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
@@ -15,8 +16,9 @@
       system="http://foo.example.org/FooData">
     <xsd:annotation>
       <xsd:appinfo xmlns="http://www.w3.org/1999/xhtml">
-        <meta property="bar:fooish" content="false"/>
-        <meta property="bar:fooable" content="true"/>
+        <meta property="bar:barish"/>
+        <meta property="bar:fooish" datatype="xsd:boolean" content="false"/>
+        <meta property="bar:fooable" datatype="xsd:boolean" content="true"/>
         <link
             rel="dc:seeAlso"
             href="http://foo.example.org/documentation/FooNotation"/>
@@ -29,4 +31,50 @@
       </xsd:appinfo>
     </xsd:annotation>
   </xsd:notation>
+
+  <xsd:simpleType name="FooUnsigned6">
+    <xsd:annotation>
+      <xsd:appinfo xmlns="http://www.w3.org/1999/xhtml">
+        <meta property="bar:bits" datatype="xsd:byte" content="6"/>
+        <link
+            rel="dc:seeAlso"
+            href="http://foo.example.org/documentation/FooUnsigned6"/>
+      </xsd:appinfo>
+    </xsd:annotation>
+
+    <xsd:restriction base="xsd:byte">
+      <xsd:minInclusive value="0"/>
+      <xsd:maxInclusive value="63"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="FooUnsigned5">
+    <xsd:annotation>
+      <xsd:appinfo xmlns="http://www.w3.org/1999/xhtml">
+        <meta property="bar:bits" datatype="xsd:byte" content="5"/>
+        <link
+            rel="dc:seeAlso"
+            href="http://foo.example.org/documentation/FooUnsigned5"/>
+      </xsd:appinfo>
+    </xsd:annotation>
+
+    <xsd:restriction base="FooUnsigned6">
+      <xsd:maxInclusive value="31"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:element name="foo-int">
+    <xsd:simpleType>
+      <xsd:annotation>
+        <xsd:appinfo xmlns="http://www.w3.org/1999/xhtml">
+          <meta property="bar:bits"/>
+          <link rel="dc:seeAlso"/>
+        </xsd:appinfo>
+      </xsd:annotation>
+
+      <xsd:restriction base="FooUnsigned5">
+        <xsd:maxInclusive value="15"/>
+      </xsd:restriction>
+    </xsd:simpleType>
+  </xsd:element>
 </xsd:schema>

@@ -51,6 +51,8 @@ class Schema implements
     /// Predefined XSI attributes
     public const PREDEFINED_XSI_ATTRS = [ 'nil' => 'boolean', 'type' => 'QName' ];
 
+    private static $builtinSchema_; ///< self
+
     /**
      * @brief Construct new schema or get it from cache
      *
@@ -167,6 +169,17 @@ class Schema implements
         )->getGlobalType(
             $xsdElement->getComponentXName()
         );
+    }
+
+    public static function getBuiltinSchema(): self
+    {
+        if (!isset(self::$builtinSchema_)) {
+            $class = static::DEFAULT_DOCUMENT_FACTORY_CLASS;
+
+            self::$builtinSchema_ = new static([], '', new $class());
+        }
+
+        return self::$builtinSchema_;
     }
 
     private $documentFactory_;       ///< DocumentFactoryInterface

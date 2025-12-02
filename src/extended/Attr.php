@@ -46,6 +46,7 @@ class Attr extends BaseAttr
         self::XH_NS => [
             '*' => [
                 'about'             => CP::class . '::uriOrSafeCurieToUri',
+                'content'           => CP::class . '::toRdfaDatatype',
                 'datatype'          => CP::class . '::curieToUri',
                 'property'          => CP::class . '::curieToUri',
                 'rel'               => CP::class . '::xhRelToUri',
