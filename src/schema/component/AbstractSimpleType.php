@@ -44,15 +44,6 @@ abstract class AbstractSimpleType extends AbstractType implements
                 );
             }
 
-            if ($baseType instanceof UnionType) {
-                return new UnionType(
-                    $schema,
-                    $xsdElement,
-                    $baseType->getMemberTypes(),
-                    $baseType
-                );
-            }
-
             if (isset($restrictionElement->query('xsd:enumeration')[0])) {
                 return new EnumerationType($schema, $xsdElement, $baseType);
             }
@@ -80,17 +71,19 @@ abstract class AbstractSimpleType extends AbstractType implements
 
             if (isset($unionElement->memberTypes)) {
                 foreach ($unionElement->memberTypes as $memberTypeXName) {
-                    $memberTypes[] = $schema->getGlobalType($memberTypeXName);
+                    $memberTypes[(string)$memberTypeXName] =
+                        $schema->getGlobalType($memberTypeXName);
                 }
             }
 
             foreach (
                 $unionElement->query('xsd:simpleType') as $memberTypeElement
             ) {
-                $memberTypes[] = self::newFromSchemaAndXsdElement(
-                    $schema,
-                    $memberTypeElement
-                );
+                $memberTypes[(string)$memberTypeElement->getComponentXName()] =
+                    self::newFromSchemaAndXsdElement(
+                        $schema,
+                        $memberTypeElement
+                    );
             }
 
             $isEnumeration = true;

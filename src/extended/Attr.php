@@ -56,6 +56,16 @@ class Attr extends BaseAttr
             ]
         ],
         self::XSD_NS => [
+            'fractionDigits' => [ 'fixed' => CP::class . '::toBool' ],
+            'length'         => [ 'fixed' => CP::class . '::toBool' ],
+            'maxExclusive'   => [ 'fixed' => CP::class . '::toBool' ],
+            'maxInclusive'   => [ 'fixed' => CP::class . '::toBool' ],
+            'maxLength'      => [ 'fixed' => CP::class . '::toBool' ],
+            'minExclusive'   => [ 'fixed' => CP::class . '::toBool' ],
+            'minInclusive'   => [ 'fixed' => CP::class . '::toBool' ],
+            'minLength'      => [ 'fixed' => CP::class . '::toBool' ],
+            'totalDigits'    => [ 'fixed' => CP::class . '::toBool' ],
+            'whiteSpace'     => [ 'fixed' => CP::class . '::toBool' ],
             '*' => [
                 'maxOccurs'         => CP::class . '::toAllNNI',
 

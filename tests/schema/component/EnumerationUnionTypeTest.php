@@ -19,7 +19,7 @@ class EnumerationUnionTypeTest extends TestCase
         $schema = Schema::newFromUris([ $fooUri ]);
 
         $type =
-            $schema->getGlobalType(self::FOO_NS . ' UnionType');
+            $schema->getGlobalType(self::FOO_NS . ' EnumerationUnionType');
 
         $expectedEnumerators = [
             'qualified',

@@ -17,6 +17,8 @@ class UnionType extends AbstractSimpleType
 {
     protected $memberTypes_; ///< Array of SimpleTypeInterface
 
+    private const NON_ID_ATTR_COUNT = 'count(@*[name() != "id"])';
+
     private $isNumeric_;  ///< bool
     private $isIntegral_; ///< bool
 
@@ -32,7 +34,7 @@ class UnionType extends AbstractSimpleType
         $this->memberTypes_ = $memberTypes;
     }
 
-    /// Get array of SimpleTypeInterface
+    /// Get map of type XName to SimpleTypeInterface
     public function getMemberTypes(): array
     {
         return $this->memberTypes_;
@@ -56,19 +58,18 @@ class UnionType extends AbstractSimpleType
             }
 
             if (isset($commonFacet)) {
-                if (
-                    count($facet->attributes) != count($commonFacet->attributes)
-                ) {
+                if ($facet->evaluate(self::NON_ID_ATTR_COUNT) != $attrCount) {
                     return null;
                 }
 
                 foreach ($facet->attributes as $name => $attr) {
-                    if ($attr->value != $commonFacet[$name]->value) {
+                    if ($name != 'id' && $attr != $commonFacet->$name) {
                         return null;
                     }
                 }
             } else {
                 $commonFacet = $facet;
+                $attrCount = $commonFacet->evaluate(self::NON_ID_ATTR_COUNT);
             }
         }
 

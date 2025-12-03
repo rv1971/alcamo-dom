@@ -78,7 +78,17 @@
     </xsd:simpleType>
   </xsd:element>
 
-  <xsd:simpleType name="UnionType">
+  <xsd:simpleType name="EnumerationUnionType">
     <xsd:union memberTypes="xsd:formChoice xsd:typeDerivationControl"/>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="nonNegativeFloat">
+    <xsd:restriction base="xsd:float">
+      <xsd:minInclusive value="0"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="UnionType">
+    <xsd:union memberTypes="nonNegativeFloat xsd:positiveInteger"/>
   </xsd:simpleType>
 </xsd:schema>

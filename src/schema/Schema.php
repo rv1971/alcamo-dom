@@ -478,7 +478,10 @@ class Schema implements
                 DocumentCache::getInstance()->add($xsd);
 
                 /* Also load imported and included XSDs. */
-                foreach ($xsd->query('xsd:import|xsd:include') as $import) {
+                foreach (
+                    $xsd->documentElement
+                        ->query('xsd:import|xsd:include') as $import
+                ) {
                     /* Ignore imports without schema location. */
                     if (!isset($import->schemaLocation)) {
                         continue;
