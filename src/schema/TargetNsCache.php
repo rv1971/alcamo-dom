@@ -108,7 +108,7 @@ class TargetNsCache implements \ArrayAccess, NamespaceConstantsInterface
      */
     public function typeUriToTypeXName(string $uri): XName
     {
-        [ $nsUri, $localName ] = explode('#', $uri);
+        [ $nsUri, $localName ] = explode('#', $uri, 2);
 
         return new XName($this[$nsUri], $localName);
     }
@@ -119,8 +119,7 @@ class TargetNsCache implements \ArrayAccess, NamespaceConstantsInterface
     protected function __construct()
     {
         foreach (static::NS_PRFIX_TO_NS_URI as $nsName) {
-            $this->data_[(string)UriNormalizer::normalize(new Uri($nsName))] =
-                $nsName;
+            $this->data_[rtrim($nsName, '#')] = $nsName;
         }
     }
 }
