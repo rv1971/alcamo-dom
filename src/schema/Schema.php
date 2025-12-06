@@ -42,6 +42,14 @@ use Psr\Http\Message\UriInterface;
  *
  * @warning `\<redefine>` is not supported.
  *
+ * The factory methods take a schema from the cache if possible. Cache keys
+ * are built from a sorted list of normalized absolute URIs of XSDs.
+ * - Hence different collections of URIs that represent the same XSD resources
+ *   are recognized as equal.
+ * - Different collections of URIs that represent the same schema because they
+ *   contain redundant URIs of XSD resources which are imported by other XSD
+ *   instead are *not* recognized as equal.
+ *
  * @date Last reviewed 2025-11-07
  */
 class Schema implements
@@ -50,8 +58,6 @@ class Schema implements
 {
     /// Predefined XSI attributes
     public const PREDEFINED_XSI_ATTRS = [ 'nil' => 'boolean', 'type' => 'QName' ];
-
-    private static $builtinSchema_; ///< self
 
     /**
      * @brief Construct new schema or get it from cache
@@ -173,13 +179,7 @@ class Schema implements
 
     public static function getBuiltinSchema(): self
     {
-        if (!isset(self::$builtinSchema_)) {
-            $class = static::DEFAULT_DOCUMENT_FACTORY_CLASS;
-
-            self::$builtinSchema_ = new static([], '', new $class());
-        }
-
-        return self::$builtinSchema_;
+        return static::newFromUris([]);
     }
 
     private $documentFactory_;       ///< DocumentFactoryInterface

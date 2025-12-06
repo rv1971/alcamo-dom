@@ -28,9 +28,20 @@ trait CacheTrait
         return self::$instance_ ?? (self::$instance_ = new self());
     }
 
-    /// Remove all cached data (for testing and debugging purposes)
-    public function clear(): void
+    /**
+     * @brief Remove all cached data
+     *
+     * Mainly for testing and debugging purposes.
+     *
+     * Classes using this trait may add initial values to the cache.
+    */
+    public function init(): void
     {
         $this->data_ = [];
+    }
+
+    private function __construct()
+    {
+        $this->init();
     }
 }

@@ -10,7 +10,7 @@ use Psr\Http\Message\UriInterface;
 /**
  * @brief Cache for XML schemas
  */
-class SchemaCache implements \ArrayAccess
+class SchemaCache implements \ArrayAccess, \Countable
 {
     use CacheTrait;
 

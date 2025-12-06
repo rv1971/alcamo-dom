@@ -23,9 +23,14 @@ use Psr\Http\Message\UriInterface;
  * access methods. However, access via normalized URIs is more efficient since
  * they are directly found in the cache.
  */
-class TargetNsCache implements \ArrayAccess, NamespaceConstantsInterface
+class TargetNsCache implements
+    \ArrayAccess,
+    \Countable,
+    NamespaceConstantsInterface
 {
-    use CacheTrait;
+    use CacheTrait {
+        init as cacheTraitInit;
+    }
 
     /**
      * @brief Whether the XSD at $uri has a target namespace
@@ -47,7 +52,7 @@ class TargetNsCache implements \ArrayAccess, NamespaceConstantsInterface
     }
 
     /**
-     * @brief Get the target namespace (potentially null) of the XSD at $uri
+     * @brief Get the target namespace (potentially `null`) of the XSD at $uri
      *
      * If not found in the cache, add it to the cache.
      */
@@ -85,7 +90,7 @@ class TargetNsCache implements \ArrayAccess, NamespaceConstantsInterface
                 ->setMessageContext([ 'uri' => $uri ]);
         }
 
-        /* Normalize URI for use in caching. */
+        /** Normalize $uri for use in caching. */
         $uri = (string)UriNormalizer::normalize($uri);
 
         if (isset($this->data_[$uri])) {
@@ -114,10 +119,17 @@ class TargetNsCache implements \ArrayAccess, NamespaceConstantsInterface
     }
 
     /**
-     * Initialize with normalized namespaces from NS_PRFIX_TO_NS_URI.
+     * Initialize with normalized namespaces from
+     * alcamo::dom::NamespaceConstantsInterface::NS_PRFIX_TO_NS_URI.
+     *
+     * Thus, for well-known namespaces where an XSD is found at the location
+     * indicated by the namespace, the target namespace is known in advance
+     * without need to access the XSD.
      */
-    protected function __construct()
+    public function init(): void
     {
+        $this->cacheTraitInit();
+
         foreach (static::NS_PRFIX_TO_NS_URI as $nsName) {
             $this->data_[rtrim($nsName, '#')] = $nsName;
         }
