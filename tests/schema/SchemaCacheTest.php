@@ -18,7 +18,9 @@ class SchemaCacheTest extends TestCase
 
         $this->assertSame(0, count($cache));
 
-        $builtinSchema = Schema::getBuiltinSchema();
+        $schemaFactory = new SchemaFactory();
+
+        $builtinSchema = $schemaFactory->getBuiltinSchema();
 
         $this->assertSame(1, count($cache));
 
@@ -38,13 +40,13 @@ class SchemaCacheTest extends TestCase
                 . 'bar.xsd'
         );
 
-        $fooBarSchema = Schema::newFromUris([ $fooUri, $barUri ]);
+        $fooBarSchema = $schemaFactory->createFromUris([ $fooUri, $barUri ]);
 
         $this->assertSame(2, count($cache));
 
         $this->assertSame($fooBarSchema, $cache[$fooBarSchema->getCacheKey()]);
 
-        $barFooSchema = Schema::newFromUris([ $barUri, $fooUri ]);
+        $barFooSchema = $schemaFactory->createFromUris([ $barUri, $fooUri ]);
 
         $this->assertSame(2, count($cache));
 

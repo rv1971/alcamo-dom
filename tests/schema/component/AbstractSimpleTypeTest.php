@@ -2,14 +2,14 @@
 
 namespace alcamo\dom\schema\component;
 
-use alcamo\dom\schema\Schema;
+use alcamo\dom\schema\{Schema, SchemaFactory};
 use PHPUnit\Framework\TestCase;
 
 class AbstractSimpleTypeTest extends TestCase
 {
     public function testNewFromSchemaAndXsdElement(): void
     {
-        $schema = Schema::getBuiltinSchema();
+        $schema = (new SchemaFactory())->getBuiltinSchema();
 
         $formChoiceType =
             $schema->getGlobalType(Schema::XSD_NS . ' formChoice');

@@ -2,7 +2,7 @@
 
 namespace alcamo\dom\schema\component;
 
-use alcamo\dom\schema\Schema;
+use alcamo\dom\schema\{Schema, SchemaFactory};
 use alcamo\uri\FileUriFactory;
 use alcamo\xml\XName;
 use PHPUnit\Framework\TestCase;
@@ -30,7 +30,7 @@ class AtomicTypeTest extends TestCase
             ->create(__DIR__ . DIRECTORY_SEPARATOR . 'foo.xsd');
 
         /* Contains XMLSchema.xsd as built-in. */
-        $schema = Schema::newFromUris([ $fooUri ]);
+        $schema = (new SchemaFactory())->createFromUris([ $fooUri ]);
 
         return [
             [
@@ -95,7 +95,7 @@ class AtomicTypeTest extends TestCase
             ->create(__DIR__ . DIRECTORY_SEPARATOR . 'foo.xsd');
 
         /* Contains XMLSchema.xsd as built-in. */
-        $schema = Schema::newFromUris([ $fooUri ]);
+        $schema = (new SchemaFactory())->createFromUris([ $fooUri ]);
 
         return [
             [
@@ -143,7 +143,7 @@ class AtomicTypeTest extends TestCase
             ->create(__DIR__ . DIRECTORY_SEPARATOR . 'foo.xsd');
 
         /* Contains XMLSchema.xsd as built-in. */
-        $schema = Schema::newFromUris([ $fooUri ]);
+        $schema = (new SchemaFactory())->createFromUris([ $fooUri ]);
 
         $fooIntType =
             $schema->getGlobalElement(self::FOO_NS . ' foo-int')->getType();

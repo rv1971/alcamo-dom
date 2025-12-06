@@ -3,14 +3,13 @@
 namespace alcamo\dom\schema;
 
 use alcamo\dom\{
-    ConverterPool,
-    Document,
     DocumentCache,
     DocumentFactoryInterface,
     HavingDocumentFactoryInterface,
+    HavingDocumentFactoryTrait,
     NamespaceConstantsInterface
 };
-use alcamo\dom\decorated\Element as XsdElement;
+use alcamo\dom\decorated\{DocumentFactory, Element as XsdElement};
 use alcamo\dom\extended\Element as ExtElement;
 use alcamo\dom\schema\component\{
     AbstractType,
@@ -56,133 +55,14 @@ class Schema implements
     HavingDocumentFactoryInterface,
     NamespaceConstantsInterface
 {
+    use HavingDocumentFactoryTrait;
+
+    public const DEFAULT_DOCUMENT_FACTORY_CLASS = DocumentFactory::class;
+
     /// Predefined XSI attributes
-    public const PREDEFINED_XSI_ATTRS = [ 'nil' => 'boolean', 'type' => 'QName' ];
+    public const PREDEFINED_XSI_ATTRS =
+        [ 'nil' => 'boolean', 'type' => 'QName' ];
 
-    /**
-     * @brief Construct new schema or get it from cache
-     *
-     * @param $doc XML document for which the schema is to be created.
-     *
-     * This method works even if a document has no `xsi:schemaLocation`
-     *  attribute, in which case the schema has only the predefined components
-     *  in the `xml` and the `xsd` namespaces. */
-    public static function newFromDocument(
-        Document $doc,
-        ?DocumentFactoryInterface $documentFactory = null
-    ): self {
-        $uris = [];
-
-        $schemaLocation = $doc->documentElement
-            ->getAttributeNodeNS(self::XSI_NS, 'schemaLocation');
-
-        if ($schemaLocation) {
-            foreach (
-                ConverterPool::pairsToMap($schemaLocation) as $nsName => $uri
-            ) {
-                $uris[] = $doc->documentElement->resolveUri(new Uri($uri));
-            }
-        }
-
-        return static::newFromUris(
-            $uris,
-            $documentFactory ?? $doc->getDocumentFactory()
-        );
-    }
-
-    /**
-     * @brief Construct new schema or get it from cache
-     *
-     * @param $uris URIs of XSDs to include into the schema.
-     */
-    public static function newFromUris(
-        iterable $uris,
-        ?DocumentFactoryInterface $documentFactory = null
-    ): self {
-        $cacheKey = SchemaCache::getInstance()->createKey($uris);
-
-        $schema = SchemaCache::getInstance()[$cacheKey] ?? null;
-
-        if (!isset($schema)) {
-            $xsds = [];
-
-            if (!isset($documentFactory)) {
-                $class = static::DEFAULT_DOCUMENT_FACTORY_CLASS;
-
-                $documentFactory = new $class();
-            }
-
-            foreach ($uris as $uri) {
-                $xsds[] = $documentFactory->createFromUri($uri);
-            }
-
-            $schema = new static($xsds, $cacheKey, $documentFactory);
-
-            SchemaCache::getInstance()->add($schema);
-        }
-
-        return $schema;
-    }
-
-    /**
-     * @brief Construct new schema or get it from cache
-     *
-     * @param $xsds alcamo::dom::Document objects containing XSDs to include
-     * into the schema.
-     */
-    public static function newFromXsds(
-        array $xsds,
-        ?DocumentFactoryInterface $documentFactory = null
-    ): self {
-        $cacheKey = SchemaCache::getInstance()->createKey($xsds);
-
-        $schema = SchemaCache::getInstance()[$cacheKey] ?? null;
-
-        if (!isset($schema)) {
-            $schema = new static($xsds, $cacheKey, $documentFactory);
-
-            SchemaCache::getInstance()->add($schema);
-        }
-
-        return $schema;
-    }
-
-    /// Create a type from an URI reference indicating an XSD element by ID
-    public static function createTypeFromUri(
-        $uri,
-        ?DocumentFactoryInterface $documentFactory = null
-    ): TypeInterface {
-        if (!isset($documentFactory)) {
-            $class = static::DEFAULT_DOCUMENT_FACTORY_CLASS;
-
-            $documentFactory = new $class();
-        }
-
-        return static::createTypeFromXsdElement(
-            $documentFactory->createFromUri($uri),
-            $documentFactory
-        );
-    }
-
-    /// Create type from a schema consisting of the element's owner document
-    public static function createTypeFromXsdElement(
-        XsdElement $xsdElement,
-        ?DocumentFactoryInterface $documentFactory = null
-    ): TypeInterface {
-        return self::newFromXsds(
-            [ $xsdElement->ownerDocument ],
-            $documentFactory ?? $xsdElement->ownerDocument->getDocumentFactory()
-        )->getGlobalType(
-            $xsdElement->getComponentXName()
-        );
-    }
-
-    public static function getBuiltinSchema(): self
-    {
-        return static::newFromUris([]);
-    }
-
-    private $documentFactory_;       ///< DocumentFactoryInterface
     private $xsds_ = [];             ///< Map of URI string to Xsd
     private $topXsds_ = [];          ///< Map of URI string to Xsd
     private $cacheKey_;              ///< Key in the schema cache
@@ -208,34 +88,23 @@ class Schema implements
      * into the schema.
      *
      * @param $cacheKey Key to use for this schema in the schema cache.
-     *
-     * @param $documentFactory Document factory used to create document
-     * objects for XSDs imported or included by the given ones.
      */
-    protected function __construct(
-        array $xsds,
-        string $cacheKey,
-        ?DocumentFactoryInterface $documentFactory = null
-    ) {
+    public function __construct(array $xsds, string $cacheKey)
+    {
         $this->cacheKey_ = $cacheKey;
 
-        $this->documentFactory_ =
-            $documentFactory ?? reset($xsds)->getDocumentFactory();
+        if ($xsds) {
+            $this->documentFactory_ = reset($xsds)->getDocumentFactory();
+        } else {
+            $class = static::DEFAULT_DOCUMENT_FACTORY_CLASS;
+
+            $this->documentFactory_ = new $class();
+        }
 
         /** @throw alcamo::exception::AbsoluteUriNeeded when an XSD has a
          *  non-absolute URI. */
         $this->loadXsds($xsds);
         $this->initGlobals();
-    }
-
-    /// Get the document factory used to create XSDs from URIs
-    public function getDocumentFactory(): DocumentFactoryInterface
-    {
-        if (!isset($this->documentFactory_)) {
-            $this->documentFactory_ = $this->createDocumentFactory();
-        }
-
-        return $this->documentFactory_;
     }
 
     /// Map of URI string to alcamo::dom::Document
@@ -453,8 +322,6 @@ class Schema implements
     /// Load XSDs into @ref $xsds_
     private function loadXsds(array $xsds): void
     {
-        $documentFactoryClass = static::DEFAULT_DOCUMENT_FACTORY_CLASS;
-
         /* Always load XMLSchema.xsd (or get it from cache). */
         $xsds[] = $this->documentFactory_->createFromUri(
             (new FileUriFactory())->create(

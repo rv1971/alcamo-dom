@@ -9,8 +9,5 @@ namespace alcamo\dom;
  */
 interface HavingDocumentFactoryInterface
 {
-    /// Default class for a new document factory
-    public const DEFAULT_DOCUMENT_FACTORY_CLASS = DocumentFactory::class;
-
     public function getDocumentFactory(): DocumentFactoryInterface;
 }

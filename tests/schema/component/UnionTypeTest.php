@@ -3,7 +3,7 @@
 namespace alcamo\dom\schema\component;
 
 use alcamo\dom\decorated\Element as XsdElement;
-use alcamo\dom\schema\Schema;
+use alcamo\dom\schema\{Schema, SchemaFactory};
 use alcamo\uri\FileUriFactory;
 use PHPUnit\Framework\TestCase;
 
@@ -17,7 +17,7 @@ class UnionTypeTest extends TestCase
             ->create(__DIR__ . DIRECTORY_SEPARATOR . 'foo.xsd');
 
         /* Contains XMLSchema.xsd as built-in. */
-        $schema = Schema::newFromUris([ $fooUri ]);
+        $schema = (new SchemaFactory())->createFromUris([ $fooUri ]);
 
         $type =
             $schema->getGlobalType(self::FOO_NS . ' UnionType');

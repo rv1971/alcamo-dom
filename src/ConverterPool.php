@@ -5,7 +5,7 @@ namespace alcamo\dom;
 use alcamo\binary_data\BinaryString;
 use alcamo\collection\ReadonlyPrefixSet;
 use alcamo\dom\psvi\Document as PsviDocument;
-use alcamo\dom\schema\{Schema, TargetNsCache, TypeMap};
+use alcamo\dom\schema\{SchemaFactory, TargetNsCache, TypeMap};
 use alcamo\exception\{OutOfRange, SyntaxError};
 use alcamo\range\NonNegativeRange;
 use alcamo\rdfa\{Lang, MediaType};
@@ -25,13 +25,23 @@ use Ds\Set;
  */
 class ConverterPool implements NamespaceConstantsInterface
 {
+    private static $schemaFactory_; ///< SchemaFactory
     private static $typeConverters_; ///< TypeMap
+
+    public static function getSchemaFactory(): SchemaFactory
+    {
+        if (!isset(self::$schemaFactory_)) {
+            self::$schemaFactory_ = new SchemaFactory();
+        }
+
+        return self::$schemaFactory_;
+    }
 
     public static function getTypeConverters(): TypeMap
     {
         if (!isset(self::$typeConverters_)) {
             self::$typeConverters_ = TypeMap::newFromSchemaAndXNameMap(
-                Schema::getBuiltinSchema(),
+                self::getSchemaFactory()->getBuiltinSchema(),
                 Document::TYPE_CONVERTER_MAP
             );
         }
@@ -325,7 +335,8 @@ class ConverterPool implements NamespaceConstantsInterface
                 $element->ownerDocument->getSchema()->getGlobalType($typeXName)
             )
             : static::getTypeConverters()->lookup(
-                Schema::getBuiltinSchema()->getGlobalType($typeXName)
+                self::getSchemaFactory()->getBuiltinSchema()
+                    ->getGlobalType($typeXName)
             );
 
         return isset($converter) ? $converter($value, $context) : $value;

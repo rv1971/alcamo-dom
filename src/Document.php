@@ -41,7 +41,11 @@ class Document extends \DOMDocument implements
     XPathQueryableInterface
 {
     use HavingBaseUriTrait;
+    use HavingDocumentFactoryTrait;
     use PreventWriteArrayAccessTrait;
+
+    /// Default class for a new document factory
+    public const DEFAULT_DOCUMENT_FACTORY_CLASS = DocumentFactory::class;
 
     /// Node classes that will be registered for each document instance
     public const NODE_CLASSES = [
@@ -164,7 +168,6 @@ class Document extends \DOMDocument implements
 
     private static $docRegistry_ = []; ///< Used for conserve()
 
-    protected $documentFactory_;      ///< DocumentFactoryInterface
     protected $loadFlags_;            ///< int
     protected $libxmlOptions_;        ///< int
 
@@ -204,8 +207,6 @@ class Document extends \DOMDocument implements
     ) {
         parent::__construct($version, $encoding);
 
-        $this->documentFactory_ = $documentFactory;
-
         $this->loadFlags_ = $loadFlags
             ?? (
                 isset($documentFactory)
@@ -222,19 +223,21 @@ class Document extends \DOMDocument implements
             )
             ?? static::LIBXML_OPTIONS;
 
+        if (isset($documentFactory)) {
+            $this->documentFactory_ = $documentFactory;
+        } else {
+            $class = static::DEFAULT_DOCUMENT_FACTORY_CLASS;
+
+            $this->documentFactory_ = new $class(
+                $this->baseURI,
+                $this->loadFlags_,
+                $this->libxmlOptions_
+            );
+        }
+
         foreach (static::NODE_CLASSES as $baseClass => $extendedClass) {
             $this->registerNodeClass($baseClass, $extendedClass);
         }
-    }
-
-    /// Get the document factory used to create dependent documents
-    public function getDocumentFactory(): DocumentFactoryInterface
-    {
-        if (!isset($this->documentFactory_)) {
-            $this->documentFactory_ = $this->createDocumentFactory();
-        }
-
-        return $this->documentFactory_;
     }
 
     public function getLibxmlOptions(): ?int
@@ -397,18 +400,6 @@ class Document extends \DOMDocument implements
     {
         $this->xPath_ = null;
         $this->xsltStylesheet_ = false;
-    }
-
-    /// Return a new instance of DocumentFactory
-    protected function createDocumentFactory(): DocumentFactoryInterface
-    {
-        $class = static::DEFAULT_DOCUMENT_FACTORY_CLASS;
-
-        return new $class(
-            $this->baseURI,
-            $this->loadFlags_,
-            $this->libxmlOptions_
-        );
     }
 
     /// Perform any initialization to be done after document loading

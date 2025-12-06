@@ -16,6 +16,9 @@ use alcamo\uri\Uri;
  */
 class Documents extends ReadonlyCollection
 {
+    /// Default class for a new document factory
+    public const DEFAULT_DOCUMENT_FACTORY_CLASS = DocumentFactory::class;
+
     /**
      * @brief Construct from a collection of documents
      *

@@ -3,7 +3,7 @@
 namespace alcamo\dom\psvi;
 
 use alcamo\dom\decorated\Document as BaseDocument;
-use alcamo\dom\schema\{Schema, TypeMap};
+use alcamo\dom\schema\{Schema, SchemaFactory, TypeMap};
 use alcamo\exception\DataValidationFailed;
 
 /**
@@ -34,6 +34,8 @@ class Document extends BaseDocument
     /** @copybrief alcamo::dom::Document::DEFAULT_DOCUMENT_FACTORY_CLASS */
     public const DEFAULT_DOCUMENT_FACTORY_CLASS = DocumentFactory::class;
 
+    public const SCHEMA_FACTORY_CLASS = SchemaFactory::class;
+
     /**
      * @brief Map of XSD type XNames to decorator classes for elements
      *
@@ -52,7 +54,11 @@ class Document extends BaseDocument
     public function getSchema(): Schema
     {
         if (!isset($this->schema_)) {
-            $this->schema_ = Schema::newFromDocument($this);
+            $class = static::SCHEMA_FACTORY_CLASS;
+
+            $schemaFactory = new $class($this->getDocumentFactory());
+
+            $this->schema_ = $schemaFactory->createFromDocument($this);
         }
 
         return $this->schema_;

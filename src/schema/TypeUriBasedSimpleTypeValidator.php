@@ -2,7 +2,11 @@
 
 namespace alcamo\dom\schema;
 
-use alcamo\dom\{DocumentFactoryInterface, HavingDocumentFactoryInterface};
+use alcamo\dom\{
+    DocumentFactoryInterface,
+    HavingDocumentFactoryInterface,
+    HavingDocumentFactoryTrait
+};
 use alcamo\exception\Unsupported;
 use alcamo\uri\Uri;
 use alcamo\xml\XName;
@@ -23,7 +27,7 @@ use Psr\Http\Message\UriInterface;
 class TypeUriBasedSimpleTypeValidator extends AbstractSimpleTypeValidator implements
     HavingDocumentFactoryInterface
 {
-    private $documentFactory_; ///< DocumentFactoryInterface
+    use HavingDocumentFactoryTrait;
 
     /**
      * @param $baseUri string|UriInterface Base URI to locate XSDs
@@ -48,12 +52,6 @@ class TypeUriBasedSimpleTypeValidator extends AbstractSimpleTypeValidator implem
 
             $this->documentFactory_ = new $class();
         }
-    }
-
-    /// Get the document factory used to create XSDs from URIs
-    public function getDocumentFactory(): DocumentFactoryInterface
-    {
-        return $this->documentFactory_;
     }
 
     /*

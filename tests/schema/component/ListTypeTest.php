@@ -2,14 +2,14 @@
 
 namespace alcamo\dom\schema\component;
 
-use alcamo\dom\schema\Schema;
+use alcamo\dom\schema\{Schema, SchemaFactory};
 use PHPUnit\Framework\TestCase;
 
 class ListTypeTest extends TestCase
 {
     public function test(): void
     {
-        $schema = Schema::getBuiltinSchema();
+        $schema = (new SchemaFactory())->getBuiltinSchema();
 
         $type = $schema->getGlobalType(Schema::XSD_NS . ' IDREFS');
 

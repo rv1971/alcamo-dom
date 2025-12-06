@@ -2,7 +2,7 @@
 
 namespace alcamo\dom\schema\component;
 
-use alcamo\dom\schema\Schema;
+use alcamo\dom\schema\{Schema, SchemaFactory};
 use alcamo\xml\XName;
 use PHPUnit\Framework\TestCase;
 
@@ -10,7 +10,7 @@ class ElementTest extends TestCase
 {
     public function testProps(): void
     {
-        $schema = Schema::getBuiltinSchema();
+        $schema = (new SchemaFactory())->getBuiltinSchema();
 
         $annotatedType = $schema->getGlobalType(Schema::XSD_NS . ' annotated');
 
