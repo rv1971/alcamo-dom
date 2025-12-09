@@ -19,7 +19,9 @@ use Ds\Set;
  * @brief Pool of converter functions for DOM node values
  *
  * Each function takes the value as its first parameter. Some take the DOM
- * node as their second one.
+ * node as their second one. It is deliberate that the second one is mostly of
+ * type \DOMNode and only in some cases of type alcamo::dom::DomNodeInterface,
+ * to be just as restrictive as necessary, not more.
  *
  * @date Last reviewed 2021-07-01
  */
@@ -70,14 +72,28 @@ class ConverterPool implements NamespaceConstantsInterface
     /**
      * @brief Call createFromUri() on the owner document's document factory
      *
-     * @param $context must implement HavingBaseUriInterface
+     * Identical to toDocumentOrElement() except for the restriction on the
+     * return type.
      */
-    public static function toDocument(string $value, \DOMNode $context): Document
-    {
-        $uri = $context->resolveUri($value);
+    public static function toDocument(
+        string $value,
+        DomNodeInterface $context
+    ): Document {
+        return $context->ownerDocument->getDocumentFactory()->createFromUri(
+            $context->resolveUri($value)
+        );
+    }
 
-        return
-            $context->ownerDocument->getDocumentFactory()->createFromUri($uri);
+    /**
+     * @brief Call createFromUri() on the owner document's document factory
+     */
+    public static function toDocumentOrElement(
+        string $value,
+        DomNodeInterface $context
+    ): DomNodeInterface {
+        return $context->ownerDocument->getDocumentFactory()->createFromUri(
+            $context->resolveUri($value)
+        );
     }
 
     /// Call alcamo::time::Duration::__construct()
@@ -309,8 +325,10 @@ class ConverterPool implements NamespaceConstantsInterface
      *
      * @sa [Typed literals](https://www.w3.org/TR/rdfa-core/#typed-literals-1)
      */
-    public static function toRdfaDatatype(string $value, \DOMNode $context)
-    {
+    public static function toRdfaDatatype(
+        string $value,
+        DomNodeInterface $context
+    ) {
         /** Take the datatype URI from the `datatype` attribute of $context
          *  (or $context's parent node if $context is an attribute), if
          *  present. */

@@ -105,6 +105,14 @@ class ConverterPoolTest extends TestCase
                 );
                 break;
 
+            case 'toDocumentOrElement':
+                $this->assertSame(
+                    $expectedResult,
+                    (string)$qualifiedConverter($attrNode, $attrNode)
+                        ->localName
+                );
+                break;
+
             case 'resolveIdRef':
                 $this->assertSame(
                     self::$doc_[$expectedResult],
@@ -134,6 +142,7 @@ class ConverterPoolTest extends TestCase
             [ 'toBool.2', false ],
             [ 'toDateTime', new \DateTime('2021-02-16T18:04:03.123+00:00') ],
             [ 'toDocument', 'foo' ],
+            [ 'toDocumentOrElement', 'bar' ],
             [ 'toDuration', new Duration('PT5M') ],
             [ 'toFloat', 3.141 ],
             [ 'toInt', 42 ],
@@ -150,7 +159,14 @@ class ConverterPoolTest extends TestCase
             [ 'xPointerUriToSubset', 'lorem-ipsum' ],
             [
                 'xPointerUriToValueSet',
-                (new Set())->merge([ 'toDateTime', 'toDocument', 'toDuration' ])
+                (new Set())->merge(
+                    [
+                        'toDateTime',
+                        'toDocument',
+                        'toDocumentOrElement',
+                        'toDuration'
+                    ]
+                )
             ],
             [ 'yesNoToBool.1', true ],
             [ 'yesNoToBool.2', false ],

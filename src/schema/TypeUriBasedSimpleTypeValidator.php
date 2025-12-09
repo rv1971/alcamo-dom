@@ -29,6 +29,8 @@ class TypeUriBasedSimpleTypeValidator extends AbstractSimpleTypeValidator implem
 {
     use HavingDocumentFactoryTrait;
 
+    public const DEFAULT_DOCUMENT_FACTORY_CLASS = DocumentFactory::class;
+
     /**
      * @param $baseUri string|UriInterface Base URI to locate XSDs
      */
@@ -37,21 +39,6 @@ class TypeUriBasedSimpleTypeValidator extends AbstractSimpleTypeValidator implem
         $class = static::DEFAULT_DOCUMENT_FACTORY_CLASS;
 
         return new static(new $class($baseUri));
-    }
-
-    /**
-     * @param $documentFactory Document factory to create XSDs from URIs
-     */
-    public function __construct(
-        ?DocumentFactoryInterface $documentFactory = null
-    ) {
-        if (isset($documentFactory)) {
-            $this->documentFactory_ = $documentFactory;
-        } else {
-            $class = static::DEFAULT_DOCUMENT_FACTORY_CLASS;
-
-            $this->documentFactory_ = new $class();
-        }
     }
 
     /*

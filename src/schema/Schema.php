@@ -55,7 +55,9 @@ class Schema implements
     HavingDocumentFactoryInterface,
     NamespaceConstantsInterface
 {
-    use HavingDocumentFactoryTrait;
+    use HavingDocumentFactoryTrait {
+        __construct as initDocumentFactory;
+    }
 
     public const DEFAULT_DOCUMENT_FACTORY_CLASS = DocumentFactory::class;
 
@@ -93,13 +95,9 @@ class Schema implements
     {
         $this->cacheKey_ = $cacheKey;
 
-        if ($xsds) {
-            $this->documentFactory_ = reset($xsds)->getDocumentFactory();
-        } else {
-            $class = static::DEFAULT_DOCUMENT_FACTORY_CLASS;
-
-            $this->documentFactory_ = new $class();
-        }
+        $this->initDocumentFactory(
+            $xsds ? reset($xsds)->getDocumentFactory() : null
+        );
 
         /** @throw alcamo::exception::AbsoluteUriNeeded when an XSD has a
          *  non-absolute URI. */

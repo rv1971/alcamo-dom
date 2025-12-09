@@ -16,16 +16,13 @@ use Psr\Http\Message\UriInterface;
  * @date Last reviewed 2025-10-23
  */
 class Element extends \DOMElement implements
-    \IteratorAggregate,
-    HavingBaseUriInterface,
+    DomNodeInterface,
     HavingXNameInterface,
-    NamespaceConstantsInterface,
-    Rfc5147Interface,
+    \IteratorAggregate,
     XPathQueryableInterface
 {
-    use HavingBaseUriTrait;
+    use DomNodeTrait;
     use HavingXNameTrait;
-    use Rfc5147Trait;
 
     /// Return [textContent](https://www.php.net/manual/en/class.domnode#domnode.props.textcontent)
     public function __toString(): string

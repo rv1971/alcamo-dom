@@ -22,11 +22,12 @@ interface DocumentFactoryInterface extends NamespaceConstantsInterface
      * - If `null`, use the cache iff $uri is absolute.
      *
      * @param $loadFlags OR-Combination of the load constants in the
-     * alcamo::dom::Document class. If not given, getLoadFlags() is used.
+     * alcamo::dom::Document class. If not given, an implementation-dependent
+     * is used.
      *
      * @param $libxmlOptions See $options in
      * [DOMDocument::load()](https://www.php.net/manual/en/domdocument.load). If
-     * not given, getLibxmlOptions() is used.
+     * not given, an implementation-dependent is used.
      *
      * @return
      * - If $uri has no fragment, an alcamo::dom::Document.

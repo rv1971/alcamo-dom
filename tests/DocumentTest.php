@@ -42,7 +42,7 @@ class DocumentTest extends TestCase
         $documentFactory = $fooDoc->getDocumentFactory();
 
         $this->assertInstanceOf(DocumentFactory::class, $documentFactory);
-        $this->assertSame($fooDoc->baseURI, (string)$documentFactory->getBaseUri());
+        $this->assertSame('', (string)$documentFactory->getBaseUri());
         $this->assertSame(4096, $documentFactory->getLoadFlags());
         $this->assertSame(0, $documentFactory->getLibxmlOptions());
 

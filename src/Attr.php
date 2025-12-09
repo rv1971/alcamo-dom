@@ -9,15 +9,10 @@ use alcamo\xml\HavingXNameInterface;
  *
  * @date Last reviewed 2025-10-23
  */
-class Attr extends \DOMAttr implements
-    HavingXNameInterface,
-    HavingBaseUriInterface,
-    NamespaceConstantsInterface,
-    Rfc5147Interface
+class Attr extends \DOMAttr implements DomNodeInterface, HavingXNameInterface
 {
-    use HavingBaseUriTrait;
+    use DomNodeTrait;
     use HavingXNameTrait;
-    use Rfc5147Trait;
 
     /// Return attribute value
     public function __toString(): string

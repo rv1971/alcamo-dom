@@ -23,18 +23,6 @@ class SchemaFactory implements
     public const DEFAULT_DOCUMENT_FACTORY_CLASS =
         Schema::DEFAULT_DOCUMENT_FACTORY_CLASS;
 
-    public function __construct(
-        ?DocumentFactoryInterface $documentFactory = null
-    ) {
-        if ($documentFactory) {
-            $this->documentFactory_ = $documentFactory;
-        } else {
-            $class = static::DEFAULT_DOCUMENT_FACTORY_CLASS;
-
-            $this->documentFactory_ = new $class();
-        }
-    }
-
     /**
      * @brief Construct new schema or get it from cache
      *
@@ -71,7 +59,8 @@ class SchemaFactory implements
      *
      * @param $uris URIs of XSDs to include into the schema.
      */
-    public function createFromUris(iterable $uris): Schema {
+    public function createFromUris(iterable $uris): Schema
+    {
         $cacheKey = SchemaCache::getInstance()->createKey($uris);
 
         $schema = SchemaCache::getInstance()[$cacheKey] ?? null;
@@ -99,7 +88,8 @@ class SchemaFactory implements
      * @param $xsds alcamo::dom::Document objects containing XSDs to include
      * into the schema.
      */
-    public function createFromXsds(array $xsds): Schema {
+    public function createFromXsds(array $xsds): Schema
+    {
         $cacheKey = SchemaCache::getInstance()->createKey($xsds);
 
         $schema = SchemaCache::getInstance()[$cacheKey] ?? null;
@@ -116,7 +106,8 @@ class SchemaFactory implements
     }
 
     /// Create a type from an URI reference indicating an XSD element by ID
-    public function createTypeFromUri($uri): TypeInterface {
+    public function createTypeFromUri($uri): TypeInterface
+    {
         return static::createTypeFromXsdElement(
             $this->documentFactory_->createFromUri($uri)
         );

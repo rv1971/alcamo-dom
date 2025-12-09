@@ -10,7 +10,6 @@ use alcamo\exception\{
     SyntaxError,
     Uninitialized
 };
-use alcamo\dom\xsl\Document as Stylesheet;
 
 /**
  * @namespace alcamo::dom
@@ -185,7 +184,7 @@ class Document extends \DOMDocument implements
      *
      * @param $documentFactory Document factory to use to create dependent
      * documents, e.g. from links. If not specified, the document factory will
-     * be created by createDocumentFactory() when needed.
+     * be created as an instance of DEFAULT_DOCUMENT_FACTORY_CLASS.
      *
      * @param $loadFlags OR-Combination of the above load constants
      *
@@ -207,21 +206,9 @@ class Document extends \DOMDocument implements
     ) {
         parent::__construct($version, $encoding);
 
-        $this->loadFlags_ = $loadFlags
-            ?? (
-                isset($documentFactory)
-                    ? $documentFactory->getLoadFlags()
-                    : null
-            )
-            ?? static::LOAD_FLAGS;
+        $this->loadFlags_ = $loadFlags ?? static::LOAD_FLAGS;
 
-        $this->libxmlOptions_ = $libxmlOptions
-            ?? (
-                isset($documentFactory)
-                    ? $documentFactory->getLibxmlOptions()
-                    : null
-            )
-            ?? static::LIBXML_OPTIONS;
+        $this->libxmlOptions_ = $libxmlOptions ?? static::LIBXML_OPTIONS;
 
         if (isset($documentFactory)) {
             $this->documentFactory_ = $documentFactory;
@@ -367,7 +354,7 @@ class Document extends \DOMDocument implements
      * @brief Get an XSLT stylesheet based on the first xml-stylesheet
      * processing instruction, if any
      */
-    public function getXsltStylesheet(): ?Stylesheet
+    public function getXsltStylesheet(): ?self
     {
         if ($this->xsltStylesheet_ === false) {
             if (!isset($this->documentElement)) {
@@ -383,7 +370,7 @@ class Document extends \DOMDocument implements
             }
 
             $this->xsltStylesheet_ = $this->getDocumentFactory()
-                ->createFromUri($pi->href, Stylesheet::class);
+                ->createFromUri($pi->href, static::class);
         }
 
         return $this->xsltStylesheet_;

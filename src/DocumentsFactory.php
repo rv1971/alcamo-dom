@@ -11,28 +11,13 @@ class DocumentsFactory implements HavingDocumentFactoryInterface
 {
     use HavingDocumentFactoryTrait;
 
+    public const DEFAULT_DOCUMENT_FACTORY_CLASS = DocumentFactory::class;
+
     /// Default class for new documents objects
     public const DEFAULT_DOCUMENTS_CLASS = Documents::class;
 
-    public const DEFAULT_DOCUMENT_FACTORY_CLASS = DocumentFactory::class;
-
     /// Default glob() flags for createFromGlob()
     public const DEFAULT_GLOB_FLAGS = GLOB_NOSORT | GLOB_BRACE;
-
-    /**
-     * @param $documentFactory Factory used to create documents.
-     */
-    public function __construct(
-        ?DocumentFactoryInterface $documentFactory = null
-    ) {
-        if (isset($documentFactory)) {
-            $this->documentFactory_ = $documentFactory;
-        } else {
-            $class = static::DEFAULT_DOCUMENT_FACTORY_CLASS;
-
-            $this->documentFactory_ = new $class();
-        }
-    }
 
     /**
      * @brief Create documents from a collection of URIs

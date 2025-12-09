@@ -171,7 +171,7 @@ class DocumentFactory implements
         $doc = $class::newFromUri(
             $docUri,
             $this,
-            $loadFlags,
+            $loadFlags ?? $this->loadFlags_,
             $libxmlOptions ?? $this->libxmlOptions_
         );
 
@@ -225,7 +225,7 @@ class DocumentFactory implements
         $doc = $class::newFromXmlText(
             $xmlText,
             $this,
-            $loadFlags,
+            $loadFlags ?? $this->loadFlags_,
             $libxmlOptions ?? $this->libxmlOptions_,
             $uri
         );

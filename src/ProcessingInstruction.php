@@ -12,14 +12,18 @@ namespace alcamo\dom;
  * @date Last reviewed 2025-10-26
  */
 class ProcessingInstruction extends \DOMProcessingInstruction implements
-    HavingBaseUriInterface,
-    \IteratorAggregate,
-    Rfc5147Interface
+    DomNodeInterface,
+    \IteratorAggregate
 {
-    use HavingBaseUriTrait;
-    use Rfc5147Trait;
+    use DomNodeTrait;
 
     private $fragment_;   ///< DOMDocumentFragment
+
+    /// Return data
+    public function __toString(): string
+    {
+        return $this->data;
+    }
 
     public function getAttributes(): \DOMNamedNodeMap
     {

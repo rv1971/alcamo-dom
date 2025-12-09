@@ -7,10 +7,9 @@ namespace alcamo\dom;
  *
  * @date Last reviewed 2025-10-23
  */
-class Text extends \DOMText implements HavingBaseUriInterface, Rfc5147Interface
+class Text extends \DOMText implements DomNodeInterface
 {
-    use HavingBaseUriTrait;
-    use Rfc5147Trait;
+    use DomNodeTrait;
 
     /// Return [wholeText](https://www.php.net/manual/en/class.domtext#domtext.props.wholetext)
     public function __toString(): string

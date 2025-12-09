@@ -17,6 +17,7 @@
   <bar xml:id="toBool.2" value="false"/>
   <bar xml:id="toDateTime" value="2021-02-16T18:04:03.123+00:00"/>
   <bar xml:id="toDocument" value="foo.xml"/>
+  <bar xml:id="toDocumentOrElement" value="foo.xml#bar"/>
   <bar xml:id="toDuration" value="PT5M"/>
   <bar xml:id="toFloat" value="3.141"/>
   <bar xml:id="toInt" value="42"/>
