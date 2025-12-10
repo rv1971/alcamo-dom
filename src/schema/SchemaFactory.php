@@ -10,8 +10,17 @@ use alcamo\dom\{
     HavingDocumentFactoryTrait,
     NamespaceConstantsInterface}
 ;
+use alcamo\dom\decorated\Element as XsdElement;
+use alcamo\dom\schema\component\TypeInterface;
 use alcamo\uri\Uri;
 
+/**
+ * @brief Factory for XML Schemas
+ *
+ * Features caching of schemas.
+ *
+ * @date Last reviewed 2025-12-10
+ */
 class SchemaFactory implements
     HavingDocumentFactoryInterface,
     NamespaceConstantsInterface
@@ -108,9 +117,28 @@ class SchemaFactory implements
     /// Create a type from an URI reference indicating an XSD element by ID
     public function createTypeFromUri($uri): TypeInterface
     {
-        return static::createTypeFromXsdElement(
-            $this->documentFactory_->createFromUri($uri)
-        );
+        $xsdElement = $this->documentFactory_->createFromUri($uri);
+
+        /** If no element with the ID given in the fragment part of $uri
+         *  exists and the target namespace of the indicated document is the
+         *  XSD namespace, take the corresponding XSD type. This allows to
+         *  correctly create types like
+         *  `http://www.w3.org/2001/XMLSchema#boolean` without actually
+         *  accessing the document at http://www.w3.org/2001/XMLSchema. */
+        if (!isset($xsdElement)) {
+            $uri = $this->documentFactory_->resolveUri($uri);
+
+            if (
+                TargetNsCache::getInstance()[$uri->withFragment('')]
+                    == self::XSD_NS
+            ) {
+                return $this->getBuiltinSchema()
+                    ->getGlobalType(self::XSD_NS . ' ' . $uri->getFragment());
+
+            }
+        }
+
+        return static::createTypeFromXsdElement($xsdElement);
     }
 
     /// Create type from a schema consisting of the element's owner document

@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<!DOCTYPE xsd:schema [
+<!ATTLIST xsd:simpleType id ID #IMPLIED>
+]>
+
 <xsd:schema
     xmlns="http://foo.example.org"
     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
     targetNamespace="http://foo.example.org">
   <xsd:import namespace="https://bar.example.com" schemaLocation="aux-bar.xsd"/>
 
-  <xsd:simpleType name="UpperString">
+  <xsd:simpleType name="UpperString" id="UpperString">
     <xsd:restriction base="xsd:string"/>
   </xsd:simpleType>
 </xsd:schema>

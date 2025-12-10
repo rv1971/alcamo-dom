@@ -7,7 +7,9 @@ namespace alcamo\dom;
  *
  * @date Last reviewed 2025-09-15
  */
-interface DocumentFactoryInterface extends NamespaceConstantsInterface
+interface DocumentFactoryInterface extends
+    HavingBaseUriInterface,
+    NamespaceConstantsInterface
 {
     /**
      * @brief Create a document or element from a URI

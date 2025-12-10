@@ -16,9 +16,7 @@ use Psr\Http\Message\UriInterface;
  *
  * @date Last reviewed 2025-10-26
  */
-class DocumentFactory implements
-    DocumentFactoryInterface,
-    HavingBaseUriInterface
+class DocumentFactory implements DocumentFactoryInterface
 {
     /// Map of `dc:identifier` prefixes to PHP classes for DOM documents
     public const DC_IDENTIFIER_PREFIX_TO_CLASS = [
