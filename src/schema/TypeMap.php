@@ -130,17 +130,10 @@ class TypeMap
          *  there is none, return the default value. */
         $result = $this->defaultValue_;
 
-        for (
-            $type = $type->getBaseType();
-            isset($type);
-            $type = $type->getBaseType()
-        ) {
-            $baseHash = spl_object_hash($type);
+        $baseType = $type->getBaseType();
 
-            if (isset($this->map_[$baseHash])) {
-                $result = $this->map_[$baseHash];
-                break;
-            }
+        if (isset($baseType)) {
+            $result = $this->lookup($baseType);
         }
 
         /** Cache any new result in the map. */

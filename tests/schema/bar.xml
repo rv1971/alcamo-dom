@@ -1,0 +1,31 @@
+<?xml version='1.0'?>
+
+<bar
+    xmlns="https://bar.example.com"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="https://bar.example.com bar.xsd"
+    xml:id="bar">
+  <xsd:annotation xml:id="annotation">
+    <xsd:appinfo xml:id="appinfo">
+      <corge
+          xmlns="https://corge.example.edu"
+          xsi:type="unknown"
+          xml:id="corge"/>
+    </xsd:appinfo>
+  </xsd:annotation>
+
+  <baz xml:id="empty"/>
+
+  <baz xsi:type="NonemptyBaz">
+    <xsd:annotation>
+      <xsd:documentation>Lorem ipsum.</xsd:documentation>
+    </xsd:annotation>
+
+    <baz xsi:type="NonemptyBaz">
+      <qux/>
+      <qux xml:id="qux"/>
+      <quux xml:id="quux"/>
+    </baz>
+  </baz>
+</bar>

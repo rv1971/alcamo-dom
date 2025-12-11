@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xsd:schema
+    xmlns="https://bar.example.com"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="https://bar.example.com"
+    elementFormDefault="qualified">
+  <xsd:import
+      namespace="http://www.w3.org/XML/1998/namespace"
+      schemaLocation="../../xsd/xml.xsd"/>
+
+  <xsd:element name="bar">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:any
+            namespace="http://www.w3.org/2001/XMLSchema"
+            processContents="skip"
+            minOccurs="0"
+            maxOccurs="unbounded"/>
+
+        <xsd:element ref="baz" maxOccurs="unbounded"/>
+      </xsd:sequence>
+
+      <xsd:attribute ref="xml:id"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="baz" type="Baz"/>
+
+  <xsd:complexType name="Baz">
+    <xsd:attribute ref="xml:id"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="Quux">
+    <xsd:attribute ref="xml:id"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="NonemptyBaz">
+    <xsd:complexContent>
+      <xsd:extension base="Baz">
+        <xsd:sequence>
+          <xsd:element
+              ref="xsd:annotation"
+              minOccurs="0"
+              maxOccurs="unbounded"/>
+
+          <xsd:element ref="baz" minOccurs="0" maxOccurs="unbounded"/>
+
+          <xsd:element name="qux" minOccurs="0" maxOccurs="unbounded">
+            <xsd:complexType>
+              <xsd:attribute ref="xml:id"/>
+            </xsd:complexType>
+          </xsd:element>
+
+          <xsd:element
+              name="quux"
+              type="Quux"
+              minOccurs="0"
+              maxOccurs="unbounded"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+</xsd:schema>
