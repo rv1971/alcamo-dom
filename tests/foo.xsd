@@ -13,4 +13,6 @@
   <xsd:simpleType name="UpperString" id="UpperString">
     <xsd:restriction base="xsd:string"/>
   </xsd:simpleType>
+
+  <xsd:notation name="jpeg" public="image/jpeg"/>
 </xsd:schema>

@@ -228,7 +228,7 @@ class Schema implements
     }
 
     /**
-     * @brief Get map of all global types.
+     * @brief Get map of XName strings to types for all global types
      *
      * @attention Use this method only if you really need all types (e.g. to
      * create a catalog of types). If you need only some types, use

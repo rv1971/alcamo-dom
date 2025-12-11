@@ -134,7 +134,6 @@ class SchemaFactory implements
             ) {
                 return $this->getBuiltinSchema()
                     ->getGlobalType(self::XSD_NS . ' ' . $uri->getFragment());
-
             }
         }
 
