@@ -15,4 +15,17 @@
   </xsd:simpleType>
 
   <xsd:notation name="jpeg" public="image/jpeg"/>
+
+  <xsd:simpleType name="ListOfEnum" id="ListOfEnum">
+    <xsd:list>
+      <xsd:simpleType>
+        <xsd:restriction base="xsd:NMTOKEN">
+          <xsd:enumeration value="FOO"/>
+          <xsd:enumeration value="BAR"/>
+          <xsd:enumeration value="BAZ"/>
+          <xsd:enumeration value="QUX"/>
+        </xsd:restriction>
+      </xsd:simpleType>
+    </xsd:list>
+  </xsd:simpleType>
 </xsd:schema>

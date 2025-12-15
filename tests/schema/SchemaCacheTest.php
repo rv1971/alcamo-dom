@@ -24,9 +24,10 @@ class SchemaCacheTest extends TestCase
 
         $this->assertSame(1, count($cache));
 
-        $this->assertSame('', $builtinSchema->getCacheKey());
-
-        $this->assertSame($builtinSchema, $cache['']);
+        $this->assertStringContainsString(
+            'xsd/xhtml-datatypes-1.xsd',
+            $builtinSchema->getCacheKey()
+        );
 
         $fileUriFactory = new FileUriFactory();
 

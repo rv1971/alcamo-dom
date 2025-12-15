@@ -81,13 +81,14 @@ class Converter implements NamespaceConstantsInterface
     ) {
         if (!($type instanceof SimpleTypeInterface)) {
             $typeXName = $type;
+
             $type = $this->schema_->getGlobalType($typeXName);
 
             if (!isset($type)) {
                 throw (new DataNotFound())->setMessageContext(
                     [
                         'inData' => $typeXName,
-                        'extraMessage' => "Type $typeXName not found"
+                        'extraMessage' => "type $typeXName not found"
                     ]
                 );
             }
@@ -113,7 +114,7 @@ class Converter implements NamespaceConstantsInterface
             $value = preg_split('/\s+/', $value);
 
             $itemType = $type->getItemType();
-            $converter = $converters->lookup($itemType);
+            $converter = $this->typeConverters_->lookup($itemType);
 
             /** - If the type is a list type and there is a converter for the
              * item type, replace the value by an associative array, mapping
@@ -122,7 +123,7 @@ class Converter implements NamespaceConstantsInterface
                 $convertedValue = [];
 
                 foreach ($value as $item) {
-                    $convertedValue[$item] = $converter($item, $this);
+                    $convertedValue[$item] = $converter($item, $context);
                 }
 
                 return $convertedValue;

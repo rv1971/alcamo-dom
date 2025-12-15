@@ -3,7 +3,7 @@
 namespace alcamo\dom;
 
 use alcamo\dom\psvi\Document as PsviDocument;
-use alcamo\exception\{OutOfRange, SyntaxError};
+use alcamo\exception\{DataNotFound, OutOfRange, SyntaxError};
 use alcamo\range\NonNegativeRange;
 use alcamo\rdfa\{Lang, MediaType};
 use alcamo\time\Duration;
@@ -169,11 +169,68 @@ class ConverterPoolTest extends TestCase
                 )
             ],
             [ 'yesNoToBool.1', true ],
-            [ 'yesNoToBool.2', false ],
-            [ 'toRdfaDatatype.1', 'true' ],
-            [ 'toRdfaDatatype.2', true ],
-            [ 'toRdfaDatatype.3', '**qualified' ],
-            [ 'toRdfaDatatype.4', 'LOREM IPSUM.' ]
+            [ 'yesNoToBool.2', false ]
+        ];
+    }
+
+    /**
+     * @dataProvider toRdfaDatatypeConversionProvider
+     */
+
+    /* This also tests class schema\Converter. */
+    public function testToRdfaDatatypeConversion(
+        $id,
+        $expectedResult,
+        $expectedClass
+    ): void {
+        $element = self::$doc_[$id];
+
+        $qualifiedConverter = ConverterPool::class . "::toRdfaDatatype";
+
+        $attrNode = $element->getAttributeNode('value');
+
+        $value = $qualifiedConverter($attrNode, $attrNode);
+
+        if (!isset($expectedClass)) {
+            $this->assertSame($expectedResult, $value);
+        } elseif (is_array($expectedClass)) {
+            $this->assertIsArray($value);
+
+            $this->assertSame(count($expectedResult), count($value));
+
+            foreach ($expectedResult as $key => $item) {
+                $this->assertInstanceOf($expectedClass[0], $value[$key]);
+                $this->assertSame($item, (string)$value[$key]);
+            }
+        } else {
+            $this->assertInstanceOf($expectedClass, $value);
+
+            $this->assertSame($expectedResult, (string)$value);
+        }
+    }
+
+    public function toRdfaDatatypeConversionProvider(): array
+    {
+        return [
+            [ 'toRdfaDatatype.1', 'true', null ],
+            [ 'toRdfaDatatype.2', true, null ],
+            [ 'toRdfaDatatype.3', '**qualified', null ],
+            [ 'toRdfaDatatype.4', 'LOREM IPSUM.', null ],
+            [ 'toRdfaDatatype.5', 'restriction', Element::class ],
+            [ 'toRdfaDatatype.6', [ 'foo', 'bar', 'baz' ], null ],
+            [
+                'toRdfaDatatype.7',
+                [ 'BAZ' => 'BAZ', 'BAR' => 'BAR', 'FOO' => 'FOO' ],
+                [ Element::class ]
+            ],
+            [
+                'toRdfaDatatype.8',
+                [
+                    'bar:#top' => 'https://bar.example.com#top',
+                    'rel:item' => 'rel#item'
+                ],
+                [ Uri::class ]
+            ],
         ];
     }
 
@@ -216,6 +273,28 @@ class ConverterPoolTest extends TestCase
         ConverterPool::xPointerUriToSubset(
             'foo.xml',
             self::$doc_->documentElement
+        );
+    }
+
+    public function testToRdfaDatatypeException()
+    {
+        $factory = new DocumentFactory(
+            (new FileUriFactory())->create(self::DATA_DIR)
+        );
+
+        $doc = $factory->createFromUri('converter-data.xml');
+
+        $element = $doc->getElementById('toRdfaDatatype-invalid');
+
+        $this->expectException(DataNotFound::class);
+
+        $this->expectExceptionMessage(
+            'type http://www.w3.org/2001/XMLSchema foo not found'
+        );
+
+        ConverterPool::toRdfaDatatype(
+            $element->getAttribute('value'),
+            $element
         );
     }
 }

@@ -12,7 +12,7 @@ use alcamo\dom\{
 ;
 use alcamo\dom\decorated\Element as XsdElement;
 use alcamo\dom\schema\component\TypeInterface;
-use alcamo\uri\Uri;
+use alcamo\uri\{FileUriFactory, Uri};
 
 /**
  * @brief Factory for XML Schemas
@@ -145,6 +145,13 @@ class SchemaFactory implements
 
     public function getBuiltinSchema(): Schema
     {
-        return $this->createFromUris([]);
+        return $this->createFromUris(
+            [
+                (new FileUriFactory())->create(
+                    dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR
+                        . 'xsd' . DIRECTORY_SEPARATOR . 'xhtml-datatypes-1.xsd'
+                )
+            ]
+        );
     }
 }

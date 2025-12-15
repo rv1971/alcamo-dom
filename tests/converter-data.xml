@@ -2,10 +2,11 @@
 
 <foo
     xmlns:dc="http://purl.org/dc/terms/"
+    xmlns:xh11d="http://www.w3.org/1999/xhtml/datatypes/"
     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:qux="http://qux.example.org"
-    xsi:schemaLocation="http://foo.example.org foo.xsd">
+    xsi:schemaLocation="http://foo.example.org foo.xsd http://www.w3.org/1999/xhtml/datatypes/ ../xsd/xhtml-datatypes-1.xsd">
   <bar xml:id="base64ToBinary" value="Zm9vCg=="/>
   <bar xml:id="curieToUri" value="dc:source"/>
   <bar xml:id="hexToBinary" value="1234abcdef"/>
@@ -55,4 +56,32 @@
       xml:id="toRdfaDatatype.4"
       datatype="foo:UpperString"
       value="Lorem ipsum."/>
+  <bar
+      xmlns="http://www.w3.org/1999/xhtml"
+      xml:id="toRdfaDatatype.5"
+      datatype="xsd:reducedDerivationControl"
+      value="restriction"/>
+  <bar
+      xmlns="http://www.w3.org/1999/xhtml"
+      xml:id="toRdfaDatatype.6"
+      datatype="xh11d:#LinkTypes"
+      value="foo bar baz"/>
+  <bar
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:foo="foo.xsd#"
+      xml:id="toRdfaDatatype.7"
+      datatype="foo:ListOfEnum"
+      value="BAZ BAR FOO"/>
+  <bar
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:bar="https://bar.example.com"
+      xmlns:rel="rel#"
+      xml:id="toRdfaDatatype.8"
+      datatype="xh11d:#CURIEs"
+      value="bar:#top rel:item"/>
+  <bar
+      xmlns="http://www.w3.org/1999/xhtml"
+      xml:id="toRdfaDatatype-invalid"
+      datatype="xsd:foo"
+      value="bar"/>
 </foo>

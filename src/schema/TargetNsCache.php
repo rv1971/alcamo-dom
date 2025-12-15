@@ -109,8 +109,7 @@ class TargetNsCache implements
         return true;
     }
 
-    /**
-     */
+    /// Create the extended name of a type from a tape URI
     public function typeUriToTypeXName(string $uri): XName
     {
         [ $nsUri, $localName ] = explode('#', $uri, 2);

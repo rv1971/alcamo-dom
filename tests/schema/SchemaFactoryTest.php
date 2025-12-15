@@ -106,7 +106,8 @@ class SchemaFactoryTest extends TestCase
         $this->assertSame(
             [
                 'XMLSchema.xsd' => Schema::XSD_NS,
-                'xml.xsd' => Schema::XML_NS
+                'xml.xsd' => Schema::XML_NS,
+                'xhtml-datatypes-1.xsd' => Schema::XH11D_NS
             ],
             $xsds
         );
