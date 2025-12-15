@@ -3,7 +3,6 @@
 namespace alcamo\dom;
 
 use alcamo\collection\PreventWriteArrayAccessTrait;
-use alcamo\dom\ConverterPool as CP;
 use alcamo\exception\{
     ErrorHandler,
     FileLoadFailed,
@@ -75,27 +74,6 @@ class Document extends \DOMDocument implements
 
     /// Validate document after xinclude()
     public const VALIDATE_AFTER_XINCLUDE = 4;
-
-    /// Map of XSD type XNames to conversion functions
-    public const TYPE_CONVERTER_MAP = [
-        self::XH11D_NS . ' CURIE'          => CP::class . '::curieToUri',
-        self::XH11D_NS . ' SafeCURIE'      => CP::class . '::safeCurieToUri',
-        self::XH11D_NS . ' URIorSafeCURIE' => CP::class . '::uriOrSafeCurieToUri',
-
-        self::XSD_NS . ' anyURI'       => CP::class . '::toUri',
-        self::XSD_NS . ' base64Binary' => CP::class . '::base64ToBinary',
-        self::XSD_NS . ' boolean'      => CP::class . '::toBool',
-        self::XSD_NS . ' date'         => CP::class . '::toDateTime',
-        self::XSD_NS . ' dateTime'     => CP::class . '::toDateTime',
-        self::XSD_NS . ' decimal'      => CP::class . '::toFloat',
-        self::XSD_NS . ' double'       => CP::class . '::toFloat',
-        self::XSD_NS . ' duration'     => CP::class . '::toDuration',
-        self::XSD_NS . ' float'        => CP::class . '::toFloat',
-        self::XSD_NS . ' hexBinary'    => CP::class . '::hexToBinary',
-        self::XSD_NS . ' integer'      => CP::class . '::toInt',
-        self::XSD_NS . ' language'     => CP::class . '::toLang',
-        self::XSD_NS . ' QName'        => CP::class . '::toXName'
-    ];
 
     /**
      * @brief Pretty-format and re-parse the document

@@ -41,23 +41,18 @@
   <bar
       xmlns="http://www.w3.org/1999/xhtml"
       xml:id="toRdfaDatatype.2"
-      datatype="xsd:reducedDerivationControl"
-      value="true"/>
-  <bar
-      xmlns="http://www.w3.org/1999/xhtml"
-      xml:id="toRdfaDatatype.3"
       datatype="xsd:boolean"
       value="true"/>
   <bar
       xmlns="http://www.w3.org/1999/xhtml"
-      xml:id="toRdfaDatatype.4"
+      xml:id="toRdfaDatatype.3"
       datatype="xsd:formChoice"
       value="qualified"
       prefix="**"/>
   <bar
       xmlns="http://www.w3.org/1999/xhtml"
       xmlns:foo="foo.xsd#"
-      xml:id="toRdfaDatatype.5"
+      xml:id="toRdfaDatatype.4"
       datatype="foo:UpperString"
       value="Lorem ipsum."/>
 </foo>

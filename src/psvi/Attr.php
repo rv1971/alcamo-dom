@@ -83,72 +83,8 @@ class Attr extends BaseAttr
 
         try {
             /** Otherwise convert based on the XML Schema type. */
-            $attrType = $this->getType();
-
-            $converters = $this->ownerDocument->getTypeConverters();
-
-            $converter = $converters->lookup($attrType);
-
-            /** - If there is a specific converter for the attribute type or
-             *  one of its base types, use it. */
-            if (isset($converter)) {
-                return $converter($this->value, $this);
-            }
-
-            /**- Otherwise, if the type is an enumeration, convert to the
-             * enumerator object. */
-            if ($attrType instanceof EnumerationTypeInterface) {
-                return $attrType->getEnumerators()[$this->value];
-            }
-
-            /** - Otherwise, if the type is a list type, convert the value to
-             * an array by splitting at whitespace. */
-            if ($attrType instanceof ListType) {
-                $value = preg_split('/\s+/', $this->value);
-
-                $itemType = $attrType->getItemType();
-                $converter = $converters->lookup($itemType);
-
-                /** - If the type is a list type and there is a converter for
-                 * the item type, replace the value by an associative array,
-                 * mapping each item literal to its conversion result.
-                 */
-                if (isset($converter)) {
-                    $convertedValue = [];
-
-                    foreach ($value as $item) {
-                        $convertedValue[$item] = $converter($item, $this);
-                    }
-
-                    return $convertedValue;
-                }
-
-                /** - Otherwise, if the type is a list type and the items are
-                 * enumerators, replace the value by an associative array,
-                 * mapping each item literal to its enumerator object.
-                 *
-                 * @attention This implies that repeated items will silently
-                 * be dropped in the last two cases. To model such cases with
-                 * possible repetition, an explicit converter for the list
-                 * type is necessary.
-                 */
-                if ($itemType instanceof EnumerationTypeInterface) {
-                    $convertedValue = [];
-
-                    $enumerators = $itemType->getEnumerators();
-
-                    foreach ($value as $item) {
-                        $convertedValue[$item] = $enumerators[$item];
-                    }
-
-                    return $convertedValue;
-                }
-
-                return $value;
-            }
-
-            /** If none of the above applies, return the literal value. */
-            return $this->value;
+            return $this->ownerDocument->getConverter()
+                ->convert($value, $this, $this->getType());
         } catch (ExceptionInterface $e) {
             throw $e->addMessageContext(
                 [

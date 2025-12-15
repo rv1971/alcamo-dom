@@ -5,7 +5,7 @@ namespace alcamo\dom;
 use alcamo\binary_data\BinaryString;
 use alcamo\collection\ReadonlyPrefixSet;
 use alcamo\dom\psvi\Document as PsviDocument;
-use alcamo\dom\schema\{SchemaFactory, TargetNsCache, TypeMap};
+use alcamo\dom\schema\{Converter, SchemaFactory, TargetNsCache, TypeMap};
 use alcamo\exception\{OutOfRange, SyntaxError};
 use alcamo\range\NonNegativeRange;
 use alcamo\rdfa\{Lang, MediaType};
@@ -27,27 +27,6 @@ use Ds\Set;
  */
 class ConverterPool implements NamespaceConstantsInterface
 {
-    private static $schemaFactory_; ///< SchemaFactory
-    private static $typeConverters_; ///< TypeMap
-
-    public static function getSchemaFactory(): SchemaFactory
-    {
-        if (!isset(self::$schemaFactory_)) {
-            self::$schemaFactory_ = new SchemaFactory();
-        }
-
-        return self::$schemaFactory_;
-    }
-
-    public static function getTypeConverters(): TypeMap
-    {
-        if (!isset(self::$typeConverters_)) {
-            self::$typeConverters_ = new TypeMap(Document::TYPE_CONVERTER_MAP);
-        }
-
-        return self::$typeConverters_;
-    }
-
     /// Split at whitespace
     public static function toArray(string $value): array
     {
@@ -345,15 +324,19 @@ class ConverterPool implements NamespaceConstantsInterface
          *  alcamo::dom::psvi::Document, otherwise use the converters in
          *  alcamo::dom::Document. */
 
-        $converter = $element->ownerDocument instanceof PsviDocument
-            ? $element->ownerDocument->getTypeConverters()->lookup(
+        if ($element->ownerDocument instanceof PsviDocument) {
+            return $element->ownerDocument->getConverter()->convert(
+                $value,
+                $context,
                 $element->ownerDocument->getSchema()->getGlobalType($typeXName)
-            )
-            : static::getTypeConverters()->lookup(
-                self::getSchemaFactory()->getBuiltinSchema()
+            );
+        } else {
+            return Converter::getBuiltinConverter()->convert(
+                $value,
+                $context,
+                Converter::getBuiltinConverter()->getSchema()
                     ->getGlobalType($typeXName)
             );
-
-        return isset($converter) ? $converter($value, $context) : $value;
+        }
     }
 }

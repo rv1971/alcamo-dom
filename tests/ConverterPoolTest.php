@@ -171,10 +171,9 @@ class ConverterPoolTest extends TestCase
             [ 'yesNoToBool.1', true ],
             [ 'yesNoToBool.2', false ],
             [ 'toRdfaDatatype.1', 'true' ],
-            [ 'toRdfaDatatype.2', 'true' ],
-            [ 'toRdfaDatatype.3', true ],
-            [ 'toRdfaDatatype.4', '**qualified' ],
-            [ 'toRdfaDatatype.5', 'LOREM IPSUM.' ]
+            [ 'toRdfaDatatype.2', true ],
+            [ 'toRdfaDatatype.3', '**qualified' ],
+            [ 'toRdfaDatatype.4', 'LOREM IPSUM.' ]
         ];
     }
 
@@ -188,18 +187,18 @@ class ConverterPoolTest extends TestCase
 
         $qualifiedConverter = ConverterPool::class . '::toRdfaDatatype';
 
-        $element3 = $doc->getElementById('toRdfaDatatype.3');
+        $element2 = $doc->getElementById('toRdfaDatatype.2');
 
         $this->assertSame(
             true,
-            $qualifiedConverter($element3->getAttribute('value'), $element3)
+            $qualifiedConverter($element2->getAttribute('value'), $element2)
         );
 
-        $element4 = $doc->getElementById('toRdfaDatatype.4');
+        $element3 = $doc->getElementById('toRdfaDatatype.3');
 
         $this->assertSame(
             'qualified',
-            $qualifiedConverter($element4->getAttribute('value'), $element4)
+            $qualifiedConverter($element3->getAttribute('value'), $element3)
         );
     }
 

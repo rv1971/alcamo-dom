@@ -3,7 +3,7 @@
 namespace alcamo\dom\psvi;
 
 use alcamo\dom\decorated\Document as BaseDocument;
-use alcamo\dom\schema\{Schema, SchemaFactory, TypeMap};
+use alcamo\dom\schema\{Converter, Schema, SchemaFactory, TypeMap};
 use alcamo\exception\DataValidationFailed;
 
 /**
@@ -36,6 +36,9 @@ class Document extends BaseDocument
 
     public const SCHEMA_FACTORY_CLASS = SchemaFactory::class;
 
+    /// Map of XSD type XNames to conversion functions
+    public const TYPE_CONVERTER_MAP = Converter::TYPE_CONVERTER_MAP;
+
     /**
      * @brief Map of XSD type XNames to decorator classes for elements
      *
@@ -47,7 +50,7 @@ class Document extends BaseDocument
     public const IDREFS_XNAME = self::XSD_NS . ' IDREFS';
 
     private $schema_;              ///< Schema
-    private $typeConverters_;      ///< TypeMap
+    private $converter_;           ///< Converter
     private $elementDecoratorMap_; ///< TypeMap
 
     /// Get schema obtained from `xsi:schemaLocation`
@@ -65,13 +68,16 @@ class Document extends BaseDocument
     }
 
     /// Get type map used to convert node values
-    public function getTypeConverters(): TypeMap
+    public function getConverter(): Converter
     {
-        if (!isset($this->typeConverters_)) {
-            $this->typeConverters_ = new TypeMap(static::TYPE_CONVERTER_MAP);
+        if (!isset($this->converter_)) {
+            $this->converter_ = new Converter(
+                $this->getSchema(),
+                new TypeMap(static::TYPE_CONVERTER_MAP)
+            );
         }
 
-        return $this->typeConverters_;
+        return $this->converter_;
     }
 
     /// Get map of XSD element types to decorator classes
@@ -139,7 +145,7 @@ class Document extends BaseDocument
         parent::clearCache();
 
         $this->schema_ = null;
-        $this->typeConverters_ = null;
+        $this->converter_ = null;
         $this->elementDecoratorMap_ = null;
     }
 }
