@@ -42,10 +42,7 @@ class ConverterPool implements NamespaceConstantsInterface
     public static function getTypeConverters(): TypeMap
     {
         if (!isset(self::$typeConverters_)) {
-            self::$typeConverters_ = TypeMap::newFromSchemaAndXNameMap(
-                self::getSchemaFactory()->getBuiltinSchema(),
-                Document::TYPE_CONVERTER_MAP
-            );
+            self::$typeConverters_ = new TypeMap(Document::TYPE_CONVERTER_MAP);
         }
 
         return self::$typeConverters_;

@@ -68,10 +68,7 @@ class Document extends BaseDocument
     public function getTypeConverters(): TypeMap
     {
         if (!isset($this->typeConverters_)) {
-            $this->typeConverters_ = TypeMap::newFromSchemaAndXNameMap(
-                $this->getSchema(),
-                static::TYPE_CONVERTER_MAP
-            );
+            $this->typeConverters_ = new TypeMap(static::TYPE_CONVERTER_MAP);
         }
 
         return $this->typeConverters_;
@@ -81,10 +78,8 @@ class Document extends BaseDocument
     public function getElementDecoratorMap(): TypeMap
     {
         if (!isset($this->elementDecoratorMap_)) {
-            $this->elementDecoratorMap_ = TypeMap::newFromSchemaAndXNameMap(
-                $this->getSchema(),
-                static::ELEMENT_DECORATOR_MAP
-            );
+            $this->elementDecoratorMap_ =
+                new TypeMap(static::ELEMENT_DECORATOR_MAP);
         }
 
         return $this->elementDecoratorMap_;

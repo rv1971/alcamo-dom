@@ -29,22 +29,17 @@ class TypeMapTest extends TestCase
     {
         $schema = (new SchemaFactory())->getBuiltinSchema();
 
-        $map = TypeMap::newFromSchemaAndXNameMap($schema, self::BASE_MAP, '*');
+        $map = new TypeMap(self::BASE_MAP, '*');
 
         $this->assertSame(3, count($map->getMap()));
 
         $this->assertSame('*', $map->getDefaultValue());
 
-        $map->addItems(
-            TypeMap::newFromSchemaAndXNameMap($schema, self::ADD_MAP)->getMap()
-        );
+        $map->addItems((new TypeMap(self::ADD_MAP))->getMap());
 
         $this->assertSame(4, count($map->getMap()));
 
-        $map->replaceItems(
-            TypeMap::newFromSchemaAndXNameMap($schema, self::REPLACE_MAP)
-                ->getMap()
-        );
+        $map->replaceItems((new TypeMap(self::REPLACE_MAP))->getMap());
 
         $this->assertSame(5, count($map->getMap()));
 
@@ -95,16 +90,14 @@ class TypeMapTest extends TestCase
     {
         $schema = (new SchemaFactory())->getBuiltinSchema();
 
-        $map = TypeMap::newFromSchemaAndXNameMap($schema, self::BASE_MAP);
+        $map = new TypeMap(self::BASE_MAP);
 
         $this->assertSame(
             'DECIMAL',
             $map->lookup($schema->getGlobalType(Schema::XSD_NS . ' decimal'))
         );
 
-        $map->addItems(
-            TypeMap::newFromSchemaAndXNameMap($schema, self::ADD_MAP)->getMap()
-        );
+        $map->addItems((new TypeMap(self::ADD_MAP))->getMap());
 
         $this->assertSame(
             'DECIMAL',
@@ -122,16 +115,14 @@ class TypeMapTest extends TestCase
     {
         $schema = (new SchemaFactory())->getBuiltinSchema();
 
-        $map = TypeMap::newFromSchemaAndXNameMap($schema, self::BASE_MAP);
+        $map = new TypeMap(self::BASE_MAP);
 
         $this->assertSame(
             'DECIMAL',
             $map->lookup($schema->getGlobalType(Schema::XSD_NS . ' decimal'))
         );
 
-        $map->addItems(
-            TypeMap::newFromSchemaAndXNameMap($schema, self::ADD_MAP)->getMap()
-        );
+        $map->addItems((new TypeMap(self::ADD_MAP))->getMap());
 
         $this->assertSame(
             'DECIMAL',
