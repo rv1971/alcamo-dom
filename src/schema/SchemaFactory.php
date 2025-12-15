@@ -117,25 +117,20 @@ class SchemaFactory implements
     /// Create a type from an URI reference indicating an XSD element by ID
     public function createTypeFromUri($uri): TypeInterface
     {
-        $xsdElement = $this->documentFactory_->createFromUri($uri);
+        /** If the target namespace of the indicated document is the
+         *  XSD namespace, take the corresponding XSD type without acually
+         *  accessing http://www.w3.org/2001/XMLSchema. */
+        $uri = $this->documentFactory_->resolveUri($uri);
 
-        /** If no element with the ID given in the fragment part of $uri
-         *  exists and the target namespace of the indicated document is the
-         *  XSD namespace, take the corresponding XSD type. This allows to
-         *  correctly create types like
-         *  `http://www.w3.org/2001/XMLSchema#boolean` without actually
-         *  accessing the document at http://www.w3.org/2001/XMLSchema. */
-        if (!isset($xsdElement)) {
-            $uri = $this->documentFactory_->resolveUri($uri);
-
-            if (
-                TargetNsCache::getInstance()[$uri->withFragment('')]
-                    == self::XSD_NS
-            ) {
-                return $this->getBuiltinSchema()
-                    ->getGlobalType(self::XSD_NS . ' ' . $uri->getFragment());
-            }
+        if (
+            TargetNsCache::getInstance()[$uri->withFragment('')]
+                == self::XSD_NS
+        ) {
+            return $this->getBuiltinSchema()
+                ->getGlobalType(self::XSD_NS . ' ' . $uri->getFragment());
         }
+
+        $xsdElement = $this->documentFactory_->createFromUri($uri);
 
         return static::createTypeFromXsdElement($xsdElement);
     }
