@@ -2,7 +2,6 @@
 
 <foo
     xmlns:dc="http://purl.org/dc/terms/"
-    xmlns:xh11d="http://www.w3.org/1999/xhtml/datatypes/"
     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:qux="http://qux.example.org"
@@ -52,9 +51,9 @@
       prefix="**"/>
   <bar
       xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:foo="foo.xsd#"
+      xmlns:foo-xsd="foo.xsd#"
       xml:id="toRdfaDatatype.4"
-      datatype="foo:UpperString"
+      datatype="foo-xsd:UpperString"
       value="Lorem ipsum."/>
   <bar
       xmlns="http://www.w3.org/1999/xhtml"
@@ -63,21 +62,23 @@
       value="restriction"/>
   <bar
       xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:foo-xsd="foo.xsd#"
       xml:id="toRdfaDatatype.6"
-      datatype="xh11d:#LinkTypes"
+      datatype="foo-xsd:SimpleList"
       value="foo bar baz"/>
   <bar
       xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:foo="foo.xsd#"
+      xmlns:foo-xsd="foo.xsd#"
       xml:id="toRdfaDatatype.7"
-      datatype="foo:ListOfEnum"
+      datatype="foo-xsd:ListOfEnum"
       value="BAZ BAR FOO"/>
   <bar
       xmlns="http://www.w3.org/1999/xhtml"
       xmlns:bar="https://bar.example.com"
+      xmlns:foo-xsd="foo.xsd#"
       xmlns:rel="rel#"
       xml:id="toRdfaDatatype.8"
-      datatype="xh11d:#CURIEs"
+      datatype="foo-xsd:Curies"
       value="bar:#top rel:item"/>
   <bar
       xmlns="http://www.w3.org/1999/xhtml"

@@ -6,8 +6,12 @@
 
 <xsd:schema
     xmlns="http://foo.example.org"
+    xmlns:xh11d="http://www.w3.org/1999/xhtml/datatypes/"
     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
     targetNamespace="http://foo.example.org">
+  <xsd:import
+      namespace="http://www.w3.org/1999/xhtml/datatypes/"
+      schemaLocation="../xsd/xhtml-datatypes-1.xsd"/>
   <xsd:import namespace="https://bar.example.com" schemaLocation="aux-bar.xsd"/>
 
   <xsd:simpleType name="UpperString" id="UpperString">
@@ -15,6 +19,10 @@
   </xsd:simpleType>
 
   <xsd:notation name="jpeg" public="image/jpeg"/>
+
+  <xsd:simpleType name="SimpleList" id="SimpleList">
+    <xsd:list itemType="xsd:NMTOKEN"/>
+  </xsd:simpleType>
 
   <xsd:simpleType name="ListOfEnum" id="ListOfEnum">
     <xsd:list>
@@ -27,5 +35,9 @@
         </xsd:restriction>
       </xsd:simpleType>
     </xsd:list>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="Curies" id="Curies">
+    <xsd:restriction base="xh11d:CURIEs"/>
   </xsd:simpleType>
 </xsd:schema>

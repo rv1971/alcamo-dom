@@ -305,32 +305,24 @@ class ConverterPool implements NamespaceConstantsInterface
      * [CURIE Syntax 1.0](https://www.w3.org/2001/sw/BestPractices/HTML/2005-10-27-CURIE).
      * This is basically incompatible with
      * [RDFa 1.1](https://www.w3.org/TR/rdfa-core/)
-     * which uses an RDFa-specific prefix mechanism.
+     * which uses an RDFa-specific prefix mechanism. The latter is meant for
+     * HTML documents an unsuitable for XML documents containing embedded HTML
+     * code.
      *
-     * However, XSD datatypes such as `xsd:date` have the same effect in RDFa
-     * 1.1, RDFa 1.0 and the current implementation:
+     * However, XSD Schema built-in datatypes such as `xsd:date` have the same
+     * effect in RDFa 1.1, RDFa 1.0 and the current implementation:
      * - They work in RDFa 1.1 because the prefix `xsd` is contained in the
      *   [RDFa Core Initial Context](https://www.w3.org/2011/rdfa-context/rdfa-1.1).
 
      * - They work in RDFa 1.0 because the RDFa 1.0 specification gives such
      *   examples, even though it is unclear *how* this works because the
-     *   CURIE resolution mechanism described in RDFA 1.0 implies that
-     *   `xsd:dateTime` in the given exmaples would resolve to
+     *   CURIE resolution mechanism described in RDFa 1.0 implies that
+     *   `xsd:dateTime` in the given examples would resolve to
      *   `http://www.w3.org/2001/XMLSchemadateTime` rather than
      *   `http://www.w3.org/2001/XMLSchema#dateTime`.
      * - They work in the present implementation because
      *   alcamo::uri::UriFromCurieFactory::createFromNsNameAndLocalName()
      *   inserts a `#` in such cases.
-     *
-     * Furthermore, all namespace prefixes contained in the RDFa Core Initial
-     * Context which end in `#`, if declared as listed there, work the same
-     * way from all three perspectives.
-     *
-     * For any other namespace prefixes, the present implementation behaves as
-     * specified in RDFa 1.0, and the result is different from RDFa 1.1. This
-     * is the case, for instance, for sueful XHTML datatypes such as
-     * `xh11d:CURIE` or `xh11d:CURIEs`.
-     *
      */
     public static function toRdfaDatatype(
         string $value,
@@ -352,21 +344,12 @@ class ConverterPool implements NamespaceConstantsInterface
         );
 
         /** Look for a converter in the $context document, if it is of type
-         *  alcamo::dom::psvi::Document, otherwise use the converters in
-         *  alcamo::dom::Document. */
+         *  alcamo::dom::psvi::Document, otherwise use the builtin converter
+         *  in alcamo::dom::schema::Converter. */
 
-        if ($element->ownerDocument instanceof PsviDocument) {
-            return $element->ownerDocument->getConverter()->convert(
-                $value,
-                $context,
-                $typeXName
-            );
-        } else {
-            return Converter::getBuiltinConverter()->convert(
-                $value,
-                $context,
-                $typeXName
-            );
-        }
+        return ($element->ownerDocument instanceof PsviDocument
+                ? $element->ownerDocument->getConverter()
+                : Converter::getBuiltinConverter())
+            ->convert($value, $context, $typeXName);
     }
 }

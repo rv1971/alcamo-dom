@@ -33,7 +33,8 @@ class SchemaFactoryTest extends TestCase
                 'XMLSchema.xsd' => Schema::XSD_NS,
                 'xml.xsd' => Schema::XML_NS,
                 'bar.xsd' => 'https://bar.example.com',
-                'foo.xsd' => 'http://foo.example.org'
+                'foo.xsd' => 'http://foo.example.org',
+                'xhtml-datatypes-1.xsd' => Schema::XH11D_NS
             ],
             $xsds
         );
@@ -73,6 +74,7 @@ class SchemaFactoryTest extends TestCase
                 'bar.xsd' => 'https://bar.example.com',
                 'aux-bar.xsd' => 'https://bar.example.com',
                 'foo.xsd' => 'http://foo.example.org',
+                'xhtml-datatypes-1.xsd' => Schema::XH11D_NS,
                 'no-ns-foo.xsd' => null
             ],
             $xsds

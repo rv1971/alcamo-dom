@@ -20,8 +20,6 @@ class TargetNsCacheTest extends TestCase
 
         $this->assertSame(Schema::XSD_NS, $cache[Schema::XSD_NS]);
 
-        $this->assertSame(Schema::OWL_NS, $cache[rtrim(Schema::OWL_NS, '#')]);
-
         $this->assertSame($initCacheCount, count($cache));
 
         $fooXsdUri = (new FileUriFactory())->create(

@@ -109,7 +109,37 @@ class TargetNsCache implements
         return true;
     }
 
-    /// Create the extended name of a type from a tape URI
+    /**
+     * @brief Create the extended name of a type from a type URI
+     *
+     * This implementation supports datatype URIs
+     * - for XML Schema built-in datatypes through the notation
+     *   `http://www.w3.org/2001/XMLSchema#xxx` to refer to built-in type
+     *   `xxx`
+     * - for simple types defined in XSDs through the notation
+     *   `http://example.org#xxx` to refer to the simple type with ID `xxx` in
+     *   the XSD located at http://example.org.
+     *
+     * Despite the syntactic similarity, there are two completely different
+     * concepts behind. The first is a convention to refer to XML Schema
+     * built-in datatypes by *name,* *without* actually accessing an
+     * XSD. Indeed, there is no XSD actually located at the URI. The second
+     * actually *accesses* an XSD and finds a type by *ID,* even though it is
+     * highly recommanded that the ID is identical to the name.
+     *
+     * This has lots of implications. For example, the XHTML datatypes
+     * *cannot* be used this way because the
+     * [official XSD](https://www.w3.org/MarkUp/SCHEMA/xhtml-datatypes-1.xsd)
+     * lacks IDs. Sadly, this implies that the very useful CURIE-related XHTML
+     * datatypes are not available through this mechanism.
+     *
+     * The present code implements the first case *as if* there were an XSD at
+     * the indicated location, and the second case *as if* it were garanteed
+     * that IDs and names always coincide.
+     *
+     * @sa [Datatype IRIs](https://www.w3.org/TR/2014/REC-rdf11-concepts-20140225/#datatype-iris)
+     * @sa [User Defined Datatypes](https://www.w3.org/TR/swbp-xsch-datatypes/#sec-userDefined)
+     */
     public function typeUriToTypeXName(string $uri): XName
     {
         [ $nsUri, $localName ] = explode('#', $uri, 2);
@@ -118,19 +148,13 @@ class TargetNsCache implements
     }
 
     /**
-     * Initialize with normalized namespaces from
-     * alcamo::dom::NamespaceConstantsInterface::NS_PRFIX_TO_NS_URI.
-     *
-     * Thus, for well-known namespaces where an XSD is found at the location
-     * indicated by the namespace, the target namespace is known in advance
-     * without need to access the XSD.
+     * Initialize with a mapping of the XSD namespace to itself, to support
+     * the first case explained in typeUriToTypeXName().
      */
     public function init(): void
     {
         $this->cacheTraitInit();
 
-        foreach (static::NS_PRFIX_TO_NS_URI as $nsName) {
-            $this->data_[rtrim($nsName, '#')] = $nsName;
-        }
+        $this->data_[self::XSD_NS] = self::XSD_NS;
     }
 }

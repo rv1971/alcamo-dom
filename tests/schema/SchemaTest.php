@@ -250,7 +250,8 @@ class SchemaTest extends TestCase
 
         $this->assertSame(
             [
-                'http://foo.example.org' => 2,
+                'http://foo.example.org' => 4,
+                Schema::XH11D_NS => 40,
                 Schema::XSD_NS => 92
             ],
             $stats
