@@ -4,7 +4,6 @@ namespace alcamo\dom\schema;
 
 use alcamo\dom\Document;
 use alcamo\exception\Locked;
-use alcamo\uri\FileUriFactory;
 use PHPUnit\Framework\TestCase;
 
 class TypeMapTest extends TestCase

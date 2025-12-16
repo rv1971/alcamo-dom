@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xsd:schema
+    xmlns="https://qux.example.edu"
+    xmlns:xh11d="http://www.w3.org/1999/xhtml/datatypes/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="https://qux.example.edu">
+  <xsd:import
+      namespace="http://www.w3.org/1999/xhtml/datatypes/"
+      schemaLocation="../../xsd/xhtml-datatypes-1.xsd"/>
+
+  <xsd:simpleType name="SafeCurie" id="SafeCurie">
+    <xsd:restriction base="xh11d:SafeCURIE"/>
+  </xsd:simpleType>
+</xsd:schema>

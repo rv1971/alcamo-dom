@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xsd:schema
+    xmlns="https://qux.example.edu"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="https://qux.example.edu">
+  <xsd:simpleType name="ListOfEnum" id="ListOfEnum">
+    <xsd:list itemType="xsd:derivationControl"/>
+  </xsd:simpleType>
+</xsd:schema>

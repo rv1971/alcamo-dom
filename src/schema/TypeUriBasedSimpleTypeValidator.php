@@ -3,6 +3,7 @@
 namespace alcamo\dom\schema;
 
 use alcamo\dom\{
+    DocumentFactory,
     DocumentFactoryInterface,
     HavingDocumentFactoryInterface,
     HavingDocumentFactoryTrait
