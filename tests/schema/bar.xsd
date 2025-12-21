@@ -2,6 +2,7 @@
 
 <xsd:schema
     xmlns="https://bar.example.com"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
     targetNamespace="https://bar.example.com"
     elementFormDefault="qualified">
@@ -31,8 +32,20 @@
     <xsd:attribute ref="xml:id"/>
   </xsd:complexType>
 
+  <xsd:simpleType name="Fooable">
+    <xsd:restriction base="xsd:string"/>
+  </xsd:simpleType>
+
   <xsd:complexType name="Quux">
+    <xsd:annotation>
+      <xsd:appinfo>
+        <rdfs:label xml:lang="en">Quux element</rdfs:label>
+      </xsd:appinfo>
+    </xsd:annotation>
+
     <xsd:attribute ref="xml:id"/>
+    <xsd:attribute name="fooish" type="xsd:boolean"/>
+    <xsd:attribute name="fooable" type="Fooable"/>
   </xsd:complexType>
 
   <xsd:complexType name="NonemptyBaz">
@@ -61,4 +74,10 @@
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
+
+  <xsd:simpleType name="BarId">
+    <xsd:restriction base="xsd:string"/>
+  </xsd:simpleType>
+
+  <xsd:attribute name="id" type="BarId"/>
 </xsd:schema>

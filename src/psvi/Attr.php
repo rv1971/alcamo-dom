@@ -28,34 +28,23 @@ class Attr extends BaseAttr
     public function getType(): SimpleTypeInterface
     {
         if (!isset($this->type_)) {
-            do {
-                $elementType = $this->parentNode->getType();
+            /** - If the attribute has a namespace, look for a global
+             *  attribute declaration, otherwise for an attribute declaration
+             *  in the element's type. If there is one, takt its type. */
 
-                /** - If the element type is unknown, the attribute type is
-                 *  `xsd:anySimpleType`. */
-                if (!($elementType instanceof ComplexType)) {
-                    $this->type_ =
-                        $this->ownerDocument->getSchema()->getAnySimpleType();
-                    break;
-                }
+            $attrDecl = isset($this->namespaceURI)
+                ? $this->ownerDocument->getSchema()
+                ->getGlobalAttr((string)$this->getXName())
+                : ($this->parentNode->getType()
+                   ->getAttrs()[(string)$this->getXName()] ?? null);
 
-                $attr = $elementType->getAttrs()[(string)$this->getXName()]
-                    ?? null;
+            /** - Otherwise, the attribute type is `xsd:anySimpleType`. This
+             *  is not necessarily an error since the element could use
+             *  `xsd:anyAttribute`. */
 
-                /** - Otherwise, if the element type does not define the
-                 *  current attribute, the attribute type is
-                 *  `xsd:anySimpleType`. This is not necessarily an error
-                 *  since the element could use `xsd:anyAttribute`. */
-                if (!isset($attr)) {
-                    $this->type_ =
-                        $this->ownerDocument->getSchema()->getAnySimpleType();
-                    break;
-                }
-
-                /** Otherwise, the type is obtained from the attribute
-                 *  declaration in the element's type. */
-                $this->type_ = $attr->getType();
-            } while (false);
+            $this->type_ = isset($attrDecl)
+                ? $attrDecl->getType()
+                : $this->ownerDocument->getSchema()->getAnySimpleType();
         }
 
         return $this->type_;

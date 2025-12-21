@@ -295,13 +295,13 @@ class SchemaTest extends TestCase
     public function lookupElementTypeProvider(): array
     {
         return [
-            [ 'bar', 13 ],
+            [ 'bar', 14 ],
             [ 'annotation', 1286 ],
             [ 'appinfo', 1259 ],
             [ 'corge', null ],
-            [ 'empty', 30 ],
-            [ 'qux', 50 ],
-            [ 'quux', 34 ]
+            [ 'empty', 31 ],
+            [ 'qux', 63 ],
+            [ 'quux', 39 ]
         ];
     }
 }
