@@ -143,6 +143,26 @@ class SchemaFactory implements
             ->getGlobalType($xsdElement->getComponentXName());
     }
 
+    /// Create schema from all XSDs in directory and its subdirectories
+    public function createFromDirectory(string $dir): Schema
+    {
+        $uris = [];
+
+        $fileUriFactory = new FileUriFactory();
+
+        foreach (
+            new \RecursiveIteratorIterator(
+                new \RecursiveDirectoryIterator($dir)
+            ) as $path => $fileInfo
+        ) {
+            if ($fileInfo->getExtension() == 'xsd') {
+                $uris[] = $fileUriFactory->create($path);
+            }
+        }
+
+        return $this->createFromUris($uris);
+    }
+
     public function getBuiltinSchema(): Schema
     {
         return $this->createFromUris(

@@ -170,4 +170,34 @@ class SchemaFactoryTest extends TestCase
             ]
         ];
     }
+
+    public function testCreateFromDirectory(): void
+    {
+        $factory = new SchemaFactory();
+
+        $schema = $factory->createFromDirectory(__DIR__);
+
+        $paths = [];
+
+        $baseUriLen = strlen(
+            (new FileUriFactory())->create(dirname(dirname(__DIR__)))
+        ) + 1;
+
+        foreach ($schema->getTopXsds() as $uri => $xsd) {
+            $paths[] = substr($uri, $baseUriLen);
+        }
+
+        $this->assertSame(
+            [
+                'xsd/XMLSchema.xsd',
+                'xsd/xml.xsd',
+                'tests/schema/qux.2.xsd',
+                'xsd/xhtml-datatypes-1.xsd',
+                'tests/schema/qux.1.xsd',
+                'tests/schema/component/foo.xsd',
+                'tests/schema/bar.xsd'
+            ],
+            $paths
+        );
+    }
 }
