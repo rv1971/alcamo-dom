@@ -1,0 +1,12 @@
+<?xml version='1.0'?>
+
+<foo
+    xmlns="http://foo.example.org"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://foo.example.org foo.xsd">
+  <bar xml:id="BAR1"/>
+  <bar xml:id="BAR2"/>
+  <bar xml:id="BAR3"/>
+
+  <baz ref="BAR1" refs="BAR2 BAR1 BAR5 BAR3"/>
+</foo>

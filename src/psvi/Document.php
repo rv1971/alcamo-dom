@@ -92,13 +92,13 @@ class Document extends BaseDocument
     }
 
     /// Validate that IDREF[S] refer to existing IDs
-    public function validateIdrefs()
+    public function validateIdrefs(): void
     {
         /**
          * @attention This method may be expensive because it iterates over
          * *all* attributes in the document.
          */
-        foreach ($this->query('//@*') as $attr) {
+        foreach ($this->query('/*//@*') as $attr) {
             switch ((string)$attr->getType()->getXName()) {
                 case self::IDREF_XNAME:
                     if (!isset($this[$attr->value])) {

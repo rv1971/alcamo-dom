@@ -2,6 +2,7 @@
 
 namespace alcamo\dom\psvi;
 
+use alcamo\dom\DocumentCache;
 use alcamo\dom\xsd\Decorator as XsdDecorator;
 use alcamo\uri\FileUriFactory;
 use alcamo\xml\XName;
@@ -42,6 +43,11 @@ class AttrTest extends TestCase
 
     public const FOO_NS = 'http://foo.example.org';
 
+    public static function setUpBeforeClass(): void
+    {
+        DocumentCache::getInstance()->init();
+    }
+
     /**
      * @dataProvider propsProvider
      */
@@ -53,8 +59,7 @@ class AttrTest extends TestCase
     ): void {
         $doc = (new DocumentFactory())->createFromUri(
             (new FileUriFactory())->create(self::BAR_PATH),
-            MyDocument2::class,
-            false
+            MyDocument2::class
         );
 
         $attr = $doc->query($xPath)[0];
