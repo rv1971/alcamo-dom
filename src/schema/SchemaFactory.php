@@ -29,8 +29,21 @@ class SchemaFactory implements
 
     public const SCHEMA_CLASS = Schema::class;
 
-    public const DEFAULT_DOCUMENT_FACTORY_CLASS =
-        Schema::DEFAULT_DOCUMENT_FACTORY_CLASS;
+    /**
+     * @param $documentFactory Factory used to create documents.
+     */
+    public function __construct(
+        ?DocumentFactoryInterface $documentFactory = null
+    ) {
+        if (isset($documentFactory)) {
+            $this->documentFactory_ = $documentFactory;
+        } else {
+            $schemaClass = static::SCHEMA_CLASS;
+            $class = $schemaClass::DEFAULT_DOCUMENT_FACTORY_CLASS;
+
+            $this->documentFactory_ = new $class();
+        }
+    }
 
     /**
      * @brief Construct new schema or get it from cache
