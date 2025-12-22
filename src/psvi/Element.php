@@ -27,11 +27,24 @@ class Element extends BaseElement
         return $this->type_;
     }
 
-    /** The default implementation calls the constructor of a class looked up
-     *  in Document::getElementDecoratorMap(). Derived classes may implement
-     *  other mechanisms. */
+    /** This implementation calls the constructor of a class looked up in
+     *  Document::getElementDecoratorMap() unless the parent already supplies
+     *  a decorator. Derived classes may implement other mechanisms.
+     */
     protected function createDecorator(): ?AbstractElementDecorator
     {
+        $decorator = parent::createDecorator();
+
+        /** If the parent class supplies a decorator which is not the default,
+         *  return it. This ensures, for instance, that XSD elements always
+         *  have the XSD-specific decorator. */
+        if (
+            isset($decorator)
+                && get_class($decorator) != static::DEFAULT_DECORATOR_CLASS
+        ) {
+            return $decorator;
+        }
+
         $class = $this->ownerDocument->getElementDecoratorMap()
             ->lookup($this->getType());
 
@@ -39,6 +52,6 @@ class Element extends BaseElement
             return new $class($this);
         }
 
-        return parent::createDecorator();
+        return $decorator;
     }
 }
