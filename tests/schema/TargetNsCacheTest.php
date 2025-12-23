@@ -22,9 +22,11 @@ class TargetNsCacheTest extends TestCase
 
         $this->assertSame($initCacheCount, count($cache));
 
+        /* Test non-normalized URI. */
         $fooXsdUri = (new FileUriFactory())->create(
-            __DIR__ . DIRECTORY_SEPARATOR . 'component' . DIRECTORY_SEPARATOR
-                . 'foo.xsd'
+            __DIR__ . DIRECTORY_SEPARATOR
+                . '..' . DIRECTORY_SEPARATOR . 'schema' . DIRECTORY_SEPARATOR
+                . 'component' . DIRECTORY_SEPARATOR . 'foo.xsd'
         );
 
         $this->assertTrue(isset($cache[$fooXsdUri]));

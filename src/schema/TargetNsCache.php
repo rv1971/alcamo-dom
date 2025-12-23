@@ -40,7 +40,7 @@ class TargetNsCache implements
     public function offsetExists($uri): bool
     {
         if (!isset($this->data_[(string)$uri])) {
-            $this->add($uri);
+            return $this->add($uri);
         }
 
         /* Internally, an XSD with no target namespace is assigned the value
@@ -59,8 +59,8 @@ class TargetNsCache implements
     public function offsetGet($uri): ?string
     {
         /* This uses the above offsetExists(). */
-        if (!isset($this[(string)$uri])) {
-            $this->add($uri);
+        if (!isset($this->data_[(string)$uri])) {
+            return $this->add($uri) ?: null;
         }
 
          /* Internally, an XSD with no target namespace is assigned the value
@@ -74,10 +74,10 @@ class TargetNsCache implements
     /**
      * @brief Add the target namespace of the XSD at $uri to the cache
      *
-     * @return Whether the URI was actually added. `false` if it was
-     * already in the cache.
+     * @return The target namespace or `false` if the XSD does not have a
+     * target namespace.
      */
-    public function add(&$uri): bool
+    public function add(&$uri)
     {
         if (!($uri instanceof UriInterface)) {
             $uri = new Uri($uri);
@@ -94,19 +94,21 @@ class TargetNsCache implements
         $uri = (string)UriNormalizer::normalize($uri);
 
         if (isset($this->data_[$uri])) {
-            return false;
+            return $this->data_[$uri];
         }
 
         $doc = isset(DocumentCache::getInstance()[$uri])
             ? DocumentCache::getInstance()[$uri]
             : ShallowDocument::newFromUri($uri);
 
-        $this->data_[$uri] =
-            $doc->documentElement->hasAttribute('targetNamespace')
+        $targetNs = $doc->documentElement->hasAttribute('targetNamespace')
             ? $doc->documentElement->getAttribute('targetNamespace')
             : false;
 
-        return true;
+        $this->data_[$uri] = $targetNs;
+
+
+        return $targetNs;
     }
 
     /**
