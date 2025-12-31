@@ -78,7 +78,9 @@ class Schema implements
     ///< Map of XName string to TypeInterface
     private $globalTypes_ = [];
 
-    private $getGlobalTypesAlreadyCalled_ = false;
+    private $getGlobalAttrsAlreadyCalled_    = false;
+    private $getGlobalElementsAlreadyCalled_ = false;
+    private $getGlobalTypesAlreadyCalled_    = false;
 
     private $anyType_;                ///< ComplexType
     private $anySimpleType;           ///< PredefinedAnySimpleType
@@ -145,6 +147,28 @@ class Schema implements
         return $globalAttr;
     }
 
+    /**
+     * @brief Get map of XName strings to attributes for all global attributes
+     *
+     * @attention Use this method only if you really need all attributes
+     * (e.g. to create a catalog of attributes). If you need only some
+     * attributes, use getGlobalAttr() which is much more efficient because it
+     * will only create the needed attr objects.
+     */
+    public function getGlobalAttrs(): array
+    {
+        if (!$this->getGlobalAttrsAlreadyCalled_) {
+            foreach ($this->globalAttrs_ as $xNameString => $globalAttr) {
+                if ($globalAttr instanceof XsdElement) {
+                    $this->globalAttrs_[$xNameString] =
+                        new Attr($this, $globalAttr);
+                }
+            }
+        }
+
+        return $this->globalAttrs_;
+    }
+
     public function getGlobalAttrGroup(string $xNameString): ?AttrGroup
     {
         $globalAttrGroup = $this->globalAttrGroups_[$xNameString] ?? null;
@@ -175,6 +199,28 @@ class Schema implements
         }
 
         return $globalElement;
+    }
+
+    /**
+     * @brief Get map of XName strings to elements for all global elements
+     *
+     * @attention Use this method only if you really need all elements
+     * (e.g. to create a catalog of elements). If you need only some elements,
+     * use getGlobalElement() which is much more efficient because it will
+     * only create the needed element objects.
+     */
+    public function getGlobalElements(): array
+    {
+        if (!$this->getGlobalElementsAlreadyCalled_) {
+            foreach ($this->globalElements_ as $xNameString => $globalElement) {
+                if ($globalElement instanceof XsdElement) {
+                    $this->globalElements_[$xNameString] =
+                        new Element($this, $globalElement);
+                }
+            }
+        }
+
+        return $this->globalElements_;
     }
 
     public function getGlobalGroup(string $xNameString): ?Group

@@ -5,7 +5,9 @@ namespace alcamo\dom\schema;
 use alcamo\dom\Document;
 use alcamo\dom\schema\component\{
     AtomicType,
+    AttrInterface,
     ComplexType,
+    Element,
     PredefinedAnySimpleType,
     TypeInterface,
     UnionType
@@ -219,6 +221,78 @@ class SchemaTest extends TestCase
             [ Schema::XSD_NS . ' allNNI', UnionType::class ],
             [ Schema::XSD_NS . ' attribute', ComplexType::class ]
         ];
+    }
+
+    public function testGetGlobalAttrs(): void
+    {
+        $globalAttrs = self::$schema_->getGlobalAttrs();
+
+        $stats = [];
+
+        foreach ($globalAttrs as $xNameString => $attr) {
+            $this->assertInstanceOf(AttrInterface::class, $attr);
+
+            $this->assertSame($xNameString, (string)$attr->getXName());
+
+            $this->assertSame(
+                $attr,
+                self::$schema_->getGlobalAttr($xNameString)
+            );
+
+            $nsName = $attr->getXName()->getNsName();
+
+            if (isset($stats[$nsName])) {
+                $stats[$nsName]++;
+            } else {
+                $stats[$nsName] = 1;
+            }
+        }
+
+        ksort($stats);
+
+        $this->assertSame(
+            [
+                Schema::XSI_NS => 2,
+                Schema::XML_NS => 4
+            ],
+            $stats
+        );
+    }
+
+    public function testGetGlobalElements(): void
+    {
+        $globalElements = self::$schema_->getGlobalElements();
+
+        $stats = [];
+
+        foreach ($globalElements as $xNameString => $element) {
+            $this->assertInstanceOf(Element::class, $element);
+
+            $this->assertSame($xNameString, (string)$element->getXName());
+
+            $this->assertSame(
+                $element,
+                self::$schema_->getGlobalElement($xNameString)
+            );
+
+            $nsName = $element->getXName()->getNsName();
+
+            if (isset($stats[$nsName])) {
+                $stats[$nsName]++;
+            } else {
+                $stats[$nsName] = 1;
+            }
+        }
+
+        ksort($stats);
+
+        $this->assertSame(
+            [
+                Schema::XSD_NS => 41,
+                'https://bar.example.com' => 1
+            ],
+            $stats
+        );
     }
 
     public function testGetGlobalTypes(): void
