@@ -82,7 +82,9 @@ class TypeUriBasedSimpleTypeValidator extends AbstractSimpleTypeValidator implem
                 );
             }
 
-            $uri = UriResolver::resolve($baseUri, new Uri($schemaLocation));
+            $uri = isset($baseUri)
+                ? UriResolver::resolve($baseUri, new Uri($schemaLocation))
+                : new Uri($schemaLocation);
 
             $nsName = TargetNsCache::getInstance()[$uri];
 
