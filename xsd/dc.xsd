@@ -9,7 +9,7 @@
     dc:title="Selected Dublin Core types and attributes"
     dc:creator="RV1971 &lt;rv1971@web.de&gt;"
     dc:created="2017-01-01"
-    dc:modified="2021-11-19"
+    dc:modified="2026-01-05"
     xml:lang="en">
   <xsd:annotation>
     <xsd:documentation xmlns="http://www.w3.org/1999/xhtml">
@@ -76,6 +76,114 @@
     <xsd:union memberTypes="xsd:date xsd:dateTime"/>
   </xsd:simpleType>
 
+  <xsd:simpleType name="Type">
+    <xsd:annotation xmlns="http://www.w3.org/1999/xhtml">
+      <xsd:documentation>
+        <p><a href="https://www.dublincore.org/specifications/dublin-core/dcmi-terms/#section-7">DCMI Type Vocabulary.</a></p>
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:restriction base="xsd:NCName">
+      <xsd:enumeration value="Collection" id="Collection">
+        <xsd:annotation xmlns="http://www.w3.org/1999/xhtml">
+          <xsd:documentation>
+            <p>An aggregation of resources.</p>
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+
+      <xsd:enumeration value="Dataset" id="Dataset">
+        <xsd:annotation xmlns="http://www.w3.org/1999/xhtml">
+          <xsd:documentation>
+            <p>Data encoded in a defined structure.</p>
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+
+      <xsd:enumeration value="Event" id="Event">
+        <xsd:annotation xmlns="http://www.w3.org/1999/xhtml">
+          <xsd:documentation>
+            <p>A non-persistent, time-based occurrence.</p>
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+
+      <xsd:enumeration value="Image" id="Image">
+        <xsd:annotation xmlns="http://www.w3.org/1999/xhtml">
+          <xsd:documentation>
+            <p>A visual representation other than text.</p>
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+
+      <xsd:enumeration value="InteractiveResource" id="InteractiveResource">
+        <xsd:annotation xmlns="http://www.w3.org/1999/xhtml">
+          <xsd:documentation>
+            <p>A resource requiring interaction from the user to be
+            understood, executed, or experienced.</p>
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+
+      <xsd:enumeration value="MovingImage" id="MovingImage">
+        <xsd:annotation xmlns="http://www.w3.org/1999/xhtml">
+          <xsd:documentation>
+            <p>A series of visual representations imparting an
+            impression of motion when shown in succession.</p>
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+
+      <xsd:enumeration value="PhysicalObject" id="PhysicalObject">
+        <xsd:annotation xmlns="http://www.w3.org/1999/xhtml">
+          <xsd:documentation>
+            <p>An inanimate, three-dimensional object or substance.</p>
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+
+      <xsd:enumeration value="Service" id="Service">
+        <xsd:annotation xmlns="http://www.w3.org/1999/xhtml">
+          <xsd:documentation>
+            <p>A system that provides one or more functions.</p>
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+
+      <xsd:enumeration value="Software" id="Software">
+        <xsd:annotation xmlns="http://www.w3.org/1999/xhtml">
+          <xsd:documentation>
+            <p>A computer program in source or compiled form.</p>
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+
+      <xsd:enumeration value="Sound" id="Sound">
+        <xsd:annotation xmlns="http://www.w3.org/1999/xhtml">
+          <xsd:documentation>
+            <p>A resource primarily intended to be heard.</p>
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+
+      <xsd:enumeration value="StillImage" id="StillImage">
+        <xsd:annotation xmlns="http://www.w3.org/1999/xhtml">
+          <xsd:documentation>
+            <p>A static visual representation.</p>
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+
+      <xsd:enumeration value="Text" id="Text">
+        <xsd:annotation xmlns="http://www.w3.org/1999/xhtml">
+          <xsd:documentation>
+            <p>A resource consisting primarily of words for reading.</p>
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:enumeration>
+    </xsd:restriction>
+  </xsd:simpleType>
+
   <!-- attributes -->
 
   <xsd:attribute name="audience" type="Audience" rdfs:label="Audience">
@@ -119,6 +227,14 @@
     <xsd:annotation xmlns="http://www.w3.org/1999/xhtml">
       <xsd:documentation>
         <p>An unambiguous reference to the resource within a given context.</p>
+      </xsd:documentation>
+    </xsd:annotation>
+  </xsd:attribute>
+
+  <xsd:attribute name="language" type="xsd:language-x" rdfs:label="Language">
+    <xsd:annotation xmlns="http://www.w3.org/1999/xhtml">
+      <xsd:documentation>
+        <p>A language of the resource.</p>
       </xsd:documentation>
     </xsd:annotation>
   </xsd:attribute>
@@ -168,7 +284,15 @@
     </xsd:annotation>
   </xsd:attribute>
 
-    <xsd:element name="alternative" type="rdfs:Literal" rdfs:label="Alternative Title">
+  <xsd:attribute name="type" type="Type" rdfs:label="Type">
+    <xsd:annotation xmlns="http://www.w3.org/1999/xhtml">
+      <xsd:documentation>
+        <p>The nature or genre of the resource.</p>
+      </xsd:documentation>
+    </xsd:annotation>
+  </xsd:attribute>
+
+  <xsd:element name="alternative" type="rdfs:Literal" rdfs:label="Alternative Title">
     <xsd:annotation xmlns="http://www.w3.org/1999/xhtml">
       <xsd:documentation>
         <p>An alternative name for the resource.</p>
