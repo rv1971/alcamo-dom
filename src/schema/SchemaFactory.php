@@ -173,6 +173,8 @@ class SchemaFactory implements
             }
         }
 
+        sort($uris);
+
         return $this->createFromUris($uris);
     }
 

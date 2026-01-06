@@ -19,9 +19,9 @@ class DocumentModifierTest extends TestCase
 
         /* foo.xml remains unchanged. */
 
-        $foo = $factory->createFromUri('foo.xsd');
+        $fooOrig = $factory->createFromUri('foo.xsd', null, false);
 
-        $fooOrig = clone $foo;
+        $foo = $factory->createFromUri('foo.xsd', null, false);
 
         $this->assertSame($foo, $modifier->stripXsdDocumentation($foo));
 
