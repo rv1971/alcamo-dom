@@ -108,6 +108,10 @@ class ElementTest extends TestCase
 
         $element = self::$doc_->query($xPath)[0];
 
+        $this->assertSame($element->textContent, (string)$element);
+
+        $this->assertSame($element->textContent, $element->getValue());
+
         if (isset($expectedValue)) {
             $this->assertTrue(isset($element->$attrName));
         } else {

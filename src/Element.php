@@ -30,6 +30,17 @@ class Element extends \DOMElement implements
         return $this->textContent;
     }
 
+    /**
+     * @brief Return the element value appropriately converted
+     *
+     * This implementation simply returns the text content. It is meant to
+     * be overriden by more sophisticated methods in derived classes.
+     */
+    public function getValue()
+    {
+        return $this->textContent;
+    }
+
     /// Return an alcamo::dom::ChildElementsIterator on this element
     public function getIterator()
     {

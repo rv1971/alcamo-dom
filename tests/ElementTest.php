@@ -24,6 +24,10 @@ class ElementTest extends TestCase
         /* This also tests the traits HavingBaseUriTrait, HavingXNameTrait,
          * Rfc5147Trait. */
 
+        $this->assertSame($element->textContent, (string)$element);
+
+        $this->assertSame($element->textContent, $element->getValue());
+
         $this->assertSame(
             (string)$expectedBaseUri,
             (string)$element->getBaseUri()

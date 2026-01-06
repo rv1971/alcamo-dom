@@ -28,8 +28,8 @@
     </xsd:annotation>
 
     <baz xsi:type="NonemptyBaz">
-      <qux/>
-      <qux xml:id="qux"/>
+      <qux>42</qux>
+      <qux xml:id="qux">43</qux>
       <quux xml:id="quux" fooish="false" fooable="partially"/>
     </baz>
   </baz>

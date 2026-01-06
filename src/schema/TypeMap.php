@@ -10,7 +10,8 @@ use alcamo\exception\Locked;
  *
  * The lookup() method searches for base types if the type itself has no
  * mapping. The result of the lookup is cached in the map to speed up further
- * lookups of the same type.
+ * lookups of the same type, provided the type has a name. If the type has no
+ * name, the method still works, but the result cannot be cached.
  *
  * @date Last reviewed 2025-11-07
  */
@@ -76,16 +77,19 @@ class TypeMap
     {
         $xNameString = (string)$type->getXName();
 
-        /** If $type appears in the map, return the value assigned to it. */
+        if ($xNameString) {
+            /** If $type has an extedned name and appears in the map, return
+             *  the value assigned to it. */
 
-        /* First try isset() which is fast but does not find a value of
-         * `null`. If not successfull, try the slower array_key_exists() which
-         * also finds `null`. */
-        if (
-            isset($this->map_[$xNameString])
+            /* First try isset() which is fast but does not find a value of
+             * `null`. If not successfull, try the slower array_key_exists()
+             * which also finds `null`. */
+            if (
+                isset($this->map_[$xNameString])
                 || array_key_exists($xNameString, $this->map_)
-        ) {
-            return $this->map_[$xNameString];
+            ) {
+                return $this->map_[$xNameString];
+            }
         }
 
         /** Otherwise check the base type. If there is none, return the
@@ -98,13 +102,15 @@ class TypeMap
             $result = $this->lookup($baseType);
         }
 
-        /** Cache any new result in the map. */
-        $this->map_[$xNameString] = $result;
+        if ($xNameString) {
+            /** Cache any new result in the map. */
+            $this->map_[$xNameString] = $result;
 
-        /** Once any new result has been added, the map must not be modified
-         * any more because the entry that has been added might become
-         * incorrect. */
-        $this->isLocked_ = true;
+            /** Once any new result has been added, the map must not be modified
+             * any more because the entry that has been added might become
+             * incorrect. */
+            $this->isLocked_ = true;
+        }
 
         return $result;
     }

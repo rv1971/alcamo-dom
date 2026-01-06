@@ -10,7 +10,7 @@ use alcamo\dom\{
 use alcamo\dom\schema\component\{
     EnumerationTypeInterface,
     ListType,
-    SimpleTypeInterface
+    TypeInterface
 };
 use alcamo\exception\DataNotFound;
 
@@ -71,15 +71,14 @@ class Converter implements NamespaceConstantsInterface
     /**
      * @brief Convert a string to an PHP representation of the given type
      *
-     * @param $type SimpleTypeInterface|string Data type, or type XName as
-     * string
+     * @param $type TypeInterface|string Data type, or type XName as string
      */
     public function convert(
         string $value,
         DomNodeInterface $context,
         $type
     ) {
-        if (!($type instanceof SimpleTypeInterface)) {
+        if (!($type instanceof TypeInterface)) {
             $typeXName = $type;
 
             $type = $this->schema_->getGlobalType($typeXName);

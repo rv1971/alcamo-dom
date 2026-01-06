@@ -61,7 +61,11 @@
 
           <xsd:element name="qux" minOccurs="0" maxOccurs="unbounded">
             <xsd:complexType>
-              <xsd:attribute ref="xml:id"/>
+              <xsd:simpleContent>
+                <xsd:extension base="xsd:integer">
+                  <xsd:attribute ref="xml:id"/>
+                </xsd:extension>
+              </xsd:simpleContent>
             </xsd:complexType>
           </xsd:element>
 

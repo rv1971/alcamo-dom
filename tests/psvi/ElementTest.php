@@ -53,7 +53,8 @@ class ElementTest extends TestCase
         $xPath,
         $expectedLocalName,
         $expectedTypeLineNo,
-        $expectedDecoratorClass
+        $expectedDecoratorClass,
+        $expectedValue
     ): void {
         $doc = (new DocumentFactory())->createFromUri(
             (new FileUriFactory())->create(self::BAR_PATH),
@@ -80,59 +81,75 @@ class ElementTest extends TestCase
             $expectedDecoratorClass,
             $element->getDecorator()
         );
+
+        $this->assertSame($expectedValue, $element->getValue());
     }
 
     public function propsProvider(): array
     {
         return [
-            [ '*', 'bar', 14, HavingDocumentationDecorator::class ],
+            [
+                '*',
+                'bar',
+                14,
+                HavingDocumentationDecorator::class,
+                'Lorem ipsum.4243'
+            ],
             [
                 '*/xsd:annotation',
                 'annotation',
                 1286,
-                XsdDecorator::class
+                XsdDecorator::class,
+                ''
             ],
             [
                 '*/xsd:annotation/xsd:appinfo',
                 'appinfo',
                 1259,
-                XsdDecorator::class
+                XsdDecorator::class,
+                ''
             ],
             [
                 '*/xsd:annotation/xsd:appinfo/*',
                 'corge',
                 null,
-                HavingDocumentationDecorator::class
+                HavingDocumentationDecorator::class,
+                ''
             ],
             [
                 '*/*[local-name() = "baz"]',
                 'baz',
                 31,
-                BazDecorator::class
+                BazDecorator::class,
+                ''
             ],
             [
                 '*/*[@xsi:type]',
                 'baz',
                 51,
-                BazDecorator::class
+                BazDecorator::class,
+                'Lorem ipsum.4243'
             ],
             [
                 '*/*[@xsi:type]/*[@xsi:type]',
                 'baz',
                 51,
-                BazDecorator::class
+                BazDecorator::class,
+                '4243'
             ],
             [
                 '*//*[local-name() = "qux"]',
                 'qux',
                 63,
-                HavingDocumentationDecorator::class
+                HavingDocumentationDecorator::class,
+                42
             ],
             [
                 '*//*[local-name() = "quux"]',
                 'quux',
                 39,
-                QuuxDecorator::class
+                QuuxDecorator::class,
+                ''
             ]
         ];
     }

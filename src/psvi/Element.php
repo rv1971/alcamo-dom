@@ -4,6 +4,7 @@ namespace alcamo\dom\psvi;
 
 use alcamo\dom\decorated\{AbstractElementDecorator, Element as BaseElement};
 use alcamo\dom\schema\component\TypeInterface;
+use alcamo\exception\DataValidationFailed;
 
 /**
  * @brief Element class for use in DOMDocument::registerNodeClass()
@@ -53,5 +54,34 @@ class Element extends BaseElement
         }
 
         return $decorator;
+    }
+
+    /// @copybrief alcamo::dom::extended::Element::createValue()
+    protected function createValue()
+    {
+        try {
+            /** Convert based on the XML Schema type. */
+            return $this->ownerDocument->getConverter()
+                ->convert($this->textContent, $this, $this->getType());
+        } catch (ExceptionInterface $e) {
+            throw $e->addMessageContext(
+                [
+                    'inData' => $this->ownerDocument->saveXML(),
+                    'atUri' => $this->ownerDocument->documentURI,
+                    'atLine' => $this->getLineNo(),
+                    'forKey' => $this->name
+                ]
+            );
+        } catch (\Throwable $e) {
+            throw DataValidationFailed::newFromPrevious(
+                $e,
+                [
+                    'inData' => $this->ownerDocument->saveXML(),
+                    'atUri' => $this->ownerDocument->documentURI,
+                    'atLine' => $this->getLineNo(),
+                    'forKey' => $this->name
+                ]
+            );
+        }
     }
 }
