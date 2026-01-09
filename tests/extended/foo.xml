@@ -1,5 +1,7 @@
 <?xml version='1.0'?>
 
+<?xml-stylesheet href="../foo.xsl" type="text/xsl"?>
+
 <foo
     xmlns="http://foo.example.org"
     xmlns:owl="http://www.w3.org/2002/07/owl#"

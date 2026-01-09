@@ -130,9 +130,12 @@ class DocumentTest extends TestCase
         $this->assertSame(2, $fooDoc->evaluate('count("//comment()")'));
     }
 
-    public function getXsltStylesheetTest(): void
+    public function testGetXsltStylesheet(): void
     {
-        $fooUri = (new FileUriFactory())->create(self::DATA_DIR . 'foo.xml');
+        $fooUri = (new FileUriFactory())->create(
+            self::DATA_DIR . DIRECTORY_SEPARATOR
+                . 'extended' . DIRECTORY_SEPARATOR . 'foo.xml'
+        );
 
         $fooDoc = Document::newFromUri($fooUri);
 
@@ -142,7 +145,7 @@ class DocumentTest extends TestCase
 
         $this->assertInstanceOf(Document::class, $xslt);
 
-        $this->assertSame('stylesheet', $xslt->documentElement->localName());
+        $this->assertSame('stylesheet', $xslt->documentElement->localName);
 
         $barUri = (new FileUriFactory())->create(self::DATA_DIR . 'bar.xml');
 
