@@ -63,8 +63,7 @@ class Document extends \DOMDocument implements
      * see [xmllint fails to validate
      * xs:language](https://stackoverflow.com/questions/29314958/xmllint-fails-to-validate-xslanguage).
      */
-    public const LIBXML_OPTIONS =
-        LIBXML_COMPACT | LIBXML_NOBLANKS | LIBXML_NSCLEAN;
+    public const LIBXML_OPTIONS = LIBXML_COMPACT | LIBXML_NOBLANKS;
 
     /// Validate document just after load (before xinclude(), if requested)
     public const VALIDATE_AFTER_LOAD = 1;
