@@ -57,7 +57,9 @@ class FixedSchemaSimpleTypeValidator extends AbstractSimpleTypeValidator
     /**
      * @brief Validate data
      *
-     * @param $valueTypeXNamePairs Pairs of value and type XName
+     * @param $valueTypeXNamePairs Nonempty iterable of pairs consisting of a
+     * value and the extended name of a type. The latter may be an XName
+     * object or an array consisting of namespace name and local name.
      *
      * @return Array mapping keys of items in $valueTypeXNamePairs to
      * (potentially multi-line) error messages. Empty array if no errors

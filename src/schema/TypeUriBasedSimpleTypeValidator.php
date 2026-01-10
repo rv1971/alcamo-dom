@@ -120,7 +120,7 @@ class TypeUriBasedSimpleTypeValidator extends AbstractSimpleTypeValidator implem
             }
 
             $valueTypeXNamePairMaps[$i][$key] =
-                [ $value, new XName($nsName, $typeId) ];
+                [ $value, [ $nsName, $typeId ] ];
         }
 
         $result = [];

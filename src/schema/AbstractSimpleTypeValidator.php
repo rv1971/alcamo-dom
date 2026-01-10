@@ -3,6 +3,7 @@
 namespace alcamo\dom\schema;
 
 use alcamo\dom\{Document, NamespaceConstantsInterface};
+use alcamo\xml\XName;
 
 /**
  * @brief Base for classes that validate data of some some XSD simple type
@@ -51,8 +52,9 @@ abstract class AbstractSimpleTypeValidator implements
      * @brief Create an instance document suitable for validation against the
      * XSD created by createXsdText()
      *
-     * @param $valueTypeXNamePairs Nonempty iterable of pairs consisting
-     * of a value and the extended name of a type.
+     * @param $valueTypeXNamePairs Nonempty iterable of pairs consisting of a
+     * value and the extended name of a type. The latter may be an XName
+     * object or an array consisting of namespace name and local name.
      *
      * @param $keys Will be filled with a nNumerically-indexed array of the
      * keys of $valueTypeXNamePairs, with indexes starting at 0.
@@ -73,7 +75,9 @@ abstract class AbstractSimpleTypeValidator implements
         foreach ($valueTypeXNamePairs as $key => $valueTypeXNamePair) {
             [ $value, $typeXName ] = $valueTypeXNamePair;
 
-            [ $nsName, $localName ] = $typeXName->getPair();
+            [ $nsName, $localName ] = $typeXName instanceof XName
+                ? $typeXName->getPair()
+                : $typeXName;
 
             if (isset($nsName)) {
                 $nsPrefix = $nsNameToPrefix[$nsName] ?? null;
@@ -107,7 +111,9 @@ abstract class AbstractSimpleTypeValidator implements
     /**
      * @brief Validate data against a schema
      *
-     * @param $valueTypeXNamePairs Pairs of value and type XName
+     * @param $valueTypeXNamePairs Nonempty iterable of pairs consisting of a
+     * value and the extended name of a type. The latter may be an XName
+     * object or an array consisting of namespace name and local name.
      *
      * @param $xsdText XSD document text to use for validation
      *
