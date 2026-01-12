@@ -347,7 +347,7 @@ class Document extends \DOMDocument implements
             }
 
             $this->xsltStylesheet_ = $this->getDocumentFactory()
-                ->createFromUri($pi->resolveUri($pi->href), static::class);
+                ->createFromUri($pi->resolveUri($pi->href));
         }
 
         return $this->xsltStylesheet_;
