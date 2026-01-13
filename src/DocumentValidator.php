@@ -70,7 +70,8 @@ class DocumentValidator implements NamespaceConstantsInterface
                 $e,
                 [
                     'inData' => $document->saveXML(),
-                    'atUri' => $document->documentURI
+                    'atUri' => $document->documentURI,
+                    'withSchemaUri' => $xsdUri
                 ]
             );
         }
@@ -100,7 +101,8 @@ class DocumentValidator implements NamespaceConstantsInterface
                 $e,
                 [
                     'inData' => $document->saveXML(),
-                    'atUri' => $document->documentURI
+                    'atUri' => $document->documentURI,
+                    'withSchema' => $xsdText
                 ]
             );
         }
