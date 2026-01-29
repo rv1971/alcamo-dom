@@ -2,7 +2,12 @@
 
 namespace alcamo\dom\decorated;
 
-use alcamo\decorator\DecoratorTrait;
+use alcamo\decorator\{
+    ArrayAccessDecoratorTrait,
+    CountableDecoratorTrait,
+    DecoratorTrait,
+    IteratorAggregateDecoratorTrait
+};
 
 /**
  * @brief Decorator for Element objects
@@ -15,6 +20,9 @@ abstract class AbstractElementDecorator implements
     \Arrayaccess
 {
     use DecoratorTrait;
+    use CountableDecoratorTrait;
+    use ArrayAccessDecoratorTrait;
+    use IteratorAggregateDecoratorTrait;
 
     /// Return DOMElement::textContent
     public function __toString(): string

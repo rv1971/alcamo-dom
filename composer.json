@@ -6,7 +6,7 @@
     "require": {
         "php": "7.3 - 8.0",
         "alcamo/binary-data": "^0.6",
-        "alcamo/decorator": "^0.1",
+        "alcamo/decorator": "^0.2",
         "alcamo/iterator": "^0.1",
         "alcamo/range": "^0.1",
         "alcamo/rdfa": "0.9 - 0.11",
