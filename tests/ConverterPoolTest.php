@@ -5,7 +5,14 @@ namespace alcamo\dom;
 use alcamo\dom\psvi\Document as PsviDocument;
 use alcamo\exception\{DataNotFound, OutOfRange, SyntaxError};
 use alcamo\range\NonNegativeRange;
-use alcamo\rdfa\{Lang, MediaType};
+use alcamo\rdfa\{
+    BooleanLiteral,
+    DateLiteral,
+    Lang,
+    LangStringLiteral,
+    Literal,
+    MediaType
+};
 use alcamo\time\Duration;
 use alcamo\uri\{FileUriFactory, Uri};
 use alcamo\xml\XName;
@@ -64,13 +71,16 @@ class ConverterPoolTest extends TestCase
 
         $qualifiedConverter = ConverterPool::class . "::$converter";
 
-        $attrNode = $element->getAttributeNode('value');
+        $node = $element->hasAttribute('value')
+            ? $element->getAttributeNode('value')
+            : $element;
 
         switch ($converter) {
             case 'toDateTime':
             case 'toDuration':
             case 'toIntSet':
             case 'toLang':
+            case 'toLiteral':
             case 'toMediaType':
             case 'toNonNegativeRange':
             case 'toPrefixSet':
@@ -81,7 +91,7 @@ class ConverterPoolTest extends TestCase
             case 'xPointerUriToValueSet':
                 $this->assertEquals(
                     $expectedResult,
-                    $qualifiedConverter($attrNode, $attrNode)
+                    $qualifiedConverter($node, $node)
                 );
                 break;
 
@@ -93,14 +103,14 @@ class ConverterPoolTest extends TestCase
             case 'xPointerUriToSubset':
                 $this->assertSame(
                     $expectedResult,
-                    (string)$qualifiedConverter($attrNode, $attrNode)
+                    (string)$qualifiedConverter($node, $node)
                 );
                 break;
 
             case 'toDocument':
                 $this->assertSame(
                     $expectedResult,
-                    (string)$qualifiedConverter($attrNode, $attrNode)
+                    (string)$qualifiedConverter($node, $node)
                         ->documentElement->localName
                 );
                 break;
@@ -108,7 +118,7 @@ class ConverterPoolTest extends TestCase
             case 'toDocumentOrElement':
                 $this->assertSame(
                     $expectedResult,
-                    (string)$qualifiedConverter($attrNode, $attrNode)
+                    (string)$qualifiedConverter($node, $node)
                         ->localName
                 );
                 break;
@@ -116,14 +126,14 @@ class ConverterPoolTest extends TestCase
             case 'resolveIdRef':
                 $this->assertSame(
                     self::$doc_[$expectedResult],
-                    $qualifiedConverter($attrNode, $attrNode)
+                    $qualifiedConverter($node, $node)
                 );
                 break;
 
             default:
                 $this->assertSame(
                     $expectedResult,
-                    $qualifiedConverter($attrNode, $attrNode)
+                    $qualifiedConverter($node, $node)
                 );
         }
     }
@@ -148,6 +158,10 @@ class ConverterPoolTest extends TestCase
             [ 'toInt', 42 ],
             [ 'toIntSet', new Set([ 42, -42, 0, 7, 5 ]) ],
             [ 'toLang', Lang::newFromPrimaryAndRegion('yo', 'NG') ],
+            [ 'toLiteral.1', new Literal('Lorem ipsum') ],
+            [ 'toLiteral.2', new LangStringLiteral('libertà', 'it') ],
+            [ 'toLiteral.3', new DateLiteral('2026-01-30') ],
+            [ 'toLiteral.4', new BooleanLiteral(true) ],
             [ 'toMediaType', new MediaType('application', 'json') ],
             [ 'toNonNegativeRange', new NonNegativeRange(42, 43) ],
             [ 'toSet', new Set(['foo', 'bar', 'baz']) ],

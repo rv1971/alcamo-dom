@@ -23,6 +23,17 @@
   <bar xml:id="toInt" value="42"/>
   <bar xml:id="toIntSet" value="42 -42 0 7 5"/>
   <bar xml:id="toLang" value="yo-NG"/>
+  <bar xml:id="toLiteral.1" value="Lorem ipsum"/>
+  <bar xml:id="toLiteral.2" xml:lang="it" value="libertà"/>
+  <bar
+      xmlns="http://www.w3.org/1999/xhtml"
+      xml:id="toLiteral.3"
+      datatype="http://www.w3.org/2001/XMLSchema#date"
+      value="2026-01-30"/>
+  <bar
+      xmlns="http://www.w3.org/1999/xhtml"
+      xml:id="toLiteral.4"
+      datatype="http://www.w3.org/2001/XMLSchema#boolean">true</bar>
   <bar xml:id="toMediaType" value="application/json"/>
   <bar xml:id="toNonNegativeRange" value="42-43"/>
   <bar xml:id="toSet" value="foo&#x0d;bar&#x0a;baz"/>

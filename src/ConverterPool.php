@@ -127,36 +127,35 @@ class ConverterPool implements NamespaceConstantsInterface
         return Lang::newFromString($value);
     }
 
+    /**
+     * @brief Create an RDF literal object
+     *
+     * If the context (or its parent, if the context is not an element node)
+     * is an xhtml element and has a `datatype` attribute, use it for the
+     * datatype URI. Use the applicable language identifcation, if any.
+     */
+    public static function toLiteral(
+        string $value,
+        DomNodeInterface $context
+    ): LiteralInterface {
+        $element =
+            $context instanceof \DOMElement ? $context : $context->parentNode;
+
+        return (new LiteralFactory())->create(
+            $value,
+            $element->namespaceURI == self::XH_NS
+                && $element->hasAttribute('datatype')
+                ? $element->getAttribute('datatype')
+                : null,
+            $context->getLang()
+        );
+    }
+
     /// Call alcamo::rdfa::MediaType::newFromString()
     public static function toMediaType(string $value): MediaType
     {
         return MediaType::newFromString($value);
     }
-    /*
-    public static function toLiteral(
-        string $value,
-        DomNodeInterface $context
-    ): LiteralInterface {
-        switch (true) {
-        }
-
-        if ($context instanceof DomElement) {
-            switch (true) {
-                case $context->hasAttributeNS(self::XML_NS, 'lang'):
-                    $lang = $context->getAttributeNS(self::XML_NS, 'lang');
-                    break;
-
-                case $context->hasAttribute('lang'):
-                    $lang = $context->getAttribute('lang');
-                    break;
-
-                default:
-                    $lang = null;
-            }
-
-        return (new LiteralFactory())->create($value, $datatypeUri, $lang);
-    }
-    */
 
     /// Call alcamo::range::NonNegativeRange::newFromString()
     public static function toNonNegativeRange(string $value): NonNegativeRange
