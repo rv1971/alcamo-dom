@@ -177,6 +177,28 @@ class ConverterPool implements NamespaceConstantsInterface
             ReadonlyPrefixBlackWhiteList::newFromStringWithOperator($value);
     }
 
+    /**
+     * @brief Create an RDF node object
+     *
+     * If the context (or its parent, if the context is not an element node)
+     * is an xhtml element and has an `hreflang` attribute, use it for the
+     * `dc:language` property of the indicated resource.
+     */
+    public static function toRdfaNode(
+        string $value,
+        DomNodeInterface $context
+    ): Node {
+        $element =
+            $context instanceof \DOMElement ? $context : $context->parentNode;
+
+        $rdfaData = ($element->namespaceURI == self::XH_NS
+                     && $element->hasAttribute('hreflang'))
+            ? [ [ 'dc:language', $element->getAttribute('hreflang') ] ]
+        : null;
+
+        return new Node($value, $rdfaData);
+    }
+
     /// Split at whitespace
     public static function toSet(string $value): Set
     {

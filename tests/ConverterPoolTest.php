@@ -11,7 +11,8 @@ use alcamo\rdfa\{
     Lang,
     LangStringLiteral,
     Literal,
-    MediaType
+    MediaType,
+    Node
 };
 use alcamo\time\Duration;
 use alcamo\uri\{FileUriFactory, Uri};
@@ -84,6 +85,7 @@ class ConverterPoolTest extends TestCase
             case 'toMediaType':
             case 'toNonNegativeRange':
             case 'toPrefixSet':
+            case 'toRdfaNode':
             case 'toSet':
             case 'toUri':
             case 'toXName':
@@ -164,6 +166,14 @@ class ConverterPoolTest extends TestCase
             [ 'toLiteral.4', new BooleanLiteral(true) ],
             [ 'toMediaType', new MediaType('application', 'json') ],
             [ 'toNonNegativeRange', new NonNegativeRange(42, 43) ],
+            [ 'toRdfaNode.1', new Node('http://www.exmaple.org') ],
+            [
+                'toRdfaNode.2',
+                new Node(
+                    'http://www.exmaple.org/cn',
+                    [ [ 'dc:language', 'cn' ] ]
+                )
+            ],
             [ 'toSet', new Set(['foo', 'bar', 'baz']) ],
             [ 'toUri', new Uri('http://www.example.org/foo') ],
             [ 'toXName', new XName(Document::DC_NS, 'title') ],
