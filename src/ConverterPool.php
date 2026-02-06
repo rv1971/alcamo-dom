@@ -147,7 +147,7 @@ class ConverterPool implements NamespaceConstantsInterface
                 && $element->hasAttribute('datatype')
                 ? $element->getAttribute('datatype')
                 : null,
-            $context->getLang()
+            $element->getLang()
         );
     }
 
