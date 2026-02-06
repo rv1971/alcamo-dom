@@ -15,8 +15,16 @@
     xsi:type="bar:bar"
     baz="BAZ"
     baz:special="">
-  <xh:p about="[bar:foo]" xml:lang="fo">
+  <xh:p about="[bar:foo]" xml:lang="fo" lang="da">
     <baz/>
+
+    <xh:span xml:id="xh1" lang="no">
+      <xh:span xml:id="xh2"/>
+
+      <xh:span xml:lang="fi">
+        <xh:span xml:id="xh3"/>
+      </xh:span>
+    </xh:span>
   </xh:p>
 
   <bar baz:special="Lorem ipsum"/>

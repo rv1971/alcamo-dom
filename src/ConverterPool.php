@@ -8,7 +8,7 @@ use alcamo\dom\psvi\Document as PsviDocument;
 use alcamo\dom\schema\{Converter, SchemaFactory, TargetNsCache, TypeMap};
 use alcamo\exception\{OutOfRange, SyntaxError};
 use alcamo\range\NonNegativeRange;
-use alcamo\rdfa\{Lang, MediaType};
+use alcamo\rdfa\{Lang, LiteralFactory, LiteralInterface, Node, MediaType};
 use alcamo\time\Duration;
 use alcamo\uri\{Uri, UriFromCurieFactory};
 use alcamo\xml\XName;
@@ -132,6 +132,31 @@ class ConverterPool implements NamespaceConstantsInterface
     {
         return MediaType::newFromString($value);
     }
+    /*
+    public static function toLiteral(
+        string $value,
+        DomNodeInterface $context
+    ): LiteralInterface {
+        switch (true) {
+        }
+
+        if ($context instanceof DomElement) {
+            switch (true) {
+                case $context->hasAttributeNS(self::XML_NS, 'lang'):
+                    $lang = $context->getAttributeNS(self::XML_NS, 'lang');
+                    break;
+
+                case $context->hasAttribute('lang'):
+                    $lang = $context->getAttribute('lang');
+                    break;
+
+                default:
+                    $lang = null;
+            }
+
+        return (new LiteralFactory())->create($value, $datatypeUri, $lang);
+    }
+    */
 
     /// Call alcamo::range::NonNegativeRange::newFromString()
     public static function toNonNegativeRange(string $value): NonNegativeRange

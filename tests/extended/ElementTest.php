@@ -81,6 +81,21 @@ class ElementTest extends TestCase
         );
 
         $this->assertSame(3, $fooDoc->getNodeRegistrySize());
+
+        $this->assertEquals(
+            Lang::newFromPrimary('no'),
+            $fooDoc['xh1']->getLang()
+        );
+
+        $this->assertEquals(
+            Lang::newFromPrimary('no'),
+            $fooDoc['xh2']->getLang()
+        );
+
+        $this->assertEquals(
+            Lang::newFromPrimary('fi'),
+            $fooDoc['xh3']->getLang()
+        );
     }
 
     /* This tests trait HavingLangTrait. */

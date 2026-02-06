@@ -60,27 +60,48 @@ class Element extends \DOMElement implements
         return $this->ownerDocument->getXPath()->evaluate($expr, $this);
     }
 
-    /// Return xml:lang of element or closest ancestor
+    /**
+     * @brief Return language of element or closest ancestor
+     *
+     * Look for `xml:lang` attributes in all elements. In xhtml elements, also
+     * look for `lang` attributes. The relevant attribute is that of the
+     * closest ancestor. If the closest ancestor is an xhtml element and has
+     * both attributes and they have different values (which is certainly bad
+     * document design), `xml:lang` takes precedence.
+     */
     public function getLang(): ?Lang
     {
-        /* For efficiency, first check if the element itself has an
-         * xml:lang attribute since this is a frequent case in
-         * practice. */
+        /* For efficiency, first check if the element itself has an xml:lang
+         * (or lang) attribute since this is a frequent case in practice. */
         if ($this->hasAttributeNS(Document::XML_NS, 'lang')) {
             return Lang::newFromString(
                 $this->getAttributeNS(Document::XML_NS, 'lang')
             );
-        } else {
-            /* If it does not, look for the first ancestor having such an
-             * attribute. */
-            $langAttr = $this->query('ancestor::*[@xml:lang][1]/@xml:lang')[0];
+        }
 
-            if (isset($langAttr)) {
-                return Lang::newFromString($langAttr->value);
+        if (
+            $this->namespaceURI == self::XH_NS && $this->hasAttribute('lang')
+        ) {
+            return Lang::newFromString($this->getAttribute('lang'));
+        }
+
+        /* If it does not, look for the first ancestor having such an
+         * attribute. */
+        $ancestor = $this->query(
+            'ancestor::*[@xml:lang or (self::xh:* and @lang)][1]'
+        )[0];
+
+        if (isset($ancestor)) {
+            if ($ancestor->hasAttributeNS(Document::XML_NS, 'lang')) {
+                return Lang::newFromString(
+                    $ancestor->getAttributeNS(Document::XML_NS, 'lang')
+                );
             } else {
-                return null;
+                return Lang::newFromString($ancestor->getAttribute('lang'));
             }
         }
+
+        return null;
     }
 
     /**
