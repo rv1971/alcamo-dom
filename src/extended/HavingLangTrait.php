@@ -23,29 +23,12 @@ trait HavingLangTrait
     /// Return xml:lang of element or closest ancestor
     public function getLang(): ?Lang
     {
+        /** Unlike alcamo::dom::Element, here the result is cached. */
         if ($this->lang_ === false) {
             /* Ensure conservation of the derived object. */
             $this->register();
 
-            /* For efficiency, first check if the element itself has an
-             * xml:lang attribute since this is a frequent case in
-             * practice. */
-            if ($this->hasAttributeNS(Document::XML_NS, 'lang')) {
-                $this->lang_ = Lang::newFromString(
-                    $this->getAttributeNS(Document::XML_NS, 'lang')
-                );
-            } else {
-                /* If it does not, look for the first ancestor having such an
-                 * attribute. */
-                $langAttr =
-                    $this->query('ancestor::*[@xml:lang][1]/@xml:lang')[0];
-
-                if (isset($langAttr)) {
-                    $this->lang_ = Lang::newFromString($langAttr->value);
-                } else {
-                    $this->lang_ = null;
-                }
-            }
+            $this->lang_ = parent::getLang();
         }
 
         return $this->lang_;

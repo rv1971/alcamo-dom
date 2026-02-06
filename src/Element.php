@@ -3,6 +3,7 @@
 namespace alcamo\dom;
 
 use alcamo\exception\AbsoluteUriNeeded;
+use alcamo\rdfa\Lang;
 use alcamo\xml\HavingXNameInterface;
 use alcamo\uri\{Uri, UriNormalizer};
 use Psr\Http\Message\UriInterface;
@@ -57,6 +58,29 @@ class Element extends \DOMElement implements
     public function evaluate(string $expr)
     {
         return $this->ownerDocument->getXPath()->evaluate($expr, $this);
+    }
+
+    /// Return xml:lang of element or closest ancestor
+    public function getLang(): ?Lang
+    {
+        /* For efficiency, first check if the element itself has an
+         * xml:lang attribute since this is a frequent case in
+         * practice. */
+        if ($this->hasAttributeNS(Document::XML_NS, 'lang')) {
+            return Lang::newFromString(
+                $this->getAttributeNS(Document::XML_NS, 'lang')
+            );
+        } else {
+            /* If it does not, look for the first ancestor having such an
+             * attribute. */
+            $langAttr = $this->query('ancestor::*[@xml:lang][1]/@xml:lang')[0];
+
+            if (isset($langAttr)) {
+                return Lang::newFromString($langAttr->value);
+            } else {
+                return null;
+            }
+        }
     }
 
     /**
