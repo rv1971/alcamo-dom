@@ -2,6 +2,7 @@
 
 namespace alcamo\dom;
 
+use alcamo\rdfa\Lang;
 use alcamo\xml\HavingXNameInterface;
 
 /**
@@ -29,5 +30,10 @@ class Attr extends \DOMAttr implements DomNodeInterface, HavingXNameInterface
     public function getValue()
     {
         return $this->value;
+    }
+
+    public function getLang(): ?Lang
+    {
+        return $this->parentNode->getLang();
     }
 }

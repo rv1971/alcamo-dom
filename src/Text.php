@@ -2,6 +2,8 @@
 
 namespace alcamo\dom;
 
+use alcamo\rdfa\Lang;
+
 /**
  * @brief Text class for use in DOMDocument::registerNodeClass()
  *
@@ -15,5 +17,10 @@ class Text extends \DOMText implements DomNodeInterface
     public function __toString(): string
     {
         return $this->wholeText;
+    }
+
+    public function getLang(): ?Lang
+    {
+        return $this->parentNode->getLang();
     }
 }

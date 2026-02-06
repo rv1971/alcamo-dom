@@ -13,7 +13,7 @@ multi-line comment -->
       xmlns:owl="http://www.w3.org/2002/07/owl#"
       xml:id="bar"
       xml:base="http://bar.example.biz">
-    <baz id="A" owl:sameAs="#a">Lorem ipsum</baz>
+    <baz id="A" owl:sameAs="#a" xml:lang="sv">Lorem ipsum</baz>
     <baz id="B" owl:sameAs="#b">dolor sit amet</baz>
     <baz id="C">consetetur <b
     xmlns="http://www.w3.org/1999/xhtml"

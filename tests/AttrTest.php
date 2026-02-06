@@ -19,7 +19,8 @@ class AttrTest extends TestCase
         $expectedResolvedUri,
         $expectedXName,
         $expectedRfc5147Fragment,
-        $expectedRfc5147Uri
+        $expectedRfc5147Uri,
+        $expectedLang
     ): void {
         /* This also tests the traits HavingBaseUriTrait, HavingXNameTrait,
          * Rfc5147Trait. */
@@ -52,6 +53,12 @@ class AttrTest extends TestCase
             $expectedRfc5147Uri,
             $attr->getRfc5147Uri()
         );
+
+        if (isset($expectedLang)) {
+            $this->assertSame($expectedLang, (string)$attr->getLang());
+        } else {
+            $this->assertNull($attr->getLang());
+        }
     }
 
     public function getDataProvider(): array
@@ -60,7 +67,7 @@ class AttrTest extends TestCase
 
         $fooDoc = Document::newFromUri(
             $fileUriFactory->create(self::DATA_DIR . 'foo.xml')
-        );
+        )->conserve();
 
         return [
             [
@@ -70,7 +77,8 @@ class AttrTest extends TestCase
                 'http://bar.example.biz/README.md',
                 Document::XML_NS . ' base',
                 'line=14',
-                $fooDoc->documentURI . '#line=14'
+                $fooDoc->documentURI . '#line=14',
+                null
             ],
             [
                 $fooDoc['bar']->firstChild->getAttributeNode('id'),
@@ -79,7 +87,8 @@ class AttrTest extends TestCase
                 'http://bar.example.biz/README.md',
                 'id',
                 'line=15',
-                $fooDoc->documentURI . '#line=15'
+                $fooDoc->documentURI . '#line=15',
+                'sv'
             ]
         ];
     }
