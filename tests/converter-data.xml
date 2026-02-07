@@ -36,12 +36,14 @@
       datatype="http://www.w3.org/2001/XMLSchema#boolean">true</bar>
   <bar xml:id="toMediaType" value="application/json"/>
   <bar xml:id="toNonNegativeRange" value="42-43"/>
-  <bar xml:id="toRdfaNode.1" value="http://www.exmaple.org"/>
+  <bar xml:id="toRdfaNode.1" value="http://www.example.org"/>
   <bar
       xmlns="http://www.w3.org/1999/xhtml"
       xml:id="toRdfaNode.2"
+      type="application/pdf"
+      title="Cinese version"
       hreflang="cn"
-      value="http://www.exmaple.org/cn"/>
+      value="http://www.example.org/cn"/>
   <bar xml:id="toSet" value="foo&#x0d;bar&#x0a;baz"/>
   <bar xml:id="toUri" value="http://www.example.org/foo"/>
   <bar xml:id="toXName" value="dc:title"/>

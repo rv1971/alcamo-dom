@@ -166,12 +166,16 @@ class ConverterPoolTest extends TestCase
             [ 'toLiteral.4', new BooleanLiteral(true) ],
             [ 'toMediaType', new MediaType('application', 'json') ],
             [ 'toNonNegativeRange', new NonNegativeRange(42, 43) ],
-            [ 'toRdfaNode.1', new Node('http://www.exmaple.org') ],
+            [ 'toRdfaNode.1', new Node('http://www.example.org') ],
             [
                 'toRdfaNode.2',
                 new Node(
-                    'http://www.exmaple.org/cn',
-                    [ [ 'dc:language', 'cn' ] ]
+                    'http://www.example.org/cn',
+                    [
+                        [ 'dc:language', 'cn' ],
+                        [ 'dc:title', 'Cinese version' ],
+                        [ 'dc:format', 'application/pdf' ]
+                    ]
                 )
             ],
             [ 'toSet', new Set(['foo', 'bar', 'baz']) ],

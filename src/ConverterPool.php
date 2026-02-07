@@ -181,8 +181,9 @@ class ConverterPool implements NamespaceConstantsInterface
      * @brief Create an RDF node object
      *
      * If the context (or its parent, if the context is not an element node)
-     * is an xhtml element and has an `hreflang` attribute, use it for the
-     * `dc:language` property of the indicated resource.
+     * is an xhtml, use any `hreflang` attribute for the `dc:language`
+     * property, `title` for `dc:title` and `type` for `dc:format` of the
+     * indicated resource.
      */
     public static function toRdfaNode(
         string $value,
@@ -191,10 +192,24 @@ class ConverterPool implements NamespaceConstantsInterface
         $element =
             $context instanceof \DOMElement ? $context : $context->parentNode;
 
-        $rdfaData = ($element->namespaceURI == self::XH_NS
-                     && $element->hasAttribute('hreflang'))
-            ? [ [ 'dc:language', $element->getAttribute('hreflang') ] ]
-        : null;
+        if ($element->namespaceURI == self::XH_NS) {
+            $rdfaData = [];
+
+            if ($element->hasAttribute('hreflang')) {
+                $rdfaData[] =
+                    [ 'dc:language', $element->getAttribute('hreflang') ];
+            }
+
+            if ($element->hasAttribute('title')) {
+                $rdfaData[] = [ 'dc:title', $element->getAttribute('title') ];
+            }
+
+            if ($element->hasAttribute('type')) {
+                $rdfaData[] = [ 'dc:format', $element->getAttribute('type') ];
+            }
+        } else {
+            $rdfaData = null;
+        }
 
         return new Node($value, $rdfaData);
     }
