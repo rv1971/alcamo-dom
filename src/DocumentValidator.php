@@ -3,6 +3,7 @@
 namespace alcamo\dom;
 
 use alcamo\exception\DataValidationFailed;
+use alcamo\xml\NamespaceConstantsInterface;
 
 /**
  * @brief Checks whether XML documents are valid

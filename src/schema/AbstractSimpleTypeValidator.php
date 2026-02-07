@@ -2,8 +2,8 @@
 
 namespace alcamo\dom\schema;
 
-use alcamo\dom\{Document, NamespaceConstantsInterface};
-use alcamo\xml\XName;
+use alcamo\dom\Document;
+use alcamo\xml\{NamespaceConstantsInterface, XName};
 
 /**
  * @brief Base for classes that validate data of some some XSD simple type

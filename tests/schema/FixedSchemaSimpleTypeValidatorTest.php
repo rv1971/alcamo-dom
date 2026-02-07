@@ -2,9 +2,9 @@
 
 namespace alcamo\dom\schema;
 
-use alcamo\dom\{DocumentFactory, NamespaceConstantsInterface};
+use alcamo\dom\DocumentFactory;
 use alcamo\uri\FileUriFactory;
-use alcamo\xml\XName;
+use alcamo\xml\{NamespaceConstantsInterface, XName};
 use PHPUnit\Framework\TestCase;
 
 class FixedSchemaSimpleTypeValidatorTest extends TestCase implements NamespaceConstantsInterface

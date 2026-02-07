@@ -4,8 +4,7 @@ namespace alcamo\dom\schema;
 
 use alcamo\dom\{
     ConverterPool as CP,
-    DomNodeInterface,
-    NamespaceConstantsInterface
+    DomNodeInterface
 };
 use alcamo\dom\schema\component\{
     EnumerationTypeInterface,
@@ -13,6 +12,7 @@ use alcamo\dom\schema\component\{
     TypeInterface
 };
 use alcamo\exception\DataNotFound;
+use alcamo\xml\NamespaceConstantsInterface;
 
 /**
  * @brief Convert a string to a PHP item based on a given type

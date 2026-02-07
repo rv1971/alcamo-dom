@@ -11,7 +11,7 @@ use alcamo\range\NonNegativeRange;
 use alcamo\rdfa\{Lang, LiteralFactory, LiteralInterface, Node, MediaType};
 use alcamo\time\Duration;
 use alcamo\uri\{Uri, UriFromCurieFactory};
-use alcamo\xml\XName;
+use alcamo\xml\{NamespaceConstantsInterface, XName};
 use alcamo\xpointer\Pointer;
 use Ds\Set;
 

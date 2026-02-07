@@ -5,12 +5,11 @@ namespace alcamo\dom\schema;
 use alcamo\dom\{
     CacheTrait,
     DocumentCache,
-    NamespaceConstantsInterface,
     ShallowDocument
 };
 use alcamo\exception\AbsoluteUriNeeded;
 use alcamo\uri\{Uri, UriNormalizer};
-use alcamo\xml\XName;
+use alcamo\xml\{NamespaceConstantsInterface, XName};
 use Psr\Http\Message\UriInterface;
 
 /**

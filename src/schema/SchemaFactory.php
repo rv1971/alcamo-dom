@@ -7,12 +7,12 @@ use alcamo\dom\{
     Document,
     DocumentFactoryInterface,
     HavingDocumentFactoryInterface,
-    HavingDocumentFactoryTrait,
-    NamespaceConstantsInterface}
-;
+    HavingDocumentFactoryTrait
+};
 use alcamo\dom\decorated\Element as XsdElement;
 use alcamo\dom\schema\component\TypeInterface;
 use alcamo\uri\{FileUriFactory, Uri};
+use alcamo\xml\NamespaceConstantsInterface;
 
 /**
  * @brief Factory for XML Schemas

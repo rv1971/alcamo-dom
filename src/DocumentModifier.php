@@ -2,6 +2,8 @@
 
 namespace alcamo\dom;
 
+use alcamo\xml\NamespaceConstantsInterface;
+
 /**
  * @brief Modify XML documents in various ways
  */

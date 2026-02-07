@@ -2,9 +2,8 @@
 
 namespace alcamo\dom\schema\component;
 
-use alcamo\dom\NamespaceConstantsInterface;
 use alcamo\dom\schema\Schema;
-use alcamo\xml\XName;
+use alcamo\xml\{NamespaceConstantsInterface, XName};
 
 /**
  * @namespace alcamo::dom::schema::component

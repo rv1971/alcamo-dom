@@ -9,6 +9,7 @@ use alcamo\exception\{
     SyntaxError,
     Uninitialized
 };
+use alcamo\xml\NamespaceConstantsInterface;
 
 /**
  * @namespace alcamo::dom

@@ -9,7 +9,7 @@ namespace alcamo\dom;
  */
 class XPath extends \DOMXPath
 {
-    /// Register all namepace prefixes in NamespaceConstantsInterface
+    /// Register all namepace prefixes in the document class
     public function __construct(\DOMDocument $doc)
     {
         parent::__construct($doc);

@@ -6,8 +6,7 @@ use alcamo\dom\{
     DocumentCache,
     DocumentFactoryInterface,
     HavingDocumentFactoryInterface,
-    HavingDocumentFactoryTrait,
-    NamespaceConstantsInterface
+    HavingDocumentFactoryTrait
 };
 use alcamo\dom\decorated\{DocumentFactory, Element as XsdElement};
 use alcamo\dom\extended\Element as ExtElement;
@@ -26,7 +25,7 @@ use alcamo\dom\schema\component\{
 };
 use alcamo\exception\ExceptionInterface;
 use alcamo\uri\{FileUriFactory, Uri, UriNormalizer};
-use alcamo\xml\XName;
+use alcamo\xml\{NamespaceConstantsInterface, XName};
 use GuzzleHttp\Psr7\UriResolver;
 use Psr\Http\Message\UriInterface;
 

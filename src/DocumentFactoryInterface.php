@@ -2,6 +2,8 @@
 
 namespace alcamo\dom;
 
+use alcamo\xml\NamespaceConstantsInterface;
+
 /**
  * @brief Class able to create a document from a URI
  *
