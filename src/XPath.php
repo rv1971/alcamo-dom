@@ -14,7 +14,7 @@ class XPath extends \DOMXPath
     {
         parent::__construct($doc);
 
-        foreach ($doc::NS_PRFIX_TO_NS_URI as $prefix => $uri) {
+        foreach ($doc::NS_PRFIX_TO_NS_NAME as $prefix => $uri) {
             $this->registerNamespace($prefix, $uri);
         }
     }

@@ -9,7 +9,7 @@ use alcamo\exception\{
     SyntaxError,
     Uninitialized
 };
-use alcamo\xml\NamespaceConstantsInterface;
+use alcamo\xml\{NamespaceConstantsInterface, NamespaceMapsInterface};
 
 /**
  * @namespace alcamo::dom
@@ -42,6 +42,10 @@ class Document extends \DOMDocument implements
     use HavingBaseUriTrait;
     use HavingDocumentFactoryTrait;
     use PreventWriteArrayAccessTrait;
+
+    /// Map of canonical namespace prefixes
+    public const NS_PRFIX_TO_NS_NAME =
+        NamespaceMapsInterface::NS_PRFIX_TO_NS_NAME;
 
     /// Default class for a new document factory
     public const DEFAULT_DOCUMENT_FACTORY_CLASS = DocumentFactory::class;

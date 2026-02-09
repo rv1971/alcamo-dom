@@ -25,11 +25,11 @@ class MyAttr extends Attr
 
 class MyDocument extends Document
 {
-    public const NS_PRFIX_TO_NS_URI =
+    public const NS_PRFIX_TO_NS_NAME =
         [
             'baz' => 'https://baz.example.edu#'
         ]
-        + parent::NS_PRFIX_TO_NS_URI;
+        + parent::NS_PRFIX_TO_NS_NAME;
 
     public const NODE_CLASSES =
         [

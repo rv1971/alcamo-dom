@@ -143,9 +143,9 @@ class TargetNsCache implements
      */
     public function typeUriToTypeXName(string $uri): XName
     {
-        [ $nsUri, $localName ] = explode('#', $uri, 2);
+        [ $nsName, $localName ] = explode('#', $uri, 2);
 
-        return new XName($this[$nsUri], $localName);
+        return new XName($this[$nsName], $localName);
     }
 
     /**
