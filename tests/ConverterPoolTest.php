@@ -81,7 +81,6 @@ class ConverterPoolTest extends TestCase
             case 'toDuration':
             case 'toIntSet':
             case 'toLang':
-            case 'toLiteral':
             case 'toMediaType':
             case 'toNonNegativeRange':
             case 'toPrefixSet':
@@ -105,6 +104,13 @@ class ConverterPoolTest extends TestCase
             case 'xPointerUriToSubset':
                 $this->assertSame(
                     $expectedResult,
+                    (string)$qualifiedConverter($node, $node)
+                );
+                break;
+
+            case 'toLiteral':
+                $this->assertSame(
+                    (string)$expectedResult,
                     (string)$qualifiedConverter($node, $node)
                 );
                 break;

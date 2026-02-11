@@ -4,6 +4,7 @@ namespace alcamo\dom\schema\component;
 
 use alcamo\dom\decorated\Element as XsdElement;
 use alcamo\dom\schema\Schema;
+use alcamo\rdfa\RdfaData;
 
 /**
  * @brief Type definition
@@ -29,6 +30,8 @@ abstract class AbstractType extends AbstractXsdComponent implements
 
     protected $baseType_; ///< ?TypeInterface
 
+    private $rdfaData_ = false; ///< RdfData
+
     /**
      * The $baseType parameter has no type declaration because ComplexType
      * initializes it with `false` to mark it as uninitialized.
@@ -49,63 +52,29 @@ abstract class AbstractType extends AbstractXsdComponent implements
     }
 
     /**
-     * @brief Get the first `<xh:meta>` element for the given property in this
-     * type or its closest base type, if any
+     * @copydoc alcamo::dom::schema::component::TypeInterface::getRdfaData()
      *
-     * If the first such element has no `content` attribute, return
-     * `null`. This allows to prevent a type from inheriting a base type's
-     * `<xh:meta>`.
+     * Any statement in a type replaces all statements abpout the same
+     * property in its base type.
      */
-    public function getAppinfoMeta(string $property): ?XsdElement
+    public function getRdfaData(): ?RdfaData
     {
-        for (
-            $type = $this;
-            $type instanceof self;
-            $type = $type->getBaseType()
-        ) {
-            foreach (
-                $type->xsdElement_->query(static::XH_META_XPATH) as $meta
-            ) {
-                /* This takes advantage of the magic attribute access in class
-                alcamo::dom::extended::Attr which transforms the `property`
-                attribute from a CURIE to a URI. A simple comparison within
-                the XPath is not sufficient here because XPath 1.0 has no
-                means to handle CURIEs. */
-                if (in_array($property, $meta->property)) {
-                    return isset($meta->content) ? $meta : null;
-                }
+        if ($this->rdfaData_ === false) {
+            $baseType = $this->getBaseType();
+
+            if ($baseType instanceof self) {
+                $baseRdfaData = $baseType->getXsdElement()->getRdfaData();
+            }
+
+            if (isset($baseRdfaData)) {
+                $this->rdfaData_ = $baseRdfaData->replace(
+                    $this->getXsdElement()->getRdfaData()
+                );
+            } else {
+                $this->rdfaData_ = $this->getXsdElement()->getRdfaData();
             }
         }
 
-        return null;
-    }
-
-
-    /**
-     * @brief Get the first `<xh:link>` element for the given relation in this
-     * type or its closest base type, if any
-     *
-     * If the first such element has no `href` attribute, return
-     * `null`. This allows to prevent a type from inheriting a base type's
-     * `<xh:link>`.
-     */
-    public function getAppinfoLink(string $rel): ?XsdElement
-    {
-        for (
-            $type = $this;
-            $type instanceof self;
-            $type = $type->getBaseType()
-        ) {
-            foreach (
-                $type->xsdElement_->query(static::XH_LINK_XPATH) as $link
-            ) {
-                /* See getAppinfoMeta(). */
-                if (in_array($rel, $link->rel)) {
-                    return isset($link->href) ? $link : null;
-                }
-            }
-        }
-
-        return null;
+        return $this->rdfaData_;
     }
 }

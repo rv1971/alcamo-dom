@@ -10,7 +10,7 @@ use alcamo\dom\schema\Schema;
  *
  * @date Last reviewed 2025-11-06
  */
-class ComplexType extends AbstractType implements TypeInterface
+class ComplexType extends AbstractType
 {
     private const DERIVATION_XPATH =
         'xsd:simpleContent/xsd:restriction'

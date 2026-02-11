@@ -38,27 +38,5 @@ class NotationTest extends TestCase
             $fooUri . '#FooNotation',
             (string)$notation->getUri()
         );
-
-        $this->assertSame(
-            false,
-            $notation->getAppinfoMeta(self::BAR_NS . 'fooish')->content
-        );
-
-        $this->assertSame(
-            true,
-            $notation->getAppinfoMeta(self::BAR_NS . 'fooable')->content
-        );
-
-        $this->assertNull($notation->getAppinfoMeta(self::BAR_NS . 'barish'));
-
-        $this->assertSame(
-            'http://foo.example.org/documentation/FooNotation',
-            $notation->getAppinfoLink(Schema::DC_NS . 'seeAlso')->href
-        );
-
-        $this->assertSame(
-            'http://foo.example.org/FooNotation/coolVersion',
-            $notation->getAppinfoLink(Schema::DC_NS . 'hasVersion')->href
-        );
     }
 }

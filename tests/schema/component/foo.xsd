@@ -13,28 +13,15 @@
       name="FooNotation"
       id="FooNotation"
       public="application/x-foo"
-      system="http://foo.example.org/FooData">
-    <xsd:annotation>
-      <xsd:appinfo xmlns="http://www.w3.org/1999/xhtml">
-        <meta property="bar:barish"/>
-        <meta property="bar:fooish" datatype="xsd:boolean" content="false"/>
-        <meta property="bar:fooable" datatype="xsd:boolean" content="true"/>
-        <link
-            rel="dc:seeAlso"
-            href="http://foo.example.org/documentation/FooNotation"/>
-        <link
-            rel="dc:hasVersion"
-            href="http://foo.example.org/FooNotation/coolVersion"/>
-        <link
-            rel="dc:hasVersion"
-            href="http://foo.example.org/FooNotation/uncoolVersion"/>
-      </xsd:appinfo>
-    </xsd:annotation>
-  </xsd:notation>
+      system="http://foo.example.org/FooData"/>
 
   <xsd:simpleType name="FooUnsigned6">
     <xsd:annotation>
       <xsd:appinfo xmlns="http://www.w3.org/1999/xhtml">
+        <meta
+            property="bar:isLimitedInt"
+            datatype="xsd:boolean"
+            content="true"/>
         <meta property="bar:bits" datatype="xsd:byte" content="6"/>
         <link
             rel="dc:seeAlso"
@@ -67,8 +54,7 @@
     <xsd:simpleType>
       <xsd:annotation>
         <xsd:appinfo xmlns="http://www.w3.org/1999/xhtml">
-          <meta property="bar:bits"/>
-          <link rel="dc:seeAlso"/>
+          <meta property="bar:bits" content=''/>
         </xsd:appinfo>
       </xsd:annotation>
 

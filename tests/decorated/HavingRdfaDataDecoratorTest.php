@@ -39,6 +39,11 @@ class HavingRdfaDataDecoratorTest extends TestCase
 
     public function getRdfaDataProvider(): array
     {
+        $booleanTrue = new BooleanLiteral(true);
+
+        /* To fill Uri::composedComponents */
+        (string)$booleanTrue->getDatatypeUri();
+
         return [
             [
                 'root',
@@ -64,7 +69,7 @@ class HavingRdfaDataDecoratorTest extends TestCase
                         new LangStringLiteral('Bob', 'en')
                     ],
                     [ 'rdfs:seeAlso', 'http://www.example.com/bob/mydoc' ],
-                    [ 'dc:bazzable', new BooleanLiteral(true) ],
+                    [ 'dc:bazzable', $booleanTrue ],
                     [ 'dc:created', '2026-02-10' ],
                     [ 'dc:modified', '2026-02-10' ],
                     [

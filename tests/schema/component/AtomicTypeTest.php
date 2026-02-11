@@ -3,6 +3,11 @@
 namespace alcamo\dom\schema\component;
 
 use alcamo\dom\schema\{Schema, SchemaFactory};
+use alcamo\rdfa\{
+    BooleanLiteral,
+    IntegerLiteral,
+    RdfaData
+};
 use alcamo\uri\FileUriFactory;
 use alcamo\xml\XName;
 use PHPUnit\Framework\TestCase;
@@ -139,45 +144,71 @@ class AtomicTypeTest extends TestCase
 
     public function testAppinfo()
     {
+        $booleanTrue = new BooleanLiteral(true);
+
+        $int6Literal = new IntegerLiteral(6, Schema::XSD_NS . '#byte');
+
+        $int5Literal = new IntegerLiteral(5, Schema::XSD_NS . '#byte');
+
+        /* To fill Uri::composedComponents */
+        (string)$booleanTrue->getDatatypeUri();
+        (string)$int6Literal->getDatatypeUri();
+        (string)$int5Literal->getDatatypeUri();
+
         $fooUri = (new FileUriFactory())
             ->create(__DIR__ . DIRECTORY_SEPARATOR . 'foo.xsd');
 
         /* Contains XMLSchema.xsd as built-in. */
         $schema = (new SchemaFactory())->createFromUris([ $fooUri ]);
 
-        $fooIntType =
+        $fooInt =
             $schema->getGlobalElement(self::FOO_NS . ' foo-int')->getType();
 
-        $this->assertNull(
-            $fooIntType->getAppinfoMeta(self::BAR_NS . 'bits')
-        );
-
-        $this->assertNull(
-            $fooIntType->getAppinfoLink(Schema::DC_NS . 'seeAlso')
-        );
-
-        $fooUnsigned5 = $fooIntType->getBaseType();
-
-        $this->assertSame(
-            5,
-            $fooUnsigned5->getAppinfoMeta(self::BAR_NS . 'bits')->content
-        );
-
-        $this->assertSame(
-            'http://foo.example.org/documentation/FooUnsigned5',
-            $fooUnsigned5->getAppinfoLink(Schema::DC_NS . 'seeAlso')->href
-        );
+        $fooUnsigned5 = $fooInt->getBaseType();
 
         $fooUnsigned6 = $fooUnsigned5->getBaseType();
 
-        $this->assertSame(
-            6,
-            $fooUnsigned6->getAppinfoMeta(self::BAR_NS . 'bits')->content
+        $this->assertEquals(
+            RdfaData::newFromIterable(
+                [
+                    [ self::BAR_NS . 'isLimitedInt', $booleanTrue ],
+                    [ self::BAR_NS . 'bits', $int6Literal ],
+                    [
+                        Schema::DC_NS . 'seeAlso',
+                        'http://foo.example.org/documentation/FooUnsigned6'
+                    ]
+                ],
+                null,
+                RdfaData::URI_AS_KEY
+            ),
+            $fooUnsigned6->getRdfaData()
         );
 
-        $this->assertSame(
-            'http://foo.example.org/documentation/FooUnsigned6',
-            $fooUnsigned6->getAppinfoLink(Schema::DC_NS . 'seeAlso')->href
+        $this->assertEquals(
+            RdfaData::newFromIterable(
+                [
+                    [ self::BAR_NS . 'isLimitedInt', $booleanTrue ],
+                    [ self::BAR_NS . 'bits', $int5Literal ],
+                    [
+                        Schema::DC_NS . 'seeAlso',
+                        'http://foo.example.org/documentation/FooUnsigned5'
+                    ],
+                ],
+                null,
+                RdfaData::URI_AS_KEY
+            ),
+            $fooUnsigned5->getRdfaData()
+        );
+
+        $this->assertEquals(
+            RdfaData::newFromIterable(
+                [
+                    [ self::BAR_NS . 'isLimitedInt', $booleanTrue ]
+                ],
+                null,
+                RdfaData::URI_AS_KEY
+            ),
+            $fooInt->getRdfaData()
         );
     }
 }

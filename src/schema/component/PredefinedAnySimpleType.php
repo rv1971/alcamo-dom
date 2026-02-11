@@ -4,6 +4,7 @@ namespace alcamo\dom\schema\component;
 
 use alcamo\dom\decorated\Element as XsdElement;
 use alcamo\dom\schema\Schema;
+use alcamo\rdfa\RdfaData;
 use alcamo\xml\XName;
 
 /**
@@ -75,5 +76,15 @@ class PredefinedAnySimpleType extends AbstractPredefinedComponent implements
     public function isIntegral(): bool
     {
         return false;
+    }
+
+    /**
+     * @copydoc alcamo::dom::schema::component::TypeInterface::getRdfaData()
+     *
+     * @return Always `null` since `anySimpleType` has no RDFa data.
+     */
+    public function getRdfaData(): ?RdfaData
+    {
+        return null;
     }
 }
