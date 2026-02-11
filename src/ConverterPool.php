@@ -4,6 +4,7 @@ namespace alcamo\dom;
 
 use alcamo\binary_data\BinaryString;
 use alcamo\collection\ReadonlyPrefixSet;
+use alcamo\dom\extended\DomNodeInterface as ExtendedDomNodeInterface;
 use alcamo\dom\psvi\Document as PsviDocument;
 use alcamo\dom\schema\{Converter, SchemaFactory, TargetNsCache, TypeMap};
 use alcamo\exception\{OutOfRange, SyntaxError};
@@ -21,8 +22,9 @@ use Psr\Http\Message\UriInterface;
  *
  * Each function takes the value as its first parameter. Some take the DOM
  * node as their second one. It is deliberate that the second one is mostly of
- * type \DOMNode and only in some cases of type alcamo::dom::DomNodeInterface,
- * to be just as restrictive as necessary, not more.
+ * type \DOMNode and only in some cases of more advanced types such as
+ * alcamo::dom::DomNodeInterface, to be just as restrictive as necessary, not
+ * more.
  *
  * @date Last reviewed 2021-07-01
  */
@@ -137,7 +139,7 @@ class ConverterPool implements NamespaceConstantsInterface
      */
     public static function toLiteral(
         string $value,
-        DomNodeInterface $context
+        ExtendedDomNodeInterface $context
     ): LiteralInterface {
         $element =
             $context instanceof \DOMElement ? $context : $context->parentNode;

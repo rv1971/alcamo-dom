@@ -10,7 +10,7 @@ use alcamo\rdfa\Lang;
  *
  * @date Last reviewed 2025-10-23
  */
-class Attr extends BaseAttr
+class Attr extends BaseAttr implements DomNodeInterface
 {
     use RegisteredNodeTrait;
 

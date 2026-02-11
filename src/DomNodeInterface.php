@@ -5,7 +5,7 @@ namespace alcamo\dom;
 use alcamo\xml\NamespaceConstantsInterface;
 
 /**
- * @brief Common interface for classes to use in DOMDocument::registerNodeClass()
+ * @brief Common interface for DOM node classes in this namespace
  *
  * @date Last reviewed 2025-12-09
  */

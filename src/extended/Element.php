@@ -9,7 +9,7 @@ use alcamo\dom\Element as BaseElement;
  *
  * @date Last reviewed 2025-11-05
  */
-class Element extends BaseElement
+class Element extends BaseElement implements DomNodeInterface
 {
     use HavingLangTrait;
     use HavingPositionTrait;
