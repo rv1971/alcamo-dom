@@ -10,9 +10,9 @@ use alcamo\rdfa\{
     DateLiteral,
     Lang,
     LangStringLiteral,
-    Literal,
     MediaType,
-    Node
+    Node,
+    StringLiteral
 };
 use alcamo\time\Duration;
 use alcamo\uri\{FileUriFactory, Uri};
@@ -160,7 +160,7 @@ class ConverterPoolTest extends TestCase
             [ 'toInt', 42 ],
             [ 'toIntSet', new Set([ 42, -42, 0, 7, 5 ]) ],
             [ 'toLang', Lang::newFromPrimaryAndRegion('yo', 'NG') ],
-            [ 'toLiteral.1', new Literal('Lorem ipsum') ],
+            [ 'toLiteral.1', new StringLiteral('Lorem ipsum') ],
             [ 'toLiteral.2', new LangStringLiteral('libertà', 'it') ],
             [ 'toLiteral.3', new DateLiteral('2026-01-30') ],
             [ 'toLiteral.4', new BooleanLiteral(true) ],

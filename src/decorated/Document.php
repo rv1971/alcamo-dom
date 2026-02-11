@@ -4,6 +4,7 @@ namespace alcamo\dom\decorated;
 
 use alcamo\dom\DocumentFactoryInterface;
 use alcamo\dom\extended\Document as BaseDocument;
+use alcamo\rdfa\RdfaFactory;
 
 /**
  * @namespace alcamo::dom::decorated
@@ -27,4 +28,15 @@ class Document extends BaseDocument
 
     /** @copybrief alcamo::dom::Document::DEFAULT_DOCUMENT_FACTORY_CLASS */
     public const DEFAULT_DOCUMENT_FACTORY_CLASS = DocumentFactory::class;
+
+    /// RDFa factory class used to create RDFa data
+    public const RDFA_DATA_FACTORY_CLASS = RdfaFactory::class;
+
+    /// RDFa factory used to create RDFa data
+    public function getRdfaFactory(): RdfaFactory
+    {
+        $class = static::RDFA_DATA_FACTORY_CLASS;
+
+        return new $class();
+    }
 }

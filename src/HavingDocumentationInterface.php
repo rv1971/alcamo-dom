@@ -34,18 +34,4 @@ interface HavingDocumentationInterface
         ?string $lang = null,
         ?int $fallbackFlags = null
     ): ?string;
-
-    /**
-     * @brief Get a human-readable comment, if present
-     *
-     * @param $lang Desired language.
-     *
-     * @param $fallbackFlags OR-Combination of the constants in
-     * alcamo::dom::HavingDocumentationInterface: which fallbacks to try if a
-     * comment in the desired language is not available.
-     */
-    public function getComment(
-        ?string $lang = null,
-        ?int $fallbackFlags = null
-    ): ?string;
 }

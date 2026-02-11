@@ -1,0 +1,37 @@
+<?xml version='1.0'?>
+
+<foo
+    xmlns="http://foo.example.org"
+    xmlns:dc="http://purl.org/dc/terms/"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xml:lang="en"
+    xml:id="root"
+    dc:title="My title"
+    owl:versionInfo="1.42"
+    rdfs:comment="This is an English-language document."
+    attr-without-ns="irrelevant attribute">
+  <rdfs:comment xml:lang="fr">Ceci est un document en anglais.</rdfs:comment>
+
+  <xsd:annotation>
+    <xsd:appinfo>
+      <dc:creator>Bob</dc:creator>
+      <rdfs:seeAlso>http://www.example.com/bob/mydoc</rdfs:seeAlso>
+    </xsd:appinfo>
+  </xsd:annotation>
+
+  <xsd:annotation>
+    <xsd:appinfo xmlns="http://www.w3.org/1999/xhtml">
+      <meta name="foo" content="ignored"/>
+      <meta property="dc:bazzable" datatype="xsd:boolean" content="true"/>
+      <meta property="dc:created dc:modified" content="2026-02-10"/>
+      <meta property="dc:alternative" xml:lang="de" content="Mein Titel"/>
+      <link
+          rel="dc:source"
+          type="application/json"
+          title="Original data"
+          href="https://www.example.biz/baz"/>
+    </xsd:appinfo>
+  </xsd:annotation>
+</foo>

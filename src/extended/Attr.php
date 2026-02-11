@@ -47,9 +47,9 @@ class Attr extends BaseAttr
             '*' => [
                 'about'             => CP::class . '::uriOrSafeCurieToUri',
                 'content'           => CP::class . '::toRdfaDatatype',
-                'datatype'          => CP::class . '::curieToUri',
-                'property'          => CP::class . '::curieToUri',
-                'rel'               => CP::class . '::xhRelToUri',
+                'datatype'          => CP::class . '::curieToAbsUri',
+                'property'          => CP::class . '::curiesToAbsUris',
+                'rel'               => CP::class . '::xhRelsToUris',
                 'resource'          => CP::class . '::uriOrSafeCurieToUri',
                 'rev'               => CP::class . '::xhRelToUri',
                 'typeof'            => CP::class . '::xhRelToUri'

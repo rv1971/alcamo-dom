@@ -2,14 +2,14 @@
 
 namespace alcamo\dom;
 
-use alcamo\rdfa\Lang;
+use alcamo\rdfa\{HavingLangInterface, Lang};
 
 /**
  * @brief Text class for use in DOMDocument::registerNodeClass()
  *
  * @date Last reviewed 2025-10-23
  */
-class Text extends \DOMText implements DomNodeInterface
+class Text extends \DOMText implements DomNodeInterface, HavingLangInterface
 {
     use DomNodeTrait;
 

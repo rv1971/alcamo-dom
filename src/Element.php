@@ -3,7 +3,7 @@
 namespace alcamo\dom;
 
 use alcamo\exception\AbsoluteUriNeeded;
-use alcamo\rdfa\Lang;
+use alcamo\rdfa\{HavingLangInterface, Lang};
 use alcamo\xml\HavingXNameInterface;
 use alcamo\uri\{Uri, UriNormalizer};
 use Psr\Http\Message\UriInterface;
@@ -18,6 +18,7 @@ use Psr\Http\Message\UriInterface;
  */
 class Element extends \DOMElement implements
     DomNodeInterface,
+    HavingLangInterface,
     HavingXNameInterface,
     \IteratorAggregate,
     XPathQueryableInterface

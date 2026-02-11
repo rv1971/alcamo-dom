@@ -87,17 +87,11 @@ class DecoratorTest extends TestCase
         $element,
         $lang,
         $fallbackFlags,
-        $expectedLabel,
-        $expectedComment
+        $expectedLabel
     ): void {
         $this->assertEquals(
             $expectedLabel,
             $element->getLabel($lang, $fallbackFlags)
-        );
-
-        $this->assertEquals(
-            $expectedComment,
-            $element->getComment($lang, $fallbackFlags)
         );
     }
 
@@ -109,10 +103,10 @@ class DecoratorTest extends TestCase
         $foo = $factory->createFromUri('foo.xsd', null, false)->conserve();
 
         return [
-           [ $foo['Foo'], 'is', null, null, null ],
-           [ $foo['Foo'], 'is', Decorator::FALLBACK_TO_NAME, 'Foo', null ],
-           [ $foo['Foo'], 'en', null, 'Foo type', 'Example type.' ],
-           [ $foo['Foo'], 'it', null, 'Tipo Foo', 'Tipo come esempio.' ],
+           [ $foo['Foo'], 'is', null, null ],
+           [ $foo['Foo'], 'is', Decorator::FALLBACK_TO_NAME, 'Foo' ],
+           [ $foo['Foo'], 'en', null, 'Foo type' ],
+           [ $foo['Foo'], 'it', null, 'Tipo Foo' ],
         ];
     }
 }

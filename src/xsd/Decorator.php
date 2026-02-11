@@ -22,12 +22,10 @@ use alcamo\xml\XName;
  */
 class Decorator extends HavingDocumentationDecorator
 {
+    public const APPINFO_XPATHS = [ 'xsd:annotation/xsd:appinfo' ];
+
     /// Relative XPath to <rdfs:label> elements
     protected const RDFS_LABEL_XPATH = 'xsd:annotation/xsd:appinfo/rdfs:label';
-
-    /// Relative XPath to <rdfs:comment> elements
-    protected const RDFS_COMMENT_XPATH =
-        'xsd:annotation/xsd:appinfo/rdfs:comment';
 
     private $componentXName_ = false; ///< ?XName
 

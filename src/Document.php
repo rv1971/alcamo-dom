@@ -9,6 +9,7 @@ use alcamo\exception\{
     SyntaxError,
     Uninitialized
 };
+use alcamo\rdfa\{LiteralFactory, RdfaFactory};
 use alcamo\xml\{NamespaceConstantsInterface, NamespaceMapsInterface};
 
 /**
@@ -89,6 +90,12 @@ class Document extends \DOMDocument implements
 
     /// OR-Combination of the above constants
     public const LOAD_FLAGS = 0;
+
+    /// Factory class used to create RDF literal objects
+    public const LITERAL_FACTORY_CLASS = LiteralFactory::class;
+
+    /// Factory class used to create RDFa data
+    public const RDFA_FACTORY_CLASS = RdfaFactory::class;
 
     /**
      * @brief Create a document from a URI
@@ -356,6 +363,22 @@ class Document extends \DOMDocument implements
         }
 
         return $this->xsltStylesheet_;
+    }
+
+    /// Factory used to create RDF literal objects
+    public function getLiteralFactory(): LiteralFactory
+    {
+        $class = static::LITERAL_FACTORY_CLASS;
+
+        return new $class();
+    }
+
+    /// Factory used to create RDFa data
+    public function getRdfaFactory(): RdfaFactory
+    {
+        $class = static::RDFA_FACTORY_CLASS;
+
+        return new $class();
     }
 
     /**

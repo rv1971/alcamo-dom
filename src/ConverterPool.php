@@ -14,6 +14,7 @@ use alcamo\uri\{Uri, UriFromCurieFactory};
 use alcamo\xml\{NamespaceConstantsInterface, XName};
 use alcamo\xpointer\Pointer;
 use Ds\Set;
+use Psr\Http\Message\UriInterface;
 
 /**
  * @brief Pool of converter functions for DOM node values
@@ -141,11 +142,10 @@ class ConverterPool implements NamespaceConstantsInterface
         $element =
             $context instanceof \DOMElement ? $context : $context->parentNode;
 
-        return (new LiteralFactory())->create(
+        return $context->ownerDocument->getLiteralFactory()->create(
             $value,
-            $element->namespaceURI == self::XH_NS
-                && $element->hasAttribute('datatype')
-                ? $element->getAttribute('datatype')
+            $element->namespaceURI == (self::XH_NS && $element->datatype)
+                ? $element->datatype
                 : null,
             $element->getLang()
         );
@@ -289,6 +289,49 @@ class ConverterPool implements NamespaceConstantsInterface
             ->createFromCurieAndContext($value, $context);
     }
 
+    /// Convert list of CURIEs to array of URIs
+    public static function curiesToUris(string $value, \DOMNode $context): array
+    {
+        $uris = [];
+
+        $uriFactory = new UriFromCurieFactory();
+
+        foreach (self::toArray($value) as $curie) {
+            $uris[] = $uriFactory->createFromCurieAndContext($curie, $context);
+        }
+
+        return $uris;
+    }
+
+    /// Call alcamo::uri::UriFromCurieFactory::createFromCurieAndContext()
+    public static function curieToAbsUri(
+        string $value,
+        \DOMNode $context
+    ): UriInterface {
+        return $context->resolveUri(
+            (new UriFromCurieFactory())
+                ->createFromCurieAndContext($value, $context)
+        );
+    }
+
+    /// Convert list of CURIEs to array of absolute URIs
+    public static function curiesToAbsUris(
+        string $value,
+        \DOMNode $context
+    ): array {
+        $uris = [];
+
+        $uriFactory = new UriFromCurieFactory();
+
+        foreach (self::toArray($value) as $curie) {
+            $uris[] = $context->resolveUri(
+                $uriFactory->createFromCurieAndContext($curie, $context)
+            );
+        }
+
+        return $uris;
+    }
+
     /// Call alcamo::uri::UriFromCurieFactory::createFromSafeCurieAndContext()
     public static function safeCurieToUri(string $value, \DOMNode $context): Uri
     {
@@ -304,10 +347,31 @@ class ConverterPool implements NamespaceConstantsInterface
     }
 
     /// Call alcamo::uri::UriFromCurieFactory::createFromCurieAndContext()
-    public static function xhRelToUri(string $value, \DOMNode $context): Uri
+    public static function xhRelToUri(
+        string $value,
+        \DOMNode $context
+    ): UriInterface {
+        return $context->resolveUri(
+            (new UriFromCurieFactory())
+                ->createFromCurieAndContext($value, $context, self::XHV_NS)
+        );
+    }
+
+    /// Convert list of XHTML relation CURIEs to array of URIs
+    public static function xhRelsToUris(string $value, \DOMNode $context): array
     {
-        return (new UriFromCurieFactory())
-            ->createFromCurieAndContext($value, $context, self::XHV_NS);
+        $uris = [];
+
+        $uriFactory = new UriFromCurieFactory();
+
+        foreach (self::toArray($value) as $curie) {
+            $uris[] = $context->resolveUri(
+                $uriFactory
+                    ->createFromCurieAndContext($curie, $context, self::XHV_NS)
+            );
+        }
+
+        return $uris;
     }
 
     /// Process an XPointer URI
@@ -400,9 +464,8 @@ class ConverterPool implements NamespaceConstantsInterface
             return $value;
         }
 
-        $typeXName = TargetNsCache::getInstance()->typeUriToTypeXName(
-            $element->resolveUri($element->datatype)
-        );
+        $typeXName = TargetNsCache::getInstance()
+            ->typeUriToTypeXName($element->datatype);
 
         /** Look for a converter in the $context document, if it is of type
          *  alcamo::dom::psvi::Document, otherwise use the builtin converter

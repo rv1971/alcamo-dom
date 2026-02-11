@@ -91,40 +91,4 @@ class HavingDocumentationDecoratorTest extends TestCase
             [ 2, 'fr', null, 'Text bref' ]
         ];
     }
-
-    /**
-     * @dataProvider getCommentProvider
-     */
-    public function testGetComment(
-        $pos,
-        $lang,
-        $fallbackFlags,
-        $expectedComment
-    ): void {
-        $elements = self::$doc_->documentElement->childNodes;
-
-        $this->assertSame(
-            $expectedComment,
-            $elements->item($pos)->getComment($lang, $fallbackFlags)
-        );
-    }
-
-    public function getCommentProvider(): array
-    {
-        return [
-            [ 0, null, null, 'empty' ],
-            [ 0, 'is', null, 'empty' ],
-            [ 0, 'yo', null, 'empty' ],
-            [ 1, null, null, 'Questo testo è piuttosto breve.' ],
-            [ 1, 'en', null, 'This is a quite short text.' ],
-            [ 1, 'it', null, 'Questo testo è piuttosto breve.' ],
-            [ 1, 'es', null, null ],
-            [
-                1,
-                'es',
-                HDD::FALLBACK_TO_OTHER_LANG,
-                'Questo testo è piuttosto breve.'
-            ]
-        ];
-    }
 }

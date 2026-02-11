@@ -4,6 +4,10 @@ namespace alcamo\dom\decorated;
 
 use alcamo\exception\MethodNotFound;
 use alcamo\dom\extended\Element as BaseElement;
+use alcamo\dom\xh\{
+    LinkDecorator as XhLinkDecorator,
+    MetaDecorator as XhMetaDecorator
+        };
 use alcamo\dom\xsd\{Decorator as XsdDecorator, Enumerator};
 
 /**
@@ -25,6 +29,10 @@ class Element extends BaseElement
      * are not explicitly listed.
      */
     public const DECORATOR_MAP = [
+        self::XH_NS => [
+            'link' => XhLinkDecorator::class,
+            'meta' => XhMetaDecorator::class
+        ],
         self::XSD_NS => [
             'enumeration' => Enumerator::class,
             '*' => XsdDecorator::class

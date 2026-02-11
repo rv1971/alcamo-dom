@@ -14,6 +14,8 @@ use alcamo\dom\HavingDocumentationInterface;
  */
 trait HavingDocumentationTrait
 {
+    use HavingRdfaDataTrait;
+
     /** @copydoc alcamo::dom::HavingDocumentationInterface::getLabel() */
     public function getLabel(
         ?string $lang = null,
@@ -49,14 +51,6 @@ trait HavingDocumentationTrait
         return $fallbackFlags & self::FALLBACK_TO_NAME
             ? $this->handler_->localName
             : null;
-    }
-
-    /** @copydoc alcamo::dom::HavingDocumentationInterface::getComment() */
-    public function getComment(
-        ?string $lang = null,
-        ?int $fallbackFlags = null
-    ): ?string {
-        return $this->getRdfsComment($lang, $fallbackFlags);
     }
 
     /// Get label from <rdfs:label> or rdfs:label attribute, if any
@@ -125,67 +119,5 @@ trait HavingDocumentationTrait
         $sameAs = $this->handler_->{'owl:sameAs'};
 
         return isset($sameAs) ? $sameAs->getFragment() : null;
-    }
-
-    /// Get comment from <rdfs:comment> or rdfs:comment attribute, if any
-    protected function getRdfsComment(
-        ?string $lang = null,
-        ?int $fallbackFlags = null
-    ): ?string {
-        /**
-         * - If a specific language is requested and there is an
-         * `\<rdfs:comment>` child for it, return its value.
-         */
-        if (isset($lang)) {
-            $commentElement = $this->handler_->query(
-                static::RDFS_COMMENT_XPATH . "[@xml:lang = '$lang']"
-            )[0];
-
-            if (isset($commentElement)) {
-                return $commentElement->nodeValue;
-            }
-
-            /* If there is no element with an explicit corresponding language,
-             * look for one that inherits the language. */
-            $commentElement = $this->handler_->query(
-                static::RDFS_COMMENT_XPATH . "[not(@xml:lang)]"
-            )[0];
-
-            if (isset($commentElement) && $commentElement->getLang() == $lang) {
-                return $commentElement->nodeValue;
-            }
-        }
-
-        /**
-         * - Otherwise (i.e. if no specific language is requested or the
-         * requested language has not been found), if the present element (not
-         * a descendent of it) has an `rdfs:comment` attribute, return its
-         * content. This way, the attribute, if present, acts as a
-          * language-agnostic default comment.
-         */
-        $commentAttr = $this->handler_->{'rdfs:comment'};
-
-        if (isset($commentAttr)) {
-            return $commentAttr;
-        }
-
-        /*
-         * - Otherwise, if no specific language is requested or $fallbackFlags
-         * contains GetCommentInterface::FALLBACK_TO_OTHER_LANG, return the
-         * first `\<rdfs:comment>` child found, regardless of its
-         * language. Thus, the document author decides about the default
-         * fallback language by putting the corresponding comment in the first
-         * place.
-         */
-        if (!isset($lang) || $fallbackFlags & self::FALLBACK_TO_OTHER_LANG) {
-            $commentElement =
-                $this->handler_->query(static::RDFS_COMMENT_XPATH)[0];
-
-            if (isset($commentElement)) {
-                return $commentElement->nodeValue;
-            }
-        }
-
-        return null;
     }
 }

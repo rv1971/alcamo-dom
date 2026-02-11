@@ -71,7 +71,7 @@ abstract class AbstractType extends AbstractXsdComponent implements
                 attribute from a CURIE to a URI. A simple comparison within
                 the XPath is not sufficient here because XPath 1.0 has no
                 means to handle CURIEs. */
-                if ($meta->property == $property) {
+                if (in_array($property, $meta->property)) {
                     return isset($meta->content) ? $meta : null;
                 }
             }
@@ -100,7 +100,7 @@ abstract class AbstractType extends AbstractXsdComponent implements
                 $type->xsdElement_->query(static::XH_LINK_XPATH) as $link
             ) {
                 /* See getAppinfoMeta(). */
-                if ($link->rel == $rel) {
+                if (in_array($rel, $link->rel)) {
                     return isset($link->href) ? $link : null;
                 }
             }

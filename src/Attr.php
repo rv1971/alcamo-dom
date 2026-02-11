@@ -2,7 +2,7 @@
 
 namespace alcamo\dom;
 
-use alcamo\rdfa\Lang;
+use alcamo\rdfa\{HavingLangInterface, Lang};
 use alcamo\xml\HavingXNameInterface;
 
 /**
@@ -10,7 +10,10 @@ use alcamo\xml\HavingXNameInterface;
  *
  * @date Last reviewed 2025-10-23
  */
-class Attr extends \DOMAttr implements DomNodeInterface, HavingXNameInterface
+class Attr extends \DOMAttr implements
+    DomNodeInterface,
+    HavingLangInterface,
+    HavingXNameInterface
 {
     use DomNodeTrait;
     use HavingXNameTrait;
