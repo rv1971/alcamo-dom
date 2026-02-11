@@ -77,7 +77,8 @@ class HavingDocumentationDecoratorTest extends TestCase
             ],
             [ 1, null, null, 'Very short text' ],
             [ 1, 'en', null, 'Very short text' ],
-            [ 1, 'fr', null, 'Very short text' ],
+            [ 1, 'fr', null, null ],
+            [ 1, 'fr', HDD::FALLBACK_TO_OTHER_LANG, 'Very short text' ],
             [ 2, 'ee', null, null ],
             [
                 2,

@@ -28,7 +28,4 @@ class HavingDocumentationDecorator extends AbstractElementDecorator implements
 
     /// XPaths where metadata elements can be found
     public const APPINFO_XPATHS = [ '.', 'xsd:annotation/xsd:appinfo' ];
-
-    /// Relative XPath to <rdfs:label> elements
-    protected const RDFS_LABEL_XPATH = 'rdfs:label';
 }

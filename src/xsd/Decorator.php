@@ -24,9 +24,6 @@ class Decorator extends HavingDocumentationDecorator
 {
     public const APPINFO_XPATHS = [ 'xsd:annotation/xsd:appinfo' ];
 
-    /// Relative XPath to <rdfs:label> elements
-    protected const RDFS_LABEL_XPATH = 'xsd:annotation/xsd:appinfo/rdfs:label';
-
     private $componentXName_ = false; ///< ?XName
 
     /**
@@ -86,7 +83,11 @@ class Decorator extends HavingDocumentationDecorator
         ?int $fallbackFlags = null
     ): ?string {
         /** - Use <rdfs:label> or rdfs:label attribute, if applicable. */
-        $label = $this->getRdfsLabel($lang, $fallbackFlags);
+        $label = $this->getRdfaData()->findStmtWithLang(
+            'rdfs:label',
+            $lang,
+            !($fallbackFlags & self::FALLBACK_TO_OTHER_LANG)
+        );
 
         if (isset($label)) {
             return $label;

@@ -21,8 +21,12 @@ trait HavingDocumentationTrait
         ?string $lang = null,
         ?int $fallbackFlags = null
     ): ?string {
-        /** - Use <rdfs:label> or rdfs:label attribute, if applicable. */
-        $label = $this->getRdfsLabel($lang, $fallbackFlags);
+        /** - Use rdfs:label from metadata in XML, if present. */
+        $label = $this->getRdfaData()->findStmtWithLang(
+            'rdfs:label',
+            $lang,
+            !($fallbackFlags & self::FALLBACK_TO_OTHER_LANG)
+        );
 
         if (isset($label)) {
             return $label;
@@ -53,71 +57,13 @@ trait HavingDocumentationTrait
             : null;
     }
 
-    /// Get label from <rdfs:label> or rdfs:label attribute, if any
-    protected function getRdfsLabel(
-        ?string $lang = null,
-        ?int $fallbackFlags = null
-    ): ?string {
-        /**
-         * - If a specific language is requested and there is an
-         * `\<rdfs:label>` child for it, return its value.
-         */
-        if (isset($lang)) {
-            $labelElement = $this->handler_
-                ->query(static::RDFS_LABEL_XPATH . "[@xml:lang = '$lang']")[0];
-
-            if (isset($labelElement)) {
-                return $labelElement->nodeValue;
-            }
-
-            /* If there is no element with an explicit corresponding language,
-             * look for one that inherits the language. */
-            $labelElement = $this->handler_
-                ->query(static::RDFS_LABEL_XPATH . "[not(@xml:lang)]")[0];
-
-            if (isset($labelElement) && $labelElement->getLang() == $lang) {
-                return $labelElement->nodeValue;
-            }
-        }
-
-        /**
-         * - Otherwise (i.e. if no specific language is requested or the
-         * requested language has not been found), if the present element (not
-         * a descendent of it) has an `rdfs:label` attribute, return its
-         * content. This way, the attribute, if present, acts as a
-         * language-agnostic default label.
-         */
-        $labelAttr = $this->handler_->{'rdfs:label'};
-
-        if (isset($labelAttr)) {
-            return $labelAttr;
-        }
-
-        /*
-         * - Otherwise, if no specific language is requested or $fallbackFlags
-         * contains HavingDocumentationInterface::FALLBACK_TO_OTHER_LANG,
-         * return the first `\<rdfs:label>` child found, regardless of its
-         * language. Thus, the document author decides about the default
-         * fallback language by putting the corresponding label in the first
-         * place.
-         */
-        if (!isset($lang) || $fallbackFlags & self::FALLBACK_TO_OTHER_LANG) {
-            $labelElement = $this->handler_->query(static::RDFS_LABEL_XPATH)[0];
-
-            if (isset($labelElement)) {
-                return $labelElement->nodeValue;
-            }
-        }
-
-        /** - Otherwise, return `null`. */
-        return null;
-    }
-
     /// Get fragment part of URI in owl:sameAs attribute, if any
     protected function getSameAsFragment(): ?string
     {
-        $sameAs = $this->handler_->{'owl:sameAs'};
+        $sameAs = $this->getRdfaData()['owl:sameAs'];
 
-        return isset($sameAs) ? $sameAs->getFragment() : null;
+        return isset($sameAs)
+            ? $sameAs->first()->getObject()->getUri()->getFragment()
+            : null;
     }
 }
