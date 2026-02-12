@@ -22,10 +22,26 @@ use alcamo\rdfa\RdfaData;
  */
 class MetaDecorator extends AbstractElementDecorator
 {
+    /**
+     * A `\<meta>` element with a `content` attribute that is an empty string
+     * results in RDFa Data that remove any existing RDFa data for the
+     * `propterty`s in that element. This also works for properties that are
+     * normally set by `\<link>` elements.
+     */
     public function createRdfaData(): ?RdfaData
     {
         if (!isset($this->property)) {
             return null;
+        }
+
+        if ($this->content === '') {
+            $rdfaData = RdfaData::newEmpty();
+
+            foreach ($this->property as $property) {
+                $rdfaData->getPropUrisToDelete()->add($property);
+            }
+
+            return $rdfaData;
         }
 
         $literal =

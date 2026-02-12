@@ -55,6 +55,7 @@
       <xsd:annotation>
         <xsd:appinfo xmlns="http://www.w3.org/1999/xhtml">
           <meta property="bar:bits" content=''/>
+          <meta property="dc:seeAlso" content=''/>
         </xsd:appinfo>
       </xsd:annotation>
 

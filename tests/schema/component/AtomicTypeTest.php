@@ -6,6 +6,7 @@ use alcamo\dom\schema\{Schema, SchemaFactory};
 use alcamo\rdfa\{
     BooleanLiteral,
     IntegerLiteral,
+    Node,
     RdfaData
 };
 use alcamo\uri\FileUriFactory;
@@ -175,7 +176,7 @@ class AtomicTypeTest extends TestCase
                     [ self::BAR_NS . 'bits', $int6Literal ],
                     [
                         Schema::DC_NS . 'seeAlso',
-                        'http://foo.example.org/documentation/FooUnsigned6'
+                        new Node('http://foo.example.org/documentation/FooUnsigned6')
                     ]
                 ],
                 null,
@@ -191,7 +192,7 @@ class AtomicTypeTest extends TestCase
                     [ self::BAR_NS . 'bits', $int5Literal ],
                     [
                         Schema::DC_NS . 'seeAlso',
-                        'http://foo.example.org/documentation/FooUnsigned5'
+                        new Node('http://foo.example.org/documentation/FooUnsigned5')
                     ],
                 ],
                 null,

@@ -59,8 +59,7 @@ trait HavingRdfaDataTrait
 
                         if (isset($rdfaData)) {
                             if (isset($this->rdfaData_)) {
-                                $this->rdfaData_ =
-                                    $this->rdfaData_->add($rdfaData);
+                                $this->rdfaData_->add($rdfaData);
                             } else {
                                 $this->rdfaData_ = $rdfaData;
                             }
@@ -91,7 +90,7 @@ trait HavingRdfaDataTrait
 
             if (isset($rdfaData)) {
                 if (isset($this->rdfaData_)) {
-                    $this->rdfaData_ = $this->rdfaData_->add($rdfaData);
+                    $this->rdfaData_->add($rdfaData);
                 } else {
                     $this->rdfaData_ = $rdfaData;
                 }

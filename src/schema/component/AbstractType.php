@@ -63,7 +63,7 @@ abstract class AbstractType extends AbstractXsdComponent implements
             $baseType = $this->getBaseType();
 
             if ($baseType instanceof self) {
-                $baseRdfaData = $baseType->getXsdElement()->getRdfaData();
+                $baseRdfaData = clone $baseType->getRdfaData();
             }
 
             if (isset($baseRdfaData)) {
@@ -71,7 +71,7 @@ abstract class AbstractType extends AbstractXsdComponent implements
                     $this->getXsdElement()->getRdfaData()
                 );
             } else {
-                $this->rdfaData_ = $this->getXsdElement()->getRdfaData();
+                $this->rdfaData_ = clone $this->getXsdElement()->getRdfaData();
             }
         }
 
