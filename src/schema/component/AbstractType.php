@@ -12,6 +12,9 @@ use alcamo\rdfa\RdfaData;
 abstract class AbstractType extends AbstractXsdComponent implements
     TypeInterface
 {
+    /// RDF properties not to inherit to derived types
+    public const NO_INHERIT_PROPS = [ 'dc:title', 'rdfs:label' ];
+
     /**
      * @brief Factory method creating the most specific type that it can
      * recognize
@@ -54,7 +57,7 @@ abstract class AbstractType extends AbstractXsdComponent implements
     /**
      * @copydoc alcamo::dom::schema::component::TypeInterface::getRdfaData()
      *
-     * Any statement in a type replaces all statements abpout the same
+     * Any statement in a type replaces all statements about the same
      * property in its base type.
      */
     public function getRdfaData(): ?RdfaData
@@ -64,6 +67,10 @@ abstract class AbstractType extends AbstractXsdComponent implements
 
             if ($baseType instanceof self) {
                 $baseRdfaData = clone $baseType->getRdfaData();
+
+                foreach (static::NO_INHERIT_PROPS as $prop) {
+                    unset($baseRdfaData[$prop]);
+                }
             }
 
             if (isset($baseRdfaData)) {

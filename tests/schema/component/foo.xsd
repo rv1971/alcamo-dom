@@ -18,6 +18,7 @@
   <xsd:simpleType name="FooUnsigned6">
     <xsd:annotation>
       <xsd:appinfo xmlns="http://www.w3.org/1999/xhtml">
+        <rdfs:label>Foo Unsigned 6</rdfs:label>
         <meta
             property="bar:isLimitedInt"
             datatype="xsd:boolean"

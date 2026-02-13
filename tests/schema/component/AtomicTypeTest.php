@@ -6,14 +6,15 @@ use alcamo\dom\schema\{Schema, SchemaFactory};
 use alcamo\rdfa\{
     BooleanLiteral,
     IntegerLiteral,
+    LangStringLiteral,
     Node,
     RdfaData
 };
 use alcamo\uri\FileUriFactory;
-use alcamo\xml\XName;
+use alcamo\xml\{NamespaceConstantsInterface, XName};
 use PHPUnit\Framework\TestCase;
 
-class AtomicTypeTest extends TestCase
+class AtomicTypeTest extends TestCase implements NamespaceConstantsInterface
 {
     public const FOO_NS = 'http://foo.example.org';
 
@@ -40,38 +41,38 @@ class AtomicTypeTest extends TestCase
 
         return [
             [
-                $schema->getGlobalType(Schema::XSD_NS . ' boolean'),
-                Schema::XSD_NS . ' boolean',
+                $schema->getGlobalType(self::XSD_NS . ' boolean'),
+                self::XSD_NS . ' boolean',
                 true
             ],
             [
-                $schema->getGlobalType(Schema::XSD_NS . ' int'),
-                Schema::XSD_NS . ' long',
+                $schema->getGlobalType(self::XSD_NS . ' int'),
+                self::XSD_NS . ' long',
                 true
             ],
             [
-                $schema->getGlobalType(Schema::XSD_NS . ' byte'),
-                Schema::XSD_NS . ' integer',
+                $schema->getGlobalType(self::XSD_NS . ' byte'),
+                self::XSD_NS . ' integer',
                 true
             ],
             [
-                $schema->getGlobalType(Schema::XSD_NS . ' float'),
-                Schema::XSD_NS . ' decimal',
+                $schema->getGlobalType(self::XSD_NS . ' float'),
+                self::XSD_NS . ' decimal',
                 false
             ],
             [
-                $schema->getGlobalType(Schema::XSD_NS . ' double'),
-                Schema::XSD_NS . ' decimal',
+                $schema->getGlobalType(self::XSD_NS . ' double'),
+                self::XSD_NS . ' decimal',
                 false
             ],
             [
-                $schema->getGlobalType(Schema::XSD_NS . ' float'),
-                Schema::XSD_NS . ' anySimpleType',
+                $schema->getGlobalType(self::XSD_NS . ' float'),
+                self::XSD_NS . ' anySimpleType',
                 true
             ],
             [
                 $schema->getGlobalElement(self::FOO_NS . ' foo-int')->getType(),
-                Schema::XSD_NS . ' byte',
+                self::XSD_NS . ' byte',
                 true
             ]
         ];
@@ -105,34 +106,34 @@ class AtomicTypeTest extends TestCase
 
         return [
             [
-                $schema->getGlobalType(Schema::XSD_NS . ' string'),
+                $schema->getGlobalType(self::XSD_NS . ' string'),
                 false,
                 false,
-                new XName(Schema::XSD_NS, 'anySimpleType')
+                new XName(self::XSD_NS, 'anySimpleType')
             ],
             [
-                $schema->getGlobalType(Schema::XSD_NS . ' decimal'),
+                $schema->getGlobalType(self::XSD_NS . ' decimal'),
                 true,
                 false,
-                new XName(Schema::XSD_NS, 'anySimpleType')
+                new XName(self::XSD_NS, 'anySimpleType')
             ],
             [
-                $schema->getGlobalType(Schema::XSD_NS . ' float'),
+                $schema->getGlobalType(self::XSD_NS . ' float'),
                 true,
                 false,
-                new XName(Schema::XSD_NS, 'anySimpleType')
+                new XName(self::XSD_NS, 'anySimpleType')
             ],
             [
-                $schema->getGlobalType(Schema::XSD_NS . ' integer'),
+                $schema->getGlobalType(self::XSD_NS . ' integer'),
                 true,
                 true,
-                new XName(Schema::XSD_NS, 'decimal')
+                new XName(self::XSD_NS, 'decimal')
             ],
             [
-                $schema->getGlobalType(Schema::XSD_NS . ' short'),
+                $schema->getGlobalType(self::XSD_NS . ' short'),
                 true,
                 true,
-                new XName(Schema::XSD_NS, 'int')
+                new XName(self::XSD_NS, 'int')
             ],
             [
                 $schema->getGlobalElement(self::FOO_NS . ' foo-int')->getType(),
@@ -147,9 +148,9 @@ class AtomicTypeTest extends TestCase
     {
         $booleanTrue = new BooleanLiteral(true);
 
-        $int6Literal = new IntegerLiteral(6, Schema::XSD_NS . '#byte');
+        $int6Literal = new IntegerLiteral(6, self::XSD_NS . '#byte');
 
-        $int5Literal = new IntegerLiteral(5, Schema::XSD_NS . '#byte');
+        $int5Literal = new IntegerLiteral(5, self::XSD_NS . '#byte');
 
         /* To fill Uri::composedComponents */
         (string)$booleanTrue->getDatatypeUri();
@@ -172,10 +173,14 @@ class AtomicTypeTest extends TestCase
         $this->assertEquals(
             RdfaData::newFromIterable(
                 [
+                    [
+                        self::RDFS_NS . 'label',
+                        new LangStringLiteral('Foo Unsigned 6', 'en')
+                    ],
                     [ self::BAR_NS . 'isLimitedInt', $booleanTrue ],
                     [ self::BAR_NS . 'bits', $int6Literal ],
                     [
-                        Schema::DC_NS . 'seeAlso',
+                        self::DC_NS . 'seeAlso',
                         new Node('http://foo.example.org/documentation/FooUnsigned6')
                     ]
                 ],
@@ -191,7 +196,7 @@ class AtomicTypeTest extends TestCase
                     [ self::BAR_NS . 'isLimitedInt', $booleanTrue ],
                     [ self::BAR_NS . 'bits', $int5Literal ],
                     [
-                        Schema::DC_NS . 'seeAlso',
+                        self::DC_NS . 'seeAlso',
                         new Node('http://foo.example.org/documentation/FooUnsigned5')
                     ],
                 ],
