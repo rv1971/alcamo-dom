@@ -43,8 +43,10 @@ trait HavingDocumentationTrait
             $type instanceof AbstractXsdComponent
             && $fallbackFlags & self::FALLBACK_TO_TYPE_NAME
         ) {
-            return $type->getXsdElement()
-                ->getLabel($lang, $fallbackFlags | self::FALLBACK_TO_NAME);
+            return $type->getRdfaData()['rdfs:label']->findLang(
+                $lang,
+                !($fallbackFlags & self::FALLBACK_TO_OTHER_LANG)
+            );
         }
 
         /**

@@ -4,7 +4,7 @@ namespace alcamo\dom\schema\component;
 
 use alcamo\dom\decorated\Element as XsdElement;
 use alcamo\dom\schema\Schema;
-use alcamo\rdfa\RdfaData;
+use alcamo\rdfa\{LangStringLiteral, RdfaData, RdfsLabel};
 
 /**
  * @brief Type definition
@@ -12,7 +12,7 @@ use alcamo\rdfa\RdfaData;
 abstract class AbstractType extends AbstractXsdComponent implements
     TypeInterface
 {
-    /// RDF properties not to inherit to derived types
+    /// RDFa properties not to inherit to derived types
     public const NO_INHERIT_PROPS = [ 'dc:title', 'rdfs:label' ];
 
     /**
@@ -79,6 +79,22 @@ abstract class AbstractType extends AbstractXsdComponent implements
                 );
             } else {
                 $this->rdfaData_ = clone $this->getXsdElement()->getRdfaData();
+            }
+
+            /** If there is no explicit language-agnostic `rdfs:label`, use
+             *  the type name as a fallback, considered as
+             *  language-agnostic. */
+            if (
+                !$this->rdfaData_->findStmtWithLang('rdfs:label', '-', true)
+                && $this->getXName()
+            ) {
+                $this->rdfaData_->addStmt(
+                    new RdfsLabel(
+                        new LangStringLiteral(
+                            $this->getXName()->getLocalName()
+                        )
+                    )
+                );
             }
         }
 

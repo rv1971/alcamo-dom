@@ -51,7 +51,7 @@ class HavingDocumentationDecoratorTest extends TestCase
             [
                 '*/*[local-name() = "baz"]',
                 'baz',
-                null,
+                'pt',
                 HDD::FALLBACK_TO_TYPE_NAME,
                 'Baz'
             ],
@@ -66,7 +66,7 @@ class HavingDocumentationDecoratorTest extends TestCase
                 '*//*[local-name() = "quux"]',
                 'quux',
                 'fr',
-                HDD::FALLBACK_TO_NAME | HDD::FALLBACK_TO_TYPE_NAME,
+                HDD::FALLBACK_TO_TYPE_NAME,
                 'Quux'
             ],
             [

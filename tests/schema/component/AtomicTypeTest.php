@@ -177,6 +177,10 @@ class AtomicTypeTest extends TestCase implements NamespaceConstantsInterface
                         self::RDFS_NS . 'label',
                         new LangStringLiteral('Foo Unsigned 6', 'en')
                     ],
+                    [
+                        self::RDFS_NS . 'label',
+                        'FooUnsigned6'
+                    ],
                     [ self::BAR_NS . 'isLimitedInt', $booleanTrue ],
                     [ self::BAR_NS . 'bits', $int6Literal ],
                     [
@@ -199,6 +203,10 @@ class AtomicTypeTest extends TestCase implements NamespaceConstantsInterface
                         self::DC_NS . 'seeAlso',
                         new Node('http://foo.example.org/documentation/FooUnsigned5')
                     ],
+                    [
+                        self::RDFS_NS . 'label',
+                        new LangStringLiteral('FooUnsigned5')
+                    ]
                 ],
                 null,
                 RdfaData::URI_AS_KEY
