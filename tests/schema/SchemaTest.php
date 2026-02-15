@@ -30,6 +30,41 @@ class SchemaTest extends TestCase
         );
     }
 
+    public function testAddXsds(): void
+    {
+        $schemaFactory = (new SchemaFactory());
+
+        $schema = $schemaFactory->createFromUris(
+            [
+                (new FileUriFactory())
+                    ->create(dirname(__DIR__) . DIRECTORY_SEPARATOR . 'bar.xsd')
+            ]
+        );
+
+        $this->assertSame(5, count($schema->getTopXsds()));
+
+        $this->assertStringContainsString(
+            'bar.xsd',
+            array_keys($schema->getTopXsds())[2]
+        );
+
+        $schema->addUris(
+            [
+                (new FileUriFactory())
+                    ->create(
+                        dirname(__DIR__) . DIRECTORY_SEPARATOR . 'bar2.xsd'
+                    )
+            ]
+        );
+
+        $this->assertSame(5, count($schema->getTopXsds()));
+
+        $this->assertStringContainsString(
+            'foo.xsd',
+            array_keys($schema->getTopXsds())[2]
+        );
+    }
+
     public function testGetAnyType(): void
     {
         $anySimpleType = self::$schema_->getAnySimpleType();

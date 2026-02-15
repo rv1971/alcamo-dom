@@ -83,25 +83,23 @@ class SchemaFactory implements
      */
     public function createFromUris(iterable $uris): Schema
     {
-        $cacheKey = SchemaCache::getInstance()->createKey($uris);
+        $cache = SchemaCache::getInstance();
 
-        $schema = SchemaCache::getInstance()[$cacheKey] ?? null;
+        $schema = $cache[$cache->createKey($uris)] ?? null;
 
-        if (!isset($schema)) {
-            $xsds = [];
-
-            foreach ($uris as $uri) {
-                $xsds[] = $this->documentFactory_->createFromUri($uri);
-            }
-
-            $class = static::SCHEMA_CLASS;
-
-            $schema = new $class($xsds, $cacheKey);
-
-            SchemaCache::getInstance()->add($schema);
+        if (isset($schema)) {
+            return $schema;
         }
 
-        return $schema;
+        $xsds = [];
+
+        foreach ($uris as $uri) {
+            $xsds[] = $this->documentFactory_->createFromUri($uri);
+        }
+
+        $class = static::SCHEMA_CLASS;
+
+        return new $class($xsds);
     }
 
     /**
@@ -112,19 +110,17 @@ class SchemaFactory implements
      */
     public function createFromXsds(array $xsds): Schema
     {
-        $cacheKey = SchemaCache::getInstance()->createKey($xsds);
+        $cache = SchemaCache::getInstance();
 
-        $schema = SchemaCache::getInstance()[$cacheKey] ?? null;
+        $schema = $cache[$cache->createKey($xsds)] ?? null;
 
-        if (!isset($schema)) {
-            $class = static::SCHEMA_CLASS;
-
-            $schema = new $class($xsds, $cacheKey);
-
-            SchemaCache::getInstance()->add($schema);
+        if (isset($schema)) {
+            return $schema;
         }
 
-        return $schema;
+        $class = static::SCHEMA_CLASS;
+
+        return new $class($xsds);
     }
 
     /// Create a type from an URI reference indicating an XSD element by ID

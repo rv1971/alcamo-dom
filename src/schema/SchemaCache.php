@@ -58,10 +58,8 @@ class SchemaCache implements \ArrayAccess, \Countable
      * @return Whether the schema was actually added. `false` if it was
      * already in the cache.
      */
-    public function add(Schema $schema): bool
+    public function add(string $key, Schema $schema): bool
     {
-        $key = $schema->getCacheKey();
-
         if (isset($this->data_[$key])) {
             if ($this->data_[$key] !== $schema) {
                 /** @throw alcamo::exception::ReadonlyViolation when

@@ -22,11 +22,12 @@ class SchemaCacheTest extends TestCase
 
         $builtinSchema = $schemaFactory->getBuiltinSchema();
 
-        $this->assertSame(1, count($cache));
+        /* one entry for key "", one for the URI of XMLSchema.xsd */
+        $this->assertSame(2, count($cache));
 
         $this->assertStringContainsString(
             'xsd/xhtml-datatypes-1.xsd',
-            $builtinSchema->getCacheKey()
+            $cache->getKeys()[1]
         );
 
         $fileUriFactory = new FileUriFactory();
@@ -43,13 +44,11 @@ class SchemaCacheTest extends TestCase
 
         $fooBarSchema = $schemaFactory->createFromUris([ $fooUri, $barUri ]);
 
-        $this->assertSame(2, count($cache));
-
-        $this->assertSame($fooBarSchema, $cache[$fooBarSchema->getCacheKey()]);
+        $this->assertSame(4, count($cache));
 
         $barFooSchema = $schemaFactory->createFromUris([ $barUri, $fooUri ]);
 
-        $this->assertSame(2, count($cache));
+        $this->assertSame(4, count($cache));
 
         $this->assertSame($fooBarSchema, $barFooSchema);
     }

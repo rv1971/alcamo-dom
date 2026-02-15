@@ -66,7 +66,7 @@ class Schema implements
 
     private $xsds_ = [];             ///< Map of URI string to Xsd
     private $topXsds_ = [];          ///< Map of URI string to Xsd
-    private $cacheKey_;              ///< Key in the schema cache
+    private $nonTopXsds_ = [];       ///< Map of URI string to Xsd
 
     private $globalAttrs_      = []; ///< Map of XName string to Attr
     private $globalAttrGroups_ = []; ///< Map of XName string to AttrGroup
@@ -89,21 +89,28 @@ class Schema implements
      *
      * @param $xsds alcamo::dom::Document objects containing XSDs to include
      * into the schema.
-     *
-     * @param $cacheKey Key to use for this schema in the schema cache.
      */
-    public function __construct(array $xsds, string $cacheKey)
+    public function __construct(array $xsds)
     {
-        $this->cacheKey_ = $cacheKey;
-
         $this->initDocumentFactory(
             $xsds ? reset($xsds)->getDocumentFactory() : null
         );
 
+        $cache = SchemaCache::getInstance();
+
+        $cache->add($cache->createKey($xsds), $this);
+
+        /* Always load XMLSchema.xsd (or get it from cache). */
+        $xsds[] = $this->documentFactory_->createFromUri(
+            (new FileUriFactory())->create(
+                dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR
+                . 'xsd' . DIRECTORY_SEPARATOR . 'XMLSchema.xsd'
+            )
+        );
+
         /** @throw alcamo::exception::AbsoluteUriNeeded when an XSD has a
          *  non-absolute URI. */
-        $this->loadXsds($xsds);
-        $this->initGlobals();
+        $this->addXsds($xsds);
     }
 
     /// Map of URI string to alcamo::dom::Document
@@ -122,12 +129,6 @@ class Schema implements
     public function getTopXsds(): array
     {
         return $this->topXsds_;
-    }
-
-    /// Key in the schema cache
-    public function getCacheKey(): string
-    {
-        return $this->cacheKey_;
     }
 
     public function getGlobalAttr(string $xNameString): ?AttrInterface
@@ -362,16 +363,30 @@ class Schema implements
         return $this->anyType_;
     }
 
-    /// Load XSDs into @ref $xsds_
-    private function loadXsds(array $xsds): void
+    /**
+     * @brief Add XSDs to the schema
+     *
+     * @param $uris URIs of XSDs to include into the schema.
+     */
+    public function addUris(iterable $uris): void
     {
-        /* Always load XMLSchema.xsd (or get it from cache). */
-        $xsds[] = $this->documentFactory_->createFromUri(
-            (new FileUriFactory())->create(
-                dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR
-                . 'xsd' . DIRECTORY_SEPARATOR . 'XMLSchema.xsd'
-            )
-        );
+        $xsds = [];
+
+        foreach ($uris as $uri) {
+            $xsds[] = $this->documentFactory_->createFromUri($uri);
+        }
+
+        $this->addXsds($xsds);
+    }
+
+    /// Add XSDs to the schema
+    public function addXsds(array $xsds): void
+    {
+        $cache = SchemaCache::getInstance();
+
+        $cache->add($cache->createKey($xsds), $this);
+
+        $processedXsds = [];
 
         /* Load indicated XSDs and XSDs referenced therein. */
         while ($xsds) {
@@ -380,8 +395,8 @@ class Schema implements
             $uri =
                 (string)UriNormalizer::normalize(new Uri($xsd->documentURI));
 
-            if (!isset($this->xsds_[$uri])) {
-                $this->xsds_[$uri] = $xsd;
+            if (!isset($processedXsds[$uri])) {
+                $processedXsds[$uri] = $xsd;
 
                 /* Cache all provided XSDs. add() will throw if
                  * documentURI is not absolute. */
@@ -401,7 +416,7 @@ class Schema implements
                         $import->resolveUri($import->schemaLocation)
                     );
 
-                    if (!isset($this->xsds_[(string)$uri])) {
+                    if (!isset($processedXsds[(string)$uri])) {
                         try {
                             $xsds[] =
                                 $this->documentFactory_->createFromUri($uri);
@@ -419,12 +434,15 @@ class Schema implements
                 }
             }
         }
+
+        $this->initGlobals($processedXsds);
     }
 
     /// Initialize all global definitions
-    private function initGlobals(): void
+    private function initGlobals(array $xsds): void
     {
-        $this->topXsds_ = $this->xsds_;
+        $this->topXsds_ += $xsds;
+        $this->xsds_ += $xsds;
 
         /* Setup maps of all global definitions. */
         $globalDefs = [
@@ -437,26 +455,25 @@ class Schema implements
             'simpleType'     => &$this->globalTypes_
         ];
 
-        foreach ($this->xsds_ as $xsd) {
+        foreach ($xsds as $xsd) {
             $targetNs = $xsd->documentElement->targetNamespace ?? null;
 
             // loop top-level XSD elements having name attributes
             foreach ($xsd->documentElement as $elem) {
                 /* Remove XSDs included in other XSDs from
-                 * $this->topXsds_. This must be done here, not in loadXsds(),
+                 * $this->topXsds_. This must be done here, not in addXsds(),
                  * because the XSDs given to the latter might redundantly
                  * contain XSDs also included in other XSDs. */
                 if (
                     $elem->namespaceURI == self::XSD_NS
                     && $elem->localName == 'include'
                 ) {
-                    unset(
-                        $this->topXsds_[
-                            (string)UriNormalizer::normalize(
-                                $elem->resolveUri($elem->schemaLocation)
-                            )
-                        ]
+                    $uri = (string)UriNormalizer::normalize(
+                        $elem->resolveUri($elem->schemaLocation)
                     );
+
+                    $this->nonTopXsds_[$uri] = $xsd;
+                    unset($this->topXsds_[$uri]);
                 }
 
                 if (isset($elem->name)) {
@@ -466,6 +483,10 @@ class Schema implements
                 }
             }
         }
+
+        /* Remove top XSDs which have become non-top because included by the
+         * new XSDs. */
+        $this->topXsds_ = array_diff_key($this->topXsds_, $this->nonTopXsds_);
 
         $this->anyType_ =
             $this->getGlobalType(new XName(self::XSD_NS, 'anyType'));
