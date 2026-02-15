@@ -19,7 +19,7 @@ class PredefinedAnySimpleTypeTest extends TestCase
      * AbstractPredefinedComponent. */
     public function testProps(): void
     {
-        $schema = (new SchemaFactory())->getBuiltinSchema();
+        $schema = (new SchemaFactory())->getMainSchema();
 
         $type = $schema->getAnySimpleType();
 

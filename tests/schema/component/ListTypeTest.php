@@ -9,7 +9,7 @@ class ListTypeTest extends TestCase
 {
     public function test(): void
     {
-        $schema = (new SchemaFactory())->getBuiltinSchema();
+        $schema = (new SchemaFactory())->getMainSchema();
 
         $type = $schema->getGlobalType(Schema::XSD_NS . ' IDREFS');
 

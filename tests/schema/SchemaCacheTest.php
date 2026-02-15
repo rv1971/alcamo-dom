@@ -20,7 +20,7 @@ class SchemaCacheTest extends TestCase
 
         $schemaFactory = new SchemaFactory();
 
-        $builtinSchema = $schemaFactory->getBuiltinSchema();
+        $mainSchema = $schemaFactory->getMainSchema();
 
         /* one entry for key "", one for the URI of XMLSchema.xsd */
         $this->assertSame(2, count($cache));

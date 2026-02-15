@@ -26,7 +26,7 @@ class TypeMapTest extends TestCase
 
     public function testLookup(): void
     {
-        $schema = (new SchemaFactory())->getBuiltinSchema();
+        $schema = (new SchemaFactory())->getMainSchema();
 
         $map = new TypeMap(self::BASE_MAP, '*');
 
@@ -87,7 +87,7 @@ class TypeMapTest extends TestCase
 
     public function testExceptionInAddItems(): void
     {
-        $schema = (new SchemaFactory())->getBuiltinSchema();
+        $schema = (new SchemaFactory())->getMainSchema();
 
         $map = new TypeMap(self::BASE_MAP);
 
@@ -112,7 +112,7 @@ class TypeMapTest extends TestCase
 
     public function testExceptionInReplaceItems(): void
     {
-        $schema = (new SchemaFactory())->getBuiltinSchema();
+        $schema = (new SchemaFactory())->getMainSchema();
 
         $map = new TypeMap(self::BASE_MAP);
 

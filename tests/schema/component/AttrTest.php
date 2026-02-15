@@ -10,7 +10,7 @@ class AttrTest extends TestCase
 {
     public function testProps(): void
     {
-        $schema = (new SchemaFactory())->getBuiltinSchema();
+        $schema = (new SchemaFactory())->getMainSchema();
 
         $schemaElementType =
             $schema->getGlobalElement(Schema::XSD_NS . ' schema')->getType();

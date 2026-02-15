@@ -10,7 +10,7 @@ class ComplexTypeTest extends TestCase
 {
     public function testProps(): void
     {
-        $schema = (new SchemaFactory())->getBuiltinSchema();
+        $schema = (new SchemaFactory())->getMainSchema();
 
         $attributeType = $schema->getGlobalType(Schema::XSD_NS . ' attribute');
 

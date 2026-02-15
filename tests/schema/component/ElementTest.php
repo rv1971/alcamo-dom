@@ -10,7 +10,7 @@ class ElementTest extends TestCase
 {
     public function testProps(): void
     {
-        $schema = (new SchemaFactory())->getBuiltinSchema();
+        $schema = (new SchemaFactory())->getMainSchema();
 
         $annotatedType = $schema->getGlobalType(Schema::XSD_NS . ' annotated');
 

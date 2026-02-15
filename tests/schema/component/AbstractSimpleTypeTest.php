@@ -9,7 +9,7 @@ class AbstractSimpleTypeTest extends TestCase
 {
     public function testNewFromSchemaAndXsdElement(): void
     {
-        $schema = (new SchemaFactory())->getBuiltinSchema();
+        $schema = (new SchemaFactory())->getMainSchema();
 
         $formChoiceType =
             $schema->getGlobalType(Schema::XSD_NS . ' formChoice');

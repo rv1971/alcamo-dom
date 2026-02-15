@@ -12,7 +12,7 @@ class PredefinedAttrTest extends TestCase
      * AbstractPredefinedComponent. */
     public function testProps(): void
     {
-        $schema = (new SchemaFactory())->getBuiltinSchema();
+        $schema = (new SchemaFactory())->getMainSchema();
 
         $xsiNilAttr = $schema->getGlobalAttr(Schema::XSI_NS . ' nil');
 

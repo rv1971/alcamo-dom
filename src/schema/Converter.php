@@ -40,21 +40,21 @@ class Converter implements NamespaceConstantsInterface
         self::XSD_NS . ' QName'        => CP::class . '::toXName'
     ];
 
-    private static $builtinConverter_; ///< Converter
+    private static $mainConverter_; ///< Converter
 
     private $schema_;                  ///< Schema
     private $typeConverters_;          ///< TypeMap
 
-    public static function getBuiltinConverter(): self
+    public static function getMainConverter(): self
     {
-        if (!isset(self::$builtinConverter_)) {
-            self::$builtinConverter_ = new Converter(
-                (new SchemaFactory())->getBuiltinSchema(),
+        if (!isset(self::$mainConverter_)) {
+            self::$mainConverter_ = new Converter(
+                (new SchemaFactory())->getMainSchema(),
                 new TypeMap(static::TYPE_CONVERTER_MAP)
             );
         }
 
-        return self::$builtinConverter_;
+        return self::$mainConverter_;
     }
 
     public function __construct(Schema $schema, TypeMap $typeConverters)

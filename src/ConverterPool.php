@@ -470,12 +470,12 @@ class ConverterPool implements NamespaceConstantsInterface
             ->typeUriToTypeXName($element->datatype);
 
         /** Look for a converter in the $context document, if it is of type
-         *  alcamo::dom::psvi::Document, otherwise use the builtin converter
+         *  alcamo::dom::psvi::Document, otherwise use the main converter
          *  in alcamo::dom::schema::Converter. */
 
         return ($element->ownerDocument instanceof PsviDocument
                 ? $element->ownerDocument->getConverter()
-                : Converter::getBuiltinConverter())
+                : Converter::getMainConverter())
             ->convert($value, $context, $typeXName);
     }
 }

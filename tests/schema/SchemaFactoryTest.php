@@ -92,11 +92,11 @@ class SchemaFactoryTest extends TestCase
         );
     }
 
-    public function testGetBuiltinSchema(): void
+    public function testGetMainSchema(): void
     {
         $factory = new SchemaFactory();
 
-        $schema = $factory->getBuiltinSchema();
+        $schema = $factory->getMainSchema();
 
         $xsds = [];
 
@@ -115,7 +115,7 @@ class SchemaFactoryTest extends TestCase
         );
 
         /* Test caching. */
-        $this->assertSame($schema, $factory->getBuiltinSchema());
+        $this->assertSame($schema, $factory->getMainSchema());
     }
 
     /**

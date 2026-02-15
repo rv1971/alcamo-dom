@@ -135,7 +135,7 @@ class SchemaFactory implements
             TargetNsCache::getInstance()[$uri->withFragment('')]
                 == self::XSD_NS
         ) {
-            return $this->getBuiltinSchema()
+            return $this->getMainSchema()
                 ->getGlobalType(self::XSD_NS . ' ' . $uri->getFragment());
         }
 
@@ -174,7 +174,13 @@ class SchemaFactory implements
         return $this->createFromUris($uris);
     }
 
-    public function getBuiltinSchema(): Schema
+    /**
+     * @brief Schema that can be extended as needed
+     *
+     * Adding all XSDs to one schema may increase performance because common
+     * components need ot be craeted only once.
+     */
+    public function getMainSchema(): Schema
     {
         return $this->createFromUris(
             [
