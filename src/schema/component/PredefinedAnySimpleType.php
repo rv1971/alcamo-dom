@@ -38,6 +38,11 @@ class PredefinedAnySimpleType extends AbstractPredefinedComponent implements
             || $typeXName == $this->baseType_->getXName();
     }
 
+    public function getPrimitiveType(): ?SimpleTypeInterface
+    {
+        return null;
+    }
+
     /**
      * @copydoc alcamo::dom::schema::component::SimpleTypeInterface::getFacet()
      *

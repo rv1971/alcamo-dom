@@ -13,6 +13,8 @@ use alcamo\dom\schema\Schema;
 abstract class AbstractSimpleType extends AbstractType implements
     SimpleTypeInterface
 {
+    private $primitiveType_; ///< self
+
     /**
      * @brief Factory method creating the most specific type that it can
      * recognize
@@ -101,6 +103,17 @@ abstract class AbstractSimpleType extends AbstractType implements
         }
 
         return new AtomicType($schema, $xsdElement);
+    }
+
+    public function getPrimitiveType(): ?SimpleTypeInterface
+    {
+        if (!isset($this->primitiveType_)) {
+            $baseType = $this->getBaseType();
+
+            $this->primitiveType_ = $baseType->getPrimitiveType() ?? $this;
+        }
+
+        return $this->primitiveType_;
     }
 
     public function isEqualToOrDerivedFrom(string $typeXName): bool

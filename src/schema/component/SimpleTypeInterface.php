@@ -14,6 +14,13 @@ interface SimpleTypeInterface extends TypeInterface
     /// Whether this type is equal to or derived from the indicated type
     public function isEqualToOrDerivedFrom(string $typeXName): bool;
 
+    /**
+     * @brief Primitive datatype the present type is uktimately derived from
+     *
+     * Return `null` if present datatype is `xsd::anySimpleType`.
+     */
+    public function getPrimitiveType(): ?self;
+
     /// Get first such facet in closest ancestor, if any
     public function getFacet(string $facetName): ?XsdElement;
 

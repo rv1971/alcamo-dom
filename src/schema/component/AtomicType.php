@@ -12,9 +12,6 @@ class AtomicType extends AbstractSimpleType
     private $isNumeric_;  ///< bool
     private $isIntegral_; ///< bool
 
-    /**
-     * @copydoc alcamo::dom::schema::component::SimpleTypeInterface::getHfpPropValue()
-     */
     public function getHfpPropValue(string $propName): ?string
     {
         for (
@@ -34,9 +31,6 @@ class AtomicType extends AbstractSimpleType
         return null;
     }
 
-    /**
-     * @copydoc alcamo::dom::schema::component::SimpleTypeInterface::isNumeric()
-     */
     public function isNumeric(): bool
     {
         if (!isset($this->isNumeric_)) {
@@ -46,9 +40,6 @@ class AtomicType extends AbstractSimpleType
         return $this->isNumeric_;
     }
 
-    /**
-     * @copydoc alcamo::dom::schema::component::SimpleTypeInterface::isIntegral()
-     */
     public function isIntegral(): bool
     {
         if (!isset($this->isIntegral_)) {

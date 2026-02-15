@@ -85,7 +85,8 @@ class AtomicTypeTest extends TestCase implements NamespaceConstantsInterface
         $type,
         $isNumeric,
         $isIntegral,
-        $baseTypeXName
+        $baseTypeXName,
+        $primitityTypeXName
     ): void {
         $this->assertSame($isNumeric, $type->isNumeric());
         $this->assertSame($isIntegral, $type->isIntegral());
@@ -93,6 +94,11 @@ class AtomicTypeTest extends TestCase implements NamespaceConstantsInterface
         $this->assertEquals(
             $baseTypeXName,
             $type->getBaseType()->getXName()
+        );
+
+        $this->assertEquals(
+            $primitityTypeXName,
+            $type->getPrimitiveType()->getXName()
         );
     }
 
@@ -109,37 +115,43 @@ class AtomicTypeTest extends TestCase implements NamespaceConstantsInterface
                 $schema->getGlobalType(self::XSD_NS . ' string'),
                 false,
                 false,
-                new XName(self::XSD_NS, 'anySimpleType')
+                new XName(self::XSD_NS, 'anySimpleType'),
+                new XName(self::XSD_NS, 'string')
             ],
             [
                 $schema->getGlobalType(self::XSD_NS . ' decimal'),
                 true,
                 false,
-                new XName(self::XSD_NS, 'anySimpleType')
+                new XName(self::XSD_NS, 'anySimpleType'),
+                new XName(self::XSD_NS, 'decimal')
             ],
             [
                 $schema->getGlobalType(self::XSD_NS . ' float'),
                 true,
                 false,
-                new XName(self::XSD_NS, 'anySimpleType')
+                new XName(self::XSD_NS, 'anySimpleType'),
+                new XName(self::XSD_NS, 'float')
             ],
             [
                 $schema->getGlobalType(self::XSD_NS . ' integer'),
                 true,
                 true,
+                new XName(self::XSD_NS, 'decimal'),
                 new XName(self::XSD_NS, 'decimal')
             ],
             [
                 $schema->getGlobalType(self::XSD_NS . ' short'),
                 true,
                 true,
-                new XName(self::XSD_NS, 'int')
+                new XName(self::XSD_NS, 'int'),
+                new XName(self::XSD_NS, 'decimal')
             ],
             [
                 $schema->getGlobalElement(self::FOO_NS . ' foo-int')->getType(),
                 true,
                 true,
-                new XName(self::FOO_NS, 'FooUnsigned5')
+                new XName(self::FOO_NS, 'FooUnsigned5'),
+                new XName(self::XSD_NS, 'decimal')
             ]
         ];
     }
