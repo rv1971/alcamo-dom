@@ -13,7 +13,11 @@ abstract class AbstractType extends AbstractXsdComponent implements
     TypeInterface
 {
     /// RDFa properties not to inherit to derived types
-    public const NO_INHERIT_PROPS = [ 'dc:title', 'rdfs:label' ];
+    public const NO_INHERIT_PROPS = [
+        'dc:alternative',
+        'dc:title',
+        'rdfs:label'
+    ];
 
     /**
      * @brief Factory method creating the most specific type that it can
