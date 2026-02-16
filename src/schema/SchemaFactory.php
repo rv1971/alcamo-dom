@@ -9,6 +9,7 @@ use alcamo\dom\{
     HavingDocumentFactoryInterface,
     HavingDocumentFactoryTrait
 };
+use alcamo\dom\extended\Document as ExtendedDocument;
 use alcamo\dom\decorated\Element as XsdElement;
 use alcamo\dom\schema\component\TypeInterface;
 use alcamo\uri\{FileUriFactory, Uri};
@@ -54,24 +55,11 @@ class SchemaFactory implements
      *  attribute, in which case the schema has only the predefined components
      *  in the `xml` and the `xsd` namespaces. */
     public function createFromDocument(
-        Document $doc,
+        ExtendedDocument $doc,
         ?DocumentFactoryInterface $documentFactory = null
     ): Schema {
-        $uris = [];
-
-        $schemaLocation = $doc->documentElement
-            ->getAttributeNodeNS(self::XSI_NS, 'schemaLocation');
-
-        if ($schemaLocation) {
-            foreach (
-                ConverterPool::pairsToMap($schemaLocation) as $nsName => $uri
-            ) {
-                $uris[] = $doc->documentElement->resolveUri(new Uri($uri));
-            }
-        }
-
         return $this->createFromUris(
-            $uris,
+            array_values($doc->documentElement->{'xsi:schemaLocation'} ?? []),
             $documentFactory ?? $doc->getDocumentFactory()
         );
     }

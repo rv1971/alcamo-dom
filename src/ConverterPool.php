@@ -270,15 +270,20 @@ class ConverterPool implements NamespaceConstantsInterface
         return BinaryString::newFromHex($value);
     }
 
-    /// Transform a value such as in `xsi:schemaLocation` to a map
-    public static function pairsToMap(string $value): array
-    {
+    /**
+     * @brief Transform a value such as in `xsi:schemaLocation` to a map of
+     * strings to absolute URIs
+     */
+    public static function schemaLocationPairsToMap(
+        string $value,
+        ExtendedDomNodeInterface $context
+    ): array {
         $items = static::toArray($value);
 
         $map = [];
 
         for ($i = 0; isset($items[$i]); $i += 2) {
-            $map[$items[$i]] = $items[$i + 1];
+            $map[$items[$i]] = $context->resolveUri($items[$i + 1]);
         }
 
         return $map;

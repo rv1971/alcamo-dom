@@ -18,6 +18,7 @@ use alcamo\time\Duration;
 use alcamo\uri\{FileUriFactory, Uri};
 use alcamo\xml\XName;
 use Ds\Set;
+use GuzzleHttp\Psr7\Uri as GuzzleHttpUri;
 use PHPUnit\Framework\TestCase;
 
 class ConverterPoolTestDocument extends PsviDocument
@@ -77,6 +78,7 @@ class ConverterPoolTest extends TestCase
             : $element;
 
         switch ($converter) {
+            case 'schemaLocationPairsToMap':
             case 'toDateTime':
             case 'toDuration':
             case 'toIntSet':
@@ -152,7 +154,13 @@ class ConverterPoolTest extends TestCase
             [ 'base64ToBinary', '666F6F0A' ],
             [ 'curieToUri', 'http://purl.org/dc/terms/source' ],
             [ 'hexToBinary', '1234ABCDEF' ],
-            [ 'pairsToMap', [ 'foo' => 'bar', 'baz-qux' => '42' ] ],
+            [
+                'schemaLocationPairsToMap',
+                [
+                    'foo' => new GuzzleHttpUri('http://www.example.com/bar'),
+                    'baz-qux' => new GuzzleHttpUri('http://www.example.com/42')
+                ]
+            ],
             [ 'resolveIdRef', 'toLang' ],
             [ 'safeCurieToUri', 'http://qux.example.org#1234' ],
             [ 'toArray', [ 'foo', 'bar', 'baz' ] ],
