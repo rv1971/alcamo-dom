@@ -10,6 +10,9 @@ use PHPUnit\Framework\TestCase;
 
 class DocumentTest extends TestCase
 {
+    public const FOO_PATH = __DIR__ . DIRECTORY_SEPARATOR
+        . 'foo.xml';
+
     public const BAR_PATH = __DIR__ . DIRECTORY_SEPARATOR
         . '..' . DIRECTORY_SEPARATOR
         . 'schema' . DIRECTORY_SEPARATOR
@@ -22,6 +25,22 @@ class DocumentTest extends TestCase
     public static function setUpBeforeClass(): void
     {
         DocumentCache::getInstance()->init();
+    }
+
+    public function testGetSchema(): void
+    {
+        $fooDoc = (new DocumentFactory())->createFromUri(
+            (new FileUriFactory())->create(self::FOO_PATH)
+        );
+
+        $barDoc = (new DocumentFactory())->createFromUri(
+            (new FileUriFactory())->create(self::BAR_PATH)
+        );
+
+        $this->assertSame(
+            $fooDoc->getSchema(),
+            $barDoc->getSchema()
+        );
     }
 
     public function testValidateIdrefs(): void
@@ -67,7 +86,10 @@ class DocumentTest extends TestCase
     public function testClearCache(): void
     {
         $doc = (new DocumentFactory())->createFromUri(
-            (new FileUriFactory())->create(self::BAR_PATH)
+            (new FileUriFactory())->create(self::BAR_PATH),
+            null,
+            false,
+            Document::VALIDATE_AFTER_LOAD
         );
 
         $schema = $doc->getSchema();

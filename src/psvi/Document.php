@@ -20,8 +20,19 @@ use alcamo\exception\DataValidationFailed;
  */
 class Document extends BaseDocument
 {
+    /**
+     * @brief Use main schema
+     *
+     * In getSchema(), instead of creating a new schema from
+     * `xsi::schemaLocation`, add the locations to the main schema of
+     * SchemaFactory. This may improve performance of schema-related
+     * processing because type data shared among documents with different
+     * `xsi::schemaLocation`s are computed only once.
+     */
+    public const USE_MAIN_SCHEMA = 16;
+
     /// @copybrief alcamo::dom::Document::LOAD_FLAFS
-    public const LOAD_FLAGS = self::VALIDATE_AFTER_LOAD;
+    public const LOAD_FLAGS = self::VALIDATE_AFTER_LOAD | self::USE_MAIN_SCHEMA;
 
     /// @copybrief alcamo::dom::Document::NODE_CLASSES
     public const NODE_CLASSES =
@@ -61,7 +72,17 @@ class Document extends BaseDocument
 
             $schemaFactory = new $class($this->getDocumentFactory());
 
-            $this->schema_ = $schemaFactory->createFromDocument($this);
+            if ($this->loadFlags_ & self::USE_MAIN_SCHEMA) {
+                $schemaFactory->getMainSchema()->addUris(
+                    array_values(
+                        $this->documentElement->{'xsi:schemaLocation'} ?? []
+                    )
+                );
+
+                $this->schema_ = $schemaFactory->getMainSchema();
+            } else {
+                $this->schema_ = $schemaFactory->createFromDocument($this);
+            }
         }
 
         return $this->schema_;
