@@ -114,29 +114,29 @@ class SchemaFactory implements
     /// Create a type from an URI reference indicating an XSD element by ID
     public function createTypeFromUri($uri): TypeInterface
     {
-        /** If the target namespace of the indicated document is the
-         *  XSD namespace, take the corresponding XSD type without acually
-         *  accessing http://www.w3.org/2001/XMLSchema. */
         $uri = $this->documentFactory_->resolveUri($uri);
 
-        if (
-            TargetNsCache::getInstance()[$uri->withFragment('')]
-                == self::XSD_NS
-        ) {
-            return $this->getMainSchema()
-                ->getGlobalType(self::XSD_NS . ' ' . $uri->getFragment());
+        $targetNs = TargetNsCache::getInstance()[$uri->withFragment('')];
+
+        $type = $this->getMainSchema()
+            ->getGlobalType("$targetNs {$uri->getFragment()}");
+
+        if (isset($type)) {
+            return $type;
         }
 
-        $xsdElement = $this->documentFactory_->createFromUri($uri);
-
-        return static::createTypeFromXsdElement($xsdElement);
+        return static::createTypeFromXsdElement(
+            $this->documentFactory_->createFromUri($uri)
+        );
     }
 
     /// Create type from a schema consisting of the element's owner document
     public function createTypeFromXsdElement(
         XsdElement $xsdElement
     ): TypeInterface {
-        return $this->createFromXsds([ $xsdElement->ownerDocument ])
+        $this->getMainSchema()->addXsds([ $xsdElement->ownerDocument ]);
+
+        return $this->getMainSchema()
             ->getGlobalType($xsdElement->getComponentXName());
     }
 

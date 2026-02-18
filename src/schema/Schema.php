@@ -395,7 +395,7 @@ class Schema implements
             $uri =
                 (string)UriNormalizer::normalize(new Uri($xsd->documentURI));
 
-            if (!isset($processedXsds[$uri])) {
+            if (!isset($this->xsds_[$uri])) {
                 $processedXsds[$uri] = $xsd;
 
                 /* Cache all provided XSDs. add() will throw if
