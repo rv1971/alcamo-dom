@@ -60,10 +60,8 @@ trait HavingDocumentationTrait
     /// Get fragment part of URI in owl:sameAs attribute, if any
     protected function getSameAsFragment(): ?string
     {
-        $sameAs = $this->getRdfaData()['owl:sameAs'];
+        $sameAs = $this->getRdfaData()->getFirstValueOrUri('owl:sameAs');
 
-        return isset($sameAs)
-            ? $sameAs->first()->getObject()->getUri()->getFragment()
-            : null;
+        return isset($sameAs) ? $sameAs->getFragment() : null;
     }
 }
