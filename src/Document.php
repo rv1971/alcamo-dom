@@ -11,6 +11,7 @@ use alcamo\exception\{
 };
 use alcamo\rdfa\{LiteralFactory, RdfaFactory};
 use alcamo\xml\{NamespaceConstantsInterface, NamespaceMapsInterface};
+use Psr\Http\Message\UriInterface;
 
 /**
  * @namespace alcamo::dom
@@ -154,13 +155,14 @@ class Document extends \DOMDocument implements
         return $doc;
     }
 
-    private static $docRegistry_ = []; ///< Used for conserve()
+    private static $docRegistry_ = [];   ///< Used for conserve()
 
-    protected $loadFlags_;            ///< int
-    protected $libxmlOptions_;        ///< int
+    protected $loadFlags_;               ///< int
+    protected $libxmlOptions_;           ///< int
 
-    private $xPath_;                  ///< XPath
-    private $xsltStylesheet_ = false; ///< Document or `null`
+    private $xPath_;                     ///< XPath
+    private $xsltStylesheetUri_ = false; ///< Uri or `null`
+    private $xsltStylesheet_ = false;    ///< Document or `null`
 
     /// Call clearCache()
     public function __clone()
@@ -340,12 +342,12 @@ class Document extends \DOMDocument implements
     }
 
     /**
-     * @brief Get an XSLT stylesheet based on the first xml-stylesheet
+     * @brief Get an XSLT stylesheet URI based on the first xml-stylesheet
      * processing instruction, if any
      */
-    public function getXsltStylesheet(): ?self
+    public function getXsltStylesheetUri(): ?UriInterface
     {
-        if ($this->xsltStylesheet_ === false) {
+        if ($this->xsltStylesheetUri_ === false) {
             if (!isset($this->documentElement)) {
                 /** @throw alcamo::exception::Uninitialized if called on an
                  *  empty document. */
@@ -355,11 +357,28 @@ class Document extends \DOMDocument implements
             $pi = $this->query('processing-instruction("xml-stylesheet")')[0];
 
             if (!isset($pi) || $pi->type != 'text/xsl') {
-                return $this->xsltStylesheet_ = null;
+                return $this->xsltStylesheetUri_ = null;
             }
 
-            $this->xsltStylesheet_ = $this->getDocumentFactory()
-                ->createFromUri($pi->resolveUri($pi->href));
+            $this->xsltStylesheetUri_ = $pi->resolveUri($pi->href);
+        }
+
+        return $this->xsltStylesheetUri_;
+    }
+
+    /**
+     * @brief Get an XSLT stylesheet based on the first xml-stylesheet
+     * processing instruction, if any
+     */
+    public function getXsltStylesheet(): ?self
+    {
+        if ($this->xsltStylesheet_ === false) {
+            $xsltStylesheetUri = $this->getXsltStylesheetUri();
+
+            $this->xsltStylesheet_ = isset($xsltStylesheetUri)
+                ? $this->getDocumentFactory()
+                ->createFromUri($xsltStylesheetUri)
+                : null;
         }
 
         return $this->xsltStylesheet_;
