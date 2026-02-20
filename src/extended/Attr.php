@@ -30,8 +30,7 @@ class Attr extends BaseAttr implements DomNodeInterface
         self::XSI_NS => [
             'nil'                       => CP::class . '::toBool',
             'noNamespaceSchemaLocation' => CP::class . '::toUri',
-            'schemaLocation'
-            => CP::class . '::schemaLocationPairsToMap',
+            'schemaLocation'            => CP::class . '::pairsToMap',
             'type'                      => CP::class . '::toXName'
         ]
     ];

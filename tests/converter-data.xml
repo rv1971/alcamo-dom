@@ -9,10 +9,7 @@
   <bar xml:id="base64ToBinary" value="Zm9vCg=="/>
   <bar xml:id="curieToUri" value="dc:source"/>
   <bar xml:id="hexToBinary" value="1234abcdef"/>
-  <bar
-      xml:id="schemaLocationPairsToMap"
-      xml:base="http://www.example.com/"
-      value="foo bar baz-qux 42"/>
+  <bar xml:id="pairsToMap" value="foo bar baz-qux 42"/>
   <bar xml:id="resolveIdRef" value="toLang"/>
   <bar xml:id="safeCurieToUri" value="[qux:#1234]"/>
   <bar xml:id="toArray" value="foo   bar	baz"/>

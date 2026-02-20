@@ -2,7 +2,7 @@
 
 namespace alcamo\dom\schema;
 
-use alcamo\dom\extended\Document;
+use alcamo\dom\Document;
 use alcamo\dom\schema\component\{
     AtomicType,
     AttrInterface,
