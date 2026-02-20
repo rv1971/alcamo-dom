@@ -73,11 +73,17 @@ class Document extends BaseDocument
             $schemaFactory = new $class($this->getDocumentFactory());
 
             if ($this->loadFlags_ & self::USE_MAIN_SCHEMA) {
-                $schemaFactory->getMainSchema()->addUris(
-                    array_values(
-                        $this->documentElement->{'xsi:schemaLocation'} ?? []
-                    )
-                );
+                if (isset($this->documentElement->{'xsi:schemaLocation'})) {
+                    $uris = [];
+
+                    foreach (
+                        $this->documentElement->{'xsi:schemaLocation'} as $uri
+                    ) {
+                        $uris[] = $this->documentElement->resolveUri($uri);
+                    }
+
+                    $schemaFactory->getMainSchema()->addUris($uris);
+                }
 
                 $this->schema_ = $schemaFactory->getMainSchema();
             } else {

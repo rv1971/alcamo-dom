@@ -2,7 +2,8 @@
 
 namespace alcamo\dom;
 
-use GuzzleHttp\Psr7\{Uri, UriResolver};
+use alcamo\uri\Uri;
+use GuzzleHttp\Psr7\UriResolver;
 use Psr\Http\Message\UriInterface;
 
 /**
