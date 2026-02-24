@@ -384,7 +384,11 @@ class Schema implements
     {
         $cache = SchemaCache::getInstance();
 
-        $cache->add($cache->createKey($xsds), $this);
+        $cacheKey = $cache->createKey($xsds);
+
+        if (!isset($cache[$cacheKey])) {
+            $cache->add($cacheKey, $this);
+        }
 
         $processedXsds = [];
 
