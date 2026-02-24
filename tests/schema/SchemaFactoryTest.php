@@ -169,7 +169,14 @@ class SchemaFactoryTest extends TestCase
                 'http://foo.example.org'
             ],
             [
-                "data:,%3C%3Fxml%20version='1.0'%3F%3E%3Cschema%20xmlns='http://www.w3.org/2001/XMLSchema'%20targetNamespace='tag:rv1971%40web.de,2021:alcamo:ns:base%23'%3E%3CsimpleType%20name='NumericString'%20xml:id='NumericString'%3E%3Crestriction%20base='string'%3E%3Cpattern%20value='%5Cd+'/%3E%3C/restriction%3E%3C/simpleType%3E%3C/schema%3E#NumericString",
+                "data:,%3C%3Fxml%20version='1.0'%3F%3E%3Cschema%20"
+                    . "xmlns='http://www.w3.org/2001/XMLSchema'%20"
+                    . "targetNamespace='tag:rv1971%40web.de,2021:alcamo:ns:base%23'%3E"
+                    . "%3CsimpleType%20name='NumericString'%20"
+                    . "xml:id='NumericString'%3E%3Crestriction%20"
+                    . "base='string'%3E%3Cpattern%20value='%5Cd+'/%3E"
+                    . "%3C/restriction%3E%3C/simpleType%3E%3C/schema%3E"
+                    . "#NumericString",
                 AtomicType::class,
                 'tag:rv1971@web.de,2021:alcamo:ns:base#'
             ]
