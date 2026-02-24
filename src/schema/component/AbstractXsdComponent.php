@@ -43,9 +43,11 @@ abstract class AbstractXsdComponent extends AbstractComponent
      */
     public function getUri(): ?UriInterface
     {
-        if (isset($this->xsdElement_->id)) {
+        $id = $this->xsdElement_->id ?? $this->xsdElement_->{'xml:id'};
+
+        if (isset($id)) {
             return $this->xsdElement_->ownerDocument->getBaseUri()
-                ->withFragment($this->xsdElement_->id);
+                ->withFragment($id);
         } else {
             return null;
         }
