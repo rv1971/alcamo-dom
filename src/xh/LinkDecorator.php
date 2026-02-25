@@ -15,7 +15,10 @@ class LinkDecorator extends AbstractElementDecorator
 {
     public function createRdfaData(): ?RdfaData
     {
-        $node = ConverterPool::toRdfaNode($this->href, $this->getElement());
+        $node = ConverterPool::toRdfaNode(
+            $this->href ?? $this->resource,
+            $this->getElement()
+        );
 
         foreach ($this->rel as $rel) {
             $rdfaData[] = [ $rel, $node ];
