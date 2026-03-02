@@ -84,6 +84,17 @@ class PredefinedAnySimpleType extends AbstractPredefinedComponent implements
     }
 
     /**
+     * @copydoc alcamo::dom::schema::component::SimpleTypeInterface::isPrintable()
+     *
+     * @return Always `false` since an instance `anySimpleType` may be an
+     * instance of data types with binary value space such as `hexBinary`.
+     */
+    public function isPrintable(): bool
+    {
+        return false;
+    }
+
+    /**
      * @copydoc alcamo::dom::schema::component::TypeInterface::getRdfaData()
      *
      * @return Always `null` since `anySimpleType` has no RDFa data.

@@ -19,8 +19,7 @@ class UnionTypeTest extends TestCase
         /* Contains XMLSchema.xsd as built-in. */
         $schema = (new SchemaFactory())->createFromUris([ $fooUri ]);
 
-        $type =
-            $schema->getGlobalType(self::FOO_NS . ' UnionType');
+        $type = $schema->getGlobalType(self::FOO_NS . ' UnionType');
 
         $this->assertSame(
             [
@@ -44,5 +43,10 @@ class UnionTypeTest extends TestCase
 
         $this->assertTrue($type->isNumeric());
         $this->assertFalse($type->isIntegral());
+        $this->assertTrue($type->isPrintable());
+
+        $type = $schema->getGlobalType(self::FOO_NS . ' BinaryUnionType');
+
+        $this->assertFalse($type->isPrintable());
     }
 }

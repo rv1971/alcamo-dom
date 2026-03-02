@@ -9,8 +9,9 @@ namespace alcamo\dom\schema\component;
  */
 class AtomicType extends AbstractSimpleType
 {
-    private $isNumeric_;  ///< bool
-    private $isIntegral_; ///< bool
+    private $isNumeric_;   ///< bool
+    private $isIntegral_;  ///< bool
+    private $isPrintable_; ///< bool
 
     public function getHfpPropValue(string $propName): ?string
     {
@@ -50,5 +51,17 @@ class AtomicType extends AbstractSimpleType
         }
 
         return $this->isIntegral_;
+    }
+
+    public function isPrintable(): bool
+    {
+        if (!isset($this->isPrintable_)) {
+            $this->isPrintable_ = !in_array(
+                $this->getPrimitiveType()->getXName()->getLocalName(),
+                [ 'base64Binary', 'hexBinary' ]
+            );
+        }
+
+        return $this->isPrintable_;
     }
 }

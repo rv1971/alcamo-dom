@@ -59,4 +59,14 @@ class ListType extends AbstractSimpleType
     {
         return false;
     }
+
+    /**
+     * @copydoc alcamo::dom::schema::component::SimpleTypeInterface::isPrintable()
+     *
+     * @return `true` if the item type is printable.
+     */
+    public function isPrintable(): bool
+    {
+        return $this->itemType_->isPrintable();
+    }
 }

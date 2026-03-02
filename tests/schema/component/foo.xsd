@@ -76,7 +76,21 @@
     </xsd:restriction>
   </xsd:simpleType>
 
+  <xsd:simpleType name="limitedHexBinary">
+    <xsd:restriction base="xsd:hexBinary">
+      <xsd:maxLength value="8"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="limitedHexBinaryList">
+    <xsd:list itemType="limitedHexBinary"/>
+  </xsd:simpleType>
+
   <xsd:simpleType name="UnionType">
     <xsd:union memberTypes="nonNegativeFloat xsd:positiveInteger"/>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="BinaryUnionType">
+    <xsd:union memberTypes="limitedHexBinaryList xsd:boolean"/>
   </xsd:simpleType>
 </xsd:schema>

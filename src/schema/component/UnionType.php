@@ -136,4 +136,25 @@ class UnionType extends AbstractSimpleType
 
         return $this->isIntegral_;
     }
+
+    /**
+     * @copydoc alcamo::dom::schema::component::SimpleTypeInterface::isPrintable()
+     *
+     * @return `true` if all member types are printable.
+     */
+    public function isPrintable(): bool
+    {
+        if (!isset($this->isPrintable_)) {
+            $this->isPrintable_ = true;
+
+            foreach ($this->memberTypes_ as $memberType) {
+                if (!$memberType->isPrintable()) {
+                    $this->isPrintable_ = false;
+                    break;
+                }
+            }
+        }
+
+        return $this->isPrintable_;
+    }
 }

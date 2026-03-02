@@ -85,11 +85,13 @@ class AtomicTypeTest extends TestCase implements NamespaceConstantsInterface
         $type,
         $isNumeric,
         $isIntegral,
+        $isPrintable,
         $baseTypeXName,
-        $primitityTypeXName
+        $primitiveTypeXName
     ): void {
         $this->assertSame($isNumeric, $type->isNumeric());
         $this->assertSame($isIntegral, $type->isIntegral());
+        $this->assertSame($isPrintable, $type->isPrintable());
 
         $this->assertEquals(
             $baseTypeXName,
@@ -97,7 +99,7 @@ class AtomicTypeTest extends TestCase implements NamespaceConstantsInterface
         );
 
         $this->assertEquals(
-            $primitityTypeXName,
+            $primitiveTypeXName,
             $type->getPrimitiveType()->getXName()
         );
     }
@@ -115,6 +117,7 @@ class AtomicTypeTest extends TestCase implements NamespaceConstantsInterface
                 $schema->getGlobalType(self::XSD_NS . ' string'),
                 false,
                 false,
+                true,
                 new XName(self::XSD_NS, 'anySimpleType'),
                 new XName(self::XSD_NS, 'string')
             ],
@@ -122,6 +125,7 @@ class AtomicTypeTest extends TestCase implements NamespaceConstantsInterface
                 $schema->getGlobalType(self::XSD_NS . ' decimal'),
                 true,
                 false,
+                true,
                 new XName(self::XSD_NS, 'anySimpleType'),
                 new XName(self::XSD_NS, 'decimal')
             ],
@@ -129,11 +133,13 @@ class AtomicTypeTest extends TestCase implements NamespaceConstantsInterface
                 $schema->getGlobalType(self::XSD_NS . ' float'),
                 true,
                 false,
+                true,
                 new XName(self::XSD_NS, 'anySimpleType'),
                 new XName(self::XSD_NS, 'float')
             ],
             [
                 $schema->getGlobalType(self::XSD_NS . ' integer'),
+                true,
                 true,
                 true,
                 new XName(self::XSD_NS, 'decimal'),
@@ -143,6 +149,7 @@ class AtomicTypeTest extends TestCase implements NamespaceConstantsInterface
                 $schema->getGlobalType(self::XSD_NS . ' short'),
                 true,
                 true,
+                true,
                 new XName(self::XSD_NS, 'int'),
                 new XName(self::XSD_NS, 'decimal')
             ],
@@ -150,8 +157,25 @@ class AtomicTypeTest extends TestCase implements NamespaceConstantsInterface
                 $schema->getGlobalElement(self::FOO_NS . ' foo-int')->getType(),
                 true,
                 true,
+                true,
                 new XName(self::FOO_NS, 'FooUnsigned5'),
                 new XName(self::XSD_NS, 'decimal')
+            ],
+            [
+                $schema->getGlobalType(self::XSD_NS . ' hexBinary'),
+                false,
+                false,
+                false,
+                new XName(self::XSD_NS, 'anySimpleType'),
+                new XName(self::XSD_NS, 'hexBinary')
+            ],
+            [
+                $schema->getGlobalType(self::FOO_NS . ' limitedHexBinary'),
+                false,
+                false,
+                false,
+                new XName(self::XSD_NS, 'hexBinary'),
+                new XName(self::XSD_NS, 'hexBinary')
             ]
         ];
     }
