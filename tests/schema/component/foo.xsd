@@ -93,4 +93,8 @@
   <xsd:simpleType name="BinaryUnionType">
     <xsd:union memberTypes="limitedHexBinaryList xsd:boolean"/>
   </xsd:simpleType>
+
+  <xsd:simpleType name="DecimalUnionType">
+    <xsd:union memberTypes="xsd:byte xsd:unsignedInt"/>
+  </xsd:simpleType>
 </xsd:schema>

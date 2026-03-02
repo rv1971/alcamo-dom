@@ -15,9 +15,10 @@ interface SimpleTypeInterface extends TypeInterface
     public function isEqualToOrDerivedFrom(string $typeXName): bool;
 
     /**
-     * @brief Primitive datatype the present type is uktimately derived from
+     * @brief Primitive datatype the present type is ultimately derived from
      *
-     * Return `null` if present datatype is `xsd::anySimpleType`.
+     * @return `null` if present datatype is `xsd::anySimpleType` or a union
+     * type or list type without explicit base type.
      */
     public function getPrimitiveType(): ?self;
 

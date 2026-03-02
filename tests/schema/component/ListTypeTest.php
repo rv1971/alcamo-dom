@@ -21,6 +21,8 @@ class ListTypeTest extends TestCase
             $type->getItemType()
         );
 
+        $this->assertNull($type->getPrimitiveType());
+
         $this->assertNull($type->getHfpPropValue('bounded'));
 
         $this->assertFalse($type->isIntegral());

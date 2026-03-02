@@ -13,7 +13,7 @@ use alcamo\dom\schema\Schema;
 abstract class AbstractSimpleType extends AbstractType implements
     SimpleTypeInterface
 {
-    private $primitiveType_; ///< self
+    private $primitiveType_ = false; ///< ?self
 
     /**
      * @brief Factory method creating the most specific type that it can
@@ -107,10 +107,14 @@ abstract class AbstractSimpleType extends AbstractType implements
 
     public function getPrimitiveType(): ?SimpleTypeInterface
     {
-        if (!isset($this->primitiveType_)) {
+        if ($this->primitiveType_ === false) {
             $baseType = $this->getBaseType();
 
-            $this->primitiveType_ = $baseType->getPrimitiveType() ?? $this;
+            $this->primitiveType_ = isset($baseType)
+                ? ($baseType instanceof PredefinedAnySimpleType
+                   ? $this
+                   : $baseType->getPrimitiveType())
+                : null;
         }
 
         return $this->primitiveType_;

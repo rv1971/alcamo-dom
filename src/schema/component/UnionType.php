@@ -19,6 +19,8 @@ class UnionType extends AbstractSimpleType
 
     private const NON_ID_ATTR_COUNT = 'count(@*[name() != "id"])';
 
+    private $primitiveType_ = false; ///< ?self
+
     private $isNumeric_;  ///< bool
     private $isIntegral_; ///< bool
 
@@ -38,6 +40,39 @@ class UnionType extends AbstractSimpleType
     public function getMemberTypes(): array
     {
         return $this->memberTypes_;
+    }
+
+    public function getPrimitiveType(): ?SimpleTypeInterface
+    {
+        if ($this->primitiveType_ === false) {
+            $this->primitiveType_ = parent::getPrimitiveType();
+
+            /** If there is no explicit base type but all member types have
+             *  the same primitive type, return it. */
+            if (!isset($this->primitiveType_)) {
+                $uniquePrimitiveType = null;
+
+                foreach ($this->memberTypes_ as $memberType) {
+                    $primitiveType = $memberType->getPrimitiveType();
+
+                    if (
+                        !isset($primitiveType)
+                            || (isset($uniquePrimitiveType)
+                                && $uniquePrimitiveType->getXName()
+                                != $primitiveType->getXName())
+                    ) {
+                        $uniquePrimitiveType = null;
+                        break;
+                    }
+
+                    $uniquePrimitiveType = $primitiveType;
+                }
+
+                $this->primitiveType_ = $uniquePrimitiveType;
+            }
+        }
+
+        return $this->primitiveType_;
     }
 
     /**
