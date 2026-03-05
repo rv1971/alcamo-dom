@@ -29,6 +29,8 @@ class SchemaFactory implements
 
     public const SCHEMA_CLASS = Schema::class;
 
+    private $mainSchema_; ///< Schema
+
     /**
      * @param $documentFactory Factory used to create documents.
      */
@@ -178,17 +180,21 @@ class SchemaFactory implements
      * @brief Schema that can be extended as needed
      *
      * Adding all XSDs to one schema may increase performance because common
-     * components need ot be craeted only once.
+     * components need ot be created only once.
      */
     public function getMainSchema(): Schema
     {
-        return $this->createFromUris(
-            [
-                (new FileUriFactory())->create(
-                    dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR
-                        . 'xsd' . DIRECTORY_SEPARATOR . 'xhtml-datatypes-1.xsd'
-                )
-            ]
-        );
+        if (!isset($this->mainSchema_)) {
+            $this->mainSchema_ = $this->createFromUris(
+                [
+                    (new FileUriFactory())->create(
+                        dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR
+                            . 'xsd' . DIRECTORY_SEPARATOR . 'xhtml-datatypes-1.xsd'
+                    )
+                ]
+            );
+        }
+
+        return $this->mainSchema_;
     }
 }
