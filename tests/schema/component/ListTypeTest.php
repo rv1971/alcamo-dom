@@ -26,6 +26,7 @@ class ListTypeTest extends TestCase
         $this->assertNull($type->getHfpPropValue('bounded'));
 
         $this->assertFalse($type->isIntegral());
+        $this->assertFalse($type->isSigned());
         $this->assertFalse($type->isNumeric());
     }
 

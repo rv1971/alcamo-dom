@@ -84,6 +84,16 @@ class PredefinedAnySimpleType extends AbstractPredefinedComponent implements
     }
 
     /**
+     * @copydoc alcamo::dom::schema::component::SimpleTypeInterface::isSigned()
+     *
+     * @return Always `false` since `anySimpleType` is not made of numbers.
+     */
+    public function isSigned(): bool
+    {
+        return false;
+    }
+
+    /**
      * @copydoc alcamo::dom::schema::component::SimpleTypeInterface::isPrintable()
      *
      * @return Always `false` since an instance `anySimpleType` may be an

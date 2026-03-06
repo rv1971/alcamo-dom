@@ -61,6 +61,16 @@ class ListType extends AbstractSimpleType
     }
 
     /**
+     * @copydoc alcamo::dom::schema::component::SimpleTypeInterface::isSigned()
+     *
+     * @return Always `false` since list types are not signed numbers
+     */
+    public function isSigned(): bool
+    {
+        return false;
+    }
+
+    /**
      * @copydoc alcamo::dom::schema::component::SimpleTypeInterface::isPrintable()
      *
      * @return `true` if the item type is printable.

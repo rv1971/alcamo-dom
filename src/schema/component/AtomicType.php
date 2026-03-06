@@ -11,6 +11,7 @@ class AtomicType extends AbstractSimpleType
 {
     private $isNumeric_;   ///< bool
     private $isIntegral_;  ///< bool
+    private $isSigned_;    ///< bool
     private $isPrintable_; ///< bool
 
     public function getHfpPropValue(string $propName): ?string
@@ -51,6 +52,22 @@ class AtomicType extends AbstractSimpleType
         }
 
         return $this->isIntegral_;
+    }
+
+    public function isSigned(): bool
+    {
+        if (!isset($this->isSigned_)) {
+            if (!$this->isNumeric()) {
+                $this->isSigned_ = false;
+            } else {
+                $minInclusiveFacet = $this->getFacet('minInclusive');
+
+                $this->isSigned_ = !isset($minInclusiveFacet)
+                    || $minInclusiveFacet->value < 0;
+            }
+        }
+
+        return $this->isSigned_;
     }
 
     public function isPrintable(): bool

@@ -54,6 +54,7 @@ class PredefinedAnySimpleTypeTest extends TestCase
 
         $this->assertFalse($type->isIntegral());
         $this->assertFalse($type->isNumeric());
+        $this->assertFalse($type->isSigned());
         $this->assertFalse($type->isPrintable());
     }
 }

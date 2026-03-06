@@ -37,6 +37,9 @@ interface SimpleTypeInterface extends TypeInterface
     /// Whether the value space is made of integers
     public function isIntegral(): bool;
 
+    /// Whether the value space numeric and can contain negative numbers
+    public function isSigned(): bool;
+
     /// Whether the value space is guaranteed to be printable
     public function isPrintable(): bool;
 }

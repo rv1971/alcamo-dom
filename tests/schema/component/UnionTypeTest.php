@@ -45,13 +45,17 @@ class UnionTypeTest extends TestCase
 
         $this->assertTrue($type->isNumeric());
         $this->assertFalse($type->isIntegral());
+        $this->assertFalse($type->isSigned());
         $this->assertTrue($type->isPrintable());
 
         $type = $schema->getGlobalType(self::FOO_NS . ' BinaryUnionType');
 
+        $this->assertFalse($type->isSigned());
         $this->assertFalse($type->isPrintable());
 
         $type = $schema->getGlobalType(self::FOO_NS . ' DecimalUnionType');
+
+        $this->assertTrue($type->isSigned());
 
         $this->assertSame(
             Schema::XSD_NS . ' decimal',

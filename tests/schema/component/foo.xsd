@@ -70,8 +70,14 @@
     <xsd:union memberTypes="xsd:formChoice xsd:typeDerivationControl"/>
   </xsd:simpleType>
 
-  <xsd:simpleType name="nonNegativeFloat">
+  <xsd:simpleType name="semiNegativeFloat">
     <xsd:restriction base="xsd:float">
+      <xsd:minInclusive value="-17"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="nonNegativeFloat">
+    <xsd:restriction base="semiNegativeFloat">
       <xsd:minInclusive value="0"/>
     </xsd:restriction>
   </xsd:simpleType>

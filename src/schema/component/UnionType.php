@@ -23,6 +23,7 @@ class UnionType extends AbstractSimpleType
 
     private $isNumeric_;  ///< bool
     private $isIntegral_; ///< bool
+    private $isSigned_; ///< bool
 
     /** @param $memberTypes array of SimpleTypeInterface */
     public function __construct(
@@ -170,6 +171,30 @@ class UnionType extends AbstractSimpleType
         }
 
         return $this->isIntegral_;
+    }
+
+    /**
+     * @copydoc alcamo::dom::schema::component::SimpleTypeInterface::isSigned()
+     *
+     * @return `true` if all member types are numeric and at least one is
+     * signed.
+     */
+    public function isSigned(): bool
+    {
+        if (!isset($this->isSigned_)) {
+            $this->isSigned_ = false;
+
+            if ($this->isNumeric()) {
+                foreach ($this->memberTypes_ as $memberType) {
+                    if ($memberType->isSigned()) {
+                        $this->isSigned_ = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        return $this->isSigned_;
     }
 
     /**
