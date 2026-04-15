@@ -56,7 +56,7 @@ class CommentTest extends TestCase
         return [
             [
                 $fooDoc->firstChild,
-                " initial\nmulti-line comment ",
+                " initial\nmulti-line <comment> ",
                 $fooDoc->documentURI,
                 $fileUriFactory->create(self::DATA_DIR . 'README.md'),
                 'line=3',

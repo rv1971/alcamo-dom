@@ -51,15 +51,14 @@ class ShallowDocument extends Document
     public function loadXmlText(string $xmlText, ?string $uri = null): void
     {
         /** Use a regular expression to find the first string in angular
-         *  brackets which is neither an xml declaration or processing
-         *  instruction nor a comment, and which contains quotes only in
+         *  brackets which comes after any xml declarations, processing
+         *  instructions and comments, and which contains quotes only in
          *  pairs.
-         *
-         *  @warning This fails if the document element is preceded by a
-         *  comment containing such a string. */
+         */
         if (
             !preg_match(
-                '/<[^!\?]([^"\'>]+=("[^"]*"|\'[^\']*\'))*[^"\'>]*>/',
+                '/(?:<!--[^-]+(?:-[^-]+)*-->\s*|<\?.*\?>\s*)*'
+                    . '(<[^!\?]([^"\'>]+=("[^"]*"|\'[^\']*\'))*[^"\'>]*>)/',
                 $xmlText,
                 $matches,
                 PREG_OFFSET_CAPTURE
@@ -75,7 +74,7 @@ class ShallowDocument extends Document
             );
         }
 
-        $bracketPos = $matches[0][1] + strlen($matches[0][0]) - 1;
+        $bracketPos = $matches[1][1] + strlen($matches[1][0]) - 1;
 
         $firstTagText = substr($xmlText, 0, $bracketPos)
             . (($xmlText[$bracketPos - 1] == '/') ? '>' : '/>');

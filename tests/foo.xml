@@ -1,7 +1,7 @@
 <?xml version='1.0'?>
 
 <!-- initial
-multi-line comment -->
+multi-line <comment> -->
 
 <?alcamo foo="FOO" bar="BAR"?>
 
