@@ -2,11 +2,8 @@
 
 namespace alcamo\dom\decorated;
 
-use alcamo\rdfa\{
-    BooleanLiteral,
-    LangStringLiteral,
-    RdfaData
-};
+use alcamo\rdfa\RdfaData;
+use alcamo\rdf_literal\{BooleanLiteral, LangStringLiteral};
 use alcamo\uri\FileUriFactory;
 use PHPUnit\Framework\TestCase;
 

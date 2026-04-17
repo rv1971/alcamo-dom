@@ -2,7 +2,7 @@
 
 namespace alcamo\dom\extended;
 
-use alcamo\rdfa\Lang;
+use alcamo\rdf_literal\Lang;
 use alcamo\uri\{FileUriFactory, Uri};
 use alcamo\xml\XName;
 use PHPUnit\Framework\TestCase;

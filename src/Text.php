@@ -2,7 +2,7 @@
 
 namespace alcamo\dom;
 
-use alcamo\rdfa\{HavingLangInterface, Lang};
+use alcamo\rdf_literal\{HavingLangInterface, Lang};
 
 /**
  * @brief Text class for use in DOMDocument::registerNodeClass()

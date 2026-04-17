@@ -9,7 +9,8 @@ use alcamo\exception\{
     SyntaxError,
     Uninitialized
 };
-use alcamo\rdfa\{LiteralFactory, RdfaFactory};
+use alcamo\rdf_literal\LiteralFactory;
+use alcamo\rdfa\RdfaFactory;
 use alcamo\xml\{NamespaceConstantsInterface, NamespaceMapsInterface};
 use Psr\Http\Message\UriInterface;
 

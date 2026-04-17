@@ -3,13 +3,12 @@
 namespace alcamo\dom\schema\component;
 
 use alcamo\dom\schema\{Schema, SchemaFactory};
-use alcamo\rdfa\{
+use alcamo\rdf_literal\{
     BooleanLiteral,
     IntegerLiteral,
     LangStringLiteral,
-    Node,
-    RdfaData
 };
+use alcamo\rdfa\{Node, RdfaData};
 use alcamo\uri\FileUriFactory;
 use alcamo\xml\{NamespaceConstantsInterface, XName};
 use PHPUnit\Framework\TestCase;

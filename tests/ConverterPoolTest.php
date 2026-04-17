@@ -5,15 +5,15 @@ namespace alcamo\dom;
 use alcamo\dom\psvi\Document as PsviDocument;
 use alcamo\exception\{DataNotFound, OutOfRange, SyntaxError};
 use alcamo\range\NonNegativeRange;
-use alcamo\rdfa\{
+use alcamo\rdf_literal\{
     BooleanLiteral,
     DateLiteral,
     Lang,
     LangStringLiteral,
     MediaType,
-    Node,
     StringLiteral
 };
+use alcamo\rdfa\Node;
 use alcamo\time\Duration;
 use alcamo\uri\{FileUriFactory, Uri};
 use alcamo\xml\XName;

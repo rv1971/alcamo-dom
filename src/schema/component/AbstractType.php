@@ -4,7 +4,8 @@ namespace alcamo\dom\schema\component;
 
 use alcamo\dom\decorated\Element as XsdElement;
 use alcamo\dom\schema\Schema;
-use alcamo\rdfa\{LangStringLiteral, RdfaData, RdfsLabel};
+use alcamo\rdf_literal\LangStringLiteral;
+use alcamo\rdfa\{RdfaData, RdfsLabel};
 
 /**
  * @brief Type definition

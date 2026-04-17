@@ -3,7 +3,7 @@
 namespace alcamo\dom;
 
 use alcamo\exception\AbsoluteUriNeeded;
-use alcamo\rdfa\{HavingLangInterface, Lang};
+use alcamo\rdf_literal\{HavingLangInterface, Lang};
 use alcamo\xml\HavingXNameInterface;
 use alcamo\uri\{Uri, UriNormalizer};
 use Psr\Http\Message\UriInterface;
