@@ -60,6 +60,30 @@ abstract class AbstractType extends AbstractXsdComponent implements
     }
 
     /**
+     * @brief Iterate over base types, beginning from $this
+     *
+     * @param $typeClass If set, loop as long as the current type is an
+     * instance of $typeClass. Otherwise, loop as long as there is a base
+     * type.
+     */
+    public function getSelfAndBaseTypes(?string $typeClass = null)
+    {
+        if (isset($typeClass)) {
+            for (
+                $type = $this;
+                $type instanceof $typeClass;
+                $type = $type->getBaseType()
+            ) {
+                yield $type;
+            }
+        } else {
+            for ($type = $this; isset($type); $type = $type->getBaseType()) {
+                yield $type;
+            }
+        }
+    }
+
+    /**
      * @copydoc alcamo::dom::schema::component::TypeInterface::getRdfaData()
      *
      * Any statement in a type replaces all statements about the same

@@ -16,11 +16,7 @@ class AtomicType extends AbstractSimpleType
 
     public function getHfpPropValue(string $propName): ?string
     {
-        for (
-            $type = $this;
-            $type instanceof self;
-            $type = $type->getBaseType()
-        ) {
+        foreach ($this->getSelfAndBaseTypes(self::class) as $type) {
             $propValue = $type->xsdElement_->query(
                 "xsd:annotation/xsd:appinfo/hfp:hasProperty[@name = '$propName']/@value"
             )[0];

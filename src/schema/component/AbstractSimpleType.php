@@ -122,7 +122,7 @@ abstract class AbstractSimpleType extends AbstractType implements
 
     public function isEqualToOrDerivedFrom(string $typeXName): bool
     {
-        for ($type = $this; isset($type); $type = $type->getBaseType()) {
+        foreach ($this->getSelfAndBaseTypes() as $type) {
             if ($type->getXName() == $typeXName) {
                 return true;
             }
@@ -141,11 +141,7 @@ abstract class AbstractSimpleType extends AbstractType implements
      */
     public function getFacet(string $facetName): ?XsdElement
     {
-        for (
-            $type = $this;
-            $type instanceof self;
-            $type = $type->getBaseType()
-        ) {
+        foreach ($this->getSelfAndBaseTypes(self::class) as $type) {
             $facet =
                 $type->xsdElement_->query("xsd:restriction/xsd:$facetName")[0];
 
