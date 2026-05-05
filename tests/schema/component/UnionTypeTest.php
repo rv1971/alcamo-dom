@@ -33,6 +33,7 @@ class UnionTypeTest extends TestCase
             $this->assertSame($xName, (string)$memberType->getXName());
         }
 
+        $this->assertNull($type->getBaseType());
         $this->assertNull($type->getPrimitiveType());
 
         $this->assertNull($type->getFacet('minInclusive'));
@@ -50,12 +51,20 @@ class UnionTypeTest extends TestCase
 
         $type = $schema->getGlobalType(self::FOO_NS . ' BinaryUnionType');
 
+        $this->assertNull($type->getBaseType());
+        $this->assertNull($type->getPrimitiveType());
+
         $this->assertFalse($type->isSigned());
         $this->assertFalse($type->isPrintable());
 
         $type = $schema->getGlobalType(self::FOO_NS . ' DecimalUnionType');
 
         $this->assertTrue($type->isSigned());
+
+        $this->assertSame(
+            Schema::XSD_NS . ' integer',
+            (string)$type->getBaseType()->getXName()
+        );
 
         $this->assertSame(
             Schema::XSD_NS . ' decimal',

@@ -19,8 +19,6 @@ class UnionType extends AbstractSimpleType
 
     private const NON_ID_ATTR_COUNT = 'count(@*[name() != "id"])';
 
-    private $primitiveType_ = false; ///< ?self
-
     private $isNumeric_;  ///< bool
     private $isIntegral_; ///< bool
     private $isSigned_; ///< bool
@@ -31,7 +29,44 @@ class UnionType extends AbstractSimpleType
         XsdElement $xsdElement,
         array $memberTypes
     ) {
-        parent::__construct($schema, $xsdElement);
+        /* Map the index of each member type to the array of its base types in
+         * reverse order, i.e. starting with the ultimate base type. */
+        $baseTypeMap = [];
+
+        foreach ($memberTypes as $memberType) {
+            $baseTypes = [];
+
+            foreach (
+                $memberType
+                    ->getSelfAndBaseTypes(AbstractSimpleType::class) as $baseType
+            ) {
+                $baseTypes[] = $baseType;
+            }
+
+            $baseTypeMap[] = array_reverse($baseTypes);
+        }
+
+        /* Find the most derived type that appears in all lists of base types
+         * of member types, if any. */
+
+        $commonBaseType = null;
+
+        for ($i = 0; isset($baseTypeMap[0][$i]); $i++) {
+            $baseType = $baseTypeMap[0][$i];
+
+            for ($j = 1; isset($baseTypeMap[$j]); $j++) {
+                if (
+                    !isset($baseTypeMap[$j][$i])
+                        || $baseTypeMap[$j][$i] !== $baseType
+                ) {
+                    break 2;
+                }
+            }
+
+            $commonBaseType = $baseType;
+        }
+
+        parent::__construct($schema, $xsdElement, $commonBaseType);
 
         $this->memberTypes_ = $memberTypes;
     }
@@ -44,35 +79,9 @@ class UnionType extends AbstractSimpleType
 
     public function getPrimitiveType(): ?SimpleTypeInterface
     {
-        if ($this->primitiveType_ === false) {
-            $this->primitiveType_ = parent::getPrimitiveType();
-
-            /** If there is no explicit base type but all member types have
-             *  the same primitive type, return it. */
-            if (!isset($this->primitiveType_)) {
-                $uniquePrimitiveType = null;
-
-                foreach ($this->memberTypes_ as $memberType) {
-                    $primitiveType = $memberType->getPrimitiveType();
-
-                    if (
-                        !isset($primitiveType)
-                            || (isset($uniquePrimitiveType)
-                                && $uniquePrimitiveType->getXName()
-                                != $primitiveType->getXName())
-                    ) {
-                        $uniquePrimitiveType = null;
-                        break;
-                    }
-
-                    $uniquePrimitiveType = $primitiveType;
-                }
-
-                $this->primitiveType_ = $uniquePrimitiveType;
-            }
-        }
-
-        return $this->primitiveType_;
+        return isset($this->baseType_)
+            ? $this->baseType_->getPrimitiveType()
+            : null;
     }
 
     /**
