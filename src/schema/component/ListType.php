@@ -17,10 +17,9 @@ class ListType extends AbstractSimpleType
     public function __construct(
         Schema $schema,
         XsdElement $xsdElement,
-        SimpleTypeInterface $itemType,
-        ?SimpleTypeInterface $baseType = null
+        SimpleTypeInterface $itemType
     ) {
-        parent::__construct($schema, $xsdElement, $baseType);
+        parent::__construct($schema, $xsdElement);
 
         $this->itemType_ = $itemType;
     }
