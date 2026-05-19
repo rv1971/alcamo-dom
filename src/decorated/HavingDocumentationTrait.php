@@ -16,17 +16,11 @@ trait HavingDocumentationTrait
 {
     use HavingRdfaDataTrait;
 
-    /** @copydoc alcamo::dom::HavingDocumentationInterface::getLabel() */
-    public function getLabel(
-        ?string $lang = null,
-        ?int $fallbackFlags = null
-    ): ?string {
-        /** - Use rdfs:label from metadata in XML, if present. */
-        $label = $this->getRdfaData()->findStmtWithLang(
-            'rdfs:label',
-            $lang,
-            !($fallbackFlags & self::FALLBACK_TO_OTHER_LANG)
-        );
+    /** @copydoc alcamo::rdfa::HavingLabelInterface::getLabel() */
+    public function getLabel($lang = null, ?int $flags = null): ?string
+    {
+        /** - label from metadata in XML, if present. */
+        $label = $this->getRdfaData()->getLabel($lang, $flags);
 
         if (isset($label)) {
             return $label;
@@ -34,12 +28,12 @@ trait HavingDocumentationTrait
 
         /*
          * - Otherwise, if the present element has an owl:sameAs attribute and
-         * $fallbackFlags contains
+         * $flags contains
          * alcamo::dom::HavingDocumentationInterface::FALLBACK_TO_SAME_AS_FRAGMENT,
          * return the fragment part of owl:sameAs.
          */
 
-        if ($fallbackFlags & self::FALLBACK_TO_SAME_AS_FRAGMENT) {
+        if ($flags & self::FALLBACK_TO_SAME_AS_FRAGMENT) {
             $label = $this->getSameAsFragment();
 
             if (isset($label)) {
@@ -48,11 +42,11 @@ trait HavingDocumentationTrait
         }
 
         /**
-         * - Otherwise, if $fallbackFlags contains
+         * - Otherwise, if $flags contains
          * alcamo::dom::HavingDocumentationInterface::FALLBACK_TO_NAME, return
          * the present element's local name.  - Otherwise return `null`.
          */
-        return $fallbackFlags & self::FALLBACK_TO_NAME
+        return $flags & self::FALLBACK_TO_NAME
             ? $this->handler_->localName
             : null;
     }

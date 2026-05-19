@@ -78,16 +78,10 @@ class Decorator extends HavingDocumentationDecorator
     }
 
     /** @copybrief alcamo::dom::decorated::HavingDocumentationDecorator */
-    public function getLabel(
-        ?string $lang = null,
-        ?int $fallbackFlags = null
-    ): ?string {
+    public function getLabel($lang = null, ?int $flags = null): ?string
+    {
         /** - Use <rdfs:label> or rdfs:label attribute, if applicable. */
-        $label = $this->getRdfaData()->findStmtWithLang(
-            'rdfs:label',
-            $lang,
-            !($fallbackFlags & self::FALLBACK_TO_OTHER_LANG)
-        );
+        $label = $this->getRdfaData()->getLabel($lang, $flags);
 
         if (isset($label)) {
             return $label;
@@ -95,12 +89,12 @@ class Decorator extends HavingDocumentationDecorator
 
         /*
          * - Otherwise, if the present element has an owl:sameAs attribute and
-         * $fallbackFlags contains
+         * $flags contains
          * HavingDocumentationInterface::FALLBACK_TO_SAME_AS_FRAGMENT, return
          * the fragment part of owl:sameAs.
          */
 
-        if ($fallbackFlags & self::FALLBACK_TO_SAME_AS_FRAGMENT) {
+        if ($flags & self::FALLBACK_TO_SAME_AS_FRAGMENT) {
             $label = $this->getSameAsFragment();
 
             if (isset($label)) {
@@ -110,11 +104,11 @@ class Decorator extends HavingDocumentationDecorator
 
         /**
          * - Otherwise, if the present element has an extended name and
-         * $fallbackFlags contains
+         * $flags contains
          * HavingDocumentationInterface::FALLBACK_TO_NAME, use its local part
          * as a fallback.
          */
-        if ($fallbackFlags & self::FALLBACK_TO_NAME) {
+        if ($flags & self::FALLBACK_TO_NAME) {
             $xName = $this->getComponentXName();
 
             return isset($xName) ? $xName->getLocalName() : null;

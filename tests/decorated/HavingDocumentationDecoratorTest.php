@@ -53,21 +53,21 @@ class HavingDocumentationDecoratorTest extends TestCase
     public function testGetLabel(
         $pos,
         $lang,
-        $fallbackFlags,
+        $flags,
         $expectedLabel
     ): void {
         $elements = self::$doc_->documentElement->childNodes;
 
         $this->assertSame(
             $expectedLabel,
-            $elements->item($pos)->getLabel($lang, $fallbackFlags)
+            $elements->item($pos)->getLabel($lang, $flags)
         );
     }
 
     public function getLabelProvider(): array
     {
         return [
-            [ 0, null, HDD::FALLBACK_TO_OTHER_LANG, null ],
+            [ 0, null, HDD::FALLBACK_TO_DIFFERENT_LANG, null ],
             [ 0, null, HDD::FALLBACK_TO_NAME, 'bar' ],
             [
                 0,
@@ -78,12 +78,12 @@ class HavingDocumentationDecoratorTest extends TestCase
             [ 1, null, null, 'Very short text' ],
             [ 1, 'en', null, 'Very short text' ],
             [ 1, 'fr', null, null ],
-            [ 1, 'fr', HDD::FALLBACK_TO_OTHER_LANG, 'Very short text' ],
+            [ 1, 'fr', HDD::FALLBACK_TO_DIFFERENT_LANG, 'Very short text' ],
             [ 2, 'ee', null, null ],
             [
                 2,
                 'ee',
-                HDD::FALLBACK_TO_OTHER_LANG
+                HDD::FALLBACK_TO_DIFFERENT_LANG
                     | HDD::FALLBACK_TO_SAME_AS_FRAGMENT
                     | HDD::FALLBACK_TO_NAME,
                 'Text bref'

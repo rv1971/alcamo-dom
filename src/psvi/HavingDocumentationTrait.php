@@ -16,16 +16,13 @@ trait HavingDocumentationTrait
     use BaseHavingDocumentationTrait;
 
     /** @copydoc alcamo::dom::HavingDocumentationInterface::getLabel() */
-    public function getLabel(
-        ?string $lang = null,
-        ?int $fallbackFlags = null
-    ): ?string {
+    public function getLabel($lang = null, ?int $flags = null): ?string
+    {
         /** Proceed as in
          *  alcamo::dom::decorated::HavingDocumentationTrait::getLabel(), but
          *  without fallback to element's local name. If a label is found,
          *  return it. */
-        $label =
-            parent::getLabel($lang, $fallbackFlags & ~self::FALLBACK_TO_NAME);
+        $label = parent::getLabel($lang, $flags & ~self::FALLBACK_TO_NAME);
 
         if (isset($label)) {
             return $label;
@@ -33,7 +30,7 @@ trait HavingDocumentationTrait
 
         /**
          * - Otherwise, if the present element has a type declared in an XSD
-         * document and $fallbackFlags contains
+         * document and $flags contains
          * alcamo::dom::HavingDocumentationInterface::FALLBACK_TO_TYPE_NAME,
          * call getLabel() on the type declaration element.
          */
@@ -41,20 +38,17 @@ trait HavingDocumentationTrait
 
         if (
             $type instanceof AbstractXsdComponent
-            && $fallbackFlags & self::FALLBACK_TO_TYPE_NAME
+            && $flags & self::FALLBACK_TO_TYPE_NAME
         ) {
-            return $type->getRdfaData()['rdfs:label']->findLang(
-                $lang,
-                !($fallbackFlags & self::FALLBACK_TO_OTHER_LANG)
-            );
+            return $type->getRdfaData()->getLabel($lang, $flags);
         }
 
         /**
-         * - Otherwise, if $fallbackFlags contains
+         * - Otherwise, if $flags contains
          * HavingDocumentationInterface::FALLBACK_TO_NAME, return the present
          * element's local name.  - Otherwise return `null`.
          */
-        return $fallbackFlags & self::FALLBACK_TO_NAME
+        return $flags & self::FALLBACK_TO_NAME
             ? $this->handler_->localName
             : null;
     }
