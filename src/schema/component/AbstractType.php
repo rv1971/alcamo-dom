@@ -5,7 +5,7 @@ namespace alcamo\dom\schema\component;
 use alcamo\dom\decorated\Element as XsdElement;
 use alcamo\dom\schema\Schema;
 use alcamo\rdf_literal\LangStringLiteral;
-use alcamo\rdfa\{RdfaData, RdfsLabel};
+use alcamo\rdfa\{AbstractRdfaData, RdfaData, RdfsLabel};
 
 /**
  * @brief Type definition
@@ -89,7 +89,7 @@ abstract class AbstractType extends AbstractXsdComponent implements
      * Any statement in a type replaces all statements about the same
      * property in its base type.
      */
-    public function getRdfaData(): ?RdfaData
+    public function getRdfaData(): ?AbstractRdfaData
     {
         if ($this->rdfaData_ === false) {
             $baseType = $this->getBaseType();

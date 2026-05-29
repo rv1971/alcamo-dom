@@ -13,7 +13,4 @@ interface TypeInterface extends ComponentInterface, HavingRdfaDataInterface
 {
     /// Get base type, if any
     public function getBaseType(): ?self;
-
-    /// Collect RdfaData in this type and its base types
-    public function getRdfaData(): ?RdfaData;
 }

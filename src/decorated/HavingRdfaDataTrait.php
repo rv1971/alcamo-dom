@@ -3,7 +3,7 @@
 namespace alcamo\dom\decorated;
 
 use alcamo\dom\ConverterPool;
-use alcamo\rdfa\RdfaData;
+use alcamo\rdfa\{AbstractRdfaData, RdfaData};
 
 /**
  * @brief Implementation of HavingRdfaDataInterface
@@ -14,7 +14,7 @@ trait HavingRdfaDataTrait
 {
     private $rdfaData_ = false; ///< RdfaData
 
-    public function getRdfaData(): ?RdfaData
+    public function getRdfaData(): ?AbstractRdfaData
     {
         if ($this->rdfaData_ === false) {
             $this->rdfaData_ = null;
