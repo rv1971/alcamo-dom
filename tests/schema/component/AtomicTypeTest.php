@@ -8,7 +8,7 @@ use alcamo\rdf_literal\{
     IntegerLiteral,
     LangStringLiteral,
 };
-use alcamo\rdfa\{Node, RdfaData};
+use alcamo\rdfa\{Node, ImmutableRdfaData};
 use alcamo\uri\FileUriFactory;
 use alcamo\xml\{NamespaceConstantsInterface, XName};
 use PHPUnit\Framework\TestCase;
@@ -234,7 +234,7 @@ class AtomicTypeTest extends TestCase implements NamespaceConstantsInterface
         $fooUnsigned6 = $fooUnsigned5->getBaseType();
 
         $this->assertEquals(
-            RdfaData::newFromIterable(
+            ImmutableRdfaData::newFromIterable(
                 [
                     [
                         self::RDFS_NS . 'label',
@@ -252,13 +252,13 @@ class AtomicTypeTest extends TestCase implements NamespaceConstantsInterface
                     ]
                 ],
                 null,
-                RdfaData::URI_AS_KEY
+                ImmutableRdfaData::URI_AS_KEY
             ),
             $fooUnsigned6->getRdfaData()
         );
 
         $this->assertEquals(
-            RdfaData::newFromIterable(
+            ImmutableRdfaData::newFromIterable(
                 [
                     [ self::BAR_NS . 'isLimitedInt', $booleanTrue ],
                     [ self::BAR_NS . 'bits', $int5Literal ],
@@ -272,18 +272,18 @@ class AtomicTypeTest extends TestCase implements NamespaceConstantsInterface
                     ]
                 ],
                 null,
-                RdfaData::URI_AS_KEY
+                ImmutableRdfaData::URI_AS_KEY
             ),
             $fooUnsigned5->getRdfaData()
         );
 
         $this->assertEquals(
-            RdfaData::newFromIterable(
+            ImmutableRdfaData::newFromIterable(
                 [
                     [ self::BAR_NS . 'isLimitedInt', $booleanTrue ]
                 ],
                 null,
-                RdfaData::URI_AS_KEY
+                ImmutableRdfaData::URI_AS_KEY
             ),
             $fooInt->getRdfaData()
         );

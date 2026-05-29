@@ -4,7 +4,7 @@ namespace alcamo\dom\schema\component;
 
 use alcamo\dom\decorated\Element as XsdElement;
 use alcamo\dom\schema\Schema;
-use alcamo\rdfa\AbstractRdfaData;
+use alcamo\rdfa\ImmutableRdfaData;
 use alcamo\xml\XName;
 
 /**
@@ -107,10 +107,10 @@ class PredefinedAnySimpleType extends AbstractPredefinedComponent implements
     /**
      * @copydoc alcamo::dom::schema::component::TypeInterface::getRdfaData()
      *
-     * @return Always `null` since `anySimpleType` has no RDFa data.
+     * @return Always empty RDFa data since `anySimpleType` has no RDFa data.
      */
-    public function getRdfaData(): ?AbstractRdfaData
+    public function getRdfaData(): ImmutableRdfaData
     {
-        return null;
+        return ImmutableRdfaData::newEmpty();
     }
 }

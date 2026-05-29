@@ -13,7 +13,7 @@ use alcamo\rdfa\RdfaData;
  */
 class LinkDecorator extends AbstractElementDecorator
 {
-    public function createRdfaData(): ?RdfaData
+    public function createRdfaData(): RdfaData
     {
         $node = ConverterPool::toRdfaNode(
             $this->href ?? $this->resource,

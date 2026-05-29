@@ -2,7 +2,7 @@
 
 namespace alcamo\dom\decorated;
 
-use alcamo\rdfa\RdfaData;
+use alcamo\rdfa\ImmutableRdfaData;
 use alcamo\rdf_literal\{BooleanLiteral, LangStringLiteral};
 use alcamo\uri\FileUriFactory;
 use PHPUnit\Framework\TestCase;
@@ -29,7 +29,7 @@ class HavingRdfaDataDecoratorTest extends TestCase
     public function testGetRdfaData($id, $expectedData): void
     {
         $this->assertEquals(
-            RdfaData::newFromIterable($expectedData),
+            ImmutableRdfaData::newFromIterable($expectedData),
             self::$doc_[$id]->getRdfaData()
         );
     }

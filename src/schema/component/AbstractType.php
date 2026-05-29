@@ -5,7 +5,7 @@ namespace alcamo\dom\schema\component;
 use alcamo\dom\decorated\Element as XsdElement;
 use alcamo\dom\schema\Schema;
 use alcamo\rdf_literal\LangStringLiteral;
-use alcamo\rdfa\{AbstractRdfaData, RdfaData, RdfsLabel};
+use alcamo\rdfa\{ImmutableRdfaData, RdfaData, RdfsLabel};
 
 /**
  * @brief Type definition
@@ -89,13 +89,13 @@ abstract class AbstractType extends AbstractXsdComponent implements
      * Any statement in a type replaces all statements about the same
      * property in its base type.
      */
-    public function getRdfaData(): ?AbstractRdfaData
+    public function getRdfaData(): ImmutableRdfaData
     {
         if ($this->rdfaData_ === false) {
             $baseType = $this->getBaseType();
 
             if ($baseType instanceof self) {
-                $baseRdfaData = clone $baseType->getRdfaData();
+                $baseRdfaData = $baseType->getRdfaData()->toMutable();
 
                 foreach (static::NO_INHERIT_PROPS as $prop) {
                     unset($baseRdfaData[$prop]);
@@ -103,28 +103,28 @@ abstract class AbstractType extends AbstractXsdComponent implements
             }
 
             if (isset($baseRdfaData)) {
-                $this->rdfaData_ = $baseRdfaData->replace(
+                $rdfaData = $baseRdfaData->replace(
                     $this->getXsdElement()->getRdfaData()
                 );
             } else {
-                $this->rdfaData_ = clone $this->getXsdElement()->getRdfaData();
+                $rdfaData = $this->getXsdElement()->getRdfaData()->toMutable();
             }
 
             /** If there is no explicit language-agnostic `rdfs:label`, use
              *  the type name as a fallback, considered as
              *  language-agnostic. */
             if (
-                !$this->rdfaData_->findStmtWithLang('rdfs:label', '-', true)
+                !$rdfaData->findStmtWithLang('rdfs:label', '-', true)
                 && $this->getXName()
             ) {
-                $this->rdfaData_->addStmt(
+                $rdfaData->addStmt(
                     new RdfsLabel(
-                        new LangStringLiteral(
-                            $this->getXName()->getLocalName()
-                        )
+                        new LangStringLiteral($this->getXName()->getLocalName())
                     )
                 );
             }
+
+            $this->rdfaData_ = $rdfaData->toImmutable();
         }
 
         return $this->rdfaData_;

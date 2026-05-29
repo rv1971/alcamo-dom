@@ -28,10 +28,10 @@ class MetaDecorator extends AbstractElementDecorator
      * `propterty`s in that element. This also works for properties that are
      * normally set by `\<link>` elements.
      */
-    public function createRdfaData(): ?RdfaData
+    public function createRdfaData(): RdfaData
     {
         if (!isset($this->property)) {
-            return null;
+            return RdfaData::newEmpty();
         }
 
         if ($this->content === '') {

@@ -3,7 +3,7 @@
 namespace alcamo\dom\decorated;
 
 use alcamo\dom\ConverterPool;
-use alcamo\rdfa\{AbstractRdfaData, RdfaData};
+use alcamo\rdfa\{ImmutableRdfaData, RdfaData};
 
 /**
  * @brief Implementation of HavingRdfaDataInterface
@@ -12,13 +12,11 @@ use alcamo\rdfa\{AbstractRdfaData, RdfaData};
  */
 trait HavingRdfaDataTrait
 {
-    private $rdfaData_ = false; ///< RdfaData
+    private $rdfaData_ = false; ///< ImmutableRdfaData
 
-    public function getRdfaData(): ?AbstractRdfaData
+    public function getRdfaData(): ImmutableRdfaData
     {
         if ($this->rdfaData_ === false) {
-            $this->rdfaData_ = null;
-
             $literalFactory = $this->ownerDocument->getLiteralFactory();
 
             $rdfaDataPairs = [];
@@ -55,14 +53,12 @@ trait HavingRdfaDataTrait
                             && ($element->localName == 'link'
                                 || $element->localName == 'meta')
                     ) {
-                        $rdfaData = $element->createRdfaData();
+                        $elementRdfaData = $element->createRdfaData();
 
                         if (isset($rdfaData)) {
-                            if (isset($this->rdfaData_)) {
-                                $this->rdfaData_->add($rdfaData);
-                            } else {
-                                $this->rdfaData_ = $rdfaData;
-                            }
+                            $rdfaData->add($elementRdfaData);
+                        } else {
+                            $rdfaData = $elementRdfaData;
                         }
 
                         continue;
@@ -82,19 +78,23 @@ trait HavingRdfaDataTrait
                 }
             }
 
-            $rdfaData = RdfaData::newFromIterable(
-                $rdfaDataPairs,
-                $this->ownerDocument->getRdfaFactory(),
-                RdfaData::URI_AS_KEY
-            );
+            if ($rdfaDataPairs) {
+                $rdfaData2 = RdfaData::newFromIterable(
+                    $rdfaDataPairs,
+                    $this->ownerDocument->getRdfaFactory(),
+                    RdfaData::URI_AS_KEY
+                );
 
-            if (isset($rdfaData)) {
-                if (isset($this->rdfaData_)) {
-                    $this->rdfaData_->add($rdfaData);
+                if (isset($rdfaData)) {
+                    $rdfaData->add($rdfaData2);
                 } else {
-                    $this->rdfaData_ = $rdfaData;
+                    $rdfaData = $rdfaData2;
                 }
             }
+
+            $this->rdfaData_ = isset($rdfaData)
+                ? $rdfaData->toImmutable()
+                : ImmutableRdfaData::newEmpty();
         }
 
         return $this->rdfaData_;

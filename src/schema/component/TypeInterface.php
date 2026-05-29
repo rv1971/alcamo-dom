@@ -2,7 +2,7 @@
 
 namespace alcamo\dom\schema\component;
 
-use alcamo\rdfa\{HavingRdfaDataInterface, RdfaData};
+use alcamo\rdfa\HavingRdfaDataInterface;
 
 /**
  * @brief Type definition
