@@ -35,43 +35,10 @@ class Decorator extends HavingDocumentationDecorator
     public function getComponentXName(): ?XName
     {
         if ($this->componentXName_ === false) {
-            /* The implicit call to offsetGet() in `$this->ref` includes a
+            /* The implicit call to offsetGet() in `$this->name` includes a
              * call to
              * alcamo::dom::extended::RegisteredNodeTrait::register(). */
-
-            if (isset($this->ref)) {
-                /** - If there is a `ref` attribute, return its value. */
-                $this->componentXName_ = $this->ref;
-            } elseif (isset($this->name)) {
-                /** - If there is a `name` attribute, build an extended name
-                 * from it. */
-                $documentElement = $this->ownerDocument->documentElement;
-
-                /* The component name has the target namespace as
-                 * its namespace iff it is global, or if it is an attribute
-                 * declaration and the form of local attributes is
-                 * qualified. */
-                $nsName =
-                    $this->parentNode->isSameNode($documentElement)
-                    || $this->form == 'qualified'
-                    || (
-                        $this->localName == 'attribute'
-                        && $documentElement->attributeFormDefault
-                        == 'qualified'
-                    )
-                    || (
-                        $this->localName == 'element'
-                        && $documentElement->elementFormDefault
-                        == 'qualified'
-                    )
-                    ? $documentElement->targetNamespace
-                    : null;
-
-                    $this->componentXName_ = new XName($nsName, $this->name);
-            } else {
-                /** - Else return `null`. */
-                $this->componentXName_ = null;
-            }
+            $this->componentXName_ = $this->name ?? $this->ref;
         }
 
         return $this->componentXName_;

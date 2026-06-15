@@ -3,7 +3,10 @@
 namespace alcamo\dom\extended;
 
 use alcamo\dom\{Attr as BaseAttr, ConverterPool as CP};
+use alcamo\dom\psvi\Document as PsviDocument;
+use alcamo\dom\schema\Converter;
 use alcamo\rdf_literal\Lang;
+use alcamo\xml\XName;
 
 /**
  * @brief Attribute class for use in DOMDocument::registerNodeClass()
@@ -59,6 +62,9 @@ class Attr extends BaseAttr implements DomNodeInterface
             ]
         ],
         self::XSD_NS => [
+#            'enumeration'    => [
+#                'value' => self::class . '::convertEnumerationValue'
+#            ],
             'fractionDigits' => [ 'fixed' => CP::class . '::toBool' ],
             'length'         => [ 'fixed' => CP::class . '::toBool' ],
             'maxExclusive'   => [ 'fixed' => CP::class . '::toBool' ],
@@ -84,6 +90,7 @@ class Attr extends BaseAttr implements DomNodeInterface
 
                 'base'              => CP::class . '::toXName',
                 'itemType'          => CP::class . '::toXName',
+                'name'              => self::class . '::convertComponentName',
                 'ref'               => CP::class . '::toXName',
                 'refer'             => CP::class . '::toXName',
                 'substitutionGroup' => CP::class . '::toXName',
@@ -109,6 +116,49 @@ class Attr extends BaseAttr implements DomNodeInterface
             ]
         ]
     ];
+
+    /// Convert the name of a component to an extended name
+    protected static function convertComponentName(
+        string $name,
+        DomNodeInterface $context
+    ) {
+        $documentElement = $context->ownerDocument->documentElement;
+        $component = $context->parentNode;
+
+        /* The component name has the target namespace as its namespace iff it
+         * is global or explictely qualified, or if it is an attribute/element
+         * declaration and the form of local attributes/elements is
+         * qualified. */
+        $nsName =
+            $component->parentNode->isSameNode($documentElement)
+            || $component->form == 'qualified'
+            || ($component->localName == 'attribute'
+                && $documentElement->attributeFormDefault == 'qualified')
+            || ($component->localName == 'element'
+                && $documentElement->elementFormDefault == 'qualified')
+            ? $documentElement->targetNamespace
+            : null;
+
+        return new XName($nsName, $name);
+    }
+
+    protected static function convertEnumerationValue(
+        string $value,
+        DomNodeInterface $context
+    ) {
+        /** Look for a converter in the $context document, if it is of type
+         *  alcamo::dom::psvi::Document, otherwise use the main converter in
+         *  alcamo::dom::schema::Converter. */
+
+        return ($context->ownerDocument instanceof PsviDocument
+                ? $context->ownerDocument->getConverter()
+                : Converter::getMainConverter())
+            ->convert(
+                $value,
+                $context,
+                $context->parentNode->parentNode->name
+            );
+    }
 
     private $value_;
 

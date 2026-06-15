@@ -481,9 +481,7 @@ class Schema implements
                 }
 
                 if (isset($elem->name)) {
-                    $globalDefs[$elem->localName]
-                        [(string)(new XName($targetNs, $elem->name))]
-                        = $elem;
+                    $globalDefs[$elem->localName][(string)$elem->name] = $elem;
                 }
             }
         }
