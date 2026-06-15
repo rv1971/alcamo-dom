@@ -2,7 +2,7 @@
 
 namespace alcamo\dom;
 
-use alcamo\binary_data\BinaryString;
+use alcamo\binary_data\ImmutableBinaryString;
 use alcamo\collection\ReadonlyPrefixSet;
 use alcamo\dom\extended\DomNodeInterface as ExtendedDomNodeInterface;
 use alcamo\dom\psvi\Document as PsviDocument;
@@ -260,15 +260,15 @@ class ConverterPool implements NamespaceConstantsInterface
     }
 
     /// Convert base64 data to binary data
-    public static function base64ToBinary(string $value): BinaryString
+    public static function base64ToBinary(string $value): ImmutableBinaryString
     {
-        return new BinaryString(base64_decode($value));
+        return new ImmutableBinaryString(base64_decode($value));
     }
 
     /// Convert hex data to binary data
-    public static function hexToBinary(string $value): BinaryString
+    public static function hexToBinary(string $value): ImmutableBinaryString
     {
-        return BinaryString::newFromHex($value);
+        return ImmutableBinaryString::newFromHex($value);
     }
 
     /// Transform a value such as in `xsi:schemaLocation` to a map
