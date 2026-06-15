@@ -13,7 +13,8 @@ use alcamo\dom\schema\Schema;
 abstract class AbstractSimpleType extends AbstractType implements
     SimpleTypeInterface
 {
-    private $primitiveType_ = false; ///< ?self
+    private $primitiveType_   = false; ///< ?self
+    private $enumerationType_ = false; ///< ?self
 
     /**
      * @brief Factory method creating the most specific type that it can
@@ -118,6 +119,28 @@ abstract class AbstractSimpleType extends AbstractType implements
         }
 
         return $this->primitiveType_;
+    }
+
+    /**
+     * @brief get associated enumeration type, if any
+     *
+     * The attribute `enumerationType` in `ALCAMO_SCHEMA_NS` is meant to link
+     * a type T to a type E derived from T defining enumerators. This allows
+     * to define some enumerators with documentation for type T while still
+     * allowing other values.
+     */
+    public function getEnumerationType(): ?SimpleTypeInterface
+    {
+        if ($this->enumerationType_ === false) {
+            $enumerationTypeXName = $this
+                ->getXsdElement()->{self::ALCAMO_SCHEMA_NS . ' enumerationType'};
+
+            $this->enumerationType_ = isset($enumerationTypeXName)
+                ? $this->getSchema()->getGlobalType($enumerationTypeXName)
+                : null;
+        }
+
+        return $this->enumerationType_;
     }
 
     public function isEqualToOrDerivedFrom(string $typeXName): bool

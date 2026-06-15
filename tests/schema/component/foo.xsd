@@ -6,6 +6,7 @@
     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
     xmlns:bar="https://bar.example.com#"
+    xmlns:alcamo-schema="tag:rv1971@web.de,2021:alcamo:ns:schema#"
     targetNamespace="http://foo.example.org"
     attributeFormDefault="qualified"
     xml:lang="en">
@@ -36,7 +37,9 @@
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="FooUnsigned5">
+  <xsd:simpleType
+      name="FooUnsigned5"
+      alcamo-schema:enumerationType="FooUnsigned5Enumeration">
     <xsd:annotation>
       <xsd:appinfo xmlns="http://www.w3.org/1999/xhtml">
         <meta property="bar:bits" datatype="xsd:byte" content="5"/>
@@ -102,5 +105,12 @@
 
   <xsd:simpleType name="DecimalUnionType">
     <xsd:union memberTypes="xsd:byte xsd:unsignedInt"/>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="FooUnsigned5Enumeration">
+    <xsd:restriction base="FooUnsigned5">
+      <xsd:enumeration value="1" rdfs:label="one"/>
+      <xsd:enumeration value="2" rdfs:label="two"/>
+    </xsd:restriction>
   </xsd:simpleType>
 </xsd:schema>

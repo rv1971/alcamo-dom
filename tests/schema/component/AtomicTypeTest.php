@@ -226,8 +226,8 @@ class AtomicTypeTest extends TestCase implements NamespaceConstantsInterface
         /* Contains XMLSchema.xsd as built-in. */
         $schema = (new SchemaFactory())->createFromUris([ $fooUri ]);
 
-        $fooInt =
-            $schema->getGlobalElement(self::FOO_NS . ' foo-int')->getType();
+         $fooInt =
+             $schema->getGlobalElement(self::FOO_NS . ' foo-int')->getType();
 
         $fooUnsigned5 = $fooInt->getBaseType();
 
@@ -286,6 +286,22 @@ class AtomicTypeTest extends TestCase implements NamespaceConstantsInterface
                 ImmutableRdfaData::URI_AS_KEY
             ),
             $fooInt->getRdfaData()
+        );
+    }
+
+    public function testGetEnumerationType(): void
+    {
+        $schema = (new SchemaFactory())->createFromUris(
+            [
+                (new FileUriFactory())
+                    ->create(__DIR__ . DIRECTORY_SEPARATOR . 'foo.xsd')
+            ]
+        );
+
+        $this->assertSame(
+            'two',
+            $schema->getGlobalType(self::FOO_NS . ' FooUnsigned5')
+                ->getEnumerationType()->getEnumerators()['2']->{'rdfs:label'}
         );
     }
 }
