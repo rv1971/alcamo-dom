@@ -19,6 +19,11 @@ class Attr extends BaseAttr implements DomNodeInterface
      * converters
      *
      * @sa [Use of CURIEs in Specific Attributes](https://www.w3.org/TR/rdfa-syntax/#sec_5.4.4.)
+     *
+     * The attribute `enumerationType` in `ALCAMO_SCHEMA_NS` is meant to link
+     * a type T to a type E derived from T defining enumerators. This allows
+     * to define some enumerators with documentation for type T while still
+     * allowing other values.
      */
     public const ATTR_CONVERTERS = [
         self::OWL_NS => [
@@ -32,6 +37,9 @@ class Attr extends BaseAttr implements DomNodeInterface
             'noNamespaceSchemaLocation' => CP::class . '::toUri',
             'schemaLocation'            => CP::class . '::pairsToMap',
             'type'                      => CP::class . '::toXName'
+        ],
+        self::ALCAMO_SCHEMA_NS => [
+            'enumerationType'           => CP::class . '::toXName'
         ]
     ];
 
