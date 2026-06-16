@@ -8,12 +8,14 @@ use alcamo\dom\schema\component\{
     AttrInterface,
     ComplexType,
     Element,
+    EnumerationType,
     PredefinedAnySimpleType,
     TypeInterface,
     UnionType
 };
-use alcamo\uri\FileUriFactory;
+use alcamo\uri\{FileUriFactory, Uri};
 use alcamo\xml\XName;
+use GuzzleHttp\Psr7\UriResolver;
 use PHPUnit\Framework\TestCase;
 
 class SchemaTest extends TestCase
@@ -411,6 +413,66 @@ class SchemaTest extends TestCase
             [ 'empty', 31 ],
             [ 'qux', 63 ],
             [ 'quux', 39 ]
+        ];
+    }
+
+    /**
+     * @dataProvider createTypeFromUriProvider
+     */
+    public function testCreateTypeFromUri(
+        $uri,
+        $expectedClass,
+        $expectedNsName
+    ): void {
+        $baseUri = (new FileUriFactory())
+            ->create(__DIR__ . DIRECTORY_SEPARATOR);
+
+        $uri = UriResolver::resolve($baseUri, new Uri($uri));
+
+        $type = self::$schema_->createTypeFromUri($uri);
+
+        $this->assertInstanceOf($expectedClass, $type);
+
+        $this->assertSame($expectedNsName, $type->getXName()->getNsName());
+
+        $this->assertSame($type, self::$schema_->createTypeFromUri($uri));
+    }
+
+    public function createTypeFromUriProvider(): array
+    {
+        return [
+            [
+                '../../xsd/XMLSchema.xsd#formChoice',
+                EnumerationType::class,
+                'http://www.w3.org/2001/XMLSchema'
+            ],
+            [
+                '../../xsd/XMLSchema.xsd#derivationSet',
+                UnionType::class,
+                'http://www.w3.org/2001/XMLSchema'
+            ],
+            [
+                'http://www.w3.org/2001/XMLSchema#boolean',
+                AtomicType::class,
+                'http://www.w3.org/2001/XMLSchema'
+            ],
+            [
+                '../foo.xsd#UpperString',
+                AtomicType::class,
+                'http://foo.example.org'
+            ],
+            [
+                "data:,%3C%3Fxml%20version='1.0'%3F%3E%3Cschema%20"
+                    . "xmlns='http://www.w3.org/2001/XMLSchema'%20"
+                    . "targetNamespace='tag:rv1971%40web.de,2021:alcamo:ns:base%23'%3E"
+                    . "%3CsimpleType%20name='NumericString'%20"
+                    . "xml:id='NumericString'%3E%3Crestriction%20"
+                    . "base='string'%3E%3Cpattern%20value='%5Cd+'/%3E"
+                    . "%3C/restriction%3E%3C/simpleType%3E%3C/schema%3E"
+                    . "#NumericString",
+                AtomicType::class,
+                'tag:rv1971@web.de,2021:alcamo:ns:base#'
+            ]
         ];
     }
 }

@@ -119,7 +119,7 @@ class Document extends \DOMDocument implements
         ?int $loadFlags = null,
         ?int $libxmlOptions = null
     ): self {
-        $doc = new static($documentFactory, $loadFlags, $libxmlOptions);
+        $doc = new static($documentFactory, $loadFlags, $libxmlOptions, $uri);
 
         $doc->loadUri($uri);
 
@@ -149,7 +149,7 @@ class Document extends \DOMDocument implements
         ?int $libxmlOptions = null,
         ?string $uri = null
     ) {
-        $doc = new static($documentFactory, $loadFlags, $libxmlOptions);
+        $doc = new static($documentFactory, $loadFlags, $libxmlOptions, $uri);
 
         $doc->loadXmlText($xmlText, $uri);
 
@@ -193,6 +193,7 @@ class Document extends \DOMDocument implements
         ?DocumentFactoryInterface $documentFactory = null,
         ?int $loadFlags = null,
         ?int $libxmlOptions = null,
+        ?string $uri = null,
         $version = null,
         $encoding = null
     ) {
@@ -208,7 +209,7 @@ class Document extends \DOMDocument implements
             $class = static::DEFAULT_DOCUMENT_FACTORY_CLASS;
 
             $this->documentFactory_ = new $class(
-                $this->baseURI,
+                $uri,
                 $this->loadFlags_,
                 $this->libxmlOptions_
             );

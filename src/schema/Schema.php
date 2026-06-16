@@ -442,6 +442,29 @@ class Schema implements
         $this->initGlobals($processedXsds);
     }
 
+    /// Create a type from an URI reference indicating an XSD element by ID
+    public function createTypeFromUri($uri): TypeInterface
+    {
+        $uri = $this->documentFactory_->resolveUri($uri)
+            ?? ($uri instanceof UriInterface ? $uri : new Uri($uri));
+
+        $targetNs = TargetNsCache::getInstance()[$uri->withFragment('')];
+
+        return $this->getGlobalType("$targetNs {$uri->getFragment()}")
+            ?? $this->createTypeFromXsdElement(
+                $this->documentFactory_->createFromUri($uri)
+            );
+    }
+
+    /// Create type from a schema consisting of the element's owner document
+    public function createTypeFromXsdElement(
+        XsdElement $xsdElement
+    ): TypeInterface {
+        $this->addXsds([ $xsdElement->ownerDocument ]);
+
+        return $this->getGlobalType($xsdElement->getComponentXName());
+    }
+
     /// Initialize all global definitions
     private function initGlobals(array $xsds): void
     {

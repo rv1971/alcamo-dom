@@ -55,10 +55,8 @@ class SchemaFactory implements
      * This method works even if a document has no `xsi:schemaLocation`
      *  attribute, in which case the schema has only the predefined components
      *  in the `xml` and the `xsd` namespaces. */
-    public function createFromDocument(
-        Document $doc,
-        ?DocumentFactoryInterface $documentFactory = null
-    ): Schema {
+    public function createFromDocument(Document $doc): Schema
+    {
         $uris = [];
 
         $schemaLocation = $doc->documentElement
@@ -72,10 +70,7 @@ class SchemaFactory implements
             }
         }
 
-        return $this->createFromUris(
-            $uris,
-            $documentFactory ?? $doc->getDocumentFactory()
-        );
+        return $this->createFromUris($uris);
     }
 
     /**
@@ -123,35 +118,6 @@ class SchemaFactory implements
         $class = static::SCHEMA_CLASS;
 
         return new $class($xsds);
-    }
-
-    /// Create a type from an URI reference indicating an XSD element by ID
-    public function createTypeFromUri($uri): TypeInterface
-    {
-        $uri = $this->documentFactory_->resolveUri($uri);
-
-        $targetNs = TargetNsCache::getInstance()[$uri->withFragment('')];
-
-        $type = $this->getMainSchema()
-            ->getGlobalType("$targetNs {$uri->getFragment()}");
-
-        if (isset($type)) {
-            return $type;
-        }
-
-        return static::createTypeFromXsdElement(
-            $this->documentFactory_->createFromUri($uri)
-        );
-    }
-
-    /// Create type from a schema consisting of the element's owner document
-    public function createTypeFromXsdElement(
-        XsdElement $xsdElement
-    ): TypeInterface {
-        $this->getMainSchema()->addXsds([ $xsdElement->ownerDocument ]);
-
-        return $this->getMainSchema()
-            ->getGlobalType($xsdElement->getComponentXName());
     }
 
     /// Create schema from all XSDs in directory and its subdirectories
