@@ -4,7 +4,7 @@
     "keywords": [ "dom", "xml", "xsd", "xml schema" ],
     "license": "Apache-2.0",
     "require": {
-        "php": "7.3 - 8.0",
+        "php": "7.3 - 8.5",
         "alcamo/binary-data": "^0.6",
         "alcamo/decorator": "^0.2",
         "alcamo/iterator": "^0.1",

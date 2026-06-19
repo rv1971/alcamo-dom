@@ -159,7 +159,7 @@ class DocumentTest extends TestCase
         $this->expectException(FileLoadFailed::class);
         $this->expectExceptionMessage(
             'Failed to load "none.xml"; DOMDocument::load(): I/O warning : '
-                . 'failed to load external entity'
+                . 'failed to load'
         );
 
         Document::newFromUri('none.xml');

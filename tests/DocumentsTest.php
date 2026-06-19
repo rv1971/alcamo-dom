@@ -41,7 +41,7 @@ class DocumentsTest extends TestCase
                 . 'expected one of ["alcamo\dom\Document"] for key 0'
         );
 
-        new Documents([ new\DOMDocument() ]);
+        new Documents([ new \DOMDocument() ]);
     }
 
     public function testConstructException2()
