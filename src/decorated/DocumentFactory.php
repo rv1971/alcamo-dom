@@ -2,7 +2,7 @@
 
 namespace alcamo\dom\decorated;
 
-use alcamo\dom\extended\DocumentFactory as DocumentFactoryBase;
+use alcamo\dom\extended\DocumentFactory as BaseDocumentFactory;
 
 /**
  * @brief Factory for DOM documents
@@ -12,7 +12,7 @@ use alcamo\dom\extended\DocumentFactory as DocumentFactoryBase;
  *
  * @date Last reviewed 2025-10-23
  */
-class DocumentFactory extends DocumentFactoryBase
+class DocumentFactory extends BaseDocumentFactory
 {
     /// @copybrief alcamo::dom::DocumentFactory::DEFAULT_DOCUMENT_CLASS
     public const DEFAULT_DOCUMENT_CLASS = Document::class;

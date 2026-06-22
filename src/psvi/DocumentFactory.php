@@ -2,7 +2,7 @@
 
 namespace alcamo\dom\psvi;
 
-use alcamo\dom\decorated\DocumentFactory as DocumentFactoryBase;
+use alcamo\dom\decorated\DocumentFactory as BaseDocumentFactory;
 
 /**
  * @brief Factory for DOM documents
@@ -12,7 +12,7 @@ use alcamo\dom\decorated\DocumentFactory as DocumentFactoryBase;
  *
  * @date Last reviewed 2025-11-25
  */
-class DocumentFactory extends DocumentFactoryBase
+class DocumentFactory extends BaseDocumentFactory
 {
     public const DEFAULT_DOCUMENT_CLASS = Document::class;
 }
