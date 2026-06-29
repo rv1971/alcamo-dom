@@ -11,6 +11,7 @@ use alcamo\exception\{
 };
 use alcamo\rdf_literal\LiteralFactory;
 use alcamo\rdfa\RdfaFactory;
+use alcamo\uri\FileUriFactory;
 use alcamo\xml\{NamespaceConstantsInterface, NamespaceMapsInterface};
 use Psr\Http\Message\UriInterface;
 
@@ -124,6 +125,34 @@ class Document extends \DOMDocument implements
         $doc->loadUri($uri);
 
         return $doc;
+    }
+
+    /**
+     * @brief Create a document from a local pathname
+     *
+     * @param $pathname complete path name in the local file system
+     *
+     * @param $documentFactory Document factory to use to create dependent
+     * documents, e.g. from links. If not specified, the Document factory will
+     * be created by createDocumentFactory() when needed.
+     *
+     * @param $loadFlags OR-Combination of the above load constants
+     *
+     * @param $libxmlOptions See $options in
+     * [DOMDocument::load()](https://www.php.net/manual/en/domdocument.load)
+     */
+    public static function newFromPathname(
+        string $pathname,
+        ?DocumentFactoryInterface $documentFactory = null,
+        ?int $loadFlags = null,
+        ?int $libxmlOptions = null
+    ): self {
+        return static::newFromUri(
+            (new FileUriFactory())->create($pathname),
+            $documentFactory,
+            $loadFlags,
+            $libxmlOptions
+        );
     }
 
     /**

@@ -16,9 +16,7 @@ class DocumentTest extends TestCase
 
     public function testClone(): void
     {
-        $fooUri = (new FileUriFactory())->create(self::DATA_DIR . 'foo.xml');
-
-        $doc1 = Document::newFromUri($fooUri);
+        $doc1 = Document::newFromPathname(self::DATA_DIR . 'foo.xml');
 
         $doc2 = clone $doc1;
 
@@ -37,7 +35,12 @@ class DocumentTest extends TestCase
     {
         $fooUri = (new FileUriFactory())->create(self::DATA_DIR . 'foo.xml');
 
-        $fooDoc = Document::newFromUri($fooUri, null, 4096, 0);
+        $fooDoc = Document::newFromPathname(
+            self::DATA_DIR . 'foo.xml',
+            null,
+            4096,
+            0
+        );
 
         $documentFactory = $fooDoc->getDocumentFactory();
 
