@@ -61,6 +61,12 @@ trait MagicAttrAccessTrait
             return $this->attrCache_[$attrName];
         }
 
+        if (!$this->attrCache_) {
+            /* Ensure conservation of the derived object when putting the
+             * first entry into the cache. */
+            $this->register();
+        }
+
         /* If not found in the cache, check which kind of attribute name is
          * given, and get the attribute node, if any. */
         if (strpos($attrName, ' ') === false) {
@@ -79,16 +85,7 @@ trait MagicAttrAccessTrait
         }
 
         /* Return null if there is no such node. */
-        if (!$attrNode) {
-            return null;
-        }
-
-        if (!$this->attrCache_) {
-            /* Ensure conservation of the derived object when putting the
-             * first entry into the cache. */
-            $this->register();
-        }
-
-        return ($this->attrCache_[$attrName] = $attrNode->getValue());
+        return $this->attrCache_[$attrName] =
+            $attrNode ? $attrNode->getValue() : null;
     }
 }
