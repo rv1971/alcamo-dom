@@ -51,6 +51,9 @@ class Document extends \DOMDocument implements
     public const NS_PRFIX_TO_NS_NAME =
         NamespaceMapsInterface::NS_PRFIX_TO_NS_NAME;
 
+    public const NS_NAME_TO_NS_PREFIX =
+        NamespaceMapsInterface::NS_NAME_TO_NS_PREFIX;
+
     /// Default class for a new document factory
     public const DEFAULT_DOCUMENT_FACTORY_CLASS = DocumentFactory::class;
 

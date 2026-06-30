@@ -210,4 +210,79 @@ class ElementTest extends TestCase
 
         $this->assertSame($uri, self::$doc_->documentElement->$attrName);
     }
+
+    public function testUnset(): void
+    {
+        /* case 1 */
+
+        $this->assertTrue(self::$doc_->documentElement->hasAttribute('baz'));
+
+        $this->assertSame('BAZ', self::$doc_->documentElement->baz);
+
+        unset(self::$doc_->documentElement->baz);
+
+        $this->assertFalse(self::$doc_->documentElement->hasAttribute('baz'));
+
+        $this->assertNull(self::$doc_->documentElement->baz);
+
+        /* case 2 */
+
+        $attrName = Document::OWL_NS . ' sameAs';
+
+        $this->assertTrue(
+            self::$doc_->documentElement
+                ->hasAttributeNS(Document::OWL_NS, 'sameAs')
+        );
+
+        $this->assertSame(
+            'foo.json',
+            (string)self::$doc_->documentElement->{'owl:sameAs'}
+        );
+
+        $this->assertSame(
+            'foo.json',
+            (string)self::$doc_->documentElement->$attrName
+        );
+
+        unset(self::$doc_->documentElement->{'owl:sameAs'});
+
+        $this->assertFalse(
+            self::$doc_->documentElement
+                ->hasAttributeNS(Document::OWL_NS, 'sameAs')
+        );
+
+        $this->assertNull(self::$doc_->documentElement->{'owl:sameAs'});
+
+        $this->assertNull(self::$doc_->documentElement->$attrName);
+
+        /* case 3 */
+
+        $attrName = Document::XML_NS . ' lang';
+
+        $this->assertTrue(
+            self::$doc_->documentElement
+                ->hasAttributeNS(Document::XML_NS, 'lang')
+        );
+
+        $this->assertSame(
+            'is',
+            (string)self::$doc_->documentElement->{'xml:lang'}
+        );
+
+        $this->assertSame(
+            'is',
+            (string)self::$doc_->documentElement->$attrName
+        );
+
+        unset(self::$doc_->documentElement->$attrName);
+
+        $this->assertFalse(
+            self::$doc_->documentElement
+                ->hasAttributeNS(Document::XML_NS, 'lang')
+        );
+
+        $this->assertNull(self::$doc_->documentElement->{'xml:lang'});
+
+        $this->assertNull(self::$doc_->documentElement->$attrName);
+    }
 }

@@ -17,8 +17,9 @@ use alcamo\xml\XName;
  * Hence there may be more than one way to specify the same attribute. All
  * ways to specify an attribute are equally stored in the cache.
  *
- * @warning The cached attributes are never updated, not even when an attribute
- * is changed.
+ * @note To change or unset the cached attributes (and the attributes in the
+ * DOM document itself), use the set and unset mechanisms. Changing directly
+ * the DOM document will not change the cached results.
  *
  * @date Last reviewed 2025-11-05
  */
@@ -87,5 +88,39 @@ trait MagicAttrAccessTrait
         /* Return null if there is no such node. */
         return $this->attrCache_[$attrName] =
             $attrNode ? $attrNode->getValue() : null;
+    }
+
+    public function __unset(string $attrName): void
+    {
+        if (strpos($attrName, ' ') === false) {
+            if (strpos($attrName, ':') === false) {
+                $this->removeAttribute($attrName);
+            } else {
+                [ $nsPrefix, $localName ] = explode(':', $attrName, 2);
+
+                $nsName = $this->ownerDocument::NS_PRFIX_TO_NS_NAME[$nsPrefix];
+
+                $this->removeAttributeNS($nsName, $localName);
+
+                $attrName2 = "$nsName $localName";
+            }
+        } else {
+            [ $nsName, $localName ] = explode(' ', $attrName);
+
+            $this->removeAttributeNS($nsName, $localName);
+
+            $nsPrefix =
+                $this->ownerDocument::NS_NAME_TO_NS_PREFIX[$nsName] ?? null;
+
+            if (isset($nsPrefix)) {
+                $attrName2 = "$nsPrefix:$localName";
+            }
+        }
+
+        $this->attrCache_[$attrName] = null;
+
+        if (isset($attrName2)) {
+            $this->attrCache_[$attrName2] = null;
+        }
     }
 }
