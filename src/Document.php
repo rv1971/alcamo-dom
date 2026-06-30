@@ -266,7 +266,14 @@ class Document extends \DOMDocument implements
         try {
             libxml_use_internal_errors(false);
 
-            $this->load($uri, $this->libxmlOptions_);
+            /* Remove file:// prefix because not all implementations support
+             * it. */
+            $this->load(
+                substr($uri, 0, 7) == 'file://'
+                    ? substr($uri, 7)
+                    : $uri,
+                $this->libxmlOptions_
+            );
         } catch (\ErrorException $e) {
             /** @throw alcamo::exception::FileLoadFailed if any libxml warning
              *  or error occurs. */
