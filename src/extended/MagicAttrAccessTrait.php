@@ -74,20 +74,35 @@ trait MagicAttrAccessTrait
             if (strpos($attrName, ':') === false) {
                 $attrNode = $this->getAttributeNode($attrName);
             } else {
-                $a = explode(':', $attrName, 2);
+                [ $nsPrefix, $localName ] = explode(':', $attrName, 2);
 
-                $attrNode = $this->getAttributeNodeNS(
-                    $this->ownerDocument::NS_PRFIX_TO_NS_NAME[$a[0]],
-                    $a[1]
-                );
+                $nsName = $this->ownerDocument::NS_PRFIX_TO_NS_NAME[$nsPrefix];
+
+                $attrNode = $this->getAttributeNodeNS($nsName, $localName);
+
+                $attrName2 = "$nsName $localName";
             }
         } else {
-            $attrNode = $this->getAttributeNodeNS(...explode(' ', $attrName));
+            [ $nsName, $localName ] = explode(' ', $attrName);
+
+            $attrNode = $this->getAttributeNodeNS($nsName, $localName);
+
+            $nsPrefix =
+                $this->ownerDocument::NS_NAME_TO_NS_PREFIX[$nsName] ?? null;
+
+            if (isset($nsPrefix)) {
+                $attrName2 = "$nsPrefix:$localName";
+            }
         }
 
         /* Return null if there is no such node. */
-        return $this->attrCache_[$attrName] =
-            $attrNode ? $attrNode->getValue() : null;
+        $value = $attrNode ? $attrNode->getValue() : null;
+
+        if (isset($attrName2)) {
+            $this->attrCache_[$attrName2] = $value;
+        }
+
+        return $this->attrCache_[$attrName] = $value;
     }
 
     public function __unset(string $attrName): void
