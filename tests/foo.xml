@@ -7,7 +7,7 @@ multi-line <comment> -->
 
 <?xml-stylesheet href="foo.xsl" type="text/xsl"?>
 
-<foo xmlns="http://foo.example.org">
+<foo xmlns="http://foo.example.org" xmlns:rdf="http://deliberately-wrong.biz">
   <bar
       xmlns="https://bar.example.com"
       xmlns:owl="http://www.w3.org/2002/07/owl#"
