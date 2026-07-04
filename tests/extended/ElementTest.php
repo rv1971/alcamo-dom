@@ -2,6 +2,7 @@
 
 namespace alcamo\dom\extended;
 
+use alcamo\exception\UnknownNamespacePrefix;
 use alcamo\rdf_literal\Lang;
 use alcamo\uri\{FileUriFactory, Uri};
 use alcamo\xml\XName;
@@ -49,7 +50,10 @@ class ElementTest extends TestCase
     {
         self::$factory_ =
             new DocumentFactory((new FileUriFactory())->create(self::DATA_DIR));
+    }
 
+    public function setUp(): void
+    {
         self::$doc_ =
             self::$factory_->createFromUri('foo.xml', MyDocument::class, false);
     }
@@ -112,6 +116,95 @@ class ElementTest extends TestCase
 
             $this->assertSame($i + 1, $fooDoc->getNodeRegistrySize());
         }
+    }
+
+    /**
+     * @dataProvider getAttrNodeProvider
+     */
+    public function testGetAttrNode(
+        $attrName,
+        $expectedAttrName2,
+        $expectedNsName,
+        $expectedLocalName,
+        $expectedAttrExists
+    ): void {
+        $attrNode = self::$doc_->documentElement
+            ->getAttrNode($attrName, $attrName2, $nsName, $localName);
+
+        $this->assertSame($expectedAttrName2, $attrName2);
+        $this->assertSame($expectedNsName, $nsName);
+        $this->assertSame($expectedLocalName, $localName);
+        $this->assertTrue(
+            $expectedAttrExists
+                ? $attrNode instanceof Attr
+                : $attrNode === null
+        );
+
+        if ($expectedAttrExists) {
+            $this->assertSame($expectedNsName, $attrNode->namespaceURI);
+            $this->assertSame($expectedLocalName, $localName);
+        }
+    }
+
+    public function getAttrNodeProvider(): array
+    {
+        return [
+            [ 'bar', null, null, 'bar', false ],
+            [ 'baz', null, null, 'baz', true ],
+            [
+                'dc:identifier',
+                Document::DC_NS . ' identifier',
+                Document::DC_NS,
+                'identifier',
+                false
+            ],
+            [
+                'xml:lang',
+                Document::XML_NS . ' lang',
+                Document::XML_NS,
+                'lang',
+                'true'
+            ],
+            [
+                Document::DC_NS . ' creator',
+                'dc:creator',
+                Document::DC_NS,
+                'creator',
+                false
+            ],
+            [
+                Document::XSI_NS . ' nil',
+                'xsi:nil',
+                Document::XSI_NS,
+                'nil',
+                true
+            ],
+            [
+                'http://foo.example.org corge',
+                null,
+                'http://foo.example.org',
+                'corge',
+                false
+            ],
+            [
+                'https://baz.example.edu# special',
+                null,
+                'https://baz.example.edu#',
+                'special',
+                true
+            ]
+        ];
+    }
+
+    public function testGetAttrNodeException(): void
+    {
+        $this->expectException(UnknownNamespacePrefix::class);
+
+        $this->expectExceptionMessage(
+            'Unknown namespace prefix "foo" in "foo:special"'
+        );
+
+        self::$doc_->documentElement->getAttrNode('foo:special');
     }
 
     /**
@@ -211,21 +304,155 @@ class ElementTest extends TestCase
         $this->assertSame($uri, self::$doc_->documentElement->$attrName);
     }
 
-    public function testUnset(): void
+    public function testSet(): void
     {
-        /* case 1 */
+        /* case 0: assign null */
 
         $this->assertTrue(self::$doc_->documentElement->hasAttribute('baz'));
 
         $this->assertSame('BAZ', self::$doc_->documentElement->baz);
 
-        unset(self::$doc_->documentElement->baz);
+        $nodeRegistrySize = self::$doc_->getNodeRegistrySize();
+
+        self::$doc_->documentElement->baz = null;
+
+        $nodeRegistrySize2 = self::$doc_->getNodeRegistrySize();
+
+        $this->assertSame($nodeRegistrySize - 1, $nodeRegistrySize2);
 
         $this->assertFalse(self::$doc_->documentElement->hasAttribute('baz'));
 
         $this->assertNull(self::$doc_->documentElement->baz);
 
-        /* case 2 */
+        /* case 1a: add attribute without namespace */
+
+        $nodeRegistrySize = self::$doc_->getNodeRegistrySize();
+
+        self::$doc_->documentElement->baz = 1234;
+
+        $nodeRegistrySize2 = self::$doc_->getNodeRegistrySize();
+
+        $this->assertSame($nodeRegistrySize + 1, $nodeRegistrySize2);
+
+        $this->assertTrue(self::$doc_->documentElement->hasAttribute('baz'));
+
+        $this->assertSame('1234', self::$doc_->documentElement->baz);
+
+        /* case 1b: modify attribute without namespace */
+
+        $nodeRegistrySize = self::$doc_->getNodeRegistrySize();
+
+        self::$doc_->documentElement->baz = 'BAZ-BAZ';
+
+        $nodeRegistrySize2 = self::$doc_->getNodeRegistrySize();
+
+        $this->assertSame($nodeRegistrySize, $nodeRegistrySize2);
+
+        $this->assertTrue(self::$doc_->documentElement->hasAttribute('baz'));
+
+        $this->assertSame('BAZ-BAZ', self::$doc_->documentElement->baz);
+
+        /* case 2a: add attribute with namespace prefix */
+
+        $nodeRegistrySize = self::$doc_->getNodeRegistrySize();
+
+        self::$doc_->documentElement->{'dc:identifier'} = 'foo';
+
+        $nodeRegistrySize2 = self::$doc_->getNodeRegistrySize();
+
+        $this->assertSame($nodeRegistrySize + 1, $nodeRegistrySize2);
+
+        $this->assertTrue(
+            self::$doc_->documentElement
+                ->hasAttributeNS(Document::DC_NS, 'identifier')
+        );
+
+        $this->assertSame(
+            'foo',
+            self::$doc_->documentElement->{'dc:identifier'}
+        );
+
+        /* case 2b: modify attribute with namespace prefix */
+
+        $nodeRegistrySize = self::$doc_->getNodeRegistrySize();
+
+        self::$doc_->documentElement->{'dc:identifier'} = 'foo-bar';
+
+        $nodeRegistrySize2 = self::$doc_->getNodeRegistrySize();
+
+        $this->assertSame($nodeRegistrySize, $nodeRegistrySize2);
+
+        $this->assertTrue(
+            self::$doc_->documentElement
+                ->hasAttributeNS(Document::DC_NS, 'identifier')
+        );
+
+        $this->assertSame(
+            'foo-bar',
+            self::$doc_->documentElement->{'dc:identifier'}
+        );
+
+        /* case 3a: add attribute with namespace name */
+
+        $nodeRegistrySize = self::$doc_->getNodeRegistrySize();
+
+        $attrName = Document::RDFS_NS . ' label';
+
+        self::$doc_->documentElement->$attrName = 'Foo';
+
+        $nodeRegistrySize2 = self::$doc_->getNodeRegistrySize();
+
+        $this->assertSame($nodeRegistrySize + 1, $nodeRegistrySize2);
+
+        $this->assertTrue(
+            self::$doc_->documentElement
+                ->hasAttributeNS(Document::RDFS_NS, 'label')
+        );
+
+        $this->assertSame('Foo', self::$doc_->documentElement->$attrName);
+
+        /* case 3b: modify attribute with namespace name */
+
+        $nodeRegistrySize = self::$doc_->getNodeRegistrySize();
+
+        self::$doc_->documentElement->$attrName = 'Foo element';
+
+        $nodeRegistrySize2 = self::$doc_->getNodeRegistrySize();
+
+        $this->assertSame($nodeRegistrySize, $nodeRegistrySize2);
+
+        $this->assertTrue(
+            self::$doc_->documentElement
+                ->hasAttributeNS(Document::RDFS_NS, 'label')
+        );
+
+        $this->assertSame(
+            'Foo element',
+            self::$doc_->documentElement->$attrName
+        );
+    }
+
+    public function testUnset(): void
+    {
+        /* case 1: attribute w/o namespace */
+
+        $this->assertTrue(self::$doc_->documentElement->hasAttribute('baz'));
+
+        $this->assertSame('BAZ', self::$doc_->documentElement->baz);
+
+        $nodeRegistrySize = self::$doc_->getNodeRegistrySize();
+
+        unset(self::$doc_->documentElement->baz);
+
+        $nodeRegistrySize2 = self::$doc_->getNodeRegistrySize();
+
+        $this->assertSame($nodeRegistrySize - 1, $nodeRegistrySize2);
+
+        $this->assertFalse(self::$doc_->documentElement->hasAttribute('baz'));
+
+        $this->assertNull(self::$doc_->documentElement->baz);
+
+        /* case 2: attribute with namespace prefix */
 
         $attrName = Document::OWL_NS . ' sameAs';
 
@@ -244,7 +471,13 @@ class ElementTest extends TestCase
             (string)self::$doc_->documentElement->$attrName
         );
 
+        $nodeRegistrySize = self::$doc_->getNodeRegistrySize();
+
         unset(self::$doc_->documentElement->{'owl:sameAs'});
+
+        $nodeRegistrySize2 = self::$doc_->getNodeRegistrySize();
+
+        $this->assertSame($nodeRegistrySize - 1, $nodeRegistrySize2);
 
         $this->assertFalse(
             self::$doc_->documentElement
@@ -255,7 +488,7 @@ class ElementTest extends TestCase
 
         $this->assertNull(self::$doc_->documentElement->$attrName);
 
-        /* case 3 */
+        /* case 3: attribute with namespace name */
 
         $attrName = Document::XML_NS . ' lang';
 
@@ -274,7 +507,13 @@ class ElementTest extends TestCase
             (string)self::$doc_->documentElement->$attrName
         );
 
+        $nodeRegistrySize = self::$doc_->getNodeRegistrySize();
+
         unset(self::$doc_->documentElement->$attrName);
+
+        $nodeRegistrySize2 = self::$doc_->getNodeRegistrySize();
+
+        $this->assertSame($nodeRegistrySize - 1, $nodeRegistrySize2);
 
         $this->assertFalse(
             self::$doc_->documentElement

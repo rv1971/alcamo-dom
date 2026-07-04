@@ -41,4 +41,9 @@ trait RegisteredNodeTrait
 
         return $this->hash_;
     }
+
+    public function unregister(): void
+    {
+        $this->ownerDocument->unregister($this);
+    }
 }
