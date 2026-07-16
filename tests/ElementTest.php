@@ -58,9 +58,7 @@ class ElementTest extends TestCase
     {
         $fileUriFactory = new FileUriFactory(null, false);
 
-        $fooDoc = Document::newFromUri(
-            $fileUriFactory->create(self::DATA_DIR . 'foo.xml')
-        );
+        $fooDoc = Document::newFromPathname(self::DATA_DIR . 'foo.xml');
 
         return [
             [
@@ -94,9 +92,7 @@ class ElementTest extends TestCase
     {
         /* This also tests class ChildElementsIterator. */
 
-        $fooDoc = Document::newFromUri(
-            (new FileUriFactory())->create(self::DATA_DIR . 'foo.xml')
-        );
+        $fooDoc = Document::newFromPathname(self::DATA_DIR . 'foo.xml');
 
         $data = [];
 
@@ -121,9 +117,7 @@ class ElementTest extends TestCase
     {
         /* This also tests the class XPath. */
 
-        $fooDoc = Document::newFromUri(
-            (new FileUriFactory())->create(self::DATA_DIR . 'foo.xml')
-        );
+        $fooDoc = Document::newFromPathname(self::DATA_DIR . 'foo.xml');
 
         $element = $fooDoc->documentElement->query($xPath)[0];
 
@@ -145,9 +139,7 @@ class ElementTest extends TestCase
     {
         /* This also tests the class XPath. */
 
-        $fooDoc = Document::newFromUri(
-            (new FileUriFactory())->create(self::DATA_DIR . 'foo.xml')
-        );
+        $fooDoc = Document::newFromPathname(self::DATA_DIR . 'foo.xml');
 
         $fooDoc->getXPath()->registerPhpFunctions();
 
@@ -169,9 +161,7 @@ class ElementTest extends TestCase
      */
     public function testGetFirstSameAs($uri, $expectedText): void
     {
-        $fooDoc = Document::newFromUri(
-            (new FileUriFactory())->create(self::DATA_DIR . 'foo.xml')
-        );
+        $fooDoc = Document::newFromPathname(self::DATA_DIR . 'foo.xml');
 
         $this->assertSame(
             $expectedText,
@@ -190,9 +180,7 @@ class ElementTest extends TestCase
 
     public function testGetFirstSameAsException(): void
     {
-        $fooDoc = Document::newFromUri(
-            (new FileUriFactory())->create(self::DATA_DIR . 'foo.xml')
-        );
+        $fooDoc = Document::newFromPathname(self::DATA_DIR . 'foo.xml');
 
         $this->expectException(AbsoluteUriNeeded::class);
         $this->expectExceptionMessage(
@@ -201,5 +189,38 @@ class ElementTest extends TestCase
         );
 
         $fooDoc->documentElement->getFirstSameAs('foo');
+    }
+
+    public function testCreateNsPrefix(): void
+    {
+        $fooDoc = Document::newFromPathname(self::DATA_DIR . 'foo.xml');
+
+        $element = $fooDoc->documentElement;
+
+        /* case 1: use canonical prefix */
+
+        $this->assertSame('dc', $element->createNsPrefix(Document::DC_NS));
+
+        $this->assertSame(
+            Document::DC_NS,
+            $element->lookupNamespaceURI('dc')
+        );
+
+        /* case 2: do not use canonical prefix because it is in use */
+
+        $this->assertSame('ns1', $element->createNsPrefix(Document::RDF_NS));
+
+        $this->assertSame(
+            Document::RDF_NS,
+            $element->lookupNamespaceURI('ns1')
+        );
+
+        /* case 3: use next available ns*i* prefix */
+
+        $nsName = 'http://ns.example.com';
+
+        $this->assertSame('ns2', $element->createNsPrefix($nsName));
+
+        $this->assertSame($nsName, $element->lookupNamespaceURI('ns2'));
     }
 }

@@ -2,6 +2,7 @@
 
 namespace alcamo\dom\extended;
 
+use alcamo\exception\UnknownNamespacePrefix;
 use alcamo\xml\XName;
 
 /**
@@ -70,33 +71,11 @@ trait MagicAttrAccessTrait
 
         /* If not found in the cache, check which kind of attribute name is
          * given, and get the attribute node, if any. */
-        if (strpos($attrName, ' ') === false) {
-            if (strpos($attrName, ':') === false) {
-                $attrNode = $this->getAttributeNode($attrName);
-            } else {
-                [ $nsPrefix, $localName ] = explode(':', $attrName, 2);
 
-                $nsName = $this->ownerDocument::NS_PRFIX_TO_NS_NAME[$nsPrefix];
-
-                $attrNode = $this->getAttributeNodeNS($nsName, $localName);
-
-                $attrName2 = "$nsName $localName";
-            }
-        } else {
-            [ $nsName, $localName ] = explode(' ', $attrName);
-
-            $attrNode = $this->getAttributeNodeNS($nsName, $localName);
-
-            $nsPrefix =
-                $this->ownerDocument::NS_NAME_TO_NS_PREFIX[$nsName] ?? null;
-
-            if (isset($nsPrefix)) {
-                $attrName2 = "$nsPrefix:$localName";
-            }
-        }
+        $attrNode = $this->getAttrNode($attrName, $attrName2);
 
         /* Return null if there is no such node. */
-        $value = $attrNode ? $attrNode->getValue() : null;
+        $value = isset($attrNode) ? $attrNode->getValue() : null;
 
         if (isset($attrName2)) {
             $this->attrCache_[$attrName2] = $value;
@@ -105,24 +84,137 @@ trait MagicAttrAccessTrait
         return $this->attrCache_[$attrName] = $value;
     }
 
+    /// Set an attribute in the document and the attribute cache
+    public function __set(string $attrName, $value): void
+    {
+        /** Setting an attribute to `null` calls __unset(). */
+        if (!isset($value)) {
+            $this->__unset($attrName);
+            return;
+        }
+
+        $attrNode =
+            $this->getAttrNode($attrName, $attrName2, $nsName, $localName);
+
+        if (isset($attrNode)) {
+            $attrNode->unregister();
+        }
+
+        if (isset($nsName)) {
+            $nsPrefix = $this->lookupPrefix($nsName);
+
+            if (!isset($nsPrefix)) {
+                $nsPrefix = $this->createNsPrefix($nsName);
+            }
+
+            $attrNode = $this->ownerDocument
+                ->createAttributeNS($nsName, "$nsPrefix:$localName");
+
+            $this->setAttributeNodeNS($attrNode);
+        } else {
+            $attrNode = $this->ownerDocument->createAttribute($attrName);
+
+            $this->setAttributeNode($attrNode);
+        }
+
+        $attrNode->value = $value;
+
+        $this->attrCache_[$attrName] = $attrNode->getValue();
+
+        if (isset($attrName2)) {
+            $this->attrCache_[$attrName2] = $attrNode->getValue();
+        }
+    }
+
+    /// Unset an attribute in the document and the attribute cache
     public function __unset(string $attrName): void
     {
-        if (strpos($attrName, ' ') === false) {
-            if (strpos($attrName, ':') === false) {
-                $this->removeAttribute($attrName);
-            } else {
-                [ $nsPrefix, $localName ] = explode(':', $attrName, 2);
+        $attrNode =
+            $this->getAttrNode($attrName, $attrName2, $nsName, $localName);
 
-                $nsName = $this->ownerDocument::NS_PRFIX_TO_NS_NAME[$nsPrefix];
+        if (!isset($attrNode)) {
+            return;
+        }
 
-                $this->removeAttributeNS($nsName, $localName);
+        $attrNode->unregister();
 
-                $attrName2 = "$nsName $localName";
+        if (isset($nsName)) {
+            $this->removeAttributeNS($nsName, $localName);
+        } else {
+            $this->removeAttribute($attrName);
+        }
+
+        $this->attrCache_[$attrName] = null;
+
+        if (isset($attrName2)) {
+            $this->attrCache_[$attrName2] = null;
+        }
+    }
+
+    /**
+     * @brief Get attribute node
+     *
+     * @param $attrName local name, qualified name or extended name
+     * (i.e. string representation of alcamo::xml::XName, i.e. concatenation
+     * of namespace name, one space, and local name).
+     *
+     * @param $attrName2 [out]
+     * - extended name if $attrName is a qualified name.
+     * - qualified name if $attrName is an extended name and a mapping of
+     *   the namespace name to a namespace prefix exists.
+     * - otherwise `null`
+     *
+     * @return Attribute node or `null`.
+     *
+     * @note The namespace prefix in a qualified name is interpreted based on
+     * the maps in alcamo::xml::NamespaceMapsInterface, *not* based on
+     * the namespace mappings in the document.
+     *
+     * @note It is possible to use an extended name to (attempt to) access an
+     * attribute even if no mapping of the namespace name to a namepsace
+     * prefix exists in
+     * alcamo::xml::NamespaceMapsInterface::NS_NAME_TO_NS_PREFIX. The converse
+     * is not possible.
+     */
+    public function getAttrNode(
+        string $attrName,
+        &$attrName2 = null,
+        &$nsName = null,
+        &$localName = null
+    ): ?Attr {
+        $hasSpace = strpos($attrName, ' ');
+        $hasColon = $hasSpace ? false : strpos($attrName, ':');
+
+        if (!$hasSpace && !$hasColon) {
+            $attrname2 = null;
+            $nsName = null;
+            $localName = $attrName;
+
+            return $this->hasAttribute($attrName)
+                ? $this->getAttributeNode($attrName)
+                : null;
+        }
+
+        if ($hasColon) {
+            [ $nsPrefix, $localName ] = explode(':', $attrName);
+
+            $nsName =
+                $this->ownerDocument::NS_PRFIX_TO_NS_NAME[$nsPrefix] ?? null;
+
+            if (!isset($nsName)) {
+                /** @throw alcamo::exception::UnknownNamespacePrefix if the
+                 *  prefix is not found in the map. */
+                throw (new UnknownNamespacePrefix())->setMessageContext(
+                    [
+                        'prefix' => $nsPrefix,
+                        'inData' => $attrName
+                    ]
+                );
             }
+
+            $attrName2 = "$nsName $localName";
         } else {
             [ $nsName, $localName ] = explode(' ', $attrName);
-
-            $this->removeAttributeNS($nsName, $localName);
 
             $nsPrefix =
                 $this->ownerDocument::NS_NAME_TO_NS_PREFIX[$nsName] ?? null;
@@ -132,10 +224,8 @@ trait MagicAttrAccessTrait
             }
         }
 
-        $this->attrCache_[$attrName] = null;
-
-        if (isset($attrName2)) {
-            $this->attrCache_[$attrName2] = null;
-        }
+        return $this->hasAttributeNS($nsName, $localName)
+            ? $this->getAttributeNodeNS($nsName, $localName)
+            : null;
     }
 }

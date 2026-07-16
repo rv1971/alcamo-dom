@@ -37,6 +37,11 @@ trait NodeRegistryTrait
         return $hash;
     }
 
+    public function unregister(\DOMNode $node): void
+    {
+        unset($this->nodeRegistry_[spl_object_hash($node)]);
+    }
+
     /// Needed in alcamo::dom::extended::Document::clearCache()
     private function clearNodeRegistry()
     {
