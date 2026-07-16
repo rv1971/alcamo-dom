@@ -57,7 +57,7 @@ class TargetNsCache implements
      */
     public function offsetGet($uri): ?string
     {
-        /* This uses the above offsetExists(). */
+        /* This does not use the above offsetExists(). */
         if (!isset($this->data_[(string)$uri])) {
             return $this->add($uri) ?: null;
         }

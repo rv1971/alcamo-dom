@@ -450,6 +450,13 @@ class Schema implements
 
         $targetNs = TargetNsCache::getInstance()[$uri->withFragment('')];
 
+        /* If $uri has not been loaded before, TargetNsCache loads it as a
+         * ShallowDocument to get its namespace. This is sufficient to compose
+         * the extended name. If a type with that extended name is already
+         * known, it is used without loading the file. This implies that, if
+         * an already loaded file is referenced through a different URI, it is
+         * loaded as a ShallowDocument only, saving the effort to load it
+         * again in its entirety. */
         return $this->getGlobalType("$targetNs {$uri->getFragment()}")
             ?? $this->createTypeFromXsdElement(
                 $this->documentFactory_->createFromUri($uri)
