@@ -503,7 +503,15 @@ class Schema implements
                     unset($this->topXsds_[$uri]);
                 }
 
-                if (isset($elem->name)) {
+                /* Do not overwrite existing definitions in order to avoid
+                 * destroying cached data when loading an already loaded file
+                 * again from a different location. */
+                if (
+                    isset($elem->name)
+                        && !isset(
+                            $globalDefs[$elem->localName][(string)$elem->name]
+                        )
+                ) {
                     $globalDefs[$elem->localName][(string)$elem->name] = $elem;
                 }
             }
