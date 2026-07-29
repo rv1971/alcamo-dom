@@ -83,6 +83,17 @@ abstract class AbstractType extends AbstractXsdComponent implements
         }
     }
 
+    public function isEqualToOrDerivedFrom(string $typeXName): bool
+    {
+        foreach ($this->getSelfAndBaseTypes() as $type) {
+            if ($type->getXName() == $typeXName) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     /**
      * @copydoc alcamo::dom::schema::component::TypeInterface::getRdfaData()
      *

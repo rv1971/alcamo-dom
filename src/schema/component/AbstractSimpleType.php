@@ -143,17 +143,6 @@ abstract class AbstractSimpleType extends AbstractType implements
         return $this->enumerationType_;
     }
 
-    public function isEqualToOrDerivedFrom(string $typeXName): bool
-    {
-        foreach ($this->getSelfAndBaseTypes() as $type) {
-            if ($type->getXName() == $typeXName) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     /**
      * @copydoc alcamo::dom::schema::component::SimpleTypeInterface::getFacet()
      *
