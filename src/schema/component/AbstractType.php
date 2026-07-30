@@ -3,6 +3,7 @@
 namespace alcamo\dom\schema\component;
 
 use alcamo\dom\decorated\Element as XsdElement;
+use alcamo\exception\InvalidType;
 use alcamo\dom\schema\Schema;
 use alcamo\rdf_literal\LangStringLiteral;
 use alcamo\rdfa\{ImmutableRdfaData, RdfaData, RdfsLabel};
@@ -92,6 +93,20 @@ abstract class AbstractType extends AbstractXsdComponent implements
         }
 
         return false;
+    }
+
+    public function throwUnlessEqualToOrDerivedFrom(string $typeXName): void
+    {
+        if (!$this->isEqualToOrDerivedFrom($typeXName)) {
+            /** @throw alcamo::exception::InvalidType if not of a type derived
+             *  from $typeXName. */
+            throw (new InvalidType())->setMessageContext(
+                [
+                    'type' => (string)$this->getXName(),
+                    'expectedOneOf' => "derived from $typeXName"
+                ]
+            );
+        }
     }
 
     /**
