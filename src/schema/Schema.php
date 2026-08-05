@@ -58,6 +58,9 @@ class Schema implements
         __construct as initDocumentFactory;
     }
 
+    /// Namespace for extensions to XML Schema
+    public const EXTENSION_NS = self::ALCAMO_SCHEMA_NS;
+
     public const DEFAULT_DOCUMENT_FACTORY_CLASS = DocumentFactory::class;
 
     /// Predefined XSI attributes
