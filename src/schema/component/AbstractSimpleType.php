@@ -132,9 +132,10 @@ abstract class AbstractSimpleType extends AbstractType implements
     public function getEnumerationType(): ?SimpleTypeInterface
     {
         if ($this->enumerationType_ === false) {
-            $enumerationTypeXName = $this
-                ->getXsdElement()
-                ->{$this->schema_::EXTENSION_NS . ' enumerationType'};
+            $xsdElement = $this->getXsdElement();
+
+            $enumerationTypeXName = $xsdElement
+                ->{$xsdElement->ownerDocument::SCHEMA_EXTENSION_NS . ' enumerationType'};
 
             $this->enumerationType_ = isset($enumerationTypeXName)
                 ? $this->getSchema()->getGlobalType($enumerationTypeXName)

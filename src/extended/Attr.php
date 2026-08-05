@@ -36,7 +36,7 @@ class Attr extends BaseAttr implements DomNodeInterface
             'schemaLocation'            => CP::class . '::pairsToMap',
             'type'                      => CP::class . '::toXName'
         ],
-        self::ALCAMO_SCHEMA_NS => [
+        Document::SCHEMA_EXTENSION_NS => [
             'enumerationType'           => CP::class . '::toXName'
         ]
     ];

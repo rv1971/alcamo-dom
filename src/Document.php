@@ -66,6 +66,9 @@ class Document extends \DOMDocument implements
         'DOMText'                  => Text::class
     ];
 
+    /// Namespace for extensions to XML Schema
+    public const SCHEMA_EXTENSION_NS = self::ALCAMO_SCHEMA_NS;
+
     /**
      * @brief Default libxml options when loading a document
      *
