@@ -37,8 +37,7 @@ class Attr extends BaseAttr implements DomNodeInterface
             'type'                      => CP::class . '::toXName'
         ],
         Document::SCHEMA_EXTENSION_NS => [
-            'enumerationType'           => CP::class . '::toXName',
-            'isBitmapType'              => CP::class . '::toBool'
+            'enumerationType'           => CP::class . '::toXName'
         ]
     ];
 
