@@ -191,6 +191,28 @@ class ElementTest extends TestCase
         $fooDoc->documentElement->getFirstSameAs('foo');
     }
 
+    /**
+     * @dataProvider getFirstSameAsSuffixProvider
+     */
+    public function testGetFirstSameAsSuffix($suffix, $expectedText): void
+    {
+        $fooDoc = Document::newFromPathname(self::DATA_DIR . 'foo.xml');
+
+        $this->assertSame(
+            $expectedText,
+            (string)$fooDoc->documentElement->getFirstSameAsSuffix($suffix)
+        );
+    }
+
+    public function getFirstSameAsSuffixProvider(): array
+    {
+        return [
+            [ 'biz#a', 'Lorem ipsum' ],
+            [ 'biz#b', 'dolor sit amet' ],
+            [ 'edu#s', 'sadipscing' ]
+        ];
+    }
+
     public function testCreateNsPrefix(): void
     {
         $fooDoc = Document::newFromPathname(self::DATA_DIR . 'foo.xml');

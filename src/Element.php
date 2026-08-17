@@ -74,9 +74,9 @@ class Element extends \DOMElement implements
     {
         /* For efficiency, first check if the element itself has an xml:lang
          * (or lang) attribute since this is a frequent case in practice. */
-        if ($this->hasAttributeNS(Document::XML_NS, 'lang')) {
+        if ($this->hasAttributeNS(self::XML_NS, 'lang')) {
             return Lang::newFromString(
-                $this->getAttributeNS(Document::XML_NS, 'lang')
+                $this->getAttributeNS(self::XML_NS, 'lang')
             );
         }
 
@@ -93,9 +93,9 @@ class Element extends \DOMElement implements
         )[0];
 
         if (isset($ancestor)) {
-            if ($ancestor->hasAttributeNS(Document::XML_NS, 'lang')) {
+            if ($ancestor->hasAttributeNS(self::XML_NS, 'lang')) {
                 return Lang::newFromString(
-                    $ancestor->getAttributeNS(Document::XML_NS, 'lang')
+                    $ancestor->getAttributeNS(self::XML_NS, 'lang')
                 );
             } else {
                 return Lang::newFromString($ancestor->getAttribute('lang'));
@@ -140,16 +140,60 @@ class Element extends \DOMElement implements
 
         $uri = (string)UriNormalizer::normalize($uri, $normalizations);
 
-        foreach ($this->query('descendant-or-self::*[@owl:sameAs]') as $element) {
+        foreach (
+            $this->query('descendant-or-self::*[@owl:sameAs]') as $element
+        ) {
             if (
                 UriNormalizer::normalize(
                     $element->resolveUri(
-                        $element->getAttributeNS(Document::OWL_NS, 'sameAs')
+                        $element->getAttributeNS(self::OWL_NS, 'sameAs')
                     ),
                     $normalizations
                 )
                 == $uri
             ) {
+                return $element;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @brief Get the first element along the `descendant-or-self` axis which
+     * is semantically the same as a URI having the given suffix.
+     *
+     * I.e. return the first element that declares itself to be the same as a
+     * URI ending in $suffix. The result may be the context element
+     * itself. Return `null` if no such element is found.
+     *
+     * This is useful when the task is to pick up one out of a set of known
+     * `owl:sameAs` targets.
+     *
+     * @param $suffix Suffix to look for.
+     *
+     * @param $normalizations to apply to each `owl:sameAs` attribute before
+     * comparison. If `null`, no normalizations take place, thus accelerating
+     * the process. In particular, unlike getFirstSameAsSuffix(), no
+     * realpath() is needed for `file://` URIs, thus saving the effort to
+     * access the file system.
+     */
+    public function getFirstSameAsSuffix(
+        string $suffix,
+        ?int $normalizations = null
+    ): ?self {
+        foreach (
+            $this->query('descendant-or-self::*[@owl:sameAs]') as $element
+        ) {
+            $sameAs = $element->resolveUri(
+                $element->getAttributeNS(self::OWL_NS, 'sameAs')
+            );
+
+            if (isset($normalizations)) {
+                $sameAs = UriNormalizer::normalize($sameAs, $normalizations);
+            }
+
+            if (substr($sameAs, -strlen($suffix)) == $suffix) {
                 return $element;
             }
         }
