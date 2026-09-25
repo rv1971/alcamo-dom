@@ -63,7 +63,8 @@ class DocumentFactoryTest extends TestCase
     public function testCreate($uri, $class, $expectedNamespace): void
     {
         $baseUri = (new FileUriFactory())->create(self::DATA_DIR);
-        $loadFlags = Document::XINCLUDE_AFTER_LOAD;
+        $loadFlags = Document::XINCLUDE_AFTER_LOAD
+            | Document::VALIDATE_XINCLUDE_SHORTHAND_POINTER;
         $libXmlOptions = LIBXML_NOBLANKS;
 
         $factory = new DocumentFactory($baseUri, $loadFlags, $libXmlOptions);
@@ -259,7 +260,6 @@ class DocumentFactoryTest extends TestCase
         $factory->createFromUri('invalid-bar-2.xml');
     }
 
-
     public function testXInclude(): void
     {
         $factory = new DocumentFactory(
@@ -277,7 +277,9 @@ class DocumentFactoryTest extends TestCase
             'bar-includer.xml',
             null,
             false,
-            Document::XINCLUDE_AFTER_LOAD | Document::VALIDATE_AFTER_XINCLUDE
+            Document::XINCLUDE_AFTER_LOAD
+                | Document::VALIDATE_AFTER_XINCLUDE
+                | Document::VALIDATE_XINCLUDE_SHORTHAND_POINTER
         );
 
         $this->assertSame(
@@ -314,5 +316,45 @@ class DocumentFactoryTest extends TestCase
         );
 
         $factory->createFromUri('invalid-bar-includer.xml', null, false);
+    }
+
+    public function testValidateXincludeShorthandPointer1(): void
+    {
+        $factory = new DocumentFactory(
+            (new FileUriFactory())->create(self::DATA_DIR),
+            Document::VALIDATE_XINCLUDE_SHORTHAND_POINTER
+        );
+
+        $this->expectException(DataValidationFailed::class);
+        $this->expectExceptionMessage(
+            "invalid-shorthand-pointer-includer.xml\" for key \"bazz\"; "
+                . "XIncluded document \"file:"
+        );
+
+        $factory->createFromUri(
+            'invalid-shorthand-pointer-includer.xml',
+            null,
+            false
+        );
+    }
+
+    public function testValidateXincludeShorthandPointer2(): void
+    {
+        $factory = new DocumentFactory(
+            (new FileUriFactory())->create(self::DATA_DIR),
+            Document::VALIDATE_XINCLUDE_SHORTHAND_POINTER
+        );
+
+        $this->expectException(DataValidationFailed::class);
+        $this->expectExceptionMessage(
+            "invalid-internal-shorthand-pointer-includer.xml\" "
+                . "for key \"bazz\"; document has no ID \"bazz\""
+        );
+
+        $factory->createFromUri(
+            'invalid-internal-shorthand-pointer-includer.xml',
+            null,
+            false
+        );
     }
 }

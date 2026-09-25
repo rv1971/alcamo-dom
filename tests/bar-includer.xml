@@ -8,4 +8,10 @@
       xmlns="http://www.w3.org/2001/XInclude"
       href="bar.xml"
       xpointer="baz"/>
+
+  <!-- not flagged as an error by VALIDATE_XINCLUDE_SHORTHAND_POINTER -->
+  <include
+      xmlns="http://www.w3.org/2001/XInclude"
+      href="bar.xml"
+      xpointer="element(bazz)"/>
 </bar>

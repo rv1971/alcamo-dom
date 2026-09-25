@@ -4,6 +4,7 @@ namespace alcamo\dom;
 
 use alcamo\collection\PreventWriteArrayAccessTrait;
 use alcamo\exception\{
+    DataValidationFailed,
     ErrorHandler,
     FileLoadFailed,
     SyntaxError,
@@ -90,6 +91,26 @@ class Document extends \DOMDocument implements
     public const VALIDATE_AFTER_XINCLUDE = 4;
 
     /**
+     * @brief Validate that each shorthand pointer used in an XInclude refers
+     * to an existing ID
+     *
+     * xinclude() does not complain when an \<include> element refers to an
+     * existing document with a non-existing shorthand pointer, in other
+     * words, when attempting to include an element in the referenced document
+     * by its ID, but eh document contains no such ID.
+     *
+     * When the present constant is specified in the load flags, the
+     * afterLoad() method checks for all \<include> elements having a
+     * shorthand pointer that the referenced ID exists, provided that the
+     * referecned document exists. It is not considered an error if the
+     * document does not exist because this case is handled by the underlying
+     * library (which considers this an error unless a fallback is defined).
+     *
+     * This validation may be expensive.
+     */
+    public const VALIDATE_XINCLUDE_SHORTHAND_POINTER = 8;
+
+    /**
      * @brief Pretty-format and re-parse the document
      *
      * This is useful to get reasonable line numbers after xinclude() because
@@ -105,6 +126,9 @@ class Document extends \DOMDocument implements
 
     /// Factory class used to create RDFa data
     public const RDFA_FACTORY_CLASS = RdfaFactory::class;
+
+    protected const SHORTHAND_POINTER_XINCLUDES_XPATH =
+        '//xi:include[@xpointer][not(contains(@xpointer, "("))]';
 
     /**
      * @brief Create a document from a URI
@@ -420,8 +444,7 @@ class Document extends \DOMDocument implements
             $xsltStylesheetUri = $this->getXsltStylesheetUri();
 
             $this->xsltStylesheet_ = isset($xsltStylesheetUri)
-                ? $this->getDocumentFactory()
-                ->createFromUri($xsltStylesheetUri)
+                ? $this->documentFactory_->createFromUri($xsltStylesheetUri)
                 : null;
         }
 
@@ -470,6 +493,54 @@ class Document extends \DOMDocument implements
 
         if ($this->loadFlags_ & self::VALIDATE_AFTER_LOAD) {
             (new DocumentValidator())->validate($this);
+        }
+
+        if ($this->loadFlags_ & self::VALIDATE_XINCLUDE_SHORTHAND_POINTER) {
+            foreach (
+                $this->query(
+                    static::SHORTHAND_POINTER_XINCLUDES_XPATH
+                ) as $xinclude
+            ) {
+                if ($xinclude->hasAttribute('href')) {
+                    $doc = $this->documentFactory_->createFromUri(
+                        $xinclude->resolveUri($xinclude->getAttribute('href'))
+                    );
+
+                    /* It is not an error if the referenced document does not
+                     * exist. */
+                    if (!isset($doc)) {
+                        continue;
+                    }
+                } else {
+                    $doc = $this;
+                }
+
+                if (
+                    !$doc->getElementById($xinclude->getAttribute('xpointer'))
+                ) {
+                    $xpointer = $xinclude->getAttribute('xpointer');
+
+                    /** @throw With VALIDATE_XINCLUDE_SHORTHAND_POINTER, throw
+                     *  alcamo::exception::DataValidationFailed if a document
+                     *  referenced in an \<include> exists but the referenced
+                     *  ID does not. This also applies to \<include>s without
+                     *  href attribute, which reference the present document
+                     *  itself. */
+                    throw (new DataValidationFailed())->setMessageContext(
+                        [
+                            'atUri' => $this->documentURI,
+                            'atLine' => $xinclude->getLineNo(),
+                            'forKey' => $xpointer,
+                            'extraMessage' =>
+                                ($xinclude->hasAttribute('href')
+                                 ? ("XIncluded document "
+                                    . "\"{$doc->documentURI}\" ")
+                                 : "document ")
+                            . "has no ID \"$xpointer\""
+                        ]
+                    );
+                }
+            }
         }
 
         if ($this->loadFlags_ & self::XINCLUDE_AFTER_LOAD) {
