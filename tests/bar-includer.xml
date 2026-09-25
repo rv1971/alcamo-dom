@@ -14,4 +14,11 @@
       xmlns="http://www.w3.org/2001/XInclude"
       href="bar.xml"
       xpointer="element(bazz)"/>
+
+    <include
+      xmlns="http://www.w3.org/2001/XInclude"
+      href="bazz.xml"
+      xpointer="bazz">
+      <fallback/>
+    </include>
 </bar>

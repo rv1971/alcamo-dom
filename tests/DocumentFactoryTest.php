@@ -357,4 +357,30 @@ class DocumentFactoryTest extends TestCase
             false
         );
     }
+
+    public function testValidateXincludeShorthandPointer3(): void
+    {
+        $bazzFilename = self::DATA_DIR . 'bazz.xml';
+
+        /* Attempt to XInclude this unreadable file will trigger an
+         * ErrorException. This tests that it is catched when validating
+         * XInclude shorthand pointers. */
+        touch($bazzFilename);
+        chmod($bazzFilename, 0333);
+
+        $factory = new DocumentFactory(
+            (new FileUriFactory())->create(self::DATA_DIR)
+        );
+
+        $bar = $factory->createFromUri(
+            'bar-includer.xml',
+            null,
+            false,
+            Document::VALIDATE_XINCLUDE_SHORTHAND_POINTER
+        );
+
+        $this->assertInstanceOf(Document::class, $bar);
+
+        unlink($bazzFilename);
+    }
 }

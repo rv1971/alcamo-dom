@@ -502,12 +502,19 @@ class Document extends \DOMDocument implements
                 ) as $xinclude
             ) {
                 if ($xinclude->hasAttribute('href')) {
-                    $doc = $this->documentFactory_->createFromUri(
-                        $xinclude->resolveUri($xinclude->getAttribute('href'))
-                    );
-
                     /* It is not an error if the referenced document does not
-                     * exist. */
+                     * exist, or any error occurs when attempting to read
+                     * it. The latter is relevant, for instance, when
+                     * realpath() is applied to the URI of a document which is
+                     * meant to optional. */
+                    try {
+                        $doc = $this->documentFactory_->createFromUri(
+                            $xinclude->resolveUri($xinclude->getAttribute('href'))
+                        );
+                    } catch (\Exception $e) {
+                        continue;
+                    }
+
                     if (!isset($doc)) {
                         continue;
                     }
