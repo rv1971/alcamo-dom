@@ -8,7 +8,7 @@
         "alcamo/binary-data": "^0.6",
         "alcamo/decorator": "^0.2",
         "alcamo/iterator": "^0.1",
-        "alcamo/range": "^0.1",
+        "alcamo/range": "^0.2",
         "alcamo/rdfa": "^0.14",
         "alcamo/uri": "^0.2",
         "alcamo/xpointer": "^0.8",
