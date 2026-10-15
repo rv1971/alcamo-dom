@@ -22,21 +22,33 @@ class NotationTest extends TestCase
         /* Contains XMLSchema.xsd as built-in. */
         $schema = (new SchemaFactory())->createFromUris([ $fooUri ]);
 
-        $notation = $schema->getGlobalNotation(self::FOO_NS . ' FooNotation');
+        $fooNotation =
+            $schema->getGlobalNotation(self::FOO_NS . ' FooNotation');
 
         $this->assertSame(
             'application/x-foo',
-            $notation->getXsdElement()->public
+            $fooNotation->getXsdElement()->public
         );
 
         $this->assertEquals(
             new XName(self::FOO_NS, 'FooNotation'),
-            $notation->getXName()
+            $fooNotation->getXName()
         );
 
         $this->assertSame(
             $fooUri . '#FooNotation',
-            (string)$notation->getUri()
+            (string)$fooNotation->getUri()
+        );
+
+        $barNotation =
+            $schema->getGlobalNotation(self::FOO_NS . ' BarNotation');
+
+        /* This tests the workaround for the `id` attribute problem explained
+         * in the comment in AbstractXsdComponent::getUri(). */
+
+        $this->assertSame(
+            $fooUri . '#BarNotation',
+            (string)$barNotation->getUri()
         );
     }
 }

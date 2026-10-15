@@ -18,6 +18,13 @@ use alcamo\xml\XName;
  * Hence there may be more than one way to specify the same attribute. All
  * ways to specify an attribute are equally stored in the cache.
  *
+ * @warning Somewhere between PHP 7.3 and php 8.4, DOMElement introduced an
+ * attribute `id` which returns an *empty string* if there is no such
+ * attribute. This prevents invocation of MagicAttrAccessTrait::__get('id')
+ * which would return `null` instead. Sadly, this implies that
+ * `isset($element->id)` always returns `true`, and there is no way to
+ * circumvent this.
+ *
  * @note To change or unset the cached attributes (and the attributes in the
  * DOM document itself), use the set and unset mechanisms. Changing directly
  * the DOM document will not change the cached results.

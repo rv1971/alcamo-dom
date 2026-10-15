@@ -16,6 +16,12 @@
       public="application/x-foo"
       system="http://foo.example.org/FooData"/>
 
+  <xsd:notation
+      name="BarNotation"
+      xml:id="BarNotation"
+      public="application/x-bar"
+      system="http://bar.example.org/BarData"/>
+
   <xsd:simpleType name="FooUnsigned6">
     <xsd:annotation>
       <xsd:appinfo xmlns="http://www.w3.org/1999/xhtml">

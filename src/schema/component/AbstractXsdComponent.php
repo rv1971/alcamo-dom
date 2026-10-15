@@ -43,7 +43,14 @@ abstract class AbstractXsdComponent extends AbstractComponent
      */
     public function getUri(): ?UriInterface
     {
-        $id = $this->xsdElement_->id ?? $this->xsdElement_->{'xml:id'};
+        $id = $this->xsdElement_->id;
+
+        /* As explained in the warning in the header of
+         * MagicAttrAccessTrait.php, $id may be the empty string if there is
+         * no `id` attribute, depending on the PHP version. */
+        if ((string)$id === '') {
+            $id = $this->xsdElement_->{'xml:id'};
+        }
 
         if (isset($id)) {
             return $this->xsdElement_->ownerDocument->getBaseUri()
