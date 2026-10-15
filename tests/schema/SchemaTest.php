@@ -20,6 +20,8 @@ use PHPUnit\Framework\TestCase;
 
 class SchemaTest extends TestCase
 {
+    public const FOO_NS = 'http://foo.example.org';
+
     private static $schema_;
 
     public static function setUpBeforeClass(): void
@@ -64,6 +66,27 @@ class SchemaTest extends TestCase
         $this->assertStringContainsString(
             'foo.xsd',
             array_keys($schema->getTopXsds())[2]
+        );
+
+        $this->assertSame(
+            'NMTOKEN',
+            $schema->getGlobalType(self::FOO_NS . ' SimpleList')
+                ->getItemType()->getXName()->getLocalName()
+        );
+
+        $schema->addUris(
+            [
+                (new FileUriFactory())
+                    ->create(
+                        dirname(__DIR__) . DIRECTORY_SEPARATOR . 'foo-wrong.xsd'
+                    )
+            ]
+        );
+
+        $this->assertSame(
+            'NMTOKEN',
+            $schema->getGlobalType(self::FOO_NS . ' SimpleList')
+                ->getItemType()->getXName()->getLocalName()
         );
     }
 
@@ -361,7 +384,7 @@ class SchemaTest extends TestCase
 
         $this->assertSame(
             [
-                'http://foo.example.org' => 4,
+                self::FOO_NS => 4,
                 Schema::XH11D_NS => 40,
                 Schema::XSD_NS => 92
             ],
@@ -459,7 +482,7 @@ class SchemaTest extends TestCase
             [
                 '../foo.xsd#UpperString',
                 AtomicType::class,
-                'http://foo.example.org'
+                self::FOO_NS
             ],
             [
                 "data:,%3C%3Fxml%20version='1.0'%3F%3E%3Cschema%20"

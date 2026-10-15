@@ -3,6 +3,7 @@
 namespace alcamo\dom\schema\component;
 
 use alcamo\dom\schema\{Schema, SchemaFactory};
+use alcamo\exception\InvalidType;
 use alcamo\rdf_literal\{
     BooleanLiteral,
     IntegerLiteral,
@@ -28,6 +29,11 @@ class AtomicTypeTest extends TestCase implements NamespaceConstantsInterface
         $expected
     ): void {
         $this->assertSame($expected, $type->isEqualToOrDerivedFrom($baseType));
+
+        /* This should not throw. */
+        if ($expected) {
+            $type->throwUnlessEqualToOrDerivedFrom($baseType);
+        }
     }
 
     public function isEqualToOrDerivedFromProvider(): array
@@ -75,6 +81,21 @@ class AtomicTypeTest extends TestCase implements NamespaceConstantsInterface
                 true
             ]
         ];
+    }
+
+    public function testThrowUnlessEqualToOrDerivedFrom(): void
+    {
+        $floatType = (new SchemaFactory())->getMainSchema()
+            ->getGlobalType(self::XSD_NS . ' float');
+
+        $this->expectException(InvalidType::class);
+
+        $this->expectExceptionMessage(
+            'Invalid type "http://www.w3.org/2001/XMLSchema float", '
+                . 'expected one of "derived from http://www.w3.org/2001/X..."'
+        );
+
+        $floatType->throwUnlessEqualToOrDerivedFrom(self::XSD_NS . ' double');
     }
 
     /**

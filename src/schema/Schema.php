@@ -9,6 +9,7 @@ use alcamo\dom\{
     HavingDocumentFactoryTrait
 };
 use alcamo\dom\decorated\{DocumentFactory, Element as XsdElement};
+use alcamo\exception\DataValidationFailed;
 use alcamo\dom\extended\Element as ExtElement;
 use alcamo\dom\schema\component\{
     AbstractType,
@@ -450,10 +451,26 @@ class Schema implements
 
         $targetNs = TargetNsCache::getInstance()[$uri->withFragment('')];
 
-        return $this->getGlobalType("$targetNs {$uri->getFragment()}")
-            ?? $this->createTypeFromXsdElement(
-                $this->documentFactory_->createFromUri($uri)
+        try {
+            /* If $uri has not been loaded before, TargetNsCache loads it as a
+             * ShallowDocument to get its namespace. This is sufficient to
+             * compose the extended name. If a type with that extended name is
+             * already known, it is used without loading the file. This
+             * implies that, if an already loaded file is referenced through a
+             * different URI, it is loaded as a ShallowDocument only, saving
+             * the effort to load it again in its entirety. */
+            return $this->getGlobalType("$targetNs {$uri->getFragment()}")
+                ?? $this->createTypeFromXsdElement(
+                    $this->documentFactory_->createFromUri($uri)
+                );
+        } catch (ExceptionInterface $e) {
+            throw $e->addMessageContext([ 'typeUri' => (string)$uri ]);
+        } catch (\Throwable $e) {
+            throw DataValidationFailed::newFromPrevious(
+                $e,
+                [ 'typeUri' => (string)$uri ]
             );
+        }
     }
 
     /// Create type from a schema consisting of the element's owner document
@@ -503,7 +520,15 @@ class Schema implements
                     unset($this->topXsds_[$uri]);
                 }
 
-                if (isset($elem->name)) {
+                /* Do not overwrite existing definitions in order to avoid
+                 * destroying cached data when loading an already loaded file
+                 * again from a different location. */
+                if (
+                    isset($elem->name)
+                        && !isset(
+                            $globalDefs[$elem->localName][(string)$elem->name]
+                        )
+                ) {
                     $globalDefs[$elem->localName][(string)$elem->name] = $elem;
                 }
             }

@@ -124,7 +124,7 @@ abstract class AbstractSimpleType extends AbstractType implements
     /**
      * @brief get associated enumeration type, if any
      *
-     * The attribute `enumerationType` in `ALCAMO_SCHEMA_NS` is meant to link
+     * The attribute `enumerationType` in `EXTENSION_NS` is meant to link
      * a type T to a type E derived from T defining enumerators. This allows
      * to define some enumerators with documentation for type T while still
      * allowing other values.
@@ -132,8 +132,10 @@ abstract class AbstractSimpleType extends AbstractType implements
     public function getEnumerationType(): ?SimpleTypeInterface
     {
         if ($this->enumerationType_ === false) {
-            $enumerationTypeXName = $this
-                ->getXsdElement()->{self::ALCAMO_SCHEMA_NS . ' enumerationType'};
+            $xsdElement = $this->getXsdElement();
+
+            $enumerationTypeXName = $xsdElement
+                ->{$xsdElement->ownerDocument::SCHEMA_EXTENSION_NS . ' enumerationType'};
 
             $this->enumerationType_ = isset($enumerationTypeXName)
                 ? $this->getSchema()->getGlobalType($enumerationTypeXName)
@@ -141,17 +143,6 @@ abstract class AbstractSimpleType extends AbstractType implements
         }
 
         return $this->enumerationType_;
-    }
-
-    public function isEqualToOrDerivedFrom(string $typeXName): bool
-    {
-        foreach ($this->getSelfAndBaseTypes() as $type) {
-            if ($type->getXName() == $typeXName) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     /**

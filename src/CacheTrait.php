@@ -21,11 +21,11 @@ trait CacheTrait
     use PreventWriteArrayAccessTrait;
     use StringIndexedReadArrayAccessTrait;
 
-    private static $instance_;
-
     public static function getInstance(): self
     {
-        return self::$instance_ ?? (self::$instance_ = new self());
+        static $instance;
+
+        return $instance ?? ($instance = new self());
     }
 
     /**
