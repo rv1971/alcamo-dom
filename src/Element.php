@@ -107,24 +107,30 @@ class Element extends \DOMElement implements
 
     /**
      * @brief Get the first element along the `descendant-or-self` axis which
-     * is semantically the same as a given URI
+     * has the given relation to the given URI
      *
-     * I.e. return the first element that declares itself to be the same as
-     * $uri. The result may be the context element itself. Return `null` if no
-     * such element is found.
+     * I.e. return the first element among the present element and its direct
+     * children that has a $relation attribute with value $uri. The result may
+     * be the context element itself. Return `null` if no such element is
+     * found.
      *
-     * @param $uri Absolute URI which is compared to `owl:sameAs` attributes,
-     * the latter resolved to absolute URIs.
+     * @param $uri Absolute URI which is compared to the given attribute
+     * values, the latter resolved to absolute URIs.
+     *
+     * @param $relation Qualified name of the attribute to look at. If it has
+     * a namespae prefix, the prefix must have been registered in the XPath
+     * returned by $this->onwerDocument->getXPath().
      *
      * @param $normalizations For comparison, both $uri and the values of
-     * `owl:sameAs` attributes are resolved to absolute URIs and normalized
+     * $relation attributes are resolved to absolute URIs and normalized
      * according to $normalizations and then compared literally. The default
      * set of normalizations applied by
      * alcamo::uri::UriNormalizer::normalize() includes realpath(), coherently
      * with the fact that DOMDocument::baseURI may resolve symbolic links.
      */
-    public function getFirstSameAs(
+    public function getFirstRelatingTo(
         $uri,
+        string $relation,
         ?int $normalizations = null
     ): ?self {
         if (!($uri instanceof UriInterface)) {
@@ -141,18 +147,72 @@ class Element extends \DOMElement implements
         $uri = (string)UriNormalizer::normalize($uri, $normalizations);
 
         foreach (
-            $this->query('descendant-or-self::*[@owl:sameAs]') as $element
+            $this->query("descendant-or-self::*/@$relation") as $attrNode
         ) {
             if (
                 UriNormalizer::normalize(
-                    $element->resolveUri(
-                        $element->getAttributeNS(self::OWL_NS, 'sameAs')
-                    ),
+                    $attrNode->resolveUri($attrNode->getValue()),
                     $normalizations
                 )
                 == $uri
             ) {
-                return $element;
+                return $attrNode->parentNode;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @brief Get the first element along the `descendant-or-self` axis which
+     * is semantically the same as a given URI
+     *
+     * Call `getFirstRelatingTo()` with the relation `owl:sameAs`.
+     */
+    public function getFirstSameAs(
+        $uri,
+        ?int $normalizations = null
+    ): ?self {
+        return $this->getFirstRelatingTo($uri, 'owl:sameAs', $normalizations);
+    }
+
+    /**
+     * @brief Get the first element along the `descendant-or-self` axis which
+     * has the given relation to a URI having the given suffix.
+     *
+     * I.e. return the first element among the present element and its direct
+     * children that has a $relation attribute with a value ending in
+     * $suffix. The result may be the context element itself. Return `null` if
+     * no such element is found.
+     *
+     * @param $suffix Suffix to look for.
+     *
+     * @param $relation Qualified name of the attribute to look at. If it has
+     * a namespae prefix, the prefix must have been registered in the XPath
+     * returned by $this->onwerDocument->getXPath().
+     *
+     * @param $normalizations to apply to each $relation attribute before
+     * comparison. If `null`, no normalizations take place, thus accelerating
+     * the process. In particular, unlike getFirstSameAsSuffix(), no
+     * realpath() is needed for `file://` URIs, thus saving the effort to
+     * access the file system.
+     */
+    public function getFirstRelatingToSuffix(
+        string $suffix,
+        string $relation,
+        ?int $normalizations = null
+    ): ?self {
+        foreach (
+            $this->query("descendant-or-self::*/@$relation") as $attrNode
+        ) {
+            $value = $attrNode->resolveUri($attrNode->getValue());
+
+            if (isset($normalizations)) {
+                $value = UriNormalizer::normalize($value, $normalizations);
+            }
+
+            if (substr($value, -strlen($suffix)) == $suffix) {
+                return $attrNode->parentNode;
             }
         }
 
@@ -163,41 +223,13 @@ class Element extends \DOMElement implements
      * @brief Get the first element along the `descendant-or-self` axis which
      * is semantically the same as a URI having the given suffix.
      *
-     * I.e. return the first element that declares itself to be the same as a
-     * URI ending in $suffix. The result may be the context element
-     * itself. Return `null` if no such element is found.
-     *
-     * This is useful when the task is to pick up one out of a set of known
-     * `owl:sameAs` targets.
-     *
-     * @param $suffix Suffix to look for.
-     *
-     * @param $normalizations to apply to each `owl:sameAs` attribute before
-     * comparison. If `null`, no normalizations take place, thus accelerating
-     * the process. In particular, unlike getFirstSameAsSuffix(), no
-     * realpath() is needed for `file://` URIs, thus saving the effort to
-     * access the file system.
+     * Call `getFirstRelatingToSuffix()` with the relation `owl:sameAs`.
      */
     public function getFirstSameAsSuffix(
         string $suffix,
         ?int $normalizations = null
     ): ?self {
-        foreach (
-            $this->query('descendant-or-self::*[@owl:sameAs]') as $element
-        ) {
-            $sameAs = $element->resolveUri(
-                $element->getAttributeNS(self::OWL_NS, 'sameAs')
-            );
-
-            if (isset($normalizations)) {
-                $sameAs = UriNormalizer::normalize($sameAs, $normalizations);
-            }
-
-            if (substr($sameAs, -strlen($suffix)) == $suffix) {
-                return $element;
-            }
-        }
-
-        return null;
+        return $this
+            ->getFirstRelatingToSuffix($suffix, 'owl:sameAs', $normalizations);
     }
 }
