@@ -109,9 +109,9 @@ class Element extends \DOMElement implements
      * @brief Get the first element along the `descendant-or-self` axis which
      * has the given relation to the given URI
      *
-     * I.e. return the first element among the present element and its direct
-     * children that has a $relation attribute with value $uri. The result may
-     * be the context element itself. Return `null` if no such element is
+     * I.e. return the first element among the present element and its
+     * descendants that has a $relation attribute with value $uri. The result
+     * may be the context element itself. Return `null` if no such element is
      * found.
      *
      * @param $uri Absolute URI which is compared to the given attribute
@@ -180,8 +180,8 @@ class Element extends \DOMElement implements
      * @brief Get the first element along the `descendant-or-self` axis which
      * has the given relation to a URI having the given suffix.
      *
-     * I.e. return the first element among the present element and its direct
-     * children that has a $relation attribute with a value ending in
+     * I.e. return the first element among the present element and its
+     * descendants that has a $relation attribute with a value ending in
      * $suffix. The result may be the context element itself. Return `null` if
      * no such element is found.
      *
