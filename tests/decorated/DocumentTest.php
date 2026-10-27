@@ -1,0 +1,109 @@
+<?php
+
+namespace alcamo\dom\decorated;
+
+use alcamo\rdfa\ImmutableRdfaData;
+use alcamo\rdf_literal\{BooleanLiteral, LangStringLiteral};
+use alcamo\uri\FileUriFactory;
+use PHPUnit\Framework\TestCase;
+
+class DocumentTest extends TestCase
+{
+    public const DATA_DIR = __DIR__ . DIRECTORY_SEPARATOR;
+
+    private static $doc_;
+
+    public static function setUpBeforeClass(): void
+    {
+        $factory = new DocumentFactory(
+            (new FileUriFactory())->create(self::DATA_DIR),
+            0
+        );
+
+        self::$doc_ = $factory->createFromUri('rdfa-data.xml');
+    }
+
+    public function testGetRdfaDataXml(): void
+    {
+        $booleanTrue = new BooleanLiteral(true);
+
+        /* To fill Uri::composedComponents */
+        (string)$booleanTrue->getDatatypeUri();
+
+        $expectedRdfaData = [
+            [ 'dc:title', new LangStringLiteral('My title', 'en') ],
+            [ 'owl:versionInfo', '1.42' ],
+            [
+                'rdfs:comment',
+                new LangStringLiteral(
+                    'This is an English-language document.',
+                    'en'
+                )
+            ],
+            [
+                'rdfs:comment',
+                new LangStringLiteral(
+                    'Ceci est un document en anglais.',
+                    'fr'
+                )
+            ],
+            [
+                'dc:creator',
+                new LangStringLiteral('Bob', 'en')
+            ],
+            [ 'rdfs:seeAlso', 'http://www.example.com/bob/mydoc' ],
+            [ 'dc:bazzable', $booleanTrue ],
+            [ 'dc:created', '2026-02-10' ],
+            [ 'dc:modified', '2026-02-10' ],
+            [
+                'dc:alternative',
+                new LangStringLiteral('Mein Titel', 'de')
+            ],
+            [
+                'dc:source',
+                [
+                    'https://www.example.biz/baz',
+                    [
+                        [ 'dc:title', 'Original data' ],
+                        [ 'dc:format', 'application/json' ]
+                    ]
+                ]
+            ]
+        ];
+
+        $this->assertEquals(
+            ImmutableRdfaData::newFromIterable($expectedRdfaData),
+            self::$doc_->getRdfaData()
+        );
+    }
+
+    public function testGetRdfaDataHtml(): void
+    {
+        $factory = new DocumentFactory(
+            (new FileUriFactory())->create(self::DATA_DIR),
+            0
+        );
+
+        $emptyDoc = $factory->createFromXmlText(
+            '<html xmlns="http://www.w3.org/1999/xhtml">'
+                . '<body>Hello</body></html>'
+        );
+
+        $this->assertEquals(
+            ImmutableRdfaData::newEmpty(),
+            $emptyDoc->getRdfaData()
+        );
+
+        $doc = $factory->createFromUri('rdfa-data.html');
+
+        $expectedRdfaData = [
+            [ 'dc:title', 'My title' ],
+            [ 'owl:versionInfo', '1.42' ]
+        ];
+
+        $this->assertEquals(
+            ImmutableRdfaData::newFromIterable($expectedRdfaData),
+            $doc->getRdfaData()
+        );
+    }
+}

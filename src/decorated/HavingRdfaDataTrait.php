@@ -78,6 +78,23 @@ trait HavingRdfaDataTrait
                 }
             }
 
+            /**
+             * - HTML \<title> element if current element is HTML \<head>
+             */
+            if (
+                $this->handler_->namespaceURI == self::XH_NS
+                    && $this->handler_->localName == 'head'
+            ) {
+                $title = $this->query('xh:title')[0];
+
+                if (isset($title)) {
+                    $rdfaDataPairs[] = [
+                        self::DC_NS . 'title',
+                        (string)$title
+                    ];
+                }
+            }
+
             if ($rdfaDataPairs) {
                 $rdfaData2 = RdfaData::newFromIterable(
                     $rdfaDataPairs,

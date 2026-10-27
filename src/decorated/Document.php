@@ -4,7 +4,7 @@ namespace alcamo\dom\decorated;
 
 use alcamo\dom\DocumentFactoryInterface;
 use alcamo\dom\extended\Document as BaseDocument;
-use alcamo\rdfa\RdfaFactory;
+use alcamo\rdfa\{ImmutableRdfaData, RdfaFactory};
 
 /**
  * @namespace alcamo::dom::decorated
@@ -38,5 +38,18 @@ class Document extends BaseDocument
         $class = static::RDFA_DATA_FACTORY_CLASS;
 
         return new $class();
+    }
+
+    public function getRdfaData(): ImmutableRdfaData
+    {
+        if ($this->documentElement->namespaceURI == Document::XH_NS) {
+            $head = $this->documentElement->query('xh:head')[0];
+
+            return isset($head)
+                ? $head->getRdfaData()
+                : ImmutableRdfaData::newEmpty();
+        } else {
+            return $this->documentElement->getRdfaData();
+        }
     }
 }
