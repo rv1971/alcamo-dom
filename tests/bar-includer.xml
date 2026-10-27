@@ -9,11 +9,14 @@
       href="bar.xml"
       xpointer="baz"/>
 
-  <!-- not flagged as an error by VALIDATE_XINCLUDE_SHORTHAND_POINTER -->
+  <!-- not flagged as an error by VALIDATE_XINCLUDE_SHORTHAND_POINTER
+       but may be flagged as error by libxml2, depending on the libxml2
+       version
   <include
       xmlns="http://www.w3.org/2001/XInclude"
       href="bar.xml"
       xpointer="element(bazz)"/>
+      -->
 
     <include
       xmlns="http://www.w3.org/2001/XInclude"
