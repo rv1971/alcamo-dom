@@ -91,7 +91,11 @@ trait MagicAttrAccessTrait
         return $this->attrCache_[$attrName] = $value;
     }
 
-    /// Set an attribute in the document and the attribute cache
+    /**
+     * @brief Set an attribute in the document and the attribute cache
+     *
+     * If $value is an array, it is converted to a space-separated list.
+     */
     public function __set(string $attrName, $value): void
     {
         /** Setting an attribute to `null` calls __unset(). */
@@ -124,7 +128,7 @@ trait MagicAttrAccessTrait
             $this->setAttributeNode($attrNode);
         }
 
-        $attrNode->value = $value;
+        $attrNode->value = is_array($value) ? implode(' ', $value) : $value;
 
         $this->attrCache_[$attrName] = $attrNode->getValue();
 

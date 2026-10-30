@@ -328,7 +328,7 @@ class ElementTest extends TestCase
 
         $nodeRegistrySize = self::$doc_->getNodeRegistrySize();
 
-        self::$doc_->documentElement->baz = 1234;
+        self::$doc_->documentElement->baz = [ 12, 34, 56 ];
 
         $nodeRegistrySize2 = self::$doc_->getNodeRegistrySize();
 
@@ -336,7 +336,7 @@ class ElementTest extends TestCase
 
         $this->assertTrue(self::$doc_->documentElement->hasAttribute('baz'));
 
-        $this->assertSame('1234', self::$doc_->documentElement->baz);
+        $this->assertSame('12 34 56', self::$doc_->documentElement->baz);
 
         /* case 1b: modify attribute without namespace */
 
