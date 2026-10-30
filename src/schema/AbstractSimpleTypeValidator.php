@@ -91,9 +91,13 @@ abstract class AbstractSimpleTypeValidator implements
                 }
 
                 $instanceText .=
-                    "<y xsi:type='$nsPrefix:$localName'>$value</y>\n";
+                    "<y xsi:type='$nsPrefix:$localName'>"
+                    . htmlspecialchars($value, ENT_NOQUOTES | ENT_SUBSTITUTE)
+                    . "</y>\n";
             } else {
-                $instanceText .= "<y xsi:type='$localName'>$value</y>\n";
+                $instanceText .= "<y xsi:type='$localName'>"
+                    . htmlspecialchars($value, ENT_NOQUOTES | ENT_SUBSTITUTE)
+                    . "</y>\n";
             }
 
             $keys[] = $key;

@@ -15,6 +15,7 @@ class FixedSchemaSimpleTypeValidatorTest extends TestCase implements NamespaceCo
 
     public const TEST_DATA = [
         '42' => [ [ self::XSD_NS, 'integer' ] ],
+        '><' => [ [ self::XSD_NS, 'string' ] ],
         'x42' => [
             [ self::XSD_NS, 'integer' ],
             "'x42' is not a valid value of the atomic type 'xs:integer'."
