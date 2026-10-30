@@ -498,4 +498,38 @@ class SchemaTest extends TestCase
             ]
         ];
     }
+
+    /**
+     * @dataProvider createElementFromUriProvider
+     */
+    public function testCreateElementFromUri(
+        $uri,
+        $expectedNsName
+    ): void {
+        $baseUri = (new FileUriFactory())
+            ->create(__DIR__ . DIRECTORY_SEPARATOR);
+
+        $uri = UriResolver::resolve($baseUri, new Uri($uri));
+
+        $element = self::$schema_->createElementFromUri($uri);
+
+        $this->assertSame($expectedNsName, $element->getXName()->getNsName());
+
+        $this->assertSame(
+            $uri->getFragment(),
+            $element->getXName()->getLocalName()
+        );
+
+        $this->assertSame($element, self::$schema_->createElementFromUri($uri));
+    }
+
+    public function createElementFromUriProvider(): array
+    {
+        return [
+            [
+                '../../xsd/XMLSchema.xsd#pattern',
+                'http://www.w3.org/2001/XMLSchema'
+            ]
+        ];
+    }
 }

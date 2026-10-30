@@ -482,6 +482,45 @@ class Schema implements
         return $this->getGlobalType($xsdElement->getComponentXName());
     }
 
+    /// Create an element from an URI reference indicating an XSD element by ID
+    public function createElementFromUri($uri): Element
+    {
+        $uri = $this->documentFactory_->resolveUri($uri)
+            ?? ($uri instanceof UriInterface ? $uri : new Uri($uri));
+
+        $targetNs = TargetNsCache::getInstance()[$uri->withFragment('')];
+
+        try {
+            /* If $uri has not been loaded before, TargetNsCache loads it as a
+             * ShallowDocument to get its namespace. This is sufficient to
+             * compose the extended name. If a type with that extended name is
+             * already known, it is used without loading the file. This
+             * implies that, if an already loaded file is referenced through a
+             * different URI, it is loaded as a ShallowDocument only, saving
+             * the effort to load it again in its entirety. */
+            return $this->getGlobalElement("$targetNs {$uri->getFragment()}")
+                ?? $this->createElementFromXsdElement(
+                    $this->documentFactory_->createFromUri($uri)
+                );
+        } catch (ExceptionInterface $e) {
+            throw $e->addMessageContext([ 'elementUri' => (string)$uri ]);
+        } catch (\Throwable $e) {
+            throw DataValidationFailed::newFromPrevious(
+                $e,
+                [ 'elementUri' => (string)$uri ]
+            );
+        }
+    }
+
+    /// Create element from a schema consisting of the element's owner document
+    public function createElementFromXsdElement(
+        XsdElement $xsdElement
+    ): Element {
+        $this->addXsds([ $xsdElement->ownerDocument ]);
+
+        return $this->getGlobalElement($xsdElement->getComponentXName());
+    }
+
     /// Initialize all global definitions
     private function initGlobals(array $xsds): void
     {
