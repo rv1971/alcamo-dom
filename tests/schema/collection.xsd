@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE xsd:schema [
+<!ATTLIST xsd:element id ID #IMPLIED>
+]>
+
+<xsd:schema
+    xmlns="http://foo.example.org/"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:xh11d="http://www.w3.org/1999/xhtml/datatypes/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://foo.example.org/">
+  <xsd:complexType name="FooCollection">
+    <xsd:attribute
+        name="no"
+        type="xsd:unsignedShort"
+        use="required"
+        rdfs:label="Number"/>
+    <xsd:attribute name="name" type="xsd:NCName" use="required"/>
+    <xsd:attribute name="isFooish" type="xsd:boolean"/>
+    <xsd:attribute name="lang" type="xsd:language" default="is"/>
+    <xsd:attribute name="numbers">
+      <xsd:simpleType>
+        <xsd:list itemType="xsd:byte"/>
+      </xsd:simpleType>
+    </xsd:attribute>
+  </xsd:complexType>
+
+    <xsd:element name="foo" id="foo" type="FooCollection"/>
+
+    <xsd:element name="foo2" id="foo2">
+      <xsd:complexType>
+        <xsd:complexContent>
+          <xsd:extension base="FooCollection">
+            <xsd:anyAttribute namespace="##local" processContents="lax"/>
+          </xsd:extension>
+        </xsd:complexContent>
+      </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

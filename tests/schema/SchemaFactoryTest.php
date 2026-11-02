@@ -141,6 +141,7 @@ class SchemaFactoryTest extends TestCase
                 'xsd/xhtml-datatypes-1.xsd',
                 'tests/schema/qux.1.xsd',
                 'tests/schema/component/foo.xsd',
+                'tests/schema/collection.xsd',
                 'tests/schema/bar.xsd'
             ],
             $paths

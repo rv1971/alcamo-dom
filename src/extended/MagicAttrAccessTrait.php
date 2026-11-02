@@ -130,10 +130,12 @@ trait MagicAttrAccessTrait
 
         $attrNode->value = is_array($value) ? implode(' ', $value) : $value;
 
-        $this->attrCache_[$attrName] = $attrNode->getValue();
+        $value = $attrNode->getValue();
+
+        $this->attrCache_[$attrName] = $value;
 
         if (isset($attrName2)) {
-            $this->attrCache_[$attrName2] = $attrNode->getValue();
+            $this->attrCache_[$attrName2] = $value;
         }
     }
 

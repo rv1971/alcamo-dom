@@ -279,7 +279,7 @@ class Document extends \DOMDocument implements
         }
     }
 
-    public function getLibxmlOptions(): ?int
+    public function getLibxmlOptions(): int
     {
         return $this->libxmlOptions_;
     }
