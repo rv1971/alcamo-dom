@@ -26,7 +26,8 @@ class CollectionWorkbench
     /// Default collection calls to create
     public const DEFAULT_COLLECTION_CLASS = ReadonlyCollection::class;
 
-    private $xsdUri_;       ///< string
+    private $xsdUri_;       ///< ?string
+    private $xsdText_;      ///< ?string
     private $docPrototype_; ///< Document
     private $attrs_;        ///< array
     private $flags_;        ///< int
@@ -36,12 +37,20 @@ class CollectionWorkbench
      * used in filterIterable().
      *
      * @param $flags OR-Combination of the above constants
+     *
+     * @param $xsdText Text of the XSD where $elementDecl comes from. Needed
+     * if the XSD cannot be retrieved from a URI, e.g. becaus it has been
+     * created dynamically.
      */
-    public function __construct(ElementDecl $elementDecl, ?int $flags = null)
-    {
+    public function __construct(
+        ElementDecl $elementDecl,
+        ?int $flags = null,
+        ?string $xsdText = null
+    ) {
         $xsd = $elementDecl->getXsdElement()->ownerDocument;
 
         $this->xsdUri_ = $xsd->documentURI;
+        $this->xsdText_ = $xsdText;
 
         $elementXName = $elementDecl->getXName();
 
@@ -58,10 +67,16 @@ class CollectionWorkbench
         $this->flags_ = $flags ?? static::DEFAULT_FLAGS;
     }
 
-    /// URI of an XSD containing the element declaration
-    public function getXsdUri(): string
+    /// URI of the XSD containing the element declaration
+    public function getXsdUri(): ?string
     {
         return $this->xsdUri_;
+    }
+
+    /// Text of the XSD containing the element declaration
+    public function getXsdText(): ?string
+    {
+        return $this->xsdText_;
     }
 
     /// Document consisting of one element without attributes
@@ -114,8 +129,13 @@ class CollectionWorkbench
         }
 
         if ($this->flags_ & self::VALIDATE) {
-            (new DocumentValidator())
-                ->validateAgainstXsdUri($doc, $this->xsdUri_);
+            if (isset($this->xsdText_)) {
+                (new DocumentValidator())
+                    ->validateAgainstXsdText($doc, $this->xsdText_);
+            } else {
+                (new DocumentValidator())
+                    ->validateAgainstXsdUri($doc, $this->xsdUri_);
+            }
         }
 
         if (!isset($result)) {

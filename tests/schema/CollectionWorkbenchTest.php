@@ -13,16 +13,29 @@ class CollectionWorkbenchTest extends TestCase
 {
     public const BASE_PATH = __DIR__ . DIRECTORY_SEPARATOR;
 
-    public const FOO_XSD = 'http://foo.example.org/';
+    public const FOO_NS = 'http://foo.example.org/';
 
-    private static $schema_;
     private static $fileUriFactory_;
+    private static $xsdText_;
+    private static $schema_;
+    private static $schema2_;
 
     public static function setUpBeforeClass(): void
     {
-        self::$schema_ = (new SchemaFactory())->getMainSchema();
-
         self::$fileUriFactory_ = new FileUriFactory();
+
+        self::$xsdText_ = file_get_contents(self::BASE_PATH . 'collection.xsd');
+
+        $schemaFactory = new SchemaFactory();
+
+        self::$schema_ = $schemaFactory->getMainSchema();
+
+        self::$schema2_ = $schemaFactory->createFromXsds(
+            [
+                $schemaFactory->getDocumentFactory()
+                    ->createFromXmlText(self::$xsdText_)
+            ]
+        );
     }
 
     public function testBasics(): void
@@ -36,6 +49,8 @@ class CollectionWorkbenchTest extends TestCase
 
         $this->assertSame((string)$xsdUri, $collectionWorkbench->getXsdUri());
 
+        $this->assertNull($collectionWorkbench->getXsdText());
+
         $this->assertSame(
             'foo',
             $collectionWorkbench->getDocPrototype()->documentElement->localName
@@ -45,6 +60,24 @@ class CollectionWorkbenchTest extends TestCase
             CollectionWorkbench::VALIDATE,
             $collectionWorkbench->getFlags()
         );
+
+        $collectionWorkbench2 = new CollectionWorkbench(
+            self::$schema2_->getGlobalElement(self::FOO_NS . ' foo2'),
+            0,
+            self::$xsdText_
+        );
+
+        $this->assertSame(
+            self::$xsdText_,
+            $collectionWorkbench2->getXsdText()
+        );
+
+        $this->assertSame(
+            'foo2',
+            $collectionWorkbench2->getDocPrototype()->documentElement->localName
+        );
+
+        $this->assertSame(0, $collectionWorkbench2->getFlags());
     }
 
     /**
@@ -64,6 +97,32 @@ class CollectionWorkbenchTest extends TestCase
         );
 
         $output = $collectionWorkbench->filterIterable($input);
+
+        $this->assertSame(array_keys($expectedOutput), array_keys($output));
+
+        foreach ($expectedOutput as $key => $expectedValue) {
+            switch ($key) {
+                case 'lang':
+                    $this->assertSame(
+                        get_class($expectedValue),
+                        get_class($output[$key])
+                    );
+
+                    $this->assertEquals($expectedValue, $output[$key]);
+                    break;
+
+                default:
+                    $this->assertSame($expectedValue, $output[$key]);
+            }
+        }
+
+        $collectionWorkbench2 = new CollectionWorkbench(
+            self::$schema2_->getGlobalElement(self::FOO_NS . " $elementId"),
+            null,
+            self::$xsdText_
+        );
+
+        $output = $collectionWorkbench2->filterIterable($input);
 
         $this->assertSame(array_keys($expectedOutput), array_keys($output));
 
@@ -125,7 +184,7 @@ class CollectionWorkbenchTest extends TestCase
     public function testFilterIterableException1(): void
     {
         $fooElement =
-            self::$schema_->getGlobalElement(self::FOO_XSD . ' foo2');
+            self::$schema_->getGlobalElement(self::FOO_NS . ' foo2');
 
         /* flags without VALIDATE */
         $collectionWorkbench = new CollectionWorkbench($fooElement, 0);
@@ -165,7 +224,7 @@ class CollectionWorkbenchTest extends TestCase
     public function testFilterIterableException2(): void
     {
         $fooElement =
-            self::$schema_->getGlobalElement(self::FOO_XSD . ' foo');
+            self::$schema_->getGlobalElement(self::FOO_NS . ' foo');
 
         $collectionWorkbench = new CollectionWorkbench($fooElement);
 
@@ -183,9 +242,32 @@ class CollectionWorkbenchTest extends TestCase
     public function testFilterIterableException3(): void
     {
         $fooElement =
-            self::$schema_->getGlobalElement(self::FOO_XSD . ' foo');
+            self::$schema_->getGlobalElement(self::FOO_NS . ' foo');
 
         $collectionWorkbench = new CollectionWorkbench($fooElement);
+
+        $this->expectException(DataValidationFailed::class);
+
+        $this->expectExceptionMessage(
+            "attribute 'name': 'my foo' is not a valid value "
+                . "of the atomic type 'xs:NCName'."
+        );
+
+        $collectionWorkbench->filterIterable(
+            [ 'no' => '12345', 'name' => 'my foo' ]
+        );
+    }
+
+    public function testFilterIterableException4(): void
+    {
+        $fooElement =
+            self::$schema2_->getGlobalElement(self::FOO_NS . ' foo');
+
+        $collectionWorkbench = new CollectionWorkbench(
+            $fooElement,
+            null,
+            self::$xsdText_
+        );
 
         $this->expectException(DataValidationFailed::class);
 
@@ -202,7 +284,7 @@ class CollectionWorkbenchTest extends TestCase
     public function testCreateCollectionFromString(): void
     {
         $collectionWorkbench = new CollectionWorkbench(
-            self::$schema_->getGlobalElement(self::FOO_XSD . ' foo2')
+            self::$schema_->getGlobalElement(self::FOO_NS . ' foo2')
         );
 
         $input = 'name=lorem-ipsum,no=1';
@@ -240,7 +322,7 @@ class CollectionWorkbenchTest extends TestCase
         $expectedRdfaData
     ): void {
         $collectionWorkbench = new CollectionWorkbench(
-            self::$schema_->getGlobalElement(self::FOO_XSD . " $elementId")
+            self::$schema_->getGlobalElement(self::FOO_NS . " $elementId")
         );
 
         $this->assertEquals(

@@ -7,7 +7,6 @@
 <xsd:schema
     xmlns="http://foo.example.org/"
     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
-    xmlns:xh11d="http://www.w3.org/1999/xhtml/datatypes/"
     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
     targetNamespace="http://foo.example.org/">
   <xsd:complexType name="FooCollection">
