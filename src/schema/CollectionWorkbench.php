@@ -85,6 +85,12 @@ class CollectionWorkbench
         return $this->docPrototype_;
     }
 
+    /// Map of keys to attribute declarations
+    public function getAttrs(): array
+    {
+        return $this->attrs_;
+    }
+
     public function getFlags(): int
     {
         return $this->flags_;

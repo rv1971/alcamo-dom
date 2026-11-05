@@ -329,6 +329,12 @@ class CollectionWorkbenchTest extends TestCase
             ImmutableRdfaData::newFromIterable($expectedRdfaData),
             $collectionWorkbench->getRdfaData($attrName)
         );
+
+        $this->assertSame(
+            $collectionWorkbench->getAttrs()[$attrName]->getXsdElement()
+                ->getRdfaData(),
+            $collectionWorkbench->getRdfaData($attrName)
+        );
     }
 
     public function getRdfaDataProvider(): array
