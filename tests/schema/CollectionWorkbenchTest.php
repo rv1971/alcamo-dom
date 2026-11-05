@@ -167,6 +167,7 @@ class CollectionWorkbenchTest extends TestCase
                 [
                     'lang' => Lang::newFromString('it-AR'),
                     'name' => 'Foo2',
+                    'numbers' => null,
                     'no' => '43',
                     'isFooish' => 'false',
                     'bar' => 'BAR'

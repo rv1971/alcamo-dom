@@ -13,7 +13,7 @@ use alcamo\rdfa\ImmutableRdfaData;
  *
  * @invariant Immutable class.
  *
- * @date Last reviewed 2026-10-30
+ * @date Last reviewed 2026-11-05
  */
 class CollectionWorkbench
 {
@@ -23,7 +23,7 @@ class CollectionWorkbench
     /// OR-Combination of the above constants
     public const DEFAULT_FLAGS = self::VALIDATE;
 
-    /// Default collection calls to create
+    /// Default collection class to create
     public const DEFAULT_COLLECTION_CLASS = ReadonlyCollection::class;
 
     private $xsdUri_;       ///< ?string
@@ -36,10 +36,11 @@ class CollectionWorkbench
      * @param $elementDecl Declaration of an element whose attributes will be
      * used in filterIterable().
      *
-     * @param $flags OR-Combination of the above constants
+     * @param $flags OR-Combination of the above constants. [Default
+     * alcamo::dom::CollectionWorkbench::DEFAULT_FLAGS]
      *
      * @param $xsdText Text of the XSD where $elementDecl comes from. Needed
-     * if the XSD cannot be retrieved from a URI, e.g. becaus it has been
+     * if the XSD cannot be retrieved from a URI, e.g. because it has been
      * created dynamically.
      */
     public function __construct(
@@ -67,13 +68,13 @@ class CollectionWorkbench
         $this->flags_ = $flags ?? static::DEFAULT_FLAGS;
     }
 
-    /// URI of the XSD containing the element declaration
+    /// URI of the XSD containing the element declaration, if available
     public function getXsdUri(): ?string
     {
         return $this->xsdUri_;
     }
 
-    /// Text of the XSD containing the element declaration
+    /// Text of the XSD containing the element declaration, if available
     public function getXsdText(): ?string
     {
         return $this->xsdText_;
@@ -91,20 +92,21 @@ class CollectionWorkbench
         return $this->attrs_;
     }
 
+    /// Flags given to constructor
     public function getFlags(): int
     {
         return $this->flags_;
     }
 
     /**
-     * @brief Filter data by XML Schema defintion
+     * @brief Filter data by XML Schema definition
      *
      * Create an XML document consisting of a single element and add the
-     * content of $data as attributes. Validate the document if requested by
+     * content of $data as attributes. Validate the document, if requested by
      * the $flags given to the constructor, and return a collection made of
      * the attributes read from the document, in the order specified by the
-     * element declaration. This offers the following features:
-     * - If validation is done, the method throws an exception if
+     * element type's declaration. This offers the following features:
+     * - If validation is done, this method throws an exception if
      *   + a required key is missing,
      *   + unknown keys are present, unless the element declaration allows for
      *     any attribute,
@@ -122,7 +124,7 @@ class CollectionWorkbench
      * @param $result array or iterable object the filtered data are added
      * to. If not given, start from an empty array.
      *
-     * @return Filtered data.
+     * @return $result containing filtered data.
      */
     public function filterIterable(
         iterable $data,
@@ -148,17 +150,22 @@ class CollectionWorkbench
             $result = [];
         }
 
+        $element = $doc->documentElement;
+
         /* Iterate over attributes of the XSD type, to maintain their order
          * and to ignore any unspecified attributes. */
         foreach ($this->attrs_ as $key => $attr) {
-            if (isset($data[$key])) {
-                $result[$key] = $doc->documentElement->$key;
+            if (isset($element->$key)) {
+                $result[$key] = $element->$key;
             } elseif (
                 $attr instanceof AbstractXsdComponent
                 && isset($attr->getXsdElement()->default)
             ) {
-                $doc->documentElement->$key = $attr->getXsdElement()->default;
-                $result[$key] = $doc->documentElement->$key;
+                $element->$key = $attr->getXsdElement()->default;
+
+                /* May differ from `default` because conversion may be
+                 * applied. */
+                $result[$key] = $element->$key;
             }
         }
 
@@ -166,8 +173,15 @@ class CollectionWorkbench
     }
 
     /**
+     * @brief Create a collection object from filtered data
+     *
      * Filter input data as described in filterIterable() and return an object
      * of the requested class.
+     *
+     * @param $data Input data passed to filterIterable().
+     *
+     * @param $collectionClass Class of the desired result object. [Default
+     * alcamo::dom::CollectionWorkbench::DEFAULT_COLLECTION_CLASS]
      */
     public function createCollectionFromIterable(
         iterable $data,
@@ -181,8 +195,15 @@ class CollectionWorkbench
     }
 
     /**
+     * @brief Create a collection object from filtered data in RDF 4514 format
+     *
      * Deserialize $text as an RFC 4514 string, filter the data as described
      * in filterIterable() and return an object of the requested class.
+     *
+     * @param $text Input data in RDF 4514 format
+     *
+     * @param $collectionClass Class of the desired result object. [Default
+     * alcamo::dom::CollectionWorkbench::DEFAULT_COLLECTION_CLASS]
      */
     public function createCollectionFromString(
         string $text,
