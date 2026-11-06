@@ -348,4 +348,37 @@ class CollectionWorkbenchTest extends TestCase
             ]
         ];
     }
+
+    public function testNewFromElementUri(): void
+    {
+        $collectionWorkbench1 = new CollectionWorkbench(
+            self::$schema_->getGlobalElement(self::FOO_NS . ' foo2'),
+            0
+        );
+
+        $collectionWorkbench2 = CollectionWorkbench::newFromElementUri(
+            (new FileUriFactory())->create(self::BASE_PATH . 'collection.xsd')
+                . '#foo2',
+            0
+        );
+
+        $this->assertEquals($collectionWorkbench1, $collectionWorkbench2);
+    }
+
+    public function testNewFromXsdTextAndId(): void
+    {
+        $collectionWorkbench1 = new CollectionWorkbench(
+            self::$schema_->getGlobalElement(self::FOO_NS . ' foo2'),
+            0,
+            self::$xsdText_
+        );
+
+        $collectionWorkbench2 = CollectionWorkbench::newFromXsdTextAndId(
+            self::$xsdText_,
+            'foo2',
+            0
+        );
+
+        $this->assertEquals($collectionWorkbench1, $collectionWorkbench2);
+    }
 }

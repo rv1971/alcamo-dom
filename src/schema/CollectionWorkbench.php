@@ -32,23 +32,36 @@ class CollectionWorkbench
     private $attrs_;        ///< array
     private $flags_;        ///< int
 
-    public static function createFromElementUri(
+    public static function newFromElementUri(
         string $uri,
-        ?int $flags = null
+        ?int $flags = null,
+        ?Schema $schema = null
     ): self {
+        if (!isset($schema)) {
+            $schema = (new SchemaFactory())->getMainSchema();
+        }
+
+        return new static(
+            $schema->createElementFromUri($uri),
+            $flags
+        );
     }
 
-    public static function createFromXsdTextAndId(
+    public static function newFromXsdTextAndId(
         string $xsdText,
         string $elementId,
-        ?int $flags = null
+        ?int $flags = null,
+        ?Schema $schema = null
     ): self {
-        $doc = (new DocumentFactory())
+        if (!isset($schema)) {
+            $schema = (new SchemaFactory())->getMainSchema();
+        }
+
+        $xsd = $schema->getDocumentFactory()
             ->createFromXmlText($xsdText, Document::class, true);
 
         return new static(
-            $doc->getSchema()
-                ->getGlobalElement($doc[$elementId]->getComponentXName()),
+            $schema->getGlobalElement($xsd[$elementId]->getComponentXName()),
             $flags,
             $xsdText
         );
