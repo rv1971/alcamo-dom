@@ -3,7 +3,7 @@
 namespace alcamo\dom\schema;
 
 use alcamo\collection\{ReadonlyCollection, Rfc4514Serializer};
-use alcamo\dom\DocumentValidator;
+use alcamo\dom\{DocumentFactory, DocumentValidator};
 use alcamo\dom\psvi\Document;
 use alcamo\dom\schema\component\{AbstractXsdComponent, Element as ElementDecl};
 use alcamo\rdfa\ImmutableRdfaData;
@@ -32,6 +32,28 @@ class CollectionWorkbench
     private $attrs_;        ///< array
     private $flags_;        ///< int
 
+    public static function createFromElementUri(
+        string $uri,
+        ?int $flags = null
+    ): self {
+    }
+
+    public static function createFromXsdTextAndId(
+        string $xsdText,
+        string $elementId,
+        ?int $flags = null
+    ): self {
+        $doc = (new DocumentFactory())
+            ->createFromXmlText($xsdText, Document::class, true);
+
+        return new static(
+            $doc->getSchema()
+                ->getGlobalElement($doc[$elementId]->getComponentXName()),
+            $flags,
+            $xsdText
+        );
+    }
+
     /**
      * @param $elementDecl Declaration of an element whose attributes will be
      * used in filterIterable().
@@ -40,8 +62,8 @@ class CollectionWorkbench
      * alcamo::dom::CollectionWorkbench::DEFAULT_FLAGS]
      *
      * @param $xsdText Text of the XSD where $elementDecl comes from. Needed
-     * if the XSD cannot be retrieved from a URI, e.g. because it has been
-     * created dynamically.
+     * if the XSD for validation cannot be retrieved from a URI, e.g. because
+     * it has been created dynamically.
      */
     public function __construct(
         ElementDecl $elementDecl,
@@ -59,7 +81,8 @@ class CollectionWorkbench
             "<?xml version='1.0' encoding='UTF-8'?>"
                 . "<{$elementXName->getLocalName()} "
                 . "xmlns='{$elementXName->getNsName()}'/>",
-            Document::class
+            Document::class,
+            true
         );
 
         $this->attrs_ =

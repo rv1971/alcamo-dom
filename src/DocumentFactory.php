@@ -4,6 +4,7 @@ namespace alcamo\dom;
 
 use alcamo\collection\PrefixFirstMatchCollection;
 use alcamo\dom\decorated\Document as Xsd;
+use alcamo\dom\schema\SchemaFactory;
 use alcamo\exception\{AbsoluteUriNeeded, InvalidType};
 use alcamo\uri\{DataHashUriFactory, Uri, UriNormalizer};
 use GuzzleHttp\Psr7\UriResolver;
@@ -34,6 +35,9 @@ class DocumentFactory implements DocumentFactoryInterface
     /// Default class for new DOM documents
     public const DEFAULT_DOCUMENT_CLASS = Document::class;
 
+    /// Class to use for getSchemaFactory()
+    public const SCHEMA_FACTORY_CLASS = SchemaFactory::class;
+
     /**
      * @brief PrefixFirstMatchCollection created from @ref
      * DC_IDENTIFIER_PREFIX_TO_CLASS
@@ -43,6 +47,7 @@ class DocumentFactory implements DocumentFactoryInterface
     private $baseUri_;       ///< ?UriInterface
     private $loadFlags_;     ///< ?int
     private $libxmlOptions_; ///< ?int
+    private $schemaFactory_; ///< SchemaFactory
 
     /**
      * @param $baseUri string|UriInterface Base URI to locate documents
@@ -101,6 +106,17 @@ class DocumentFactory implements DocumentFactoryInterface
     public function getLibxmlOptions(): ?int
     {
         return $this->libxmlOptions_;
+    }
+
+    public function getSchemaFactory(): SchemaFactory
+    {
+        if (!isset($this->schemaFactory_)) {
+            $class = static::SCHEMA_FACTORY_CLASS;
+
+            return $this->schemaFactory_ = new $class($this);
+        }
+
+        return $this->schemaFactory_;
     }
 
     public function createFromUri(

@@ -6,7 +6,7 @@ use alcamo\binary_data\ImmutableBinaryString;
 use alcamo\collection\ReadonlyPrefixSet;
 use alcamo\dom\extended\DomNodeInterface as ExtendedDomNodeInterface;
 use alcamo\dom\psvi\Document as PsviDocument;
-use alcamo\dom\schema\{Converter, SchemaFactory, TargetNsCache, TypeMap};
+use alcamo\dom\schema\{Converter, TargetNsCache, TypeMap};
 use alcamo\exception\{OutOfRange, SyntaxError};
 use alcamo\range\NonNegativeRange;
 use alcamo\rdfa\Node;

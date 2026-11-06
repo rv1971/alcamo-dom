@@ -45,8 +45,6 @@ class Document extends BaseDocument
     /** @copybrief alcamo::dom::Document::DEFAULT_DOCUMENT_FACTORY_CLASS */
     public const DEFAULT_DOCUMENT_FACTORY_CLASS = DocumentFactory::class;
 
-    public const SCHEMA_FACTORY_CLASS = SchemaFactory::class;
-
     /// Map of XSD type XNames to conversion functions
     public const TYPE_CONVERTER_MAP = Converter::TYPE_CONVERTER_MAP;
 
@@ -68,9 +66,7 @@ class Document extends BaseDocument
     public function getSchema(): Schema
     {
         if (!isset($this->schema_)) {
-            $class = static::SCHEMA_FACTORY_CLASS;
-
-            $schemaFactory = new $class($this->getDocumentFactory());
+            $schemaFactory = $this->getDocumentFactory()->getSchemaFactory();
 
             if ($this->loadFlags_ & self::USE_MAIN_SCHEMA) {
                 if (isset($this->documentElement->{'xsi:schemaLocation'})) {
