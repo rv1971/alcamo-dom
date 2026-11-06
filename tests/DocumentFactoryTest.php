@@ -78,12 +78,14 @@ class DocumentFactoryTest extends TestCase
             $class,
             null,
             null,
+            null,
             $uri
         );
 
         $doc4 = $factory->createFromXmlText(
             file_get_contents($factory->resolveUri($uri)),
             $class,
+            true,
             0,
             LIBXML_COMPACT
         );
@@ -144,6 +146,15 @@ class DocumentFactoryTest extends TestCase
         $this->assertSame(
             $expectedNamespace,
             $doc4->documentElement->namespaceURI
+        );
+
+        $this->assertSame(
+            $doc4,
+            $factory->createFromXmlText(
+                file_get_contents($factory->resolveUri($uri)),
+                $class,
+                true
+            )
         );
     }
 

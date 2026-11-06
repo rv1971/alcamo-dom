@@ -5,7 +5,7 @@ namespace alcamo\dom;
 use alcamo\collection\PrefixFirstMatchCollection;
 use alcamo\dom\decorated\Document as Xsd;
 use alcamo\exception\{AbsoluteUriNeeded, InvalidType};
-use alcamo\uri\{Uri, UriNormalizer};
+use alcamo\uri\{DataHashUriFactory, Uri, UriNormalizer};
 use GuzzleHttp\Psr7\UriResolver;
 use Psr\Http\Message\UriInterface;
 
@@ -188,6 +188,10 @@ class DocumentFactory implements DocumentFactoryInterface
      * @param $class PHP class to use for the new document. If `null`,
      * xmlTextToClass() is called to get the class.
      *
+     * @param $useCache
+     * - If `true`, use the cache.
+     * - If `false`, do not use the cache.
+     *
      * @param $loadFlags OR-Combination of the load constants in the
      * alcamo::dom::Document class. If not given, getLoadFlags() is used.
      *
@@ -200,6 +204,7 @@ class DocumentFactory implements DocumentFactoryInterface
     public function createFromXmlText(
         string $xmlText,
         ?string $class = null,
+        ?bool $useCache = null,
         ?int $loadFlags = null,
         ?int $libxmlOptions = null,
         ?string $uri = null
@@ -220,6 +225,29 @@ class DocumentFactory implements DocumentFactoryInterface
             }
         }
 
+        if ($useCache) {
+            $cacheUri = (new DataHashUriFactory())->create($xmlText);
+
+            if (isset(DocumentCache::getInstance()[$cacheUri])) {
+                $doc = DocumentCache::getInstance()[$cacheUri];
+
+                if (isset($class) && !($doc instanceof $class)) {
+                    /** @throw alcamo::exception::InvalidType when cached
+                     *  document is not an instance of the
+                     *  requested class. */
+                    throw (new InvalidType())->setMessageContext(
+                        [
+                            'value' => $doc,
+                            'expectedOneOf' => [ $class ],
+                            'atUri' => $cacheUri
+                        ]
+                    );
+                }
+
+                return $doc;
+            }
+        }
+
         $doc = $class::newFromXmlText(
             $xmlText,
             $this,
@@ -227,6 +255,10 @@ class DocumentFactory implements DocumentFactoryInterface
             $libxmlOptions ?? $this->libxmlOptions_,
             $uri
         );
+
+        if ($useCache) {
+            DocumentCache::getInstance()->add($doc, $cacheUri);
+        }
 
         return $doc;
     }
