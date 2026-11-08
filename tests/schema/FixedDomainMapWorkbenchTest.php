@@ -365,7 +365,7 @@ class FixedDomainMapWorkbenchTest extends TestCase
         $this->assertEquals($collectionWorkbench1, $collectionWorkbench2);
     }
 
-    public function testNewFromXsdTextAndId(): void
+    public function testNewFromXsdText(): void
     {
         $collectionWorkbench1 = new FixedDomainMapWorkbench(
             self::$schema_->getGlobalElement(self::FOO_NS . ' foo2'),
@@ -373,11 +373,22 @@ class FixedDomainMapWorkbenchTest extends TestCase
             self::$xsdText_
         );
 
-        $collectionWorkbench2 = FixedDomainMapWorkbench::newFromXsdTextAndId(
+        $collectionWorkbench2 = FixedDomainMapWorkbench::newFromXsdText(
             self::$xsdText_,
             'foo2',
             0
         );
+
+        $this->assertEquals($collectionWorkbench1, $collectionWorkbench2);
+
+        $collectionWorkbench1 = new FixedDomainMapWorkbench(
+            self::$schema_->getGlobalElement(self::FOO_NS . ' foo'),
+            null,
+            self::$xsdText_
+        );
+
+        $collectionWorkbench2 =
+            FixedDomainMapWorkbench::newFromXsdText(self::$xsdText_);
 
         $this->assertEquals($collectionWorkbench1, $collectionWorkbench2);
     }

@@ -35,6 +35,13 @@ class FixedDomainMapWorkbench
     private $attrs_;        ///< map of string keys to Attr objects
     private $flags_;        ///< int
 
+    /**
+     * Unlike newFromXsdText(), there the element ID (as part of the URI) is
+     * not optional. This is because
+     * alcamo::dom::Schema::createElementFromUri() is optimized to avoid
+     * actually loading the XSD if possible, while loading the XSD would be
+     * necessary to find out which is the first element.
+     */
     public static function newFromElementUri(
         string $uri,
         ?int $flags = null,
@@ -50,9 +57,12 @@ class FixedDomainMapWorkbench
         );
     }
 
-    public static function newFromXsdTextAndId(
+    /**
+     * If $elementId is not given, the first element in the XSD is used.
+     */
+    public static function newFromXsdText(
         string $xsdText,
-        string $elementId,
+        ?string $elementId = null,
         ?int $flags = null,
         ?Schema $schema = null
     ): self {
@@ -64,7 +74,12 @@ class FixedDomainMapWorkbench
             ->createFromXmlText($xsdText, Document::class, true);
 
         return new static(
-            $schema->getGlobalElement($xsd[$elementId]->getComponentXName()),
+            $schema->getGlobalElement(
+                (isset($elementId)
+                 ? $xsd[$elementId]
+                 : $xsd->query('/*/xsd:element[1]')[0])
+                    ->getComponentXName()
+            ),
             $flags,
             $xsdText
         );
