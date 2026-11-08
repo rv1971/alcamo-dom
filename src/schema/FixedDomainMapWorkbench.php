@@ -3,7 +3,7 @@
 namespace alcamo\dom\schema;
 
 use alcamo\collection\{ReadonlyCollection, Rfc4514Serializer};
-use alcamo\dom\{DocumentFactory, DocumentValidator};
+use alcamo\dom\DocumentValidator;
 use alcamo\dom\psvi\Document;
 use alcamo\dom\schema\component\{AbstractXsdComponent, Element as ElementDecl};
 use alcamo\rdfa\ImmutableRdfaData;
@@ -12,7 +12,7 @@ use alcamo\rdfa\ImmutableRdfaData;
  * @brief Manage a key-value data structure with fixed keys
  *
  * Rules about allowed keys, required keys, canonical order of keys and data
- * types associated to jeysa er all taken from an XML Schemw document.
+ * types associated to the keys are all taken from an XML Schema document.
  *
  * @invariant Immutable class.
  *
@@ -26,13 +26,13 @@ class FixedDomainMapWorkbench
     /// OR-Combination of the above constants
     public const DEFAULT_FLAGS = self::VALIDATE;
 
-    /// Default collection class to create
+    /// Default collection class to create in create*() methods
     public const DEFAULT_COLLECTION_CLASS = ReadonlyCollection::class;
 
     private $xsdUri_;       ///< ?string
     private $xsdText_;      ///< ?string
     private $docPrototype_; ///< Document
-    private $attrs_;        ///< array
+    private $attrs_;        ///< map of string keys to Attr objects
     private $flags_;        ///< int
 
     public static function newFromElementUri(
@@ -78,7 +78,7 @@ class FixedDomainMapWorkbench
      * alcamo::dom::FixedDomainMapWorkbench::DEFAULT_FLAGS]
      *
      * @param $xsdText Text of the XSD where $elementDecl comes from. Needed
-     * if the XSD for validation cannot be retrieved from a URI, e.g. because
+     * if the XSD for validation cannot be retrieved via a URI, e.g. because
      * it has been created dynamically.
      */
     public function __construct(
@@ -131,7 +131,7 @@ class FixedDomainMapWorkbench
         return $this->attrs_;
     }
 
-    /// Flags given to constructor
+    /// Flags given to the constructor
     public function getFlags(): int
     {
         return $this->flags_;
@@ -142,7 +142,7 @@ class FixedDomainMapWorkbench
      *
      * Create an XML document consisting of a single element and add the
      * content of $data as attributes. Validate the document, if requested by
-     * the $flags given to the constructor, and return a collection made of
+     * the $flags given to the constructor, and return an iterable made of
      * the attributes read from the document, in the order specified by the
      * element type's declaration. This offers the following features:
      * - If validation is done, this method throws an exception if
@@ -171,8 +171,10 @@ class FixedDomainMapWorkbench
     ): iterable {
         $doc = clone $this->docPrototype_;
 
+        $element = $doc->documentElement;
+
         foreach ($data as $key => $value) {
-            $doc->documentElement->$key = $value;
+            $element->$key = $value;
         }
 
         if ($this->flags_ & self::VALIDATE) {
@@ -188,8 +190,6 @@ class FixedDomainMapWorkbench
         if (!isset($result)) {
             $result = [];
         }
-
-        $element = $doc->documentElement;
 
         /* Iterate over attributes of the XSD type, to maintain their order
          * and to ignore any unspecified attributes. */
@@ -248,10 +248,8 @@ class FixedDomainMapWorkbench
         string $text,
         ?string $collectionClass = null
     ): object {
-        $serializer = new Rfc4514Serializer();
-
         return $this->createCollectionFromIterable(
-            $serializer->deserialize($text),
+            (new Rfc4514Serializer())->deserialize($text),
             $collectionClass
         );
     }
