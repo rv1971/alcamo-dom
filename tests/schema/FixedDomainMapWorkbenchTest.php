@@ -9,7 +9,7 @@ use alcamo\rdfa\ImmutableRdfaData;
 use alcamo\uri\FileUriFactory;
 use PHPUnit\Framework\TestCase;
 
-class CollectionWorkbenchTest extends TestCase
+class FixedDomainMapWorkbenchTest extends TestCase
 {
     public const BASE_PATH = __DIR__ . DIRECTORY_SEPARATOR;
 
@@ -43,7 +43,7 @@ class CollectionWorkbenchTest extends TestCase
         $xsdUri =
             self::$fileUriFactory_->create(self::BASE_PATH . 'collection.xsd');
 
-        $collectionWorkbench = new CollectionWorkbench(
+        $collectionWorkbench = new FixedDomainMapWorkbench(
             self::$schema_->createElementFromUri($xsdUri->withFragment('foo'))
         );
 
@@ -57,11 +57,11 @@ class CollectionWorkbenchTest extends TestCase
         );
 
         $this->assertSame(
-            CollectionWorkbench::VALIDATE,
+            FixedDomainMapWorkbench::VALIDATE,
             $collectionWorkbench->getFlags()
         );
 
-        $collectionWorkbench2 = new CollectionWorkbench(
+        $collectionWorkbench2 = new FixedDomainMapWorkbench(
             self::$schema2_->getGlobalElement(self::FOO_NS . ' foo2'),
             0,
             self::$xsdText_
@@ -88,7 +88,7 @@ class CollectionWorkbenchTest extends TestCase
         $input,
         $expectedOutput
     ): void {
-        $collectionWorkbench = new CollectionWorkbench(
+        $collectionWorkbench = new FixedDomainMapWorkbench(
             self::$schema_->createElementFromUri(
                 self::$fileUriFactory_
                     ->create(self::BASE_PATH . 'collection.xsd')
@@ -116,7 +116,7 @@ class CollectionWorkbenchTest extends TestCase
             }
         }
 
-        $collectionWorkbench2 = new CollectionWorkbench(
+        $collectionWorkbench2 = new FixedDomainMapWorkbench(
             self::$schema2_->getGlobalElement(self::FOO_NS . " $elementId"),
             null,
             self::$xsdText_
@@ -188,7 +188,7 @@ class CollectionWorkbenchTest extends TestCase
             self::$schema_->getGlobalElement(self::FOO_NS . ' foo2');
 
         /* flags without VALIDATE */
-        $collectionWorkbench = new CollectionWorkbench($fooElement, 0);
+        $collectionWorkbench = new FixedDomainMapWorkbench($fooElement, 0);
 
         $data2 = [ 'qux' => 'QUX' ];
 
@@ -211,7 +211,7 @@ class CollectionWorkbenchTest extends TestCase
             $data2
         );
 
-        $collectionWorkbench = new CollectionWorkbench($fooElement);
+        $collectionWorkbench = new FixedDomainMapWorkbench($fooElement);
 
         $this->expectException(DataValidationFailed::class);
 
@@ -227,7 +227,7 @@ class CollectionWorkbenchTest extends TestCase
         $fooElement =
             self::$schema_->getGlobalElement(self::FOO_NS . ' foo');
 
-        $collectionWorkbench = new CollectionWorkbench($fooElement);
+        $collectionWorkbench = new FixedDomainMapWorkbench($fooElement);
 
         $this->expectException(DataValidationFailed::class);
 
@@ -245,7 +245,7 @@ class CollectionWorkbenchTest extends TestCase
         $fooElement =
             self::$schema_->getGlobalElement(self::FOO_NS . ' foo');
 
-        $collectionWorkbench = new CollectionWorkbench($fooElement);
+        $collectionWorkbench = new FixedDomainMapWorkbench($fooElement);
 
         $this->expectException(DataValidationFailed::class);
 
@@ -264,7 +264,7 @@ class CollectionWorkbenchTest extends TestCase
         $fooElement =
             self::$schema2_->getGlobalElement(self::FOO_NS . ' foo');
 
-        $collectionWorkbench = new CollectionWorkbench(
+        $collectionWorkbench = new FixedDomainMapWorkbench(
             $fooElement,
             null,
             self::$xsdText_
@@ -284,7 +284,7 @@ class CollectionWorkbenchTest extends TestCase
 
     public function testCreateCollectionFromString(): void
     {
-        $collectionWorkbench = new CollectionWorkbench(
+        $collectionWorkbench = new FixedDomainMapWorkbench(
             self::$schema_->getGlobalElement(self::FOO_NS . ' foo2')
         );
 
@@ -322,7 +322,7 @@ class CollectionWorkbenchTest extends TestCase
         $attrName,
         $expectedRdfaData
     ): void {
-        $collectionWorkbench = new CollectionWorkbench(
+        $collectionWorkbench = new FixedDomainMapWorkbench(
             self::$schema_->getGlobalElement(self::FOO_NS . " $elementId")
         );
 
@@ -351,12 +351,12 @@ class CollectionWorkbenchTest extends TestCase
 
     public function testNewFromElementUri(): void
     {
-        $collectionWorkbench1 = new CollectionWorkbench(
+        $collectionWorkbench1 = new FixedDomainMapWorkbench(
             self::$schema_->getGlobalElement(self::FOO_NS . ' foo2'),
             0
         );
 
-        $collectionWorkbench2 = CollectionWorkbench::newFromElementUri(
+        $collectionWorkbench2 = FixedDomainMapWorkbench::newFromElementUri(
             (new FileUriFactory())->create(self::BASE_PATH . 'collection.xsd')
                 . '#foo2',
             0
@@ -367,13 +367,13 @@ class CollectionWorkbenchTest extends TestCase
 
     public function testNewFromXsdTextAndId(): void
     {
-        $collectionWorkbench1 = new CollectionWorkbench(
+        $collectionWorkbench1 = new FixedDomainMapWorkbench(
             self::$schema_->getGlobalElement(self::FOO_NS . ' foo2'),
             0,
             self::$xsdText_
         );
 
-        $collectionWorkbench2 = CollectionWorkbench::newFromXsdTextAndId(
+        $collectionWorkbench2 = FixedDomainMapWorkbench::newFromXsdTextAndId(
             self::$xsdText_,
             'foo2',
             0

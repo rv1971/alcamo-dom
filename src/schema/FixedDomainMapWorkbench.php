@@ -9,13 +9,16 @@ use alcamo\dom\schema\component\{AbstractXsdComponent, Element as ElementDecl};
 use alcamo\rdfa\ImmutableRdfaData;
 
 /**
- * @brief Manage collections ruled by XML Schema
+ * @brief Manage a key-value data structure with fixed keys
+ *
+ * Rules about allowed keys, required keys, canonical order of keys and data
+ * types associated to jeysa er all taken from an XML Schemw document.
  *
  * @invariant Immutable class.
  *
  * @date Last reviewed 2026-11-05
  */
-class CollectionWorkbench
+class FixedDomainMapWorkbench
 {
     /// Validate data in filterIterable()
     public const VALIDATE = 1;
@@ -72,7 +75,7 @@ class CollectionWorkbench
      * used in filterIterable().
      *
      * @param $flags OR-Combination of the above constants. [Default
-     * alcamo::dom::CollectionWorkbench::DEFAULT_FLAGS]
+     * alcamo::dom::FixedDomainMapWorkbench::DEFAULT_FLAGS]
      *
      * @param $xsdText Text of the XSD where $elementDecl comes from. Needed
      * if the XSD for validation cannot be retrieved from a URI, e.g. because
@@ -217,7 +220,7 @@ class CollectionWorkbench
      * @param $data Input data passed to filterIterable().
      *
      * @param $collectionClass Class of the desired result object. [Default
-     * alcamo::dom::CollectionWorkbench::DEFAULT_COLLECTION_CLASS]
+     * alcamo::dom::FixedDomainMapWorkbench::DEFAULT_COLLECTION_CLASS]
      */
     public function createCollectionFromIterable(
         iterable $data,
@@ -239,7 +242,7 @@ class CollectionWorkbench
      * @param $text Input data in RDF 4514 format
      *
      * @param $collectionClass Class of the desired result object. [Default
-     * alcamo::dom::CollectionWorkbench::DEFAULT_COLLECTION_CLASS]
+     * alcamo::dom::FixedDomainMapWorkbench::DEFAULT_COLLECTION_CLASS]
      */
     public function createCollectionFromString(
         string $text,
