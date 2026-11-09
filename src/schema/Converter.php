@@ -40,6 +40,9 @@ class Converter implements NamespaceConstantsInterface
         self::XSD_NS . ' QName'        => CP::class . '::toXName'
     ];
 
+    /// Default class to get a default schema from
+    public const DEFAULT_SCHEMA_FACTORY_CLASS = SchemaFactory::class;
+
     private static $mainConverter_; ///< Converter
 
     private $schema_;                  ///< Schema
@@ -48,8 +51,10 @@ class Converter implements NamespaceConstantsInterface
     public static function getMainConverter(): self
     {
         if (!isset(self::$mainConverter_)) {
+            $class = static::DEFAULT_SCHEMA_FACTORY_CLASS;
+
             self::$mainConverter_ = new Converter(
-                (new SchemaFactory())->getMainSchema(),
+                $class::getMainInstance()->getMainSchema(),
                 new TypeMap(static::TYPE_CONVERTER_MAP)
             );
         }

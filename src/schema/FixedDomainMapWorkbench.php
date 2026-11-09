@@ -35,7 +35,11 @@ class FixedDomainMapWorkbench implements HavingDocumentFactoryInterface
     /// OR-Combination of the above constants
     public const DEFAULT_FLAGS = self::VALIDATE;
 
+    /// Default class used to create a document prototype
     public const DEFAULT_DOCUMENT_FACTORY_CLASS = DocumentFactory::class;
+
+    /// Default class to get a default schema from
+    public const DEFAULT_SCHEMA_FACTORY_CLASS = SchemaFactory::class;
 
     /// Default collection class to create in create*() methods
     public const DEFAULT_COLLECTION_CLASS = ReadonlyCollection::class;
@@ -60,7 +64,8 @@ class FixedDomainMapWorkbench implements HavingDocumentFactoryInterface
         ?DocumentFactoryInterface $documentFactory = null
     ): self {
         if (!isset($schema)) {
-            $schema = (new SchemaFactory())->getMainSchema();
+            $class = static::DEFAULT_SCHEMA_FACTORY_CLASS;
+            $schema = $class::getMainInstance()->getMainSchema();
         }
 
         return new static(
@@ -81,7 +86,8 @@ class FixedDomainMapWorkbench implements HavingDocumentFactoryInterface
         ?DocumentFactoryInterface $documentFactory = null
     ): self {
         if (!isset($schema)) {
-            $schema = (new SchemaFactory())->getMainSchema();
+            $class = static::DEFAULT_SCHEMA_FACTORY_CLASS;
+            $schema = $class::getMainInstance()->getMainSchema();
         }
 
         if (!isset($documentFactory)) {

@@ -31,6 +31,14 @@ class SchemaFactory implements
 
     private $mainSchema_; ///< Schema
 
+    public static function getMainInstance(): self
+    {
+        static $instances = [];
+
+        return $instances[static::class]
+        ?? ($instances[static::class] = new static());
+    }
+
     /**
      * @param $documentFactory Factory used to create documents.
      */
