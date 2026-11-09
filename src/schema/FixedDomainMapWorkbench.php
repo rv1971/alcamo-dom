@@ -3,8 +3,13 @@
 namespace alcamo\dom\schema;
 
 use alcamo\collection\{ReadonlyCollection, Rfc4514Serializer};
-use alcamo\dom\DocumentValidator;
-use alcamo\dom\psvi\Document;
+use alcamo\dom\{
+    DocumentFactoryInterface,
+    DocumentValidator,
+    HavingDocumentFactoryInterface,
+    HavingDocumentFactoryTrait
+};
+use alcamo\dom\psvi\{Document, DocumentFactory};
 use alcamo\dom\schema\component\{AbstractXsdComponent, Element as ElementDecl};
 use alcamo\rdfa\ImmutableRdfaData;
 
@@ -18,13 +23,19 @@ use alcamo\rdfa\ImmutableRdfaData;
  *
  * @date Last reviewed 2026-11-05
  */
-class FixedDomainMapWorkbench
+class FixedDomainMapWorkbench implements HavingDocumentFactoryInterface
 {
+    use HavingDocumentFactoryTrait {
+        __construct as initDocumentFactory;
+    }
+
     /// Validate data in filterIterable()
     public const VALIDATE = 1;
 
     /// OR-Combination of the above constants
     public const DEFAULT_FLAGS = self::VALIDATE;
+
+    public const DEFAULT_DOCUMENT_FACTORY_CLASS = DocumentFactory::class;
 
     /// Default collection class to create in create*() methods
     public const DEFAULT_COLLECTION_CLASS = ReadonlyCollection::class;
@@ -45,7 +56,8 @@ class FixedDomainMapWorkbench
     public static function newFromElementUri(
         string $uri,
         ?int $flags = null,
-        ?Schema $schema = null
+        ?Schema $schema = null,
+        ?DocumentFactoryInterface $documentFactory = null
     ): self {
         if (!isset($schema)) {
             $schema = (new SchemaFactory())->getMainSchema();
@@ -53,7 +65,8 @@ class FixedDomainMapWorkbench
 
         return new static(
             $schema->createElementFromUri($uri),
-            $flags
+            $flags,
+            $documentFactory
         );
     }
 
@@ -64,14 +77,20 @@ class FixedDomainMapWorkbench
         string $xsdText,
         ?string $elementId = null,
         ?int $flags = null,
-        ?Schema $schema = null
+        ?Schema $schema = null,
+        ?DocumentFactoryInterface $documentFactory = null
     ): self {
         if (!isset($schema)) {
             $schema = (new SchemaFactory())->getMainSchema();
         }
 
-        $xsd = $schema->getDocumentFactory()
-            ->createFromXmlText($xsdText, Document::class, true);
+        if (!isset($documentFactory)) {
+            $class = static::DEFAULT_DOCUMENT_FACTORY_CLASS;
+
+            $documentFactory = new $class();
+        }
+
+        $xsd = $documentFactory->createFromXmlText($xsdText, null, true);
 
         return new static(
             $schema->getGlobalElement(
@@ -81,7 +100,8 @@ class FixedDomainMapWorkbench
                     ->getComponentXName()
             ),
             $flags,
-            $xsdText
+            $xsdText,
+            $documentFactory
         );
     }
 
@@ -99,20 +119,22 @@ class FixedDomainMapWorkbench
     public function __construct(
         ElementDecl $elementDecl,
         ?int $flags = null,
-        ?string $xsdText = null
+        ?string $xsdText = null,
+        ?DocumentFactoryInterface $documentFactory = null
     ) {
-        $xsd = $elementDecl->getXsdElement()->ownerDocument;
-
-        $this->xsdUri_ = $xsd->documentURI;
+        $this->xsdUri_ =
+            $elementDecl->getXsdElement()->ownerDocument->documentURI;
         $this->xsdText_ = $xsdText;
+
+        $this->initDocumentFactory($documentFactory);
 
         $elementXName = $elementDecl->getXName();
 
-        $this->docPrototype_ = $xsd->getDocumentFactory()->createFromXmlText(
+        $this->docPrototype_ = $this->documentFactory_->createFromXmlText(
             "<?xml version='1.0' encoding='UTF-8'?>"
                 . "<{$elementXName->getLocalName()} "
                 . "xmlns='{$elementXName->getNsName()}'/>",
-            Document::class,
+            null,
             true
         );
 
