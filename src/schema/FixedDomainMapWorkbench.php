@@ -99,6 +99,8 @@ class FixedDomainMapWorkbench implements HavingDocumentFactoryInterface
 
         $xsd = $documentFactory->createFromXmlText($xsdText, null, true);
 
+        $schema->addXsds([ $xsd ]);
+
         return new static(
             $schema->getGlobalElement(
                 (isset($elementId)

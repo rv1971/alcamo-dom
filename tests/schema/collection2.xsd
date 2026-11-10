@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE xsd:schema [
+<!ATTLIST xsd:element id ID #IMPLIED>
+]>
+
+<xsd:schema
+    xmlns="http://foo.example.org/"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://foo.example.org/">
+  <xsd:element name="foo4" id="foo4">
+    <xsd:complexType>
+      <xsd:attribute name="isFooish" type="xsd:boolean" default="true"/>
+      <xsd:attribute name="int43" type="xsd:short" default="-43"/>
+    </xsd:complexType>
+  </xsd:element>
+</xsd:schema>

@@ -216,6 +216,9 @@ class DocumentFactory implements DocumentFactoryInterface
      * not given, getLibxmlOptions() is used.
      *
      * @param $uri Document URI
+     *
+     * If the cache is used, `documentURI` is set to a tag URI containing a
+     * hash of the data, which is used as the cache key.
      */
     public function createFromXmlText(
         string $xmlText,
@@ -269,7 +272,7 @@ class DocumentFactory implements DocumentFactoryInterface
             $this,
             $loadFlags ?? $this->loadFlags_,
             $libxmlOptions ?? $this->libxmlOptions_,
-            $uri
+            $cacheUri ?? $uri
         );
 
         if ($useCache) {

@@ -376,29 +376,14 @@ class FixedDomainMapWorkbenchTest extends TestCase
 
     public function testNewFromXsdText(): void
     {
-        $collectionWorkbench1 = new FixedDomainMapWorkbench(
-            self::$schema_->getGlobalElement(self::FOO_NS . ' foo2'),
-            0,
-            self::$xsdText_
+        $collectionWorkbench = FixedDomainMapWorkbench::newFromXsdText(
+            file_get_contents(self::BASE_PATH . 'collection2.xsd'),
+            'foo4'
         );
 
-        $collectionWorkbench2 = FixedDomainMapWorkbench::newFromXsdText(
-            self::$xsdText_,
-            'foo2',
-            0
+        $this->assertSame(
+            [ 'isFooish' => [ 'true', true ], 'int43' => [ '-43', -43 ] ],
+            $collectionWorkbench->getDefaultAttrs()
         );
-
-        $this->assertEquals($collectionWorkbench1, $collectionWorkbench2);
-
-        $collectionWorkbench1 = new FixedDomainMapWorkbench(
-            self::$schema_->getGlobalElement(self::FOO_NS . ' foo'),
-            null,
-            self::$xsdText_
-        );
-
-        $collectionWorkbench2 =
-            FixedDomainMapWorkbench::newFromXsdText(self::$xsdText_);
-
-        $this->assertEquals($collectionWorkbench1, $collectionWorkbench2);
     }
 }

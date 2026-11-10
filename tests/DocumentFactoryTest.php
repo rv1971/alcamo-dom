@@ -60,8 +60,12 @@ class DocumentFactoryTest extends TestCase
     /**
      * @dataProvider createProvider
      */
-    public function testCreate($uri, $class, $expectedNamespace): void
-    {
+    public function testCreate(
+        $uri,
+        $class,
+        $expectedNamespace,
+        $expectedXsdCacheUri
+    ): void {
         $baseUri = (new FileUriFactory())->create(self::DATA_DIR);
         $loadFlags = Document::XINCLUDE_AFTER_LOAD
             | Document::VALIDATE_XINCLUDE_SHORTHAND_POINTER;
@@ -123,8 +127,7 @@ class DocumentFactoryTest extends TestCase
         );
 
         $this->assertSame(
-            (string)(new FileUriFactory())
-                ->create(getcwd() . DIRECTORY_SEPARATOR),
+            $expectedXsdCacheUri,
             $doc4->documentURI
         );
 
@@ -161,11 +164,17 @@ class DocumentFactoryTest extends TestCase
     public function createProvider(): array
     {
         return [
-            [ self::XSD_DIR . 'xml.xsd', null, Document::XSD_NS ],
+            [
+                self::XSD_DIR . 'xml.xsd',
+                null,
+                Document::XSD_NS,
+                'tag:rv1971@web.de,2021:alcamo:hash:md5:fb6ed42b408c2f19183f3667e4b1d432'
+            ],
             [
                 self::XSD_DIR . 'XMLSchema.xsd',
                 BarDocument::class,
-                Document::XSD_NS
+                Document::XSD_NS,
+                'tag:rv1971@web.de,2021:alcamo:hash:md5:9bd1fbe1ee459b0c2b05265d20e18e9c'
             ]
         ];
     }
