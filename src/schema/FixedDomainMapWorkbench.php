@@ -48,6 +48,7 @@ class FixedDomainMapWorkbench implements HavingDocumentFactoryInterface
     private $xsdText_;      ///< ?string
     private $docPrototype_; ///< Document
     private $attrs_;        ///< map of string keys to Attr objects
+    private $defaultAttrs_; ///< array
     private $flags_;        ///< int
 
     /**
@@ -147,6 +148,28 @@ class FixedDomainMapWorkbench implements HavingDocumentFactoryInterface
         $this->attrs_ =
             $this->docPrototype_->documentElement->getType()->getAttrs();
 
+        $this->defaultAttrs_ = [];
+
+        $doc = clone $this->docPrototype_;
+
+        foreach ($this->attrs_ as $key => $attr) {
+            if (
+                $attr instanceof AbstractXsdComponent
+                && isset($attr->getXsdElement()->default)
+            ) {
+                $defaultString = $attr->getXsdElement()->default;
+
+                $doc->documentElement->$key = $defaultString;
+
+                /* $element->$key may differ from `default` because conversion
+                 * may be applied. */
+                $this->defaultAttrs_[$key] = [
+                    $defaultString,
+                    $doc->documentElement->$key
+                ];
+            }
+        }
+
         $this->flags_ = $flags ?? static::DEFAULT_FLAGS;
     }
 
@@ -172,6 +195,12 @@ class FixedDomainMapWorkbench implements HavingDocumentFactoryInterface
     public function getAttrs(): array
     {
         return $this->attrs_;
+    }
+
+    /// Map of key to pair of default attribute string and (converted) value
+    public function getDefaultAttrs(): array
+    {
+        return $this->defaultAttrs_;
     }
 
     /// Flags given to the constructor
@@ -239,15 +268,8 @@ class FixedDomainMapWorkbench implements HavingDocumentFactoryInterface
         foreach ($this->attrs_ as $key => $attr) {
             if (isset($element->$key)) {
                 $result[$key] = $element->$key;
-            } elseif (
-                $attr instanceof AbstractXsdComponent
-                && isset($attr->getXsdElement()->default)
-            ) {
-                $element->$key = $attr->getXsdElement()->default;
-
-                /* May differ from `default` because conversion may be
-                 * applied. */
-                $result[$key] = $element->$key;
+            } elseif (isset($this->defaultAttrs_[$key])) {
+                [ $element->$key, $result[$key] ] = $this->defaultAttrs_[$key];
             }
         }
 

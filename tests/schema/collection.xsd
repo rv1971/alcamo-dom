@@ -36,4 +36,11 @@
         </xsd:complexContent>
       </xsd:complexType>
     </xsd:element>
+
+    <xsd:element name="foo3" id="foo3">
+      <xsd:complexType>
+        <xsd:attribute name="isFooish" type="xsd:boolean" default="false"/>
+        <xsd:attribute name="int42" type="xsd:integer" default="42"/>
+      </xsd:complexType>
+    </xsd:element>
 </xsd:schema>

@@ -78,6 +78,15 @@ class FixedDomainMapWorkbenchTest extends TestCase
         );
 
         $this->assertSame(0, $collectionWorkbench2->getFlags());
+
+        $collectionWorkbench3 = new FixedDomainMapWorkbench(
+            self::$schema_->createElementFromUri($xsdUri->withFragment('foo3'))
+        );
+
+        $this->assertSame(
+            [ 'isFooish' => [ 'false', false ], 'int42' => [ '42', 42 ] ],
+            $collectionWorkbench3->getDefaultAttrs()
+        );
     }
 
     /**
