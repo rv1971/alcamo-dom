@@ -48,7 +48,7 @@ class FixedDomainMapWorkbench implements HavingDocumentFactoryInterface
     private $xsdText_;      ///< ?string
     private $docPrototype_; ///< Document
     private $attrs_;        ///< map of string keys to Attr objects
-    private $defaultAttrs_; ///< array
+    private $defaultAttrs_; ///< map of string keys to default attr values
     private $flags_;        ///< int
 
     /**
@@ -159,16 +159,11 @@ class FixedDomainMapWorkbench implements HavingDocumentFactoryInterface
                 $attr instanceof AbstractXsdComponent
                 && isset($attr->getXsdElement()->default)
             ) {
-                $defaultString = $attr->getXsdElement()->default;
+                $doc->documentElement->$key = $attr->getXsdElement()->default;
 
-                $doc->documentElement->$key = $defaultString;
-
-                /* $element->$key may differ from `default` because conversion
-                 * may be applied. */
-                $this->defaultAttrs_[$key] = [
-                    $defaultString,
-                    $doc->documentElement->$key
-                ];
+                /* $doc->documentElement may differ from `default` because
+                 * conversion may be applied. */
+                $this->defaultAttrs_[$key] = $doc->documentElement->$key;
             }
         }
 
@@ -271,7 +266,7 @@ class FixedDomainMapWorkbench implements HavingDocumentFactoryInterface
             if (isset($element->$key)) {
                 $result[$key] = $element->$key;
             } elseif (isset($this->defaultAttrs_[$key])) {
-                [ $element->$key, $result[$key] ] = $this->defaultAttrs_[$key];
+                $result[$key] = $this->defaultAttrs_[$key];
             }
         }
 

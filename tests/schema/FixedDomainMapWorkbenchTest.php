@@ -84,7 +84,7 @@ class FixedDomainMapWorkbenchTest extends TestCase
         );
 
         $this->assertSame(
-            [ 'isFooish' => [ 'false', false ], 'int42' => [ '42', 42 ] ],
+            [ 'isFooish' => false, 'int42' => 42 ],
             $collectionWorkbench3->getDefaultAttrs()
         );
     }
@@ -382,7 +382,7 @@ class FixedDomainMapWorkbenchTest extends TestCase
         );
 
         $this->assertSame(
-            [ 'isFooish' => [ 'true', true ], 'int43' => [ '-43', -43 ] ],
+            [ 'isFooish' => true, 'int43' => -43 ],
             $collectionWorkbench->getDefaultAttrs()
         );
     }
