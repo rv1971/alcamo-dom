@@ -61,15 +61,27 @@ class DocumentCacheTest extends TestCase
         DocumentCache::getInstance()->init();
 
         $this->assertSame(0, count(DocumentCache::getInstance()));
+
+        $fooXsdText =
+            file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'foo.xml');
+
+        $doc7 = Document::newFromXmlText($fooXsdText);
+
+        $this->assertTrue(DocumentCache::getInstance()->add($doc7));
+
+        $doc8 = Document::newFromXmlText($fooXsdText);
+
+        $this->assertSame(
+            $doc7,
+            DocumentCache::getInstance()[$doc8->getIdentifierUri()]
+        );
     }
 
     public function testAbsoluteUriNeededException()
     {
-        $factory = new MyDocumentFactory(
-            (new FileUriFactory())->create(__DIR__ . DIRECTORY_SEPARATOR)
-        );
+        $fooDoc =
+            Document::newFromUri(__DIR__ . DIRECTORY_SEPARATOR . 'foo.xml');
 
-        $fooDoc = $factory->createFromUri('foo.xml');
         $fooDoc->documentURI = 'foo.xml';
 
         $this->expectException(AbsoluteUriNeeded::class);
@@ -86,7 +98,7 @@ class DocumentCacheTest extends TestCase
             (new FileUriFactory())->create(__DIR__ . DIRECTORY_SEPARATOR)
         );
 
-        $doc1 = $factory->createFromUri('foo.xml', null, false);
+        $doc1 = $factory->createFromUri('foo.xml', null, true);
 
         $this->expectException(ReadonlyViolation::class);
         $this->expectExceptionMessage(
@@ -94,9 +106,7 @@ class DocumentCacheTest extends TestCase
                 . 'in method add(); attempt to replace cache entry "file://'
         );
 
-        $doc2 = $factory->createFromUri('empty-bar.xml');
-
-        $doc2->documentURI = $doc1->documentURI;
+        $doc2 = clone $doc1;
 
         DocumentCache::getInstance()->add($doc2);
     }

@@ -228,12 +228,6 @@ class DocumentFactory implements DocumentFactoryInterface
         ?int $libxmlOptions = null,
         ?string $uri = null
     ): Document {
-        if (!isset($class)) {
-            $class = $this->getClassForDocument(
-                ShallowDocument::newFromXmlText($xmlText)
-            );
-        }
-
         if (isset($uri)) {
             if (isset($this->baseUri_)) {
                 if (!($uri instanceof UriInterface)) {
@@ -267,16 +261,22 @@ class DocumentFactory implements DocumentFactoryInterface
             }
         }
 
+        if (!isset($class)) {
+            $class = $this->getClassForDocument(
+                ShallowDocument::newFromXmlText($xmlText)
+            );
+        }
+
         $doc = $class::newFromXmlText(
             $xmlText,
             $this,
             $loadFlags ?? $this->loadFlags_,
             $libxmlOptions ?? $this->libxmlOptions_,
-            $cacheUri ?? $uri
+            $uri
         );
 
         if ($useCache) {
-            DocumentCache::getInstance()->add($doc, $cacheUri);
+            DocumentCache::getInstance()->add($doc);
         }
 
         return $doc;

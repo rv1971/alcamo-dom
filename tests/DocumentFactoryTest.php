@@ -127,7 +127,8 @@ class DocumentFactoryTest extends TestCase
         );
 
         $this->assertSame(
-            $expectedXsdCacheUri,
+            (string)(new FileUriFactory())
+                ->create(getcwd() . DIRECTORY_SEPARATOR),
             $doc4->documentURI
         );
 

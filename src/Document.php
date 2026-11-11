@@ -12,7 +12,7 @@ use alcamo\exception\{
 };
 use alcamo\rdf_literal\LiteralFactory;
 use alcamo\rdfa\RdfaFactory;
-use alcamo\uri\FileUriFactory;
+use alcamo\uri\{DataHashUriFactory, FileUriFactory, Uri, UriNormalizer};
 use alcamo\xml\{NamespaceConstantsInterface, NamespaceMapsInterface};
 use Psr\Http\Message\UriInterface;
 
@@ -212,6 +212,8 @@ class Document extends \DOMDocument implements
 
         $doc->loadXmlText($xmlText, $uri);
 
+        $doc->identifierUri_ = (new DataHashUriFactory())->create($xmlText);
+
         return $doc;
     }
 
@@ -220,6 +222,7 @@ class Document extends \DOMDocument implements
     protected $loadFlags_;               ///< int
     protected $libxmlOptions_;           ///< int
 
+    private $identifierUri_ = false;     ///< ?string
     private $xPath_;                     ///< XPath
     private $xsltStylesheetUri_ = false; ///< Uri or `null`
     private $xsltStylesheet_ = false;    ///< Document or `null`
@@ -282,6 +285,28 @@ class Document extends \DOMDocument implements
     public function getLibxmlOptions(): int
     {
         return $this->libxmlOptions_;
+    }
+
+    /**
+     * @brief URI uniquely identifying the document, if available
+     *
+     * @return
+     * - A tag URI containing a hash of the document content, if the document
+     *   was created with newFromXmlText().
+     * - Else, a normalized documentURI if the latter is absolute.
+     * - Else `null`.
+     */
+    public function getIdentifierUri(): ?string
+    {
+        if ($this->identifierUri_ === false) {
+            $uri = new Uri($this->documentURI);
+
+            return $this->identifierUri_ = Uri::isAbsolute($uri)
+                ? (string)UriNormalizer::normalize($uri)
+                : null;
+        }
+
+        return $this->identifierUri_;
     }
 
     /**

@@ -2,7 +2,7 @@
 
 namespace alcamo\dom\schema;
 
-use alcamo\dom\CacheTrait;
+use alcamo\dom\{CacheTrait, Document};
 use alcamo\exception\{AbsoluteUriNeeded, ReadonlyViolation};
 use alcamo\uri\{Uri, UriNormalizer};
 use Psr\Http\Message\UriInterface;
@@ -29,22 +29,35 @@ class SchemaCache implements \ArrayAccess, \Countable
                     $uri = $item;
                     break;
 
-                case $item instanceof \DOMDocument:
-                    $uri = new Uri($item->documentURI);
+                case $item instanceof Document:
+                    $uri = $item->getIdentifierUri();
+
+                    if (!isset($uri)) {
+                        /** @throw alcamo::exception::AbsoluteUriNeeded when
+                         * encountering an XSD without identifier URI. */
+                        throw (new AbsoluteUriNeeded())
+                            ->setMessageContext(['uri' => $item->documentURI ]);
+                    }
+
                     break;
 
                 default:
                     $uri = new Uri((string)$item);
             }
 
-            if (!Uri::isAbsolute($uri)) {
+            /* No need to check and normalize result of getIdentifierUri(). */
+            if ($uri instanceof UriInterface) {
+                if (!Uri::isAbsolute($uri)) {
                 /** @throw alcamo::exception::AbsoluteUriNeeded when
                  * encountering a non-absolute URI. */
-                throw (new AbsoluteUriNeeded())
-                    ->setMessageContext(['uri' => $uri ]);
+                    throw (new AbsoluteUriNeeded())
+                        ->setMessageContext(['uri' => $uri ]);
+                }
+
+                $uri = (string)UriNormalizer::normalize($uri);
             }
 
-            $uris[] = (string)UriNormalizer::normalize($uri);
+            $uris[] = $uri;
         }
 
         sort($uris);

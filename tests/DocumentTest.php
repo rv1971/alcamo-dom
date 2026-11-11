@@ -57,6 +57,30 @@ class DocumentTest extends TestCase
         $this->assertSame("\n  ", (string)$firstChild);
     }
 
+    public function testGetIdentifierUri(): void
+    {
+        $fooUri = (new FileUriFactory())->create(self::DATA_DIR . 'foo.xml');
+
+        $foo1 = Document::newFromUri($fooUri);
+
+        $this->assertSame((string)$fooUri, $foo1->getIdentifierUri());
+
+        $foo2 = Document::newFromUri($fooUri);
+
+        $foo2->documentURI = 'foo.xml';
+
+        $this->assertNull($foo2->getIdentifierUri());
+
+        $foo3 = Document::newFromXmlText(
+            file_get_contents(self::DATA_DIR . 'foo.xml')
+        );
+
+        $this->assertSame(
+            'tag:rv1971@web.de,2021:alcamo:hash:md5:f7f80c3d3e3bb190a5e0bce994afcf35',
+            $foo3->getIdentifierUri()
+        );
+    }
+
     public function testGetConserve(): void
     {
         $fooUri = (new FileUriFactory())->create(self::DATA_DIR . 'foo.xml');

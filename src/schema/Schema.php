@@ -397,8 +397,7 @@ class Schema implements
         while ($xsds) {
             $xsd = array_pop($xsds);
 
-            $uri =
-                (string)UriNormalizer::normalize(new Uri($xsd->documentURI));
+            $uri = $xsd->getIdentifierUri();
 
             if (!isset($this->xsds_[$uri])) {
                 $processedXsds[$uri] = $xsd;
