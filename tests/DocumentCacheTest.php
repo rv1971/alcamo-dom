@@ -106,7 +106,7 @@ class DocumentCacheTest extends TestCase
                 . 'in method add(); attempt to replace cache entry "file://'
         );
 
-        $doc2 = clone $doc1;
+        $doc2 = $factory->createFromUri('foo.xml', null, false);
 
         DocumentCache::getInstance()->add($doc2);
     }

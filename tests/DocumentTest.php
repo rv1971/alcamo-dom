@@ -65,9 +65,13 @@ class DocumentTest extends TestCase
 
         $this->assertSame((string)$fooUri, $foo1->getIdentifierUri());
 
-        $foo2 = Document::newFromUri($fooUri);
+        $dir = getcwd();
 
-        $foo2->documentURI = 'foo.xml';
+        chdir(self::DATA_DIR);
+
+        $foo2 = Document::newFromUri('foo.xml');
+
+        chdir($dir);
 
         $this->assertNull($foo2->getIdentifierUri());
 

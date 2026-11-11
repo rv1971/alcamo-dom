@@ -145,7 +145,7 @@ class Document extends \DOMDocument implements
      * [DOMDocument::load()](https://www.php.net/manual/en/domdocument.load)
      */
     public static function newFromUri(
-        string $uri,
+        $uri,
         ?DocumentFactoryInterface $documentFactory = null,
         ?int $loadFlags = null,
         ?int $libxmlOptions = null
@@ -206,13 +206,11 @@ class Document extends \DOMDocument implements
         ?DocumentFactoryInterface $documentFactory = null,
         ?int $loadFlags = null,
         ?int $libxmlOptions = null,
-        ?string $uri = null
+        $uri = null
     ) {
         $doc = new static($documentFactory, $loadFlags, $libxmlOptions, $uri);
 
         $doc->loadXmlText($xmlText, $uri);
-
-        $doc->identifierUri_ = (new DataHashUriFactory())->create($xmlText);
 
         return $doc;
     }
@@ -222,7 +220,7 @@ class Document extends \DOMDocument implements
     protected $loadFlags_;               ///< int
     protected $libxmlOptions_;           ///< int
 
-    private $identifierUri_ = false;     ///< ?string
+    private $identifierUri_;             ///< ?string
     private $xPath_;                     ///< XPath
     private $xsltStylesheetUri_ = false; ///< Uri or `null`
     private $xsltStylesheet_ = false;    ///< Document or `null`
@@ -231,6 +229,7 @@ class Document extends \DOMDocument implements
     public function __clone()
     {
         $this->clearCache();
+        $this->identifierUri_ = null;
     }
 
     /**
@@ -255,7 +254,7 @@ class Document extends \DOMDocument implements
         ?DocumentFactoryInterface $documentFactory = null,
         ?int $loadFlags = null,
         ?int $libxmlOptions = null,
-        ?string $uri = null,
+        $uri = null,
         $version = null,
         $encoding = null
     ) {
@@ -298,14 +297,6 @@ class Document extends \DOMDocument implements
      */
     public function getIdentifierUri(): ?string
     {
-        if ($this->identifierUri_ === false) {
-            $uri = new Uri($this->documentURI);
-
-            return $this->identifierUri_ = Uri::isAbsolute($uri)
-                ? (string)UriNormalizer::normalize($uri)
-                : null;
-        }
-
         return $this->identifierUri_;
     }
 
@@ -314,7 +305,7 @@ class Document extends \DOMDocument implements
      *
      * @param $uri URI to get the data from
      */
-    public function loadUri(string $uri): void
+    public function loadUri($uri): void
     {
         $handler = new ErrorHandler();
 
@@ -335,6 +326,14 @@ class Document extends \DOMDocument implements
             throw FileLoadFailed::newFromPrevious($e, [ 'filename' => $uri ]);
         }
 
+        if (!($uri instanceof UriInterface)) {
+            $uri = new Uri($uri);
+        }
+
+        if (Uri::isAbsolute($uri)) {
+            $this->identifierUri_ =  (string)UriNormalizer::normalize($uri);
+        }
+
         /** After loading, run the afterLoad() hook. */
         $this->afterLoad();
     }
@@ -346,7 +345,7 @@ class Document extends \DOMDocument implements
      *
      * @param $uri Document URI
      */
-    public function loadXmlText(string $xmlText, ?string $uri = null): void
+    public function loadXmlText(string $xmlText, $uri = null): void
     {
         $handler = new ErrorHandler();
 
@@ -363,6 +362,8 @@ class Document extends \DOMDocument implements
         if (isset($uri)) {
             $this->documentURI = $uri;
         }
+
+        $this->identifierUri_ = (new DataHashUriFactory())->create($xmlText);
 
         /** After loading, run the afterLoad() hook. */
         $this->afterLoad();

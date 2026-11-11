@@ -24,7 +24,7 @@ class ShallowDocument extends Document
      *
      * See loadXmlText() for details.
      */
-    public function loadUri(string $uri): void
+    public function loadUri($uri): void
     {
         $errorLevel = error_reporting(E_ERROR);
 
@@ -48,7 +48,7 @@ class ShallowDocument extends Document
      * @warning The first tag must end within the first @ref MAX_LENGH bytes
      * of the data.
      */
-    public function loadXmlText(string $xmlText, ?string $uri = null): void
+    public function loadXmlText(string $xmlText, $uri = null): void
     {
         /** Use a regular expression to find the first string in angular
          *  brackets which comes after any xml declarations, processing
