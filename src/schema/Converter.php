@@ -12,7 +12,18 @@ use alcamo\dom\schema\component\{
     TypeInterface
 };
 use alcamo\exception\DataNotFound;
-use alcamo\xml\NamespaceConstantsInterface;
+use alcamo\rdf_literal\{
+    DateTimeLiteral,
+    DateLiteral,
+    GDayLiteral,
+    GMonthDayLiteral,
+    GMonthLiteral,
+    GYearLiteral,
+    GYearMonthLiteral,
+    NamespaceConstantsInterface,
+    PositiveGYearLiteral,
+    TimeLiteral
+};
 
 /**
  * @brief Convert a string to a PHP item based on a given type
@@ -28,8 +39,22 @@ class Converter implements NamespaceConstantsInterface
         self::XSD_NS . ' anyURI'       => CP::class . '::toUri',
         self::XSD_NS . ' base64Binary' => CP::class . '::base64ToBinary',
         self::XSD_NS . ' boolean'      => CP::class . '::toBool',
-        self::XSD_NS . ' date'         => CP::class . '::toDateTime',
-        self::XSD_NS . ' dateTime'     => CP::class . '::toDateTime',
+        self::XSD_NS . ' date'
+            => DateLiteral::class . '::newFromString',
+        self::XSD_NS . ' dateTime'
+            => DateTimeLiteral::class . '::newFromString',
+        self::XSD_NS . ' gDay'
+            => GDayLiteral::class . '::newFromString',
+        self::XSD_NS . ' gMonthDay'
+            => GMonthDayLiteral::class . '::newFromString',
+        self::XSD_NS . ' gMonth'
+            => GMonthLiteral::class . '::newFromString',
+        self::XSD_NS . ' gYear'
+            => GYearLiteral::class . '::newFromString',
+        self::XSD_NS . ' gYearMonth'
+            => GYearMonthLiteral::class . '::newFromString',
+        self::XSD_NS . ' time'
+            => TimeLiteral::class . '::newFromString',
         self::XSD_NS . ' decimal'      => CP::class . '::toFloat',
         self::XSD_NS . ' double'       => CP::class . '::toFloat',
         self::XSD_NS . ' duration'     => CP::class . '::toDuration',
@@ -37,7 +62,9 @@ class Converter implements NamespaceConstantsInterface
         self::XSD_NS . ' hexBinary'    => CP::class . '::hexToBinary',
         self::XSD_NS . ' integer'      => CP::class . '::toInt',
         self::XSD_NS . ' language'     => CP::class . '::toLang',
-        self::XSD_NS . ' QName'        => CP::class . '::toXName'
+        self::XSD_NS . ' QName'        => CP::class . '::toXName',
+        self::ALCAMO_RDF_NS . ' PositiveGYear'
+            => PositiveGYearLiteral::class . '::newFromString'
     ];
 
     /// Default class to get a default schema from

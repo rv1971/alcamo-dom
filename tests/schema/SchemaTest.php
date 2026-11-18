@@ -434,7 +434,7 @@ class SchemaTest extends TestCase
             [ 'appinfo', 1259 ],
             [ 'corge', null ],
             [ 'empty', 31 ],
-            [ 'qux', 63 ],
+            [ 'qux', 64 ],
             [ 'quux', 39 ]
         ];
     }

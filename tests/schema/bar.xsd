@@ -46,6 +46,7 @@
     <xsd:attribute ref="xml:id"/>
     <xsd:attribute name="fooish" type="xsd:boolean"/>
     <xsd:attribute name="fooable" type="Fooable"/>
+    <xsd:attribute name="date" type="xsd:date"/>
   </xsd:complexType>
 
   <xsd:complexType name="NonemptyBaz">

@@ -126,21 +126,21 @@ class ElementTest extends TestCase
             [
                 '*/*[@xsi:type]',
                 'baz',
-                51,
+                52,
                 BazDecorator::class,
                 'Lorem ipsum.4243'
             ],
             [
                 '*/*[@xsi:type]/*[@xsi:type]',
                 'baz',
-                51,
+                52,
                 BazDecorator::class,
                 '4243'
             ],
             [
                 '*//*[local-name() = "qux"]',
                 'qux',
-                63,
+                64,
                 HavingDocumentationDecorator::class,
                 42
             ],

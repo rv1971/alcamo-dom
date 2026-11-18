@@ -30,7 +30,7 @@
     <baz xsi:type="NonemptyBaz">
       <qux>42</qux>
       <qux xml:id="qux">43</qux>
-      <quux xml:id="quux" fooish="false" fooable="partially"/>
+      <quux xml:id="quux" fooish="false" fooable="partially" date="2026-11-18"/>
     </baz>
   </baz>
 </bar>

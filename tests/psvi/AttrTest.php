@@ -4,6 +4,7 @@ namespace alcamo\dom\psvi;
 
 use alcamo\dom\DocumentCache;
 use alcamo\dom\xsd\Decorator as XsdDecorator;
+use alcamo\rdf_literal\DateLiteral;
 use alcamo\uri\FileUriFactory;
 use alcamo\xml\XName;
 use PHPUnit\Framework\TestCase;
@@ -82,7 +83,14 @@ class AttrTest extends TestCase
 
             $this->assertInstanceOf($expectedValueType, $value);
 
-            $this->assertEquals($expectedValue, $value);
+            switch ($expectedValueType) {
+                case DateLiteral::class:
+                    $this->assertTrue($expectedValue->equals($value));
+                    break;
+
+                default:
+                    $this->assertEquals($expectedValue, $value);
+            }
         }
     }
 
@@ -124,6 +132,12 @@ class AttrTest extends TestCase
                 new XName(self::BAR_NS, 'Fooable'),
                 '\stdClass',
                 (object)[ 'PARTIALLY' ]
+            ],
+            [
+                '*//*[local-name() = "quux"]/@date',
+                new XName(Document::XSD_NS, 'date'),
+                DateLiteral::class,
+                new DateLiteral('2026-11-18')
             ]
         ];
     }
